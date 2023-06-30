@@ -3,7 +3,7 @@ package cn.rjtech.admin.inventorychange;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -318,7 +318,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 	public InventoryChange findByBeforeInventoryId(Long beforeInventoryId, Long id){
 		String sql = "select * from Bd_InventoryChange where IsDeleted = 0 and iBeforeInventoryId = ?";
 		// 为空校验全部，不为空排除校验自己
-		if (ObjectUtil.isNotNull(id)){
+		if (ObjUtil.isNotNull(id)){
 			sql = sql.concat(" and iAutoId <> "+id);
 		}
 		return findFirst(sql, beforeInventoryId);

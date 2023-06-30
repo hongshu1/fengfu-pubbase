@@ -18,7 +18,7 @@ import cn.rjtech.model.momdata.MoMopatchweldm;
  * @author: chentao
  * @date: 2023-06-27 10:16
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MOMOPATCHWELDM)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/momopatchweldm", viewPath = "/_view/admin/momopatchweldm")
 public class MoMopatchweldmAdminController extends BaseAdminController {

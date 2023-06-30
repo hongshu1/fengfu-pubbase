@@ -11,7 +11,6 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -52,6 +51,7 @@ public class VendorAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
 //		renderJsonData(service.pageList(getKv()));
         Page<Record> adminDatas = service

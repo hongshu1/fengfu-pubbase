@@ -3,6 +3,7 @@ package cn.rjtech.admin.inventorycapacity;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -89,11 +90,14 @@ public class InventoryCapacityAdminController extends BaseAdminController {
 		renderJson(service.delete(getLong(0)));
 	}
 
+    @UnCheck
 	public void findByInvId(@Para(value = "invId") Long invId){
 		renderJsonData(service.findByInvId(invId));
 	}
-	
+
+    @UnCheck
 	public void getSelect(){
 		renderJsonData(workshiftmService.getSelect());
 	}
+    
 }

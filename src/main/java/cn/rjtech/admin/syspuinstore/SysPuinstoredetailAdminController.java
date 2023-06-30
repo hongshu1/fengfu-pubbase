@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syspuinstore;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -8,8 +9,6 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
-import cn.rjtech.wms.utils.StringUtils;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -43,6 +42,7 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service
             .getAdminDatas(getPageNumber(), getPageSize(), get("SourceBillType"), get("TrackType"), getBoolean("IsDeleted")));
@@ -108,12 +108,13 @@ public class SysPuinstoredetailAdminController extends BaseAdminController {
         renderJsonData(service.findEditTableDatas(getKv()));
     }
 
-    /*
+    /**
      * 采购入库单明细
-     * */
+     */
+    @UnCheck
     public void finddetaildatas() {
         Kv kv = getKv();
-        if (StringUtils.isBlank(kv.getStr("masid")) && StringUtils.isBlank(kv.getStr("barcode"))) {
+        if (StrUtil.isBlank(kv.getStr("masid")) && StrUtil.isBlank(kv.getStr("barcode"))) {
             renderJsonData(null);
             return;
         }

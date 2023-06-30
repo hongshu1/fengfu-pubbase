@@ -190,7 +190,7 @@
             </td>
             <td #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) data-editable="false" #end >${data.barcode}</td>
             <td #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvcode}</td>
-            <td #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvdddcode}</td>
+            <td #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvaddcode}</td>
             <td #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvname}</td>
             <td #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvstd}</td>
             <td #if(sysProductin.iAuditStatus?? ==2 || sysProductin.iAuditStatus?? ==3 || sysProductin.iAuditStatus?? ==1) data-editable="false" #end >${data.inventorycuomname}</td>
@@ -312,7 +312,7 @@
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "barcode,cinvcode,cinvdddcode,cinvname,cinvstd,cUomName,qty,cequipmentmodelname",
+                    columnAttr: "barcode,cinvcode,cinvaddcode,cinvname,cinvstd,cUomName,qty,cequipmentmodelname",
                     header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
                     changeColumns: [{column: "barcode", use: "barcode"}, {
                         column: "cinvcode",

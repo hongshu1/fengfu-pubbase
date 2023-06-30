@@ -97,6 +97,7 @@ public class PersonEquipmentAdminController extends BaseAdminController {
 	/**
 	 * 查询可编辑表格数据 
 	 */
+    @UnCheck
 	public void findEditableDatas(@Para(value="iPersonId") Long iPersonId){
 		renderJsonData(service.findEditableDatas(iPersonId));
 	}

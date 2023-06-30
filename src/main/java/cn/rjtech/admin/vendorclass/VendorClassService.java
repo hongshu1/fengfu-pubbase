@@ -2,7 +2,7 @@ package cn.rjtech.admin.vendorclass;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.cache.JBoltUserCache;
@@ -32,7 +32,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -109,7 +108,7 @@ public class VendorClassService extends BaseService<VendorClass> {
         }
         //2、分类编码不能重复
         String cvcCode = vendorClass.getCVCCode();//分类编码
-        ValidationUtils.isTrue(StringUtils.isBlank(findCVCCodeInfo(cvcCode)), cvcCode + " 分类编码不能重复！");
+        ValidationUtils.isTrue(StrUtil.isBlank(findCVCCodeInfo(cvcCode)), cvcCode + " 分类编码不能重复！");
         //3、给参数赋值
         saveVendorClassModel(vendorClass, new Date());
         boolean success = vendorClass.save();
@@ -179,7 +178,7 @@ public class VendorClassService extends BaseService<VendorClass> {
     public Ret deleteVendorClassByIds(String ids) {
         String[] split = ids.split(",");
         String check = checkDelete(split);
-        if (StringUtils.isNotBlank(check)) {
+        if (StrUtil.isNotBlank(check)) {
             return fail(check);
         }
         boolean result = tx(() -> {
@@ -370,29 +369,10 @@ public class VendorClassService extends BaseService<VendorClass> {
      * 获取分类数据中的所有后端分类数据
      */
     public List<VendorClass> getMgrList() {
-        //筛选组织id
-        List<VendorClass> vendorClassList = getVendorclass(false);
-        List<VendorClass> vendorClassListData = new ArrayList<>();
-        if(ObjectUtil.isNotEmpty(vendorClassList)){
-            for (int i=0;i < vendorClassList.size();i++){
-                if(getOrgCode().equals(vendorClassList.get(i).getCOrgCode())){
-                    vendorClassListData.add(vendorClassList.get(i));
-                }
-            }
-        }
-        return vendorClassListData;
-//        return getVendorclass(false);
-    }
-
-    /**
-     * 获取分类数据
-     */
-    public List<VendorClass> getVendorclass(Boolean isDeleteD) {
-        Okv kv = Okv.create();
-        if (isDeleteD != null) {
-            kv.set("isDeleted", isDeleteD);
-        }
-        return getCommonList(kv, "dUpdateTime", "asc");
+        Okv kv = Okv.by(VendorClass.ISDELETED, ZERO_STR)
+                .set(VendorClass.IORGID, getOrgId());
+        
+        return getCommonList(kv, VendorClass.CVCCODE, "asc");
     }
 
     /**

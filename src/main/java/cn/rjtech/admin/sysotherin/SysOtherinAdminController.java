@@ -19,9 +19,11 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import org.apache.commons.lang3.StringUtils;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -152,50 +154,37 @@ public class SysOtherinAdminController extends BaseAdminController {
         renderJson(service.submit(iautoid));
     }
 
-    /**
-     * 撤回已提审
-     */
-    public void withdraw(Long iAutoId) {
-        ValidationUtils.validateId(iAutoId, "iAutoId");
 
-        // renderJson(service.withdraw(iAutoId));
+    /**
+     * 查询业务类型类型
+     */
+    public void billtype() {
+        renderJsonData(service.billtype(getKv()));
     }
 
+
     /**
-     * 批量审核通过（批量审批也走这里）
+     * 条码数据源
      */
-    public void batchApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
+    @UnCheck
+    public void barcodeDatas() {
+        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()));
+        String barcode = get("detailHidden");
+        if(null != barcode &&  !"".equals(barcode)){
+            String[] split = barcode.split(",");
+            for (int i = 0; i < split.length; i++) {
+                String s = split[i].replaceAll("'", "");
+                Iterator<Record> iterator = barcodeDatas.iterator();
+                while (iterator.hasNext()) {
+                    Record r = iterator.next();
+                    if (r.getStr("barcode").equals(s)) {
+                        iterator.remove();
+                    }
+                }
+            }
         }
-        renderJson(service.process(ids));
-    }
 
-    /**
-     * 批量反审核
-     */
-    public void batchReverseApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.noProcess(ids));
+        renderJsonData(barcodeDatas);
     }
-
-    /**
-     * 审批通过
-     */
-    public void approve(String ids) {
-        renderJson(service.approve(getLong(0)));
-
-    }
-    /**
-     * 审批不通过
-     */
-    public void reject(String ids) {
-        renderJson(service.reject(getLong(0)));
-    }
-
 
 }

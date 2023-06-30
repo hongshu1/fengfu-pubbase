@@ -18,7 +18,7 @@
 							data-value=""
 							name="sn"
 							data-width="260"
-							onchange="onblurInput()"
+							onchange="onblurselect()"
 							id="searchBackGoodsTypeInput3_#(pageId)"
 					>
 					</select>
@@ -55,21 +55,21 @@
 	</div>
 
 	<script>
-		function onblurInput() {
+		function onblurselect() {
 			var inpVal = $("#searchBackGoodsTypeInput3_#(pageId)").val();
 			if(isOk(inpVal)){
-				treeHtml(inpVal)
+				jstreeHtml(inpVal)
 			}
 		}
 
-		treeHtml("");
-		function treeHtml(sn) {
+		jstreeHtml("");
+		function jstreeHtml(sn) {
 			setTimeout(function (){
-				mgrTreehandlerFn(sn);
+				mgrTreehandlerFn1(sn);
 			},300)
 		}
 
-		function mgrTreehandlerFn(sn) {
+		function mgrTreehandlerFn1(sn) {
 			var treeHtmlStr = "<div id='fitemss97subTree' " +
 					"data-jstree " +
 					"data-portalid='fitemss97Portal_#(pageId)' " +

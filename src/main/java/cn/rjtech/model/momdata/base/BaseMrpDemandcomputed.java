@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**物料需求计划计算主表ID*/
@@ -37,6 +37,8 @@ public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> 
     public static final String IQTY5 = "iQty5";
     /**是否锁定;0. 否 1. 是*/
     public static final String ISLOCKED = "isLocked";
+    /**包装数量*/
+    public static final String IPKGQTY = "iPkgQty";
 	/**
 	 * 主键ID
 	 */
@@ -82,7 +84,7 @@ public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> 
 	/**
 	 * 供应商ID
 	 */
-	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=true, maxLength=19, fixed=0, order=3)
+	@JBoltField(name="ivendorid" ,columnName="iVendorId",type="Long", remark="供应商ID", required=false, maxLength=19, fixed=0, order=3)
 	@JSONField(name = "ivendorid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIVendorId() {
 		return getLong("iVendorId");
@@ -167,7 +169,7 @@ public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> 
 	/**
 	 * 实绩需求数
 	 */
-	@JBoltField(name="iqty1" ,columnName="iQty1",type="BigDecimal", remark="实绩需求数", required=true, maxLength=24, fixed=6, order=8)
+	@JBoltField(name="iqty1" ,columnName="iQty1",type="BigDecimal", remark="实绩需求数", required=false, maxLength=24, fixed=6, order=8)
 	@JSONField(name = "iqty1")
 	public java.math.BigDecimal getIQty1() {
 		return getBigDecimal("iQty1");
@@ -184,7 +186,7 @@ public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> 
 	/**
 	 * 到货计划数
 	 */
-	@JBoltField(name="iqty2" ,columnName="iQty2",type="BigDecimal", remark="到货计划数", required=true, maxLength=24, fixed=6, order=9)
+	@JBoltField(name="iqty2" ,columnName="iQty2",type="BigDecimal", remark="到货计划数", required=false, maxLength=24, fixed=6, order=9)
 	@JSONField(name = "iqty2")
 	public java.math.BigDecimal getIQty2() {
 		return getBigDecimal("iQty2");
@@ -201,7 +203,7 @@ public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> 
 	/**
 	 * 到货实绩
 	 */
-	@JBoltField(name="iqty3" ,columnName="iQty3",type="BigDecimal", remark="到货实绩", required=true, maxLength=24, fixed=6, order=10)
+	@JBoltField(name="iqty3" ,columnName="iQty3",type="BigDecimal", remark="到货实绩", required=false, maxLength=24, fixed=6, order=10)
 	@JSONField(name = "iqty3")
 	public java.math.BigDecimal getIQty3() {
 		return getBigDecimal("iQty3");
@@ -218,7 +220,7 @@ public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> 
 	/**
 	 * 差异数量
 	 */
-	@JBoltField(name="iqty4" ,columnName="iQty4",type="BigDecimal", remark="差异数量", required=true, maxLength=24, fixed=6, order=11)
+	@JBoltField(name="iqty4" ,columnName="iQty4",type="BigDecimal", remark="差异数量", required=false, maxLength=24, fixed=6, order=11)
 	@JSONField(name = "iqty4")
 	public java.math.BigDecimal getIQty4() {
 		return getBigDecimal("iQty4");
@@ -235,7 +237,7 @@ public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> 
 	/**
 	 * 计划在库
 	 */
-	@JBoltField(name="iqty5" ,columnName="iQty5",type="BigDecimal", remark="计划在库", required=true, maxLength=24, fixed=6, order=12)
+	@JBoltField(name="iqty5" ,columnName="iQty5",type="BigDecimal", remark="计划在库", required=false, maxLength=24, fixed=6, order=12)
 	@JSONField(name = "iqty5")
 	public java.math.BigDecimal getIQty5() {
 		return getBigDecimal("iQty5");
@@ -256,6 +258,23 @@ public abstract class BaseMrpDemandcomputed<M extends BaseMrpDemandcomputed<M>> 
 	@JSONField(name = "islocked")
 	public java.lang.Boolean getIsLocked() {
 		return getBoolean("isLocked");
+	}
+
+	/**
+	 * 包装数量
+	 */
+	public M setIPkgQty(java.lang.Integer iPkgQty) {
+		set("iPkgQty", iPkgQty);
+		return (M)this;
+	}
+
+	/**
+	 * 包装数量
+	 */
+	@JBoltField(name="ipkgqty" ,columnName="iPkgQty",type="Integer", remark="包装数量", required=true, maxLength=10, fixed=0, order=14)
+	@JSONField(name = "ipkgqty")
+	public java.lang.Integer getIPkgQty() {
+		return getInt("iPkgQty");
 	}
 
 }

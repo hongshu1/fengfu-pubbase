@@ -36,7 +36,7 @@
                                 </div>
                                 <label class="col-sm-2 col-form-label">客户部番:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    #(moDoc.cnvcode1??)
+                                    #(moDoc.cinvcode1??)
                                 </div>
                                 <label class="col-sm-2 col-form-label">部品名称:</label>
                                 <div class="col-sm-2 col-form-label">
@@ -63,33 +63,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">完工数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" name="moDoc.iCompQty" value="#(moDoc.icompqty??0)">
+                                    #(moDoc.icompqty??0)
                                 </div>
                                 <label class="col-sm-2 col-form-label">差异数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" id="remainder" value="#(moDoc.iqty-moDoc.icompqty??0)">
+                                    #(moDoc.iqty-moDoc.icompqty??0)
                                 </div>
                                 <label class="col-sm-2 col-form-label">包装数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" name="ipkgqty" value="#(moDoc.ipkgqty??moDoc.iqty)">
+                                    #(moDoc.ipkgqty??moDoc.iqty)
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">作业人员:</label>
-                                <input type="text" autocomplete="off" class="form-control"
-                                       data-autocomplete
-                                       name="moMoinvbatch.jobname"
-                                       readonly="readonly"
-                                       data-url="admin/person/autocomplete"
-                                       data-link-para-ele="#capplypersoncode"
-                                       data-sync-ele="capplypersoncode"
-                                       data-text-attr="cpsnname"
-                                       data-value-attr="cpsnnum"
-                                       placeholder="=作业人员="
-                                       value="#(moMoinvbatch.jobname??)"
-                                       data-column-attr="cpsnnum,cpsnname">
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.psnname??)
+                                </div>
                                 <label class="col-sm-2 col-form-label">产线组长:</label>
                                 <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cdutypersonname??)
                                 </div>
                             </div>
                         </form>
@@ -102,7 +94,7 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="card">
-                <div class="card-header"><b>未打印现品票</b></div>
+                <div class="card-header"><h5><b>未打印现品票</b></h5></div>
                 <div class="card-body">
                     #include("table1.html")
                 </div>
@@ -110,7 +102,7 @@
         </div>
         <div class="col-lg-6">
             <div class="card">
-                <div class="card-header"><b>已打印现品票</b></div>
+                <div class="card-header"><h5><b>已打印现品票</b></h5></div>
                 <div class="card-body">
                     #include("table2.html")
                 </div>
@@ -121,20 +113,14 @@
 </div>
 #define js()
 <script>
-   /// if(isOk('#(type??)')){
-        hideParentLayerDialogBtn(0);
-    //}
     function submitForm(){
-
         LayerMsgBox.confirm("确认保存此数据?",function(){
-            // submitThisForms();
             submitThisForms("admin/processdefect/saveprocessDefect");
 
         });
     }
    function submitForms(){
        LayerMsgBox.confirm("确认提交此数据?",function(){
-           // submitThisForms();
            submitThisForms("admin/processdefect/subprocessDefect");
 
        });
@@ -197,14 +183,25 @@
    }
 
    function checkDatas() {
-       var datas = getJboltTableAllDatas("table1_#(pageId)");
+       var table1datas = getJboltTableAllDatas("table1_#(pageId)");
+       var table2Datas = getJboltTableAllDatas("table2_#(pageId)");
        // 已生成现品票数据默认隐藏生成现品票按钮
-       if (datas) {
+       if (table1datas||table2Datas) {
            $("#create_moinvbatch_#(pageId)").hide();
            #if(printworkorderspotticketsinadvance)
            $("#toolbar_deleteBtn_#(pageId)").removeAttr("disabled");
            #end
        }
+   }
+
+    /**
+     * 打印刷新已打印现品票数据
+     */
+   function refreshTable2() {
+       // 更新页面
+        refreshPjaxContainer();
+
+       // 调用打印
    }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="processDefectForm")

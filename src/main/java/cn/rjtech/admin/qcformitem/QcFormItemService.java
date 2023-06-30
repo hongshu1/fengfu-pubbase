@@ -1,7 +1,7 @@
 package cn.rjtech.admin.qcformitem;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.service.base.BaseService;
@@ -240,7 +240,7 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 	
 	public QcFormItem createQcFormItem(Long qcFormItemId, Long qcFormId, Long qcItemId, Integer seq, Boolean isDeleted){
 		QcFormItem qcFormItem = new QcFormItem();
-		if (ObjectUtil.isNull(qcFormItemId)){
+		if (ObjUtil.isNull(qcFormItemId)){
 			qcFormItemId = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormItem.setIAutoId(qcFormItemId);
@@ -252,7 +252,7 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 	}
 
 	public List<QcFormItem> createQcFormItemList(Long qcFormId, boolean isDelete , JSONArray formItemArray){
-		if (CollectionUtil.isEmpty(formItemArray)){
+		if (CollUtil.isEmpty(formItemArray)){
 			return null;
 		}
 		List<QcFormItem> list = new ArrayList<>();

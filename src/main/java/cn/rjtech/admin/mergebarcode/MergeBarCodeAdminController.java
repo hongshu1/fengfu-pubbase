@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import com.jfinal.aop.Before;
@@ -19,7 +20,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @ClassName: MergeBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MERGE_BARCODE)
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/mergeBarcode", viewPath = "_view/admin/mergebarcode")
@@ -65,9 +66,10 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         renderJsonData(service.datas(getPageNumber(), getPageSize(), getKv()));
     }
 
-    /*
+    /**
      * 点击查看按钮，跳转到查看页面
-     * */
+     */
+    @UnCheck
     public void findByLogno() {
         Kv kv = getKv();
         Record byLogId = service.findByLogId(kv.getStr("logno"));
@@ -79,9 +81,10 @@ public class MergeBarCodeAdminController extends BaseAdminController {
         render("edit.html");
     }
 
-    /*
+    /**
      * 跳转到“查看”页面自动加载数据
-     * */
+     */
+    @UnCheck
     public void detailDatas() {
         Kv kv = getKv();
         renderJsonData(service.findShiWuByCSourceId(kv.getStr("csourceid")));

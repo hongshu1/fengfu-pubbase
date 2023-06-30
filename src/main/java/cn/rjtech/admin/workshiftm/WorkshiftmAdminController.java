@@ -8,6 +8,7 @@ import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.model.momdata.Workshiftm;
@@ -49,12 +50,15 @@ public class WorkshiftmAdminController extends JBoltBaseController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
+    
 	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void getSelect() {
 		renderJsonData(service.getSelect());
 	}

@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.user.UserService;
@@ -720,9 +720,9 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 		Date now = new Date();
 		Purchasem purchasem = findById(ipurchasemid);
 		Proposalm proposalm = proposalmService.findById(purchasem.getIproposalmid());
-		ValidationUtils.isTrue(ObjectUtil.equal(proposalm.getIAuditStatus(), AuditStatusEnum.APPROVED.getValue()), "申购单的来源禀议书已失效,操作失败!");
-		ValidationUtils.isTrue(ObjectUtil.equal(purchasem.getIAuditStatus(), AuditStatusEnum.APPROVED.getValue())
-				&& ObjectUtil.equal(purchasem.getIeffectivestatus(), EffectiveStatusEnum.INVAILD.getValue())
+		ValidationUtils.isTrue(ObjUtil.equal(proposalm.getIAuditStatus(), AuditStatusEnum.APPROVED.getValue()), "申购单的来源禀议书已失效,操作失败!");
+		ValidationUtils.isTrue(ObjUtil.equal(purchasem.getIAuditStatus(), AuditStatusEnum.APPROVED.getValue())
+				&& ObjUtil.equal(purchasem.getIeffectivestatus(), EffectiveStatusEnum.INVAILD.getValue())
 				, "请选择已审核,未生效的申购单进行生效操作");
 		//校验是否超过禀议金额限制
 		validatePurchaseMoneyIsExceed(purchasem,true);
@@ -933,7 +933,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         		errorMsg.append("第"+nowRow+"行,预算编号不能为空<br/>");
         		continue;
         	}
-        	List<Record> isExistsProposalFilterList = budgetRecordList.stream().filter(item->ObjectUtil.equal(item.getStr("cbudgetno"), cbudgetno)).collect(Collectors.toList());
+        	List<Record> isExistsProposalFilterList = budgetRecordList.stream().filter(item->ObjUtil.equal(item.getStr("cbudgetno"), cbudgetno)).collect(Collectors.toList());
         	if(CollUtil.isEmpty(isExistsProposalFilterList)) {
         		errorMsg.append("第"+nowRow+"行,预算编号不存在参照禀议书中<br/>");
         		continue;
@@ -944,7 +944,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         	record.set("isourceid", isExistsProposalFilterList.get(0).get("isourceid"));
         	record.set("iproposaldid", isExistsProposalFilterList.get(0).get("iproposaldid"));
         	//excel中预算编号相同的所有行中第一行默认isubitem=0,其它行为isubitem=1
-        	List<Record> isISubItemFilterList = rows.stream().filter(item->ObjectUtil.equal(item.getStr("cbudgetno"), cbudgetno) && item.getInt("isubitem") != null).collect(Collectors.toList());
+        	List<Record> isISubItemFilterList = rows.stream().filter(item->ObjUtil.equal(item.getStr("cbudgetno"), cbudgetno) && item.getInt("isubitem") != null).collect(Collectors.toList());
         	if(CollUtil.isEmpty(isISubItemFilterList)) record.set("isubitem", IsEnableEnum.NO.getValue());
         	else record.set("isubitem", IsEnableEnum.YES.getValue());
         	String cinvcode = record.getStr("cinvcode");
@@ -1120,7 +1120,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         		errorMsg.append("第"+nowRow+"行,预算编号不能为空<br/>");
         		continue;
         	}
-        	List<Record> isExistsProposalFilterList = budgetRecordList.stream().filter(item->ObjectUtil.equal(item.getStr("cbudgetno"), cbudgetno)).collect(Collectors.toList());
+        	List<Record> isExistsProposalFilterList = budgetRecordList.stream().filter(item->ObjUtil.equal(item.getStr("cbudgetno"), cbudgetno)).collect(Collectors.toList());
         	if(CollUtil.isEmpty(isExistsProposalFilterList)) {
         		errorMsg.append("第"+nowRow+"行,预算编号不存在可导入的预算数据范围内<br/>");
         		continue;
@@ -1130,7 +1130,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         	record.set("iprojectcardid", isExistsProposalFilterList.get(0).get("iprojectcardid"));
         	record.set("isourceid", isExistsProposalFilterList.get(0).get("isourceid"));
         	//excel中预算编号相同的所有行中第一行默认isubitem=0,其它行为isubitem=1
-        	List<Record> isISubItemFilterList = rows.stream().filter(item->ObjectUtil.equal(item.getStr("cbudgetno"), cbudgetno) && item.getInt("isubitem") != null).collect(Collectors.toList());
+        	List<Record> isISubItemFilterList = rows.stream().filter(item->ObjUtil.equal(item.getStr("cbudgetno"), cbudgetno) && item.getInt("isubitem") != null).collect(Collectors.toList());
         	if(CollUtil.isEmpty(isISubItemFilterList)) record.set("isubitem", IsEnableEnum.NO.getValue());
         	else record.set("isubitem", IsEnableEnum.YES.getValue());
         	String cinvcode = record.getStr("cinvcode");

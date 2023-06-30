@@ -1,6 +1,6 @@
 package cn.rjtech.admin.purchasem;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
@@ -134,7 +134,7 @@ public class PurchasemAdminController extends BaseAdminController {
         // 控制详情页面对子表数据的操作
         set("details", true);
         Integer ireftype = rc.getInt("ireftype");
-        if(ObjectUtil.equal(PurchaseRefTypeEnum.PROPOSAL.getValue(), ireftype))
+        if(ObjUtil.equal(PurchaseRefTypeEnum.PROPOSAL.getValue(), ireftype))
         	render("details.html");
         else
         	render("ref_budget_form.html");
@@ -236,6 +236,7 @@ public class PurchasemAdminController extends BaseAdminController {
     /**
      * 选择费用预算列表数据
      */
+    @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findExpenseBudgetItemDatas() {
         renderJsonData(service.findExpenseBudgetItemDatas(getKv()));
@@ -251,9 +252,11 @@ public class PurchasemAdminController extends BaseAdminController {
     	set("period", period);
         render("choose_investmentplan.html");
     }    
+    
     /**
      * 选择投资计划列表数据
      */
+    @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findInvestmentPlanItemDatas() {
         renderJsonData(service.findInvestmentPlanItemDatas(getKv()));

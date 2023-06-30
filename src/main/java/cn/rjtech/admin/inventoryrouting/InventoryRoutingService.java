@@ -1,11 +1,11 @@
 package cn.rjtech.admin.inventoryrouting;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
@@ -28,7 +28,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -165,7 +164,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 
     public List<Record> dataList(Long iinventoryid) {
 		List<Record> list = dbTemplate("inventoryclass.getRouings", Okv.by("iinventoryid", iinventoryid)).find();
-		if (CollectionUtil.isNotEmpty(list)){
+		if (CollUtil.isNotEmpty(list)){
 			for (Record record :list){
 				Integer iAuditStatus = record.getInt(InventoryRouting.IAUDITSTATUS);
 				ValidationUtils.notNull(iAuditStatus, "该工艺路线缺少审批状态！");
@@ -278,7 +277,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 			}
 		}
 		//删除工序配置子表以及所有下级子表数据
-		if (StringUtils.isNotBlank(ids)) {
+		if (StrUtil.isNotBlank(ids)) {
 			inventoryRoutingConfigService.deleteByBatchIds(ids);
 		}
 		deleteMultiByIds(deletes);
@@ -292,7 +291,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 		List<InventoryRoutingConfig> routingConfigs = inventoryRoutingConfigService.find(inventoryRoutingConfigService.selectSql().eq("iInventoryRoutingId", iinventoryroutingid).eq("isEnabled","1").orderBy("iSeq","ASC"));
 		StringBuilder processViewStr = new StringBuilder("graph TD\nA([开始])");
 		if(routingConfigs != null && routingConfigs.size() > 0){
-			if(routingConfigs.get(0).getISeq() == null||StringUtils.isBlank(routingConfigs.get(0).getCOperationName())){
+			if(routingConfigs.get(0).getISeq() == null||StrUtil.isBlank(routingConfigs.get(0).getCOperationName())){
 				return processViewStr.toString();
 			}
 			processViewStr.append(" --> ").append(routingConfigs.get(0).getISeq()).append("[").append(routingConfigs.get(0).getCOperationName()).append("]\n");
@@ -300,7 +299,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 			InventoryRoutingConfig last = routingConfigs.get(0);
 			for (int i =1;i<routingConfigs.size();i++){
 				InventoryRoutingConfig config = routingConfigs.get(i);
-				if (config.getIType() != null&&1 == config.getIType().intValue() && routingConfigs.get(0).getISeq() != null&&StringUtils.isNotBlank(routingConfigs.get(0).getCOperationName())){
+				if (config.getIType() != null&&1 == config.getIType().intValue() && routingConfigs.get(0).getISeq() != null&&StrUtil.isNotBlank(routingConfigs.get(0).getCOperationName())){
 					processViewStr.append(last.getISeq()).append(" --> ").append(config.getISeq()).append("[").append(config.getCOperationName()).append("]\n");
 
 					if(parallels.size() > 0){
@@ -310,7 +309,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 						parallels.clear();
 					}
 					last = config;
-				}else if(config.getIType() != null && routingConfigs.get(0).getISeq() != null&&StringUtils.isNotBlank(routingConfigs.get(0).getCOperationName())){
+				}else if(config.getIType() != null && routingConfigs.get(0).getISeq() != null&&StrUtil.isNotBlank(routingConfigs.get(0).getCOperationName())){
 					StringBuilder parallel = new StringBuilder(config.getISeq().intValue()+"").append("[").append(config.getCOperationName()).append("]");
 					parallels.add(parallel);
 				}
@@ -354,7 +353,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 			JsTreeBean jsTreeBean = new JsTreeBean(id,pid,text,type,"",false);
 			jsTreeBeanList.add(jsTreeBean);
 		}
-		if(StringUtils.isNotBlank(ids)){
+		if(StrUtil.isNotBlank(ids)){
 			Kv kv1 = new Kv();
 			kv1.put("idsstr",ids.substring(0,ids.length()-1));
 			List<Record> invcs = dbTemplate("inventory.getRoutingInvcs", kv1).find();
@@ -449,7 +448,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 	
 	public Integer queryAwaitAudit(Long id, Long invId){
 		String sqlStr = "SELECT * FROM Bd_InventoryRouting WHERE iInventoryId = ? AND iAuditStatus IN (1)";
-		if (ObjectUtil.isNotNull(id)){
+		if (ObjUtil.isNotNull(id)){
 			sqlStr = sqlStr.concat(" AND iAutoId <> "+id);
 		}
 		return queryInt(sqlStr, invId);

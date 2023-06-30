@@ -1,7 +1,6 @@
 package cn.rjtech.admin.inventory;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileTypeUtil;
@@ -50,7 +49,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -128,7 +126,7 @@ public class InventoryService extends BaseService<Inventory> {
             kv.remove("iInventoryClassId");
         }
         String iInventoryClassCode = kv.getStr("iInventoryClassCode");
-        if (StringUtils.isNotBlank(iInventoryClassCode)) {
+        if (StrUtil.isNotBlank(iInventoryClassCode)) {
             if (!iInventoryClassCode.contains("["))
                 kv.remove("iInventoryClassCode");
             else
@@ -187,7 +185,7 @@ public class InventoryService extends BaseService<Inventory> {
     public Inventory setIItemAttribute(Inventory inventory) {
         String itemAttributes = inventory.getItemAttributes();
         String[] itemAttribute = null;
-        if (StringUtils.isNotBlank(itemAttributes)) {
+        if (StrUtil.isNotBlank(itemAttributes)) {
             itemAttribute = itemAttributes.split(",");
         }
         List<Dictionary> dictionaries = dictionaryService.getOptionListByTypeKey("iItem_attribute_column");
@@ -520,12 +518,12 @@ public class InventoryService extends BaseService<Inventory> {
         List<InventoryCapacity> saveInventoryCapacityList = inventoryCapacityJboltTable.getSaveBeanList(InventoryCapacity.class);
         Object[] delCapacityIds = inventoryCapacityJboltTable.getDelete();
 
-        if (CollectionUtil.isNotEmpty(saveInventoryCapacityList)) {
+        if (CollUtil.isNotEmpty(saveInventoryCapacityList)) {
             setInventoryId(invId, saveInventoryCapacityList);
             inventoryCapacityService.batchSave(saveInventoryCapacityList);
         }
 
-        if (CollectionUtil.isNotEmpty(updateInventoryCapacityList)) {
+        if (CollUtil.isNotEmpty(updateInventoryCapacityList)) {
             setInventoryId(invId, updateInventoryCapacityList);
             inventoryCapacityService.batchUpdate(updateInventoryCapacityList);
         }
@@ -561,11 +559,11 @@ public class InventoryService extends BaseService<Inventory> {
         // 获取修改数据
         List<Record> updateModelList = inventoryRoutingJboltTable.getUpdateRecordList();
 
-        if (CollectionUtil.isNotEmpty(saveRecordList)) {
+        if (CollUtil.isNotEmpty(saveRecordList)) {
             recordList.addAll(saveRecordList);
         }
 
-        if (CollectionUtil.isNotEmpty(updateModelList)) {
+        if (CollUtil.isNotEmpty(updateModelList)) {
             recordList.addAll(updateModelList);
         }
 
@@ -587,12 +585,12 @@ public class InventoryService extends BaseService<Inventory> {
         }
 
         // 为空无需操作
-        if (CollectionUtil.isEmpty(recordList)) {
+        if (CollUtil.isEmpty(recordList)) {
             return;
         }
         // 判断当前工序是否与1， 大于1则按seq排序
-        if (CollectionUtil.isNotEmpty(recordList) && recordList.size() > 1) {
-            CollectionUtil.sort(recordList, Comparator.comparingInt(u -> u.getInt(InventoryRoutingConfig.ISEQ)));
+        if (CollUtil.isNotEmpty(recordList) && recordList.size() > 1) {
+            CollUtil.sort(recordList, Comparator.comparingInt(u -> u.getInt(InventoryRoutingConfig.ISEQ)));
         }
 
         Long userId = JBoltUserKit.getUserId();
@@ -723,7 +721,7 @@ public class InventoryService extends BaseService<Inventory> {
             }
             // 添加半成品下的物料记录
             List<InvPart> childInvPartList = createInvPartList(routingId, orgId, masterInvId, pid, routingConfigId, invPartType, seq, itemList, seqMap);
-            if (CollectionUtil.isNotEmpty(childInvPartList)) {
+            if (CollUtil.isNotEmpty(childInvPartList)) {
                 invPartList.addAll(childInvPartList);
             }
 
@@ -767,7 +765,7 @@ public class InventoryService extends BaseService<Inventory> {
     }
 
     public List<InvPart> createInvPartList(Long routingId, Long orgId, Long parentInvId, Long pid, Long routingConfigId, int invPartType, int seq, List<JSONObject> itemList, Map<Integer, Record> seqMap) {
-        if (CollectionUtil.isEmpty(itemList)) {
+        if (CollUtil.isEmpty(itemList)) {
             return null;
         }
 
@@ -896,7 +894,7 @@ public class InventoryService extends BaseService<Inventory> {
     }
 
     public Integer getMinSeq(List<Record> recordList) {
-        if (CollectionUtil.isEmpty(recordList)) {
+        if (CollUtil.isEmpty(recordList)) {
             return 0;
         }
         if (recordList.size() == 1) {
@@ -907,7 +905,7 @@ public class InventoryService extends BaseService<Inventory> {
     }
 
     public Integer getMaxSeq(List<Record> recordList) {
-        if (CollectionUtil.isEmpty(recordList)) {
+        if (CollUtil.isEmpty(recordList)) {
             return 0;
         }
         if (recordList.size() == 1) {
@@ -1015,8 +1013,9 @@ public class InventoryService extends BaseService<Inventory> {
             String cInvCode1 = kv.getStr("cinvcode1");
             String cInvName1 = kv.getStr("cinvname1");
             String cInvStd = kv.getStr("cinvstd");
-            if (StringUtils.isBlank(cInvName1))
+            if (StrUtil.isBlank(cInvName1)) {
                 return inventories;
+            }
             inventory.put("iautoid", inventoryId);
             inventory.put("cinvname1", cInvName1);
             inventory.put("cinvcode", cInvCode);
@@ -1142,7 +1141,7 @@ public class InventoryService extends BaseService<Inventory> {
 
     public JBoltTable getJboltTable(JBoltTableMulti jboltTableMulti, String type) {
 
-        if (CollectionUtil.isNotEmpty(jboltTableMulti)) {
+        if (CollUtil.isNotEmpty(jboltTableMulti)) {
             for (String tableKey : jboltTableMulti.keySet()) {
                 if (type.equals(tableKey)) {
 					/*//获取额外传递参数 比如订单ID等信息 在下面数据里可能用到
@@ -1263,7 +1262,7 @@ public class InventoryService extends BaseService<Inventory> {
 
     public Page<Record> resourceList(Integer pageNumber, Integer pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("inventory.resourceList", kv).paginate(pageNumber, pageSize);
-        if (CollectionUtil.isNotEmpty(paginate.getList())) {
+        if (CollUtil.isNotEmpty(paginate.getList())) {
             DateTime now = DateUtil.date();
 
             Map<Long, Record> versionMap = bomMService.findByVersionMap(getOrgId());

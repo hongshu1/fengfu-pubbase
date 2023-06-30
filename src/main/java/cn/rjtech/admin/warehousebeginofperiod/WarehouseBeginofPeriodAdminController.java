@@ -7,6 +7,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.warehouse.WarehouseService;
@@ -16,7 +17,6 @@ import cn.rjtech.common.model.Barcodemaster;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -30,7 +30,7 @@ import com.jfinal.upload.UploadFile;
  * @ClassName: GenBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.WAREHOUSEBEGINOFPERIOD)
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/warehousebeginofperiod", viewPath = "_view/admin/warehousebeginofperiod")
@@ -85,7 +85,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     public void detailDatas() {
         Kv kv = getKv();
         Long aLong = getLong(0);
-        if (StringUtils.isBlank(kv.getStr("masid"))) {
+        if (StrUtil.isBlank(kv.getStr("masid"))) {
             renderJsonData(null);
             return;
         }
@@ -121,9 +121,10 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJsonData(service.submitAddBarcode(jBoltPara));
     }
 
-    /*
+    /**
      * 新增页加载的数据
-     * */
+     */
+    @UnCheck
     public void findDetails() {
         renderJsonData(null);
     }
@@ -181,9 +182,10 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJsonData(service.addPrintData(getKv()));
     }
 
-    /*
+    /**
      * 根据仓库编码查询库区编码
-     * */
+     */
+    @UnCheck
     public void findAreaByWhcode() {
         renderJsonData(service.findAreaByWhcode());
     }
@@ -223,7 +225,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
         // 部品存货id
         String cwhcode = "";
-        if (StringUtils.isNotBlank(get("cwhcode"))) {
+        if (StrUtil.isNotBlank(get("cwhcode"))) {
             cwhcode = get("cwhcode");
             Warehouse warehouse = warehouseService.findByWhCode(cwhcode);
             set("cwhcode", warehouse.getCWhCode());
@@ -236,7 +238,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
         // 部品存货id
-        if (StringUtils.isNotBlank(get("careacode"))) {
+        if (StrUtil.isNotBlank(get("careacode"))) {
             set("careacode", get("careacode"));
         }
         keepPara();
@@ -247,7 +249,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         ValidationUtils.notBlank(index, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notBlank(type, JBoltMsg.PARAM_ERROR);
         // 部品存货id
-        if (StringUtils.isNotBlank(get("cvencode"))) {
+        if (StrUtil.isNotBlank(get("cvencode"))) {
             set("cvencode", get("cvencode"));
         }
         keepPara();

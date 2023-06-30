@@ -3,7 +3,7 @@ package cn.rjtech.admin.formuploadm;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -71,7 +71,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv para) {
         Page<Record> paginate = dbTemplate("formuploadm.getAdminDatas", para).paginate(pageNumber, pageSize);
         for (Record record : paginate.getList()) {
-            if (ObjectUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))) {
+            if (ObjUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))) {
                 record.set("iworkregionmid", workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
             }
             if (ObjUtil.isNotNull(formUploadCategoryService.findById(record.getStr("icategoryid")))) {
@@ -299,7 +299,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
     public Page<Record> getApiAdminDatas(Integer pageNumber, Integer pageSize, Kv para) {
         Page<Record> paginate = dbTemplate("formuploadm.getAdminDatas", para).paginate(pageNumber, pageSize);
         for (Record record : paginate.getList()) {
-            if (ObjectUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))) {
+            if (ObjUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))) {
                 record.set("iworkregionmname", workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
             }
             if (ObjUtil.isNotNull(formUploadCategoryService.findById(record.getStr("icategoryid")))) {

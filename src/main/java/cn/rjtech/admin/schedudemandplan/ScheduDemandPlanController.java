@@ -1,8 +1,10 @@
 package cn.rjtech.admin.schedudemandplan;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -15,7 +17,6 @@ import cn.rjtech.util.Util;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang.StringUtils;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -30,7 +31,7 @@ import java.util.Map;
  * @author: chentao
  * @date: 2023-05-02 10:00
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.DEMAND_ALGORITHM)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/schedudemandplan", viewPath = "/_view/admin/schedudemandplan")
 public class ScheduDemandPlanController extends BaseAdminController {
@@ -124,10 +125,12 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		renderJsonData(service.apsScheduDemandPlan(endDate));
 	}
 
+    @UnCheck
 	public void getDemandList() {
 		renderJsonData(service.getDemandList(getKv()));
 	}
 
+    @UnCheck
 	public void getSupplierList() {
 		renderJsonData(service.getSupplierList(getKv()));
 	}
@@ -154,6 +157,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		render("demandforecastm.html");
 	}
 
+    @UnCheck
 	public void getMrpDemandForecastMPage() {
 		renderJsonData(service.getMrpDemandForecastMList(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -168,10 +172,10 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		String enddate = get("enddate");
 
 		LocalDate localDate = LocalDate.now();
-		if (StringUtils.isBlank(startdate)){
+		if (StrUtil.isBlank(startdate)){
 			startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
 		}
-		if (StringUtils.isBlank(enddate)){
+		if (StrUtil.isBlank(enddate)){
 			enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 		set("idemandforecastmid",idemandforecastmid);
@@ -263,6 +267,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 	/**
 	 * 物料需求计划预示
 	 */
+    @UnCheck
 	public void getMrpDemandForecastDPage() {
 		renderJsonData(service.getMrpDemandForecastDList(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -275,10 +280,10 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		String startdate = get("startdate");
 		String enddate = get("enddate");
 		LocalDate localDate = LocalDate.now();
-		if (StringUtils.isBlank(startdate)){
+		if (StrUtil.isBlank(startdate)){
 			startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
 		}
-		if (StringUtils.isBlank(enddate)){
+		if (StrUtil.isBlank(enddate)){
 			enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
@@ -333,6 +338,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		render("demandplanm.html");
 	}
 
+    @UnCheck
 	public void getMrpDemandPlanMPage() {
 		renderJsonData(service.getMrpDemandPlanMList(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -347,10 +353,10 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		String enddate = get("enddate");
 
 		LocalDate localDate = LocalDate.now();
-		if (StringUtils.isBlank(startdate)){
+		if (StrUtil.isBlank(startdate)){
 			startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
 		}
-		if (StringUtils.isBlank(enddate)){
+		if (StrUtil.isBlank(enddate)){
 			enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 		set("idemandplanmid",idemandplanmid);
@@ -454,10 +460,10 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		String startdate = get("startdate");
 		String enddate = get("enddate");
 		LocalDate localDate = LocalDate.now();
-		if (StringUtils.isBlank(startdate)){
+		if (StrUtil.isBlank(startdate)){
 			startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
 		}
-		if (StringUtils.isBlank(enddate)){
+		if (StrUtil.isBlank(enddate)){
 			enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
@@ -517,10 +523,10 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		String active = get("active");
 
 		LocalDate localDate = LocalDate.now();
-		if (StringUtils.isBlank(startdate)){
+		if (StrUtil.isBlank(startdate)){
 			startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
 		}
-		if (StringUtils.isBlank(enddate)){
+		if (StrUtil.isBlank(enddate)){
 			enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 
@@ -628,10 +634,10 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		String startdate = get("startdate");
 		String enddate = get("enddate");
 		LocalDate localDate = LocalDate.now();
-		if (StringUtils.isBlank(startdate)){
+		if (StrUtil.isBlank(startdate)){
 			startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
 		}
-		if (StringUtils.isBlank(enddate)){
+		if (StrUtil.isBlank(enddate)){
 			enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
 		}
 		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序

@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ProjectCard;
@@ -36,6 +37,7 @@ public class ProjectCardAdminController extends BaseAdminController {
   	/**
 	* 数据源
 	*/
+    @UnCheck
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
 	}
@@ -83,5 +85,12 @@ public class ProjectCardAdminController extends BaseAdminController {
 	public void toggleIsfreeze(){
 		renderJson(service.toggleIsfreeze(getLong(0)));
 	}
-
+	/**
+	 * 切换是否完成
+	 * */
+	public void toggleIsFinish(){
+		String ccode = getKv().getStr("ccode");
+		Integer istatus = getKv().getInt("istatus");
+		renderJson(service.toggleIsFinish(ccode,istatus));
+	}
 }

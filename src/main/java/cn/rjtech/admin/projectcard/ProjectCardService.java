@@ -6,6 +6,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.FinishStatusEnum;
 import cn.rjtech.model.momdata.ExpenseBudgetItem;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
 import cn.rjtech.model.momdata.ProjectCard;
@@ -204,5 +205,14 @@ public class ProjectCardService extends BaseService<ProjectCard> {
 	 * */
 	public Ret toggleIsfreeze(Long iautoid) {
 		return toggleBoolean(iautoid, "isfreeze");
+	}
+	/**
+	 * 切换是否冻结
+	 * @param istatus 
+	 * */
+	public Ret toggleIsFinish(String ccode, Integer istatus) {
+		Integer setStatusValue = istatus == FinishStatusEnum.FINISHED.getValue() ?  FinishStatusEnum.UNFINISHED.getValue() : FinishStatusEnum.FINISHED.getValue();
+		update(updateSql().set("istatus", setStatusValue).eq("ccode", ccode));
+		return SUCCESS;
 	}
 }

@@ -1,6 +1,7 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -34,7 +35,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import java.math.BigDecimal;
@@ -879,7 +879,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 }
 
                 //如果所有物料的在库都小于，那么则上一次最后排产的物料先排
-                if (StringUtils.isNotBlank(endInvCode) && isFlag){
+                if (StrUtil.isNotBlank(endInvCode) && isFlag){
                     for (Map<String,Object> map : planZaiKuList) {
                         String inv = map.get("inv").toString();
                         if (endInvCode.equals(inv)){
@@ -1653,7 +1653,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }
         //锁定截止日期
         String lockEndDate = kv.getStr("endDate");
-        if (StringUtils.isBlank(lockEndDate)) {
+        if (StrUtil.isBlank(lockEndDate)) {
             return fail("锁定截止日期不能为空！");
         }
         //排产层级
@@ -2334,7 +2334,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }
         //解锁开始日期
         String unLockStartDate = kv.getStr("endDate");
-        if (StringUtils.isBlank(unLockStartDate)) {
+        if (StrUtil.isBlank(unLockStartDate)) {
             return fail("解锁开始日期不能为空！");
         }
         //排产层级
@@ -2366,7 +2366,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
      */
     public Ret saveLevel(Kv kv) {
         String jsonDate = kv.getStr("data");
-        if (jsonDate.equals("[]") || StringUtils.isBlank(jsonDate)) {
+        if (jsonDate.equals("[]") || StrUtil.isBlank(jsonDate)) {
             return SUCCESS;
         }
         JSONArray jsonArray = JSONArray.parseArray(jsonDate);
@@ -3111,7 +3111,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         planRecord.set("cInvCode1", invInfo.getStr("cInvCode1"));
         planRecord.set("cInvName1", invInfo.getStr("cInvName1"));
         planRecord.set("cWorkName", invInfo.getStr("cWorkName"));
-        if (StringUtils.isNotBlank(colName)) {
+        if (StrUtil.isNotBlank(colName)) {
             planRecord.set("colName", colName);  //自定义列名
         }
         planRecord.set("seq", invInfo.getInt("seq"));  //用于页面排序
@@ -3172,7 +3172,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         planRecord.set("cInvCode1", invInfo.getStr("cInvCode1"));
         planRecord.set("cInvName1", invInfo.getStr("cInvName1"));
         planRecord.set("cWorkName", invInfo.getStr("cWorkName"));
-        if (StringUtils.isNotBlank(colName)) {
+        if (StrUtil.isNotBlank(colName)) {
             planRecord.set("colName", colName);  //自定义列名
         }
         planRecord.set("seq", invInfo.getInt("seq"));  //用于页面排序

@@ -2,6 +2,7 @@ package cn.rjtech.admin.container;
 
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -17,7 +18,6 @@ import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -149,7 +149,7 @@ public class ContainerAdminController extends BaseAdminController {
     public void dataExport() throws Exception {
         List<Record> rows = service.list(getKv());
         for (Record row : rows) {
-            row.put("isinner", StringUtils.equals("1", row.getStr("isinner")) ? "社外" : "社内");
+            row.put("isinner", StrUtil.equals("1", row.getStr("isinner")) ? "社外" : "社内");
         }
         renderJxls("container.xlsx", Kv.by("rows", rows), "容器档案_" + DateUtil.today() + ".xlsx");
     }

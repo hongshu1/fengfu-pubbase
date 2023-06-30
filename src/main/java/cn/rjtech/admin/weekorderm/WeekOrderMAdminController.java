@@ -1,5 +1,6 @@
 package cn.rjtech.admin.weekorderm;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -16,7 +17,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 客户订单-周间客户订单
@@ -52,6 +52,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.WEEKORDERM_ADD)
     public void add() {
         WeekOrderM addData = new WeekOrderM();
         set("weekOrderM", addData);
@@ -62,6 +63,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.WEEKORDERM_SAVETABLESUBMIT)
     public void saveTableSubmit() {
         renderJson(service.saveTableSubmit(getJBoltTable()));
     }
@@ -69,6 +71,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.WEEKORDERM_EDIT)
     public void edit() {
         Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", get("iautoid")));
         ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
@@ -81,6 +84,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.WEEKORDERM_DELETEBYIDS)
     public void deleteByIds(@Para(value = "ids") String ids) {
         ValidationUtils.notBlank(ids, JBoltMsg.PARAM_ERROR);
 
@@ -90,6 +94,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.WEEKORDERM_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -98,7 +103,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
      * 关闭
      */
     public void closeWeekOrder(@Para(value = "iautoid") String iAutoId) {
-        if (StringUtils.isEmpty(iAutoId)) {
+        if (StrUtil.isBlank(iAutoId)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }

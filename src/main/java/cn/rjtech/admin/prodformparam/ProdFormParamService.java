@@ -1,22 +1,19 @@
 package cn.rjtech.admin.prodformparam;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
-import cn.rjtech.model.momdata.QcFormParam;
-import cn.rjtech.model.momdata.QcParam;
-import cn.rjtech.model.momdata.SpotCheckFormParam;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.ProdFormParam;
+import cn.rjtech.model.momdata.QcFormParam;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.Okv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
@@ -97,7 +94,7 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 
 	public ProdFormParam createQcFormParam(Long id, Long qcFormId, Long qcFormItemId, Long qcItemId, Long qcParamId, Integer itemSeq, Integer itemParamSeq, Boolean isDeleted){
 		ProdFormParam qcFormParam = new ProdFormParam();
-		if (ObjectUtil.isNull(id)){
+		if (ObjUtil.isNull(id)){
 			id = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormParam.setIProdParamId(qcParamId);
@@ -112,7 +109,7 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 	}
 
 	public List<ProdFormParam> createQcFormParamList(Long qcFormId, JSONArray formParamArray){
-		if (CollectionUtil.isEmpty(formParamArray)){
+		if (CollUtil.isEmpty(formParamArray)){
 			return null;
 		}
 		List<ProdFormParam> qcFormParamList = new ArrayList<>();
@@ -138,7 +135,7 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 	}
 
 	public List<Record> getQcFormParamListByPId(Long qcFormId) {
-		if (ObjectUtil.isNull(qcFormId)){
+		if (ObjUtil.isNull(qcFormId)){
 			return null;
 		}
 		return dbTemplate("prodformparam.findByFormId", Okv.by("qcFormId", qcFormId)).find();
@@ -147,5 +144,12 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 
 	public Page<Record> qcformparamlist(int pageNumber, int pageSize, Okv kv) {
 		return dbTemplate("prodformparam.qcformparamlist", kv).paginate(pageNumber, pageSize);
+	}
+
+	/**
+	 * 切换isenabled属性
+	 */
+	public Ret toggleIsEnabled(Long id) {
+		return toggleBoolean(id, "isenabled");
 	}
 }

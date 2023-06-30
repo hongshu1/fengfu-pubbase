@@ -2,13 +2,13 @@ package cn.rjtech.admin.currentstock;
 
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.permission.*;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouch;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
@@ -50,6 +50,35 @@ public class CurrentStockController extends BaseAdminController {
 		keepPara();
 
 		render("currentstockbyselect.html");
+	}
+
+
+	/**
+	 * 盘点条码 明细
+	 */
+	@UnCheck
+	public void getStockCheckVouchBarcodeLines() {
+		String autoid = get("autoid");
+		String OrgCode = getOrgCode();
+		Kv kv = new Kv();
+		kv.set("autoid",autoid== null? "" :autoid);
+		kv.set("OrgCode",OrgCode);
+		renderJsonData(service.getStockCheckVouchBarcodeLines(kv));
+	}
+
+	/**
+	 * 根据条码带出其他数据
+	 */
+	@UnCheck
+	public void barcode(@Para(value = "barcode") String barcode,
+						@Para(value = "autoid") Long autoid,
+						@Para(value = "detailHidden") String detailHidden,
+						@Para(value = "poscodes") String poscodes, //库区
+						@Para(value = "whcode") String whcode //仓库
+						) {
+		ValidationUtils.notBlank(barcode, "请扫码");
+
+		renderJsonData(service.barcode(Kv.by("barcode", barcode).set("autoid",autoid).set("detailHidden",detailHidden).set("whcode",whcode).set("poscodes",poscodes)));
 	}
 	/**
 	 * 选择数据源
@@ -97,7 +126,7 @@ public class CurrentStockController extends BaseAdminController {
 	   Kv kv = getKv();
 	   String autoid = kv.getStr("autoid");
 	   StockCheckVouch stockChekVouch = stockChekVouchService.findById(autoid);
-	   set("SysStockchekvouch", stockChekVouch);
+	   set("stockchekvouch", stockChekVouch);
 	   set("bill", stockChekVouch);
 	   set("isapp",0);
 	   render("stockEdit.html");
@@ -158,7 +187,6 @@ public class CurrentStockController extends BaseAdminController {
 	   render("stockForm.html");
    }
 
-
    /**
 	* 盘点单
 	* */
@@ -166,102 +194,9 @@ public class CurrentStockController extends BaseAdminController {
 		renderJson(service.jboltTableSubmit(getJBoltTable()));
 	}
 
-
-
    public void saveSubmit(){
    	renderJson(service.saveSubmit(getKv()));
    }
-
-
-   /**
-	* 完成盘点，发起审批,修改盘点单单头状态
-	* */
-   @CheckPermission(PermissionKey.CURRENT_STOCK_SUBMIT)
-   public void submit(@Para(value = "formSn") String formSn,
-					  @Para(value = "formAutoId") Long formAutoId,
-					  @Para(value = "primaryKeyName") String primaryKeyName,
-					  @Para(value = "className") String className,
-					  @Para(value = "permissionKey") String permissionKey) {
-	   ValidationUtils.notBlank(formSn, "缺少表单编码");
-	   ValidationUtils.validateId(formAutoId, "单据ID");
-	   ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
-	   ValidationUtils.notBlank(className, "缺少实现审批通过业务的类名参数");
-	   ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少单据的提审权限");
-
-	   service.preSubmitFunc(formAutoId);
-	}
-
-
-	/**
-	 * 驳回,修改盘点单单头状态
-	 * */
-	@CheckPermission(PermissionKey.CURRENT_STOCK_REJECT)
-	public void reject(@Para(value = "formAutoId") Long formAutoId,
-					   @Para(value = "formSn") String formSn,
-					   @Para(value = "status") Integer status,
-					   @Para(value = "primaryKeyName") String primaryKeyName,
-					   @Para(value = "className") String className,@Para(value = "remark") String remark) {
-		ValidationUtils.validateId(formAutoId, "单据ID");
-		ValidationUtils.notBlank(formSn, "表单编码不能为空");
-		ValidationUtils.validateIntGt0(status, "审批状态");
-		ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
-		ValidationUtils.notBlank(className, "处理审批的Service类名");
-		service.postRejectFunc(formAutoId,false);
-	}
-
-	/**
-	 * 审核通过,修改盘点单单头状态,并推单给戴工
-	 * */
-	@CheckPermission(PermissionKey.CURRENT_STOCK_APPROVE)
-	public void approve(@Para(value = "formAutoId") Long formAutoId,
-						@Para(value = "formSn") String formSn,
-						@Para(value = "status") Integer status,
-						@Para(value = "primaryKeyName") String primaryKeyName,
-						@Para(value = "className") String className,@Para(value = "remark") String remark) {
-		ValidationUtils.validateId(formAutoId, "单据ID");
-		ValidationUtils.notBlank(formSn, "表单编码不能为空");
-		ValidationUtils.validateIntGt0(status, "审批状态");
-		ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
-		ValidationUtils.notBlank(className, "缺少实现审批通过业务的类名参数");
-		service.postApproveFunc(formAutoId, false);
-	}
-
-	/**
-	 * 撤回审核
-	 */
-	@CheckPermission(PermissionKey.CURRENT_STOCK_WITHDRAW)
-	public void withdraw(@Para(value = "formAutoId") Long formAutoId,
-						 @Para(value = "formSn") String formSn,
-						 @Para(value = "primaryKeyName") String primaryKeyName,
-						 @Para(value = "className") String className,
-						 @Para(value = "permissionKey") String permissionKey) {
-		ValidationUtils.validateId(formAutoId, "单据ID");
-		ValidationUtils.notBlank(formSn, "表单编码不能为空");
-		ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
-		ValidationUtils.notBlank(className, "缺少实现审批通过后的业务类名");
-		ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“撤回”的权限");
-
-		service.postWithdrawFunc(formAutoId);
-	}
-
-	/**
-	 * 反审批
-	 * @param formAutoId 业务id
-	 */
-	@CheckPermission(PermissionKey.CURRENT_STOCK_REVERSE_APPROVE)
-	public void reverseApprove(@Para(value = "formAutoId") Long formAutoId,
-							   @Para(value = "formSn") String formSn,
-							   @Para(value = "status") Integer status,
-							   @Para(value = "primaryKeyName") String primaryKeyName,
-							   @Para(value = "className") String className,@Para(value = "remark") String remark) {
-		ValidationUtils.validateId(formAutoId, "单据ID");
-		ValidationUtils.notBlank(formSn, "表单编码不能为空");
-		ValidationUtils.validateIntGt0(status, "审批状态");
-		ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
-		ValidationUtils.notBlank(className, "处理审批的Service类名");
-		service.preReverseApproveFunc(formAutoId, false, false);
-	}
-
 
 	/**
 	 * 逻辑删除
@@ -272,27 +207,4 @@ public class CurrentStockController extends BaseAdminController {
 		mid.setIsDeleted("1");
 		stockChekVouchService.update(mid);
 	}
-
-
-
-//	public void agree() {
-//		Kv kv = getKv();
-//		Ret ret = service.agree(stockChekVouchService.findById(kv.get("mid")));
-//		renderJsonData(ret);
-//
-//	}
-//
-//	/**
-//	 * 完成盘点,修改盘点单单头状态
-//	 * */
-//	public void okCheck() {
-//		Kv kv = getKv();
-//		List<StockCheckVouch> autoId = stockChekVouchService.getListByIds((String) kv.get("mid"));
-//		StockCheckVouch byId = autoId.get(0);
-//
-//		byId.setStatus("1");
-//		Ret ret = stockChekVouchService.update(byId);
-//		renderJsonData(ret);
-//	}
-
 }

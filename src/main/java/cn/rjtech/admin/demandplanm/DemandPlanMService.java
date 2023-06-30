@@ -1,10 +1,10 @@
 package cn.rjtech.admin.demandplanm;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -239,11 +239,11 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 			
 			// 字段记录 判断委外或采购订单数量是否为空
 			if (type == 1){
-				if (CollectionUtil.isNotEmpty(purchaseorderdQtyList)){
+				if (CollUtil.isNotEmpty(purchaseorderdQtyList)){
 					record.set(PurchaseOrderD.PURCHASEORDERD_QTY_LIST, purchaseorderdQtyList);
 				}
 			}else if (type == 2){
-				if (CollectionUtil.isNotEmpty(subcontractOrderdQtyList)){
+				if (CollUtil.isNotEmpty(subcontractOrderdQtyList)){
 					record.set(SubcontractOrderD.SUBCONTRACTORDERD_QTY_LIST, subcontractOrderdQtyList);
 				}
 			}
@@ -276,14 +276,14 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 		
 		// 先去校验子件是否全部做了订单
 		List<Record> demandPlanDList = demandPlanDService.findByDemandPlanMid(id);
-		if (CollectionUtil.isEmpty(demandPlanDList)){
+		if (CollUtil.isEmpty(demandPlanDList)){
 			return;
 		}
 		// 查询所有细表数据
 		List<Long> demandPlanDIds = demandPlanDList.stream().map(record -> record.getLong(DemandPlanD.IAUTOID)).collect(Collectors.toList());
 		// 排除
 		Integer count = demandPlanDService.queryNotGenOrderNum(id, demandPlanDIds);
-		if (ObjectUtil.isNotNull(count) && count == 0){
+		if (ObjUtil.isNotNull(count) && count == 0){
 			update(demandPlanM, status);
 		}
 	}
@@ -297,7 +297,7 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 	}
 	
 	public void batchUpdateStatusByIds(List<Long> ids, Integer status){
-		if (CollectionUtil.isEmpty(ids)){
+		if (CollUtil.isEmpty(ids)){
 			return;
 		}
 		for (Long id : ids){

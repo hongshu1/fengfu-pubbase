@@ -23,7 +23,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -154,6 +153,7 @@ public class SysProductinAdminController extends BaseAdminController {
     /**
      * 获取仓库下拉
      */
+    @UnCheck
     public void getWarehouse() {
         renderJsonData(service.getwareHouseDatas(getKv()));
     }
@@ -161,6 +161,7 @@ public class SysProductinAdminController extends BaseAdminController {
     /**
      * 获取入库类别下拉
      */
+    @UnCheck
     public void getRdStyle() {
         renderJsonData(service.getRdStyleDatas(getKv()));
     }
@@ -168,6 +169,7 @@ public class SysProductinAdminController extends BaseAdminController {
     /**
      * 获取生产部门下拉
      */
+    @UnCheck
     public void getDepartment() {
         renderJsonData(service.getDepartmentDatas(getKv()));
     }
@@ -206,27 +208,8 @@ public class SysProductinAdminController extends BaseAdminController {
         renderJson(service.reject(getLong(0)));
     }
 
-    /**
-     * 批量审核通过（批量审批也走这里）
-     */
-    public void batchApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.process(ids));
-    }
 
-    /**
-     * 批量反审核
-     */
-    public void batchReverseApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.noProcess(ids));
-    }
+
 
     /**
      * 条码数据源

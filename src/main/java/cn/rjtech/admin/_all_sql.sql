@@ -755,3 +755,7 @@
 #namespace("uptimetplcategory")
 #include("uptimetplcategory/uptimetplcategory.sql")
 #end
+
+#namespace("spotcheckformm")
+#include("spotcheckformm/spotcheckformm.sql")
+#end

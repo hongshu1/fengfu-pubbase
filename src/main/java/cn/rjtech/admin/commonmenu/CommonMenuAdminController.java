@@ -1,13 +1,13 @@
 package cn.rjtech.admin.commonmenu;
 
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.UnCheck;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.common.model.CommonMenu;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.base.controller.BaseAdminController;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.plugin.activerecord.tx.Tx;
 /**
  * 常用菜单 Controller
  * @ClassName: CommonMenuAdminController
@@ -88,10 +88,12 @@ public class CommonMenuAdminController extends BaseAdminController {
 		renderJson(service.delete(getLong(0)));
 	}
 
+    @UnCheck
     public void findAllCanCheckedMenu(){
     	renderJsonData(service.findAllCanCheckedMenu());
     }
-    
+
+    @UnCheck
 	public void findCheckedIds(){
 		renderJson(service.findCheckedIds());
 	}

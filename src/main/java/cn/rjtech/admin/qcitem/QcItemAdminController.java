@@ -1,5 +1,6 @@
 package cn.rjtech.admin.qcitem;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -20,7 +21,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -97,7 +97,7 @@ public class QcItemAdminController extends BaseAdminController {
      */
     public void delete() {
         String checkResult = checkQcItemIsUse(getLong(0));
-        if(StringUtils.isNotBlank(checkResult)){
+        if(StrUtil.isNotBlank(checkResult)){
             renderFail(checkResult);
             return;
         }
@@ -112,7 +112,7 @@ public class QcItemAdminController extends BaseAdminController {
         String[] ids = get("ids").split(",");
         for (String id : ids) {
             String checkResult = checkQcItemIsUse(Long.valueOf(id));
-            if(StringUtils.isNotBlank(checkResult)){
+            if(StrUtil.isNotBlank(checkResult)){
                 renderFail(checkResult);
                 return;
             }

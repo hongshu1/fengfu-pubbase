@@ -13,7 +13,9 @@
             <div class="card-body">
                 <div class="col">
                     #if(readonly != 'readonly')
+                    #if(controls != '1')
                     <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
+                    #end
                     #end
                     #include("/_view/_common/_approval_btns.html", uri="/admin/spotCheckFormM",
                     formSn="PL_SpotCheckFormM", primaryKeyName="iAutoId", o=spotCheckFormM,
@@ -25,24 +27,90 @@
         </div>
     </div>
     <div class="py-2" style="padding:.5rem 0rem;">
-        <span class="py-1"><strong></strong></span>
+        <span class="py-1"><strong>工单信息</strong></span>
     </div>
+    #if(readonly == 'readonly')
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">工单号</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="cmodocno" value="#(data.cmodocno??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">计划日期</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="date" value="#(data.d??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">生产部门</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="cdepname" value="#(data.cdepname??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">存货编码</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="cinvcode" value="#(data.cinvcode??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">客户部番</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="cinvcode1" value="#(data.cinvcode1??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">部品名称</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="cinvname1" value="#(data.cinvname1??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label">产线名称</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="cworkname" value="#(data.cworkname??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">班次名称</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="cworkshiftname" value="#(data.cworkshiftname??)"/>
+                </div>
+                <label class="col-sm-1 col-form-label">计划数量</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="icompqty" value="#(data.icompqty??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    #end
     <div class="row">
         <div class="col">
             <div class="form-group row">
                 <label class="col-sm-1 col-form-label">工序名称</label>
                 <div class="col-2">
                     <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="spotCheckFormM.coperationname" value="#(spotCheckFormM.coperationname??)"/>
-                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="iprodformid" value="#(spotcheckformid??)"/>
-                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="routingconfigid" value="#(routingconfigid??)"/>
-                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="modocid" value="#(modocid??)"/>
                 </div>
+                <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="iprodformid" value="#(spotcheckformid??)"/>
+                <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="routingconfigid" value="#(routingconfigid??)"/>
+                <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="modocid" value="#(modocid??)"/>
                 <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="coperationname" value="#(spotCheckFormM.coperationname??)"/>
+                <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="controls" value="#(controls??)"/>
+                <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="croutingname" value="#(croutingname??)"/>
+                <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="iinventoryid" value="#(iinventoryid??)"/>
+                <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="itype" value="#(itype??)"/>
 
                 <label class="col-sm-1 col-form-label">设备名称</label>
                 <div class="col-2">
                     <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="20" name="spotCheckFormM.cequipmentmodelname" value="#(spotCheckFormM.cequipmentnames??)"/>
                 </div>
+                #if(readonly == 'readonly')
+                <label class="col-sm-1 col-form-label">状态</label>
+                <div class="col-2">
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="20" name="statename" value="#(data.statename??)"/>
+                </div>
+                #end
 
             </div>
         </div>
@@ -54,6 +122,73 @@
     <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
         #ajaxPortal("/admin/spotCheckFormM/table3?spotcheckformid="+(spotcheckformid??'')+"&spotcheckformmid="+(spotCheckFormM.iautoid??''),"qcformtable_portal_" + pageId, true)
     </div>
+    <div class="py-2" style="padding:.5rem 0rem;margin-top: 10px">
+
+    </div>
+    #if(readonly == 'readonly')
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">点检异常记录：</label>
+                <div class="col">
+                    <span class="form-control">#(data.cdesc??)</span>
+                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="data.cdesc" value="#(data.cdesc??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">处理方式：</label>
+                <div class="col">
+                    <span class="form-control">#(data.cmethod??)</span>
+                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="data.cmethod" value="#(data.cmethod??)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">创建人：</label>
+                <div class="col">
+                    <span class="form-control">#(data.ccreatename??)</span>
+                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="data.ccreatename" value="#(data.ccreatename??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">创建时间：</label>
+                <div class="col">
+                    <span class="form-control">#(data.dcreatetime??)</span>
+                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="data.dcreatetime" value="#(data.dcreatetime??)"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">审核人：</label>
+                <div class="col">
+                    <span class="form-control">#(data.cauditname??)</span>
+                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="data.cauditname" value="#(data.cauditname??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">审核时间：</label>
+                <div class="col">
+                    <span class="form-control">#(data.daudittime??)</span>
+                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="data.daudittime" value="#(data.daudittime??)"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    #end
 </form>
 #define js()
 #include("_table3_js.html")
@@ -111,9 +246,21 @@
      * 新增/修改/提审
      */
     function successHandler(msg, id) {
+        var iinventoryid = $("input[name='iinventoryid']").val();
+        var coperationname = $("input[name='coperationname']").val();
+        var modocid = $("input[name='modocid']").val();
+        var routingconfigid = $("input[name='routingconfigid']").val();
+        var spotcheckformmid = $("input[name='spotCheckFormM.iautoid']").val();
+        var controls = $("input[name='controls']").val();
+        var croutingname = $("input[name='croutingname']").val();
+        var cequipmentnames = $("input[name='spotCheckFormM.cequipmentmodelname']").val();
+
         LayerMsgBox.success(msg, 600, function () {
             // 新增/修改，均跳转到详情页
-            var url="admin/spotCheckFormM/edit?iautoid="+id+ '&_jb_rqtype_=dialog';
+            var url="admin/spotCheckFormM/edit?coperationname="+coperationname+'&iinventoryid='+iinventoryid
+                +'&modocid='+modocid+'&routingconfigid='+routingconfigid+'&cequipmentnames='+cequipmentnames
+                +'&spotcheckformmid='+spotcheckformmid +'&controls='+controls+'&croutingname='+croutingname
+                + '&_jb_rqtype_=dialog';
             location.href = url;
             parent.refreshPjaxContainer();
         });

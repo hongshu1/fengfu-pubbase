@@ -1,6 +1,6 @@
 package cn.rjtech.admin.inventoryroutingconfig;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -22,7 +22,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -159,19 +158,19 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 
 	public List<Record> dataList(Long iinventoryroutingid) {
 		List<Record> list = dbTemplate("inventoryclass.getRouingConfigs", Okv.by("iinventoryroutingid", iinventoryroutingid)).find();
-		if (CollectionUtil.isNotEmpty(list)) {
+		if (CollUtil.isNotEmpty(list)) {
 			for (Record record : list) {
 				Long routingConfigId = record.getLong(InventoryRoutingConfig.IAUTOID);
 				List<Record> routingInvList = inventoryRoutingInvcService.findRoutingConfigId(routingConfigId);
 				// 物料集
-				if (CollectionUtil.isNotEmpty(routingInvList)) {
+				if (CollUtil.isNotEmpty(routingInvList)) {
 					String jsonString = JSONObject.toJSONString(routingInvList);
 					record.set(InventoryRoutingConfig.ITEMJSON, EncodeUtils.encodeUrl(jsonString, EncodeUtils.UTF_8));
 					record.set(InventoryRoutingConfig.ITEMJSONSTR, routingInvList);
 				}
 				// 设备集
 				List<Record> equipmentList = inventoryRoutingEquipmentService.findRoutingConfigId(routingConfigId);
-				if (CollectionUtil.isNotEmpty(equipmentList)) {
+				if (CollUtil.isNotEmpty(equipmentList)) {
 					String jsonString = JSONObject.toJSONString(equipmentList);
 					record.set(InventoryRoutingConfig.EQUIPMENTJSON, EncodeUtils.encodeUrl(jsonString, EncodeUtils.UTF_8));
 					record.set(InventoryRoutingConfig.EQUIPMENTJSONSTR, equipmentList);
@@ -186,7 +185,7 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 	}
 
 	public List<InventoryRoutingConfig> createInventoryRoutingConfigList(Long orgId, Long userId, String userName, boolean isEnable, Date date, List<Record> recordList){
-		if (CollectionUtil.isEmpty(recordList)){
+		if (CollUtil.isEmpty(recordList)){
 			return null;
 		}
 		List<InventoryRoutingConfig> configs = new ArrayList<>();
@@ -317,14 +316,14 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 			String coperationname = inventoryRoutingConfig.getStr("COperationName");
 			Long iAutoId = inventoryRoutingConfig.getLong("iAutoId");
 			String ioperationIds = "";
-			if (StringUtils.isNotBlank(coperationname)) {
+			if (StrUtil.isNotBlank(coperationname)) {
 				String[] arry = coperationname.split("\\^");
 				inventoryRoutingConfig.set("COperationName",arry[0]);
 				ioperationIds = arry[1];
 			}
 			updateRecord(inventoryRoutingConfig);
 			//工序名称子表
-			if (StringUtils.isNotBlank(ioperationIds)){
+			if (StrUtil.isNotBlank(ioperationIds)){
 				String[] arry = ioperationIds.split("/");
 				List<Long> longList = new ArrayList<>();
 				for (int i = 0; i < arry.length; i++) {
@@ -427,11 +426,11 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 			deleteMultiByIdsOper(inventoryRoutingConfig.getIAutoId(), longList.toArray());
 		}
 		
-		if (CollectionUtil.isNotEmpty(addConfigs)){
+		if (CollUtil.isNotEmpty(addConfigs)){
 			batchSave(addConfigs);
 		}
 		
-		if (CollectionUtil.isNotEmpty(updateConfigs)){
+		if (CollUtil.isNotEmpty(updateConfigs)){
 			batchUpdate(updateConfigs);
 		}
 	

@@ -1,5 +1,6 @@
 package cn.rjtech.admin.momopatchweldm;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -8,14 +9,11 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.momopatchweldd.MoMopatchwelddService;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.ApsAnnualpland;
 import cn.rjtech.model.momdata.MoMopatchweldd;
 import cn.rjtech.model.momdata.MoMopatchweldm;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
-import com.itextpdf.text.pdf.PRIndirectReference;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -244,7 +242,7 @@ public class MoMopatchweldmService extends BaseService<MoMopatchweldm> implement
 		mopatchweldm.setDUpdateTime(newDate);
 
 		List<MoMopatchweldd> recordLineList = new ArrayList<>();
-		if (StringUtils.isNotBlank(dataArrarStr) && !dataArrarStr.equals("[]")){
+		if (StrUtil.isNotBlank(dataArrarStr) && !dataArrarStr.equals("[]")){
 			recordLineList = JBoltModelKit.getBeanList(MoMopatchweldd.class, JSON.parseArray(dataArrarStr));
 			for (MoMopatchweldd recordLine : recordLineList) {
 				recordLine.setIMoPatchWeldMid(mid);

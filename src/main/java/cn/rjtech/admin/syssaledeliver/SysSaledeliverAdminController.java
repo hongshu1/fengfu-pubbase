@@ -1,10 +1,12 @@
 package cn.rjtech.admin.syssaledeliver;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.syssaledeliverdetail.SysSaledeliverdetailService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -18,7 +20,6 @@ import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -57,9 +58,9 @@ public class SysSaledeliverAdminController extends BaseAdminController {
         String sortType = getSortType("desc");
         kv.setIfNotNull("sortColumn", sortColumn);
         kv.setIfNotNull("sortType", sortType);
-        String billNo = StringUtils.trim(kv.getStr("BillNo"));
-        String cCusCode = StringUtils.trim(kv.getStr("cCusCode"));
-        String whName = StringUtils.trim(kv.getStr("whName"));
+        String billNo = StrUtil.trim(kv.getStr("BillNo"));
+        String cCusCode = StrUtil.trim(kv.getStr("cCusCode"));
+        String whName = StrUtil.trim(kv.getStr("whName"));
         kv.setIfNotNull("billNo",billNo);
         kv.setIfNotNull("cCusCode",cCusCode);
         kv.setIfNotNull("whName",whName);
@@ -73,9 +74,9 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     public void exportExcelByForm() {
         //获取参数
         Kv kv = getKv();
-        String billNo = StringUtils.trim(kv.getStr("BillNo"));
-        String cCusCode = StringUtils.trim(kv.getStr("cCusCode"));
-        String whName = StringUtils.trim(kv.getStr("whName"));
+        String billNo = StrUtil.trim(kv.getStr("BillNo"));
+        String cCusCode = StrUtil.trim(kv.getStr("cCusCode"));
+        String whName = StrUtil.trim(kv.getStr("whName"));
         kv.setIfNotNull("billNo",billNo);
         kv.setIfNotNull("cCusCode",cCusCode);
         kv.setIfNotNull("whName",whName);
@@ -107,6 +108,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 获取行数据
      */
+    @UnCheck
     public void getLineData() {
         Long masId = useIfPresent(getLong("sysSaledeliver.masId",1L));
         if (notOk(masId)){

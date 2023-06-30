@@ -1,5 +1,6 @@
 package cn.rjtech.admin.otherout;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -13,7 +14,6 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
@@ -54,11 +54,12 @@ public class OtherOutAdminController extends BaseAdminController {
 		kv.setIfNotNull("idepartmentid", get("idepartmentid"));
 		kv.setIfNotNull("state", get("state"));
 		renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), kv));
-
 	}
+    
 	/**
 	* 特殊领料单列表明细
 	*/
+    @UnCheck
 	public void getOtherOutLines() {
 		String autoid = get("autoid");
 				Kv kv = new Kv();
@@ -172,7 +173,7 @@ public class OtherOutAdminController extends BaseAdminController {
 	 * 审批
 	 */
 	public void approve(String iAutoId,Integer mark) {
-		if (StringUtils.isEmpty(iAutoId)) {
+		if (StrUtil.isBlank(iAutoId)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
@@ -183,7 +184,7 @@ public class OtherOutAdminController extends BaseAdminController {
 	 * 反审批
 	 */
 	public void NoApprove(String ids) {
-		if (StringUtils.isEmpty(ids)) {
+		if (StrUtil.isBlank(ids)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
@@ -194,7 +195,7 @@ public class OtherOutAdminController extends BaseAdminController {
 	 * 手动关闭
 	 */
 	public void closeWeekOrder(String iAutoId) {
-		if (StringUtils.isEmpty(iAutoId)) {
+		if (StrUtil.isBlank(iAutoId)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
@@ -205,7 +206,7 @@ public class OtherOutAdminController extends BaseAdminController {
 	 * 撤回
 	 */
 	public void recall(String iAutoId) {
-		if (StringUtils.isEmpty(iAutoId)) {
+		if (StrUtil.isBlank(iAutoId)) {
 			renderFail(JBoltMsg.PARAM_ERROR);
 			return;
 		}
@@ -232,6 +233,7 @@ public class OtherOutAdminController extends BaseAdminController {
 	 * 获取现品票
 	 * 通过关键字匹配
 	 */
+    @UnCheck
 	public void gettable2() {
 		Kv kv = new Kv();
 		kv.setIfNotNull("billno",get("billno"));

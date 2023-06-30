@@ -33,6 +33,7 @@ public class ApprovalFormAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
 //		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKeywords()));
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));

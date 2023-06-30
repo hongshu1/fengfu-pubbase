@@ -4,9 +4,9 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.Fitemss97;
 import cn.rjtech.model.momdata.Fitemss97sub;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -50,6 +50,7 @@ public class Fitemss97subAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }

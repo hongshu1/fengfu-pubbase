@@ -40,6 +40,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     @Inject
     private CusOrderSumService cusOrderSumService;
 
+
     /**
      * 首页
      */
@@ -64,6 +65,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.MANUALORDERM_ADD)
     public void add() {
         render("add.html");
     }
@@ -71,6 +73,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.MANUALORDERM_SAVETABLESUBMIT)
     public void save() {
         JBoltTable jBoltTable = getJBoltTable();
         ManualOrderM manualOrderM = jBoltTable.getFormBean(ManualOrderM.class, "manualOrderM");
@@ -81,6 +84,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.MANUALORDERM_ADD)
     public void edit() {
         Page<Record> datas = service.getAdminDatas(1, 1, Kv.by("iAutoId", get("iautoid")));
         ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
@@ -118,6 +122,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.MANUALORDERM_DELETEBYIDS)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
     }
@@ -125,7 +130,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     /**
      * 删除
      */
-
+    @CheckPermission(PermissionKey.MANUALORDERM_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }

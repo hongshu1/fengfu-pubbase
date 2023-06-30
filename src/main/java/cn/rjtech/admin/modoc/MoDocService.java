@@ -2,10 +2,12 @@ package cn.rjtech.admin.modoc;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -33,7 +35,6 @@ import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
@@ -348,7 +349,7 @@ public class MoDocService extends BaseService<MoDoc> {
           moMoroutingconfig.setICreateBy(userId);
           moMoroutingconfig.setDCreateTime(dCreateTime);
           moMoroutingconfigService.save(moMoroutingconfig);
-          if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
+          if (StrUtil.isNotBlank(rowid) && rowid.equals(iautoid)) {
             iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
           }
 
@@ -423,7 +424,7 @@ public class MoDocService extends BaseService<MoDoc> {
 
                 iPersonId = p.getIAutoId();
               } else {
-                if (StringUtils.isNotBlank(r.getStr("cpsn_num"))) {
+                if (StrUtil.isNotBlank(r.getStr("cpsn_num"))) {
                   Record p = personService.getpersonByCpsnnum(r.getStr("cpsn_num"));
                   if (p == null) {
                     throw new ParameterException("存在无效人员信息");
@@ -461,21 +462,21 @@ public class MoDocService extends BaseService<MoDoc> {
     }
     /// checkDoc(moDoc);
     if (!isOk(moDoc.getIInventoryId())) {
-      return Ret.fail("缺少产线,请重新选择人员在提交");
+      return fail("缺少产线,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getIDepartmentId())) {
-      return Ret.fail("缺少部门,请重新选择人员在提交");
+      return fail("缺少部门,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getIInventoryId())) {
-      return Ret.fail("缺少存货编号,请重新选择人员在提交");
+      return fail("缺少存货编号,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getIQty())) {
-      return Ret.fail("缺少计划数,请重新选择人员在提交");
+      return fail("缺少计划数,请重新选择人员在提交");
     }
     if (!isOk(moDoc.getDPlanDate())) {
-      return Ret.fail("缺少计划日期,请重新选择人员在提交");
+      return fail("缺少计划日期,请重新选择人员在提交");
     }
-    if (!isOk(moDoc.getIAutoId()) && StringUtils.isBlank(moDoc.getCMoDocNo())) {
+    if (!isOk(moDoc.getIAutoId()) && StrUtil.isBlank(moDoc.getCMoDocNo())) {
       return addDoc(jBoltTable, rowid);
     }
     MoDoc oldModoc = findById(moDoc.getIAutoId());
@@ -665,7 +666,7 @@ public class MoDocService extends BaseService<MoDoc> {
         moMoroutingconfig.setCCreateName(JBoltUserKit.getUserName());
         moMoroutingconfig.setDCreateTime(dCreateTime);
         moMoroutingconfigService.save(moMoroutingconfig);
-        if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
+        if (StrUtil.isNotBlank(rowid) && rowid.equals(iautoid)) {
           iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
         }
 
@@ -721,7 +722,7 @@ public class MoDocService extends BaseService<MoDoc> {
       } else {
         moMoroutingconfig = moMoroutingconfigService.findById(iautoid);
         if (moMoroutingconfig != null) {
-          if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
+          if (StrUtil.isNotBlank(rowid) && rowid.equals(iautoid)) {
             iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
             //删除原有人员信息
             moMoroutingconfigPersonService.deleteBy(Okv.create().set(MoMoroutingconfigPerson.IMOROUTINGCONFIGID, moMoroutingconfig.getIAutoId()));
@@ -748,7 +749,7 @@ public class MoDocService extends BaseService<MoDoc> {
 
               iPersonId = p.getIAutoId();
             } else {
-              if (StringUtils.isNotBlank(r.getStr("cpsn_num"))) {
+              if (StrUtil.isNotBlank(r.getStr("cpsn_num"))) {
                 Record p = personService.getpersonByCpsnnum(r.getStr("cpsn_num"));
                 if (p == null) {
                   throw new ParameterException("存在无效人员信息");
@@ -930,19 +931,19 @@ public class MoDocService extends BaseService<MoDoc> {
 
   public Ret checkDoc(MoDoc moDoc) {
     if (!isOk(moDoc.getIInventoryId())) {
-      return Ret.fail("缺少产线");
+      return fail("缺少产线");
     }
     if (!isOk(moDoc.getIDepartmentId())) {
-      return Ret.fail("缺少部门");
+      return fail("缺少部门");
     }
     if (!isOk(moDoc.getIInventoryId())) {
-      return Ret.fail("缺少存货编号");
+      return fail("缺少存货编号");
     }
     if (!isOk(moDoc.getIQty())) {
-      return Ret.fail("缺少计划数");
+      return fail("缺少计划数");
     }
     if (!isOk(moDoc.getDPlanDate())) {
-      return Ret.fail("缺少计划日期");
+      return fail("缺少计划日期");
     }
     return SUCCESS;
   }
@@ -981,18 +982,19 @@ public class MoDocService extends BaseService<MoDoc> {
     return SUCCESS;
   }
 
-  /**
-   * 获取工单对应产线关联所属仓库信息
-   *
-   * @param imdcocid
-   */
-  public void getModocWarehouse(Long imdcocid) {
-    MoDoc moDoc = findById(imdcocid);
-    //获取产线
-    if (moDoc != null) {
+    /**
+     * 获取工单对应产线关联所属仓库信息
+     *
+     * @param imdcocid
+     */
+    @UnCheck
+    public void getModocWarehouse(Long imdcocid) {
+        MoDoc moDoc = findById(imdcocid);
+        //获取产线
+        if (moDoc != null) {
 
+        }
     }
-  }
 
   //推送u8数据接口
   public Ret pushU8(MoDoc moDoc) {
@@ -1039,7 +1041,7 @@ public class MoDocService extends BaseService<MoDoc> {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return Ret.fail("上传u8失败");
+    return fail("上传u8失败");
   }
 
   //通过当前登录人名称获取部门id
@@ -1256,5 +1258,19 @@ public class MoDocService extends BaseService<MoDoc> {
       return true;
     });
     return SUCCESS;
+  }
+
+  /**
+   * 根据ID获取作业人员信息
+   * @param iAutoId
+   * @return
+   */
+  public String getPsnNameById(Long iAutoId) {
+    ValidationUtils.notNull(iAutoId, "制造工单主键不允许为空");
+    Record record = dbTemplate("modoc.getPsnNameById", Kv.by("iautoid", iAutoId)).findFirst();
+    if (isOk(record)) {
+      return record.getStr("cpsn_name");
+    }
+    return null;
   }
 }

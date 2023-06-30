@@ -120,6 +120,7 @@ public class BomMasterAdminController extends BaseAdminController {
         render("edit.html");
     }
 
+    @UnCheck
     public void findByBomMasterId() {
         renderJsonData(bomCompareService.findByBomMasterId(getLong(0)));
     }
@@ -175,14 +176,17 @@ public class BomMasterAdminController extends BaseAdminController {
         renderJsonData(service.submitForm(formJsonData, tableJsonData, commonInvData, flag));
     }
 
+    @UnCheck
     public void findEquipmentModelAll() {
         renderJsonData(equipmentModelService.getAdminDataNoPage(getKv()));
     }
 
+    @UnCheck
     public void getDatas() {
         renderJsonData(service.getDatas(getKv()));
     }
 
+    @UnCheck
     public void getPageData() {
         renderJsonData(service.getPageData(getPageNumber(), getPageSize(), getKv()));
     }
@@ -227,6 +231,7 @@ public class BomMasterAdminController extends BaseAdminController {
         render("version_index.html");
     }
 
+    @UnCheck
     public void getVersionRecord() {
         renderJsonData(bomMService.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
     }
@@ -243,10 +248,12 @@ public class BomMasterAdminController extends BaseAdminController {
         renderJsonData(service.checkCommonInv(bomMasterId, tableJsonData));
     }
 
+    @UnCheck
     public void findCustomerList() {
         renderJsonData(customerService.getAdminDatas(getKv()));
     }
 
+    @UnCheck
     public void findVendorList() {
         renderJsonData(customerService.findVendorList(getKv()));
     }

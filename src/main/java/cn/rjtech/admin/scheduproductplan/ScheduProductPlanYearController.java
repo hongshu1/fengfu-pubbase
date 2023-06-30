@@ -2,9 +2,11 @@ package cn.rjtech.admin.scheduproductplan;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -16,10 +18,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -30,7 +29,7 @@ import java.util.*;
  * @author: chentao
  * @date: 2023-03-30 11:26
  */
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.SCHEDUPRODUCTPLANYEAR)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/scheduproductplanyear", viewPath = "/_view/admin/scheduproductplan")
 public class ScheduProductPlanYearController extends BaseAdminController {
@@ -48,7 +47,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
         set("cplanorderno",cplanorderno);
         set("icustomerid",icustomerid);
-        if (StringUtils.isBlank(cplanorderno)){
+        if (StrUtil.isBlank(cplanorderno)){
             startyear = DateUtils.formatDate(new Date(),"yyyy");
         }
         set("startyear",startyear);
@@ -176,7 +175,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
     //-----------------------------------------------------------------年度生产计划排产-----------------------------------------------
 
-
+    @UnCheck
     public void getCustomerList() {
         renderJsonData(service.getCustomerList());
     }
@@ -197,6 +196,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 获取计划
      */
+    @UnCheck
     public void getApsYearPlanList() {
         String cplanorderno = get("cplanorderno");
         Long icustomerid = getLong("icustomerid");
@@ -207,6 +207,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 获取订单计划
      */
+    @UnCheck
     public void getApsYearPlanMasterPage() {
         renderJsonData(service.getApsYearPlanMasterPage(getPageNumber(),getPageSize(),getKv()));
     }
@@ -279,7 +280,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
         String cinvcode1 = get("cinvcode1");
         String cinvname1 = get("cinvname1");
 
-        if (StringUtils.isBlank(startyear)){
+        if (StrUtil.isBlank(startyear)){
             startyear = DateUtils.getYear();
         }
 
@@ -296,6 +297,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 获取年度生产计划汇总
      */
+    @UnCheck
     public void getApsYearPlanSumPage() {
         renderJsonData(service.getApsYearPlanSumPage(getPageNumber(),getPageSize(),getKv()));
     }
@@ -418,6 +420,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      *计划选择
      */
+    @UnCheck
     public void selectaprm() {
         set("month",get("month"));
         render("selectaprm.html");

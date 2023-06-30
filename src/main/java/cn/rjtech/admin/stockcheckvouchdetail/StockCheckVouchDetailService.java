@@ -10,6 +10,7 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 import static cn.jbolt.core.para.JBoltParaValidator.isOk;

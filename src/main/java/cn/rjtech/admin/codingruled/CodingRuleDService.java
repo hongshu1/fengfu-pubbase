@@ -1,7 +1,7 @@
 package cn.rjtech.admin.codingruled;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -54,7 +54,7 @@ public class CodingRuleDService extends BaseService<CodingRuleD> {
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Long icodingrulemid) {
         
-        if (ObjectUtil.isNull(icodingrulemid)){
+        if (ObjUtil.isNull(icodingrulemid)){
             return emptyPage(pageSize);
         }
         // 创建sql对象
@@ -188,7 +188,7 @@ public class CodingRuleDService extends BaseService<CodingRuleD> {
     
     public CodingRuleD create(Long id, Long iCodingRuleMid, String iBeginValue, Integer iLength, Integer seq, String cCodingType, String cCodingValue, String cSeparator){
         CodingRuleD codingRuleD = new CodingRuleD();
-        if (ObjectUtil.isNotNull(id)){
+        if (ObjUtil.isNotNull(id)){
             codingRuleD.setIAutoId(id);
         }
         codingRuleD.setICodingRuleMid(iCodingRuleMid);

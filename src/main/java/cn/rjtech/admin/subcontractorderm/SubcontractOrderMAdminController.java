@@ -1,8 +1,9 @@
 package cn.rjtech.admin.subcontractorderm;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
@@ -89,21 +90,21 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     record.set(SubcontractOrderM.DBEGINDATE, beginDate);
     record.set(SubcontractOrderM.DENDDATE, endDate);
 
-    if (ObjectUtil.isNotNull(vendor.getITaxRate())) {
+    if (ObjUtil.isNotNull(vendor.getITaxRate())) {
       record.set(SubcontractOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
     }
 
     record.set(SubcontractOrderM.CCURRENCY, vendor.getCCurrency());
     Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
     // 汇率
-    if (ObjectUtil.isNotNull(exch)) {
+    if (ObjUtil.isNotNull(exch)) {
       record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
     }
     record.set(SubcontractOrderM.IDEPARTMENTID, vendor.getCVenDepart());
     record.set(SubcontractOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
 
     Person person = personService.findById(vendor.getIDutyPersonId());
-    if (ObjectUtil.isNotNull(person)) {
+    if (ObjUtil.isNotNull(person)) {
       set("personname", person.getCpsnName());
     }
     set("subcontractOrderM", record);
@@ -143,7 +144,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
       return;
     }
     Person person = personService.findById(subcontractOrderM.getIDutyUserId());
-    if (ObjectUtil.isNotNull(person)) {
+    if (ObjUtil.isNotNull(person)) {
       set("personname", person.getCpsnName());
     }
 
@@ -153,10 +154,10 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     if (StrUtil.isNotBlank(isView)) {
       set("isView", 1);
     }
-    if (ObjectUtil.isNotNull(subcontractOrderM.getITaxRate())) {
+    if (ObjUtil.isNotNull(subcontractOrderM.getITaxRate())) {
       subcontractOrderM.setITaxRate(subcontractOrderM.getITaxRate().stripTrailingZeros());
     }
-    if (ObjectUtil.isNotNull(subcontractOrderM.getIExchangeRate())) {
+    if (ObjUtil.isNotNull(subcontractOrderM.getIExchangeRate())) {
       subcontractOrderM.setIExchangeRate(subcontractOrderM.getIExchangeRate().stripTrailingZeros());
     }
     set("subcontractOrderM", subcontractOrderM);
@@ -175,7 +176,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
       return;
     }
     Person person = personService.findById(subcontractOrderM.getIDutyUserId());
-    if (ObjectUtil.isNotNull(person)) {
+    if (ObjUtil.isNotNull(person)) {
       set("personname", person.getCpsnName());
     }
 
@@ -209,18 +210,21 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     render("consummate.html");
   }
 
-  public void findForeignCurrencyAll() {
-    renderJsonData(foreignCurrencyService.findAll(getKv()));
-  }
+    @UnCheck
+    public void findForeignCurrencyAll() {
+        renderJsonData(foreignCurrencyService.findAll(getKv()));
+    }
 
-  public void findPurchaseType() {
-    renderJsonData(purchaseTypeService.selectAll(getKv()));
-  }
+    @UnCheck
+    public void findPurchaseType() {
+        renderJsonData(purchaseTypeService.selectAll(getKv()));
+    }
 
-  public void findByiVendorId(@Para(value = "vendorId") String vendorId,
-                              @Para(value = "id") String id) {
-    renderJsonData(vendorAddrService.findList(getKv()));
-  }
+    @UnCheck
+    public void findByiVendorId(@Para(value = "vendorId") String vendorId,
+                                @Para(value = "id") String id) {
+        renderJsonData(vendorAddrService.findList(getKv()));
+    }
 
   /**
    * 保存
@@ -287,10 +291,10 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     renderJsonData(service.batchDel(ids));
   }
 
-
-  public void findSubcontractOrderDBatch() {
-    renderJsonData(subcontractOrderDBatchService.findBySubcontractOrderMId(getPageNumber(), getPageSize(), getKv()));
-  }
+    @UnCheck
+    public void findSubcontractOrderDBatch() {
+        renderJsonData(subcontractOrderDBatchService.findBySubcontractOrderMId(getPageNumber(), getPageSize(), getKv()));
+    }
 
   /**
    * /
@@ -325,17 +329,19 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     renderJsonData(subcontractOrderDBatchService.updateOrderBatch(subcontractOrderMid, id, cVersion, qty));
   }
 
-  public void findSubcontractOrderDBatchVersion() {
-    renderJsonData(subcontractOrderDBatchVersionService.findBySubcontractOrderMid(getPageNumber(), getPageSize(), getKv()));
-  }
+    @UnCheck
+    public void findSubcontractOrderDBatchVersion() {
+        renderJsonData(subcontractOrderDBatchVersionService.findBySubcontractOrderMid(getPageNumber(), getPageSize(), getKv()));
+    }
 
   public void saveSubmit() {
     renderJson(service.saveSubmit(getJBoltTable()));
   }
 
-  public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId) {
-    renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
-  }
+    @UnCheck
+    public void findPurchaseOrderD(@Para(value = "purchaseOrderMId") Long purchaseOrderMId) {
+        renderJsonData(service.findPurchaseOrderD(purchaseOrderMId));
+    }
 
   public void inventory_dialog_index() {
     keepPara();
