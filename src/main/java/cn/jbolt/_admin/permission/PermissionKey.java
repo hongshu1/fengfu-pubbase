@@ -2737,4 +2737,28 @@ public class PermissionKey {
 	 * 现品票
 	 */
 	public static final String MOMOINVBATCH = "momoinvbatch";
+	public static final String WEEKORDERM_ADD = "weekorderm_add";
+	public static final String WEEKORDERM_SAVETABLESUBMIT = "weekorderm_savetablesubmit";
+	public static final String WEEKORDERM_EDIT = "weekorderm_edit";
+	public static final String WEEKORDERM_DELETE = "weekorderm_delete";
+	public static final String WEEKORDERM_DELETEBYIDS = "weekorderm_deletebyids";
+	public static final String ANNUALORDERM_SAVETABLESUBMIT = "annualorderm_savetablesubmit";
+	public static final String ANNUALORDERM_EDIT = "annualorderm_edit";
+	public static final String ANNUALORDERM_DELETE = "annualorderm_delete";
+	public static final String ANNUALORDERM_DELETEBYIDS = "annualorderm_deletebyids";
+	public static final String MANUALORDERM_ADD = "manualorderm_add";
+	public static final String MANUALORDERM_SAVETABLESUBMIT = "manualorderm_savetablesubmit";
+	public static final String MANUALORDERM_EDIT = "manualorderm_edit";
+	public static final String MANUALORDERM_DELETE = "manualorderm_delete";
+	public static final String MANUALORDERM_DELETEBYIDS = "manualorderm_deletebyids";
+	public static final String MONTHORDERM_ADD = "monthorderm_add";
+	public static final String MONTHORDERM_SAVETABLESUBMIT = "monthorderm_savetablesubmit";
+	public static final String MONTHORDERM_EDIT = "monthorderm_edit";
+	public static final String MONTHORDERM_DELETE = "monthorderm_delete";
+	public static final String MONTHORDERM_DELETEBYIDS = "monthorderm_deletebyids";
+	public static final String SUBCONTRACTSALEORDERM_ADD = "subcontractsaleorderm_add";
+	public static final String SUBCONTRACTSALEORDERM_SAVETABLESUBMIT = "subcontractsaleorderm_savetablesubmit";
+	public static final String SUBCONTRACTSALEORDERM_EDIT = "subcontractsaleorderm_edit";
+	public static final String SUBCONTRACTSALEORDERM_DELETE = "subcontractsaleorderm_delete";
+	public static final String SUBCONTRACTSALEORDERM_DELETEBYIDS = "subcontractsaleorderm_deletebyids";
 }
