@@ -53,6 +53,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.SUBCONTRACTSALEORDERM_ADD)
     public void add() {
         render("add.html");
     }
@@ -60,6 +61,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.SUBCONTRACTSALEORDERM_EDIT)
     public void edit() {
         Page<Record> datas = service.paginateAdminDatas(1, 1, Kv.by("iautoid", getLong("iautoid")));
         ValidationUtils.notNull(datas, JBoltMsg.DATA_NOT_EXIST);
@@ -86,6 +88,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.SUBCONTRACTSALEORDERM_DELETEBYIDS)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -93,6 +96,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.SUBCONTRACTSALEORDERM_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -100,6 +104,7 @@ public class SubcontractsaleordermAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
+    @CheckPermission(PermissionKey.SUBCONTRACTSALEORDERM_SAVETABLESUBMIT)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }

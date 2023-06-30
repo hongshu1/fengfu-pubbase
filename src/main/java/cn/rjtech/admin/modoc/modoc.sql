@@ -365,3 +365,16 @@ where iMoRoutingConfigId=#para(iautoid)
 #sql("getPersonsByIds")
 select * from Bd_Person per where iautoid  IN (#(configpersonids))
 #end
+
+#sql("getPsnNameById")
+SELECT *
+FROM Bd_Person
+WHERE iAutoId = (
+    SELECT TOP 1 iPersonId
+    FROM Mo_MoRouting mr
+             LEFT JOIN Mo_MoRoutingConfig mrc ON mr.iAutoId = mrc.iMoRoutingId
+             LEFT JOIN Mo_MoRoutingConfig_Person mrcp ON mrc.iAutoId = mrcp.iMoRoutingConfigId
+    WHERE mr.iMoDocId = #para(iautoid)
+    ORDER BY mrc.iSeq DESC
+)
+#end

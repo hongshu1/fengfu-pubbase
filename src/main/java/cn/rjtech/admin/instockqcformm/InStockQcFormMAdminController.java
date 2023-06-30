@@ -32,7 +32,7 @@ import java.util.List;
  * @date: 2023-04-25 15:00
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.INSTOCKQCFORMM)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/instockqcformm", viewPath = "/_view/admin/instockqcformm")
 public class InStockQcFormMAdminController extends BaseAdminController {

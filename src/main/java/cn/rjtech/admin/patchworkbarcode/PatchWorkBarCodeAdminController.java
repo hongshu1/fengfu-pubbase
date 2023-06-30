@@ -1,12 +1,12 @@
 package cn.rjtech.admin.patchworkbarcode;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -40,7 +40,7 @@ public class PatchWorkBarCodeAdminController extends BaseAdminController {
     public void datas() {
         Kv kv = getKv();
         String cinvcode = kv.getStr("cinvcode");
-        if (StringUtils.isBlank(cinvcode)) {
+        if (StrUtil.isBlank(cinvcode)) {
             renderJsonData(null);
             return;
         }

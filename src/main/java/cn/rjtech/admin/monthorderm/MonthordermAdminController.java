@@ -54,6 +54,7 @@ public class MonthordermAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.MONTHORDERM_ADD)
 	public void add() {
 		render("add.html");
 	}
@@ -61,6 +62,7 @@ public class MonthordermAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.MONTHORDERM_EDIT)
 	public void edit(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid, "月度计划订单ID");
         
@@ -97,6 +99,7 @@ public class MonthordermAdminController extends BaseAdminController {
    /**
 	* 批量删除
 	*/
+   @CheckPermission(PermissionKey.MONTHORDERM_DELETEBYIDS)
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
@@ -104,6 +107,7 @@ public class MonthordermAdminController extends BaseAdminController {
    /**
 	* 删除
 	*/
+   @CheckPermission(PermissionKey.MONTHORDERM_DELETE)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
@@ -118,6 +122,7 @@ public class MonthordermAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
+	@CheckPermission(PermissionKey.MONTHORDERM_SAVETABLESUBMIT)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }

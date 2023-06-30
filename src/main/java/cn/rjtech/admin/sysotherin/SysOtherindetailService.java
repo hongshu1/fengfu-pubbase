@@ -2,10 +2,15 @@ package cn.rjtech.admin.sysotherin;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.SysOtherin;
 import cn.rjtech.model.momdata.SysOtherindetail;
+import cn.rjtech.model.momdata.SysPureceive;
+import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -21,6 +26,9 @@ import java.util.List;
  */
 public class SysOtherindetailService extends BaseService<SysOtherindetail> {
     private final SysOtherindetail dao = new SysOtherindetail().dao();
+
+    @Inject
+    private SysOtherinService sysotherinservice;
 
     @Override
     protected SysOtherindetail dao() {
@@ -119,6 +127,14 @@ public class SysOtherindetailService extends BaseService<SysOtherindetail> {
      * @return
      */
     public Ret delete(Long id) {
+        SysOtherindetail byId1 = findById(id);
+        SysOtherin byId = sysotherinservice.findById(byId1.getMasID());
+        if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+        }
+        if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+        }
         deleteById(id);
         return SUCCESS;
     }
@@ -127,6 +143,18 @@ public class SysOtherindetailService extends BaseService<SysOtherindetail> {
      * 批量删除
      */
     public Ret deleteRmRdByIds(String ids) {
+        String[] split = ids.split(",");
+        for (String s : split) {
+            SysOtherindetail byId1 = findById(s);
+            SysOtherin byId = sysotherinservice.findById(byId1.getMasID());
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+                ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+            }
+            if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+            }
+        }
+
         deleteByIds(ids);
         return SUCCESS;
     }

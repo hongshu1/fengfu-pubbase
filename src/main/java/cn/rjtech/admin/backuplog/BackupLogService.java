@@ -1,5 +1,6 @@
 package cn.rjtech.admin.backuplog;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -12,7 +13,6 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.Date;
@@ -137,7 +137,7 @@ public class BackupLogService extends BaseService<BackupLog> {
     public Ret copyFile(BackupLog backupLog) throws IOException {
 		String cPath = backupLog.getCPath();
 
-		if (StringUtils.isBlank(cPath)) {
+		if (StrUtil.isBlank(cPath)) {
 				return fail("请输入文件路径");
 			}
 		//通过备份设置拿到备份文件保存路径

@@ -2,11 +2,13 @@
 SELECT co.*,
        w.cwhname,
        d.cdepname,
-       p.cPsn_Name AS cpsnname
+       p.cPsn_Name AS cpsnname,
+       s1.cstname
 FROM Co_WeekOrderM co
          LEFT JOIN Bd_Warehouse w ON CONVERT(VARCHAR, co.ibustype) = w.cwhcode
          LEFT JOIN Bd_Department d ON co.iDepartmentId = d.iautoid
          LEFT JOIN Bd_Person p ON co.iBusPersonId = p.iAutoId
+         LEFT JOIN Bd_SaleType s1 ON co.isaletypeid=s1.iautoid
 WHERE
 	co.IsDeleted = 0
     #if(corderno)

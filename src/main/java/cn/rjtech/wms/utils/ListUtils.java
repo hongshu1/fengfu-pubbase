@@ -3,6 +3,7 @@
  */
 package cn.rjtech.wms.utils;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -257,9 +258,9 @@ public class ListUtils extends org.apache.commons.collections.ListUtils {
         try {
             for (Object obj : collection) {
                 String value = (String) PropertyUtils.getProperty(obj, propertyName);
-                if (StringUtils.isBlank(prefix) || StringUtils.startsWith(value, prefix)) {
+                if (StrUtil.isBlank(prefix) || StringUtils.startsWith(value, prefix)) {
                     if (isNotBlank) {
-                        if (StringUtils.isNotBlank(value)) {
+                        if (StrUtil.isNotBlank(value)) {
                             list.add(value);
                         }
                     } else {
@@ -478,7 +479,7 @@ public class ListUtils extends org.apache.commons.collections.ListUtils {
      * @author ThinkGem
      */
     public static <T> List<T> listOrderBy(List<T> list, String orderBy) {
-        if (list != null && StringUtils.isNotBlank(orderBy)) {
+        if (list != null && StrUtil.isNotBlank(orderBy)) {
             final String[] ss = orderBy.trim().split(" ");
             final String t = ss.length == 2 ? ss[1] : "asc";
             list.sort((o1, o2) -> {

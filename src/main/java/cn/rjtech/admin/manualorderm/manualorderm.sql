@@ -1,7 +1,8 @@
 #sql("list")
-select mom.*,d.name statename,p.cPsn_Name AS cpsnname from Co_ManualOrderM mom
+select mom.*,d.name statename,s1.cstname,p.cPsn_Name AS cpsnname from Co_ManualOrderM mom
  inner join #(getBaseDbName()).dbo.jb_dictionary d on d.sn = mom.iOrderStatus and d.type_key = 'iorder_status'
 LEFT JOIN Bd_Person p ON mom.iBusPersonId = p.iAutoId
+LEFT JOIN Bd_SaleType s1 ON mom.isaletypeid=s1.iautoid
 where mom.IsDeleted = '0'
 #if(iAutoId)
 AND mom.iAutoId = #para(iAutoId)

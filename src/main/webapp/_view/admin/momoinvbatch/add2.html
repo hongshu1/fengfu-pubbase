@@ -36,7 +36,7 @@
                                 </div>
                                 <label class="col-sm-2 col-form-label">客户部番:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    #(moDoc.cnvcode1??)
+                                    #(moDoc.cinvcode1??)
                                 </div>
                                 <label class="col-sm-2 col-form-label">部品名称:</label>
                                 <div class="col-sm-2 col-form-label">
@@ -63,33 +63,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">完工数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" name="moDoc.iCompQty" value="#(moDoc.icompqty??0)">
+                                    #(moDoc.icompqty??0)
                                 </div>
                                 <label class="col-sm-2 col-form-label">差异数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" id="remainder" value="#(moDoc.iqty-moDoc.icompqty??0)">
+                                    #(moDoc.iqty-moDoc.icompqty??0)
                                 </div>
                                 <label class="col-sm-2 col-form-label">包装数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" name="ipkgqty" value="#(moDoc.ipkgqty??moDoc.iqty)">
+                                    #(moDoc.ipkgqty??moDoc.iqty)
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">作业人员:</label>
-                                <input type="text" autocomplete="off" class="form-control"
-                                       data-autocomplete
-                                       name="moMoinvbatch.jobname"
-                                       readonly="readonly"
-                                       data-url="admin/person/autocomplete"
-                                       data-link-para-ele="#capplypersoncode"
-                                       data-sync-ele="capplypersoncode"
-                                       data-text-attr="cpsnname"
-                                       data-value-attr="cpsnnum"
-                                       placeholder="=作业人员="
-                                       value="#(moMoinvbatch.jobname??)"
-                                       data-column-attr="cpsnnum,cpsnname">
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.psnname??)
+                                </div>
                                 <label class="col-sm-2 col-form-label">产线组长:</label>
                                 <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cdutypersonname??)
                                 </div>
                             </div>
                         </form>
@@ -102,7 +94,7 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="card">
-                <div class="card-header"><b>未打印现品票</b></div>
+                <div class="card-header"><h5><b>未打印现品票</b></h5></div>
                 <div class="card-body">
                     #include("table1.html")
                 </div>
@@ -110,7 +102,7 @@
         </div>
         <div class="col-lg-6">
             <div class="card">
-                <div class="card-header"><b>已打印现品票</b></div>
+                <div class="card-header"><h5><b>已打印现品票</b></h5></div>
                 <div class="card-body">
                     #include("table2.html")
                 </div>
@@ -119,6 +111,8 @@
     </div>
     </div>
 </div>
+#@hiprintjs()
+#@hiprintcss()
 #define js()
 <script>
     function submitForm(){
@@ -206,11 +200,183 @@
      * 打印刷新已打印现品票数据
      */
    function refreshTable2() {
-       // 更新页面
-        refreshPjaxContainer();
 
        // 调用打印
+        var table =getJBoltTable('#table1_#(pageId)');
+        var datas=getJboltTableCheckedDatas(table);
+
+        //客户部番
+        var cinvcode1='#(moDoc.cinvcode1??)';
+        //部品名称
+        var cinvname1='#(moDoc.cinvname1??)';
+        //生产线 产线名称
+        var cworkname='#(moDoc.cworkname??)';
+        //班次
+        var cworkshiftname='#(moDoc.cworkshiftname??)';
+
+        //作业员 作业人员
+        var psnname='#(moDoc.psnname??)';
+
+        //生产组长
+        var cdutypersonname='#(moDoc.cdutypersonname??)';
+
+        var i=0;
+
+        for (const data of datas) {
+            data["cinvcode1"]=cinvcode1;
+            data["cinvname1"]=cinvname1;
+            data["cworkname"]=cworkname;
+            data["cworkshiftname"]=cworkshiftname;
+            data["psnname"]=psnname;
+            data["cdutypersonname"]=cdutypersonname;
+            data["i"]=++i;
+        }
+
+        var  total=i;
+
+        for (const data of datas) {
+            data["total"]=total;
+        }
+
+
+
+        jboltHiprintWebPrint('momoinvbatch','json',datas);
+
+        // 更新页面
+        //refreshPjaxContainer();
+
    }
+
+
+
+
+
+
+    function  refreshTable3(id) {
+        let url = "admin/momoinvbatch/batchPrint?imodocid="+id+"&ids="+id;
+        Ajax.get(url,function(res){
+        });
+
+        var datas = jboltTableGetAllDatas('#table1_#(pageId)')
+
+
+
+
+
+
+
+        console.log(datas)
+        console.log(id)
+        console.log('data33')
+
+        var data=null;
+        for (const data2 of datas) {
+            console.log(data2)
+            var iautoid=data2.iautoid;
+            console.log(iautoid+","+id)
+            if(iautoid==id){
+                data=data2;
+            }
+        }
+
+
+
+        //客户部番
+        var cinvcode1='#(moDoc.cinvcode1??)';
+        //部品名称
+        var cinvname1='#(moDoc.cinvname1??)';
+        //生产线 产线名称
+        var cworkname='#(moDoc.cworkname??)';
+        //班次
+        var cworkshiftname='#(moDoc.cworkshiftname??)';
+
+        //作业员 作业人员
+        var psnname='#(moDoc.psnname??)';
+
+        //生产组长
+        var cdutypersonname='#(moDoc.cdutypersonname??)';
+
+        var i=0;
+
+
+        data["cinvcode1"]=cinvcode1;
+        data["cinvname1"]=cinvname1;
+        data["cworkname"]=cworkname;
+        data["cworkshiftname"]=cworkshiftname;
+        data["psnname"]=psnname;
+        data["cdutypersonname"]=cdutypersonname;
+        data["i"]=++i;
+        data["total"]=i;
+
+
+
+        jboltHiprintWebPrint('momoinvbatch','json',data);
+
+        // 更新页面
+        //refreshPjaxContainer();
+
+    }
+
+
+    function  refreshTable4(id) {
+        var datas = jboltTableGetAllDatas('#table2_#(pageId)')
+
+
+        console.log(datas)
+        console.log(id)
+        console.log('data33')
+
+        var data=null;
+        for (const data2 of datas) {
+            console.log(data2)
+            var iautoid=data2.iautoid;
+            console.log(iautoid+","+id)
+            if(iautoid==id){
+                data=data2;
+            }
+        }
+
+
+
+        //客户部番
+        var cinvcode1='#(moDoc.cinvcode1??)';
+        //部品名称
+        var cinvname1='#(moDoc.cinvname1??)';
+        //生产线 产线名称
+        var cworkname='#(moDoc.cworkname??)';
+        //班次
+        var cworkshiftname='#(moDoc.cworkshiftname??)';
+
+        //作业员 作业人员
+        var psnname='#(moDoc.psnname??)';
+
+        //生产组长
+        var cdutypersonname='#(moDoc.cdutypersonname??)';
+
+        var i=0;
+
+
+        data["cinvcode1"]=cinvcode1;
+        data["cinvname1"]=cinvname1;
+        data["cworkname"]=cworkname;
+        data["cworkshiftname"]=cworkshiftname;
+        data["psnname"]=psnname;
+        data["cdutypersonname"]=cdutypersonname;
+        data["i"]=++i;
+        data["total"]=i;
+
+
+
+        jboltHiprintWebPrint('momoinvbatch','json',data);
+
+        // 更新页面
+        //refreshPjaxContainer();
+
+    }
+
+
+
+
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="processDefectForm")
 #end
