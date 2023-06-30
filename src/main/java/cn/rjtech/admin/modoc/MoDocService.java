@@ -1259,4 +1259,18 @@ public class MoDocService extends BaseService<MoDoc> {
     });
     return SUCCESS;
   }
+
+  /**
+   * 根据ID获取作业人员信息
+   * @param iAutoId
+   * @return
+   */
+  public String getPsnNameById(Long iAutoId) {
+    ValidationUtils.notNull(iAutoId, "制造工单主键不允许为空");
+    Record record = dbTemplate("modoc.getPsnNameById", Kv.by("iautoid", iAutoId)).findFirst();
+    if (isOk(record)) {
+      return record.getStr("cpsn_name");
+    }
+    return null;
+  }
 }

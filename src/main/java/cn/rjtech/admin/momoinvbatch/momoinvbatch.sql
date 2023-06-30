@@ -25,7 +25,8 @@ SELECT
         a.cCreateName,
         a.dCreateTime,
         a.cUpdateName,
-        a.dUpdateTime
+        a.dUpdateTime,
+        a.cCompleteBarcode
 FROM
     Mo_MoInvBatch a
         LEFT JOIN Mo_MoDoc b ON b.iAutoId= a.iMoDocId
