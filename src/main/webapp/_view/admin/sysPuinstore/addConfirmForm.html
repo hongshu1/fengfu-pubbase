@@ -1,0 +1,54 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page_content">
+    <form onsubmit="return false;" id="syspuinstore_form" action="#(action)" method="post">
+        <div style="margin-top: 50px;margin-left: 20px">
+            <div class="form-group row"
+                 id="ordertype"
+                 data-radio
+                 data-rule="radio"
+                 data-value="#(ordertype??)"
+                 data-name="ordertype"
+                 data-default="options_first"
+                 data-width="col-sm-1,col-sm-4">
+                <label class="col-sm-1 col-form-label">订单类型：</label>
+                <div class="col-sm-4" style="padding-top: 1px;">
+                    <div class="radio radio-primary  radio-inline">
+                        <input id="ordertype_01" type="radio" name="ordertype" value="PO"/>
+                        <label for="ordertype_01">采购订单</label>
+                    </div>
+                    <div class="radio radio-primary  radio-inline">
+                        <input id="ordertype_02" type="radio" name="ordertype" value="OM"/>
+                        <label for="ordertype_02">委外订单</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+#end
+
+#define js()
+<script>
+    function submitThisForm () {
+        var $form = $('#syspuinstore_form');
+        if (FormChecker.check($form)) {
+            var data = formToJson($form);
+            // console.log("=====" + data.ordertype);
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+             parent.DialogUtil.openNewDialog({
+                 title: "切换页面",
+                 width: "100%",
+                 height: "100%",
+                 offset: "auto",
+                 zIndex: 20220610,
+                 url: "admin/purchaseReceiptList/add?ordertype="+data.ordertype
+             });
+        }
+    }
+
+</script>
+#end
+

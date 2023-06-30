@@ -15,9 +15,11 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -64,11 +66,20 @@ public class SysPuinstoreAdminController extends BaseAdminController {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
+    /*
+     * 选择订单
+     * */
+    public void addConfirmForm(){
+        render("addConfirmForm.html");
+    }
+
     /**
      * 新增
      */
     public void add() {
         Record record = new Record();
+        Kv kv = getKv();
+        record.set("ordertype",kv.get("ordertype"));
         record.set("billno", JBoltSnowflakeKit.me.nextId());
         set("sysPuinstore", record);
         render("add.html");
@@ -150,6 +161,8 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * 订单号的选择数据Dialog
      */
     public void chooseSysPuinstoreData() {
+        Kv kv = getKv();
+        set("ordertype",kv.get("ordertype"));
         render("sysPuinstoreDialog.html");
     }
 
@@ -158,7 +171,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      */
     @UnCheck
     public void getMesSysPODetails() {
-        Page<Record> recordPage = service.getMesSysPODetails(getKv(), getPageNumber(), getPageSize());
+        Page<Record> recordPage = service.getMesSysPODetails(getKv(), getPageNumber(), getPageSize(), get("ordertype"));
         renderJsonData(recordPage);
     }
 
@@ -168,7 +181,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     @UnCheck
     public void getInsertPuinstoreDetail() {
         Kv kv = getKv();
-        if (StrUtil.isBlank(kv.getStr("sourcebillno"))){
+        if (StrUtil.isBlank(kv.getStr("sourcebillno"))) {
             fail("订单号为空，请先选择订单号");
             return;
         }
@@ -190,6 +203,27 @@ public class SysPuinstoreAdminController extends BaseAdminController {
     @UnCheck
     public void getPrintData() {
         renderJson(service.printData(getKv()));
+    }
+
+    /*
+     * 扫描现品票
+     * */
+    public void scanBarcode(@Para(value = "barcode") String barcode, @Para(value = "orderType") String orderType) {
+        Record record = service.scanBarcode(barcode, orderType);
+        renderJsonData(record);
+    }
+
+    /*
+     * 根据barcode加载数据
+     * */
+    public void getBarcodeDatas() {
+        Kv kv = getKv();
+        if (StrUtil.isBlank(kv.getStr("sourcebillno"))) {
+            fail("订单号为空，请先选择订单号");
+            return;
+        }
+        List<Record> recordList = service.getBarcodeDatas(get("q"),kv.getStr("ordertype"));
+        renderJsonData(recordList);
     }
 
 }

@@ -4,6 +4,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -494,8 +495,14 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     /*
      * 获取mes采购订单视图
      * */
-    public Page<Record> getMesSysPODetails(Kv kv, int size, int PageSize) {
-        return dbTemplate("syspuinstore.getMesSysPODetails", kv).paginate(size, PageSize);
+    public Page<Record> getMesSysPODetails(Kv kv, int size, int PageSize, String ordertype) {
+        Page<Record> recordPage = new Page<>();
+        if (ObjUtil.equal(ordertype, "PO")) {
+            recordPage = dbTemplate("syspuinstore.getMesSysPODetailsByPO", kv).paginate(size, PageSize);
+        } else if (ObjUtil.equal(ordertype, "OM")) {
+            recordPage = dbTemplate("syspuinstore.getMesSysPODetailsByOM", kv).paginate(size, PageSize);
+        }
+        return recordPage;
     }
 
     public List<Record> getInsertPuinstoreDetail(Kv kv) {
@@ -887,5 +894,42 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
         return null;
+    }
+
+    /*
+     * 扫描现品票
+     * */
+    public Record scanBarcode(String barcode, String orderType) {
+        SysPuinstoredetail puinstoredetail = syspuinstoredetailservice.findFirstByBarcode(barcode);
+        if (puinstoredetail != null) {
+            SysPuinstore puinstore = findById(puinstoredetail.getMasID());
+            ValidationUtils.isTrue(puinstoredetail == null,
+                String.format("现品票 %s 已存在于 %s 入库单号，不能重复！！", barcode, puinstore.getBillNo()));
+        }
+        //采购订单
+        Record record = null;
+        if (ObjUtil.equal(orderType, "PO")) {
+            record = dbTemplate("syspuinstore.scanPurchaseOrderBarcode", Kv.by("barcode", barcode)).findFirst();
+        } else if (ObjUtil.equal(orderType, "OM")) {
+            //委外订单
+            record = dbTemplate("syspuinstore.scanSubcontractOrderBarcode", Kv.by("barcode", barcode)).findFirst();
+        }
+        ValidationUtils.notNull(record, barcode + "：现品票不存在，请重新扫描！！！");
+        return record;
+    }
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public List<Record> getBarcodeDatas(String q,String ordertype) {
+        List<Record> recordList = null;
+        if (ObjUtil.equal(ordertype,"PO")){
+            recordList = dbTemplate("syspuinstore.scanPurchaseOrderBarcode", Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        }else if (ObjUtil.equal(ordertype, "OM")) {
+            recordList = dbTemplate("syspuinstore.scanSubcontractOrderBarcode", Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        }
+        return recordList;
     }
 }
