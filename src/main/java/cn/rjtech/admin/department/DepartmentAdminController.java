@@ -211,6 +211,7 @@ public class DepartmentAdminController extends BaseAdminController {
         render("person_table.html");
     }
 
+    @UnCheck
     public void findPersonPage() {
         renderJsonData(personService.paginateDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -219,6 +220,7 @@ public class DepartmentAdminController extends BaseAdminController {
     /**
      * 下拉框选择人员数据源
      */
+    @UnCheck
     public void selectPerson() {
         String key = get("key");
         Kv kv = new Kv();
@@ -226,10 +228,12 @@ public class DepartmentAdminController extends BaseAdminController {
         renderJsonData(personService.findAll(kv));
     }
 
+    @UnCheck
     public void findPersonAll() {
         renderJsonData(personService.findAll(getKv()));
     }
 
+    @UnCheck
     public void findParentData(Long excludeId) {
         renderJsonData(service.findParentData(excludeId));
     }
@@ -261,6 +265,7 @@ public class DepartmentAdminController extends BaseAdminController {
         renderBytesToExcelXlsFile(service.exportExcelTpl(null));
     }
 
+    @UnCheck
     public void getTreeTableDatas() {
         List<Record> datas = service.findAll(getKv());
         List<Record> trees = service.convertToRecordTree(datas, Department.IAUTOID, Department.IPID, (p) -> this.notOk(p.getLong(Department.IPID)));

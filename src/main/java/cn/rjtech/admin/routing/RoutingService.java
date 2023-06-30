@@ -1,6 +1,6 @@
 package cn.rjtech.admin.routing;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -146,7 +146,7 @@ public class RoutingService extends BaseService<BomMaster> {
     public List<JsTreeBean> findRoutingAll(Kv kv){
     	kv.set("orgId", getOrgId());
 		List<Record> recordList = dbTemplate("routing.findRoutingAll", kv).find();
-		if (CollectionUtil.isEmpty(recordList)){
+		if (CollUtil.isEmpty(recordList)){
 			return null;
 		}
 	
@@ -193,7 +193,7 @@ public class RoutingService extends BaseService<BomMaster> {
 	 */
 	public void subordinate(List<Record> recordList, Map<Long, List<Record>> listMap){
 		
-		if (CollectionUtil.isEmpty(recordList)){
+		if (CollUtil.isEmpty(recordList)){
 			return;
 		}
 		
@@ -243,7 +243,7 @@ public class RoutingService extends BaseService<BomMaster> {
 			}
 		}
 		
-		if (CollectionUtil.isNotEmpty(commonList)){
+		if (CollUtil.isNotEmpty(commonList)){
 			recordList.addAll(commonList);
 		}
 	}
@@ -303,7 +303,7 @@ public class RoutingService extends BaseService<BomMaster> {
 		kv.set(InvPart.IPARENTINVID, invPart.getIParentInvId());
 		List<Record> details = detail(kv);
 		
-		if (CollectionUtil.isEmpty(details)){
+		if (CollUtil.isEmpty(details)){
 			return null;
 		}
 		
@@ -357,7 +357,7 @@ public class RoutingService extends BaseService<BomMaster> {
 	
 	
 	public void changeData(List<Record> recordList){
-		if (CollectionUtil.isEmpty(recordList)){
+		if (CollUtil.isEmpty(recordList)){
 			return;
 		}
 		for (Record record : recordList){

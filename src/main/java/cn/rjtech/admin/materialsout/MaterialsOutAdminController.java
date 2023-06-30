@@ -131,11 +131,10 @@ public class MaterialsOutAdminController extends BaseAdminController {
 		renderJsonData(service.getBarcodeDatas(kv));
 	}
 
-
-
 	/**
 	 * 材料出库单列表明细
 	 */
+    @UnCheck
 	public void getMaterialsOutLines() {
 		String autoid = get("autoid");
 		String OrgCode = getOrgCode();

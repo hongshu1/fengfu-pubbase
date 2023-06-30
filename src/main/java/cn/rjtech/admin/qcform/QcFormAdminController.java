@@ -1,11 +1,10 @@
 package cn.rjtech.admin.qcform;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -24,7 +23,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.upload.UploadFile;
 
 import java.util.List;
 import java.util.Map;
@@ -146,6 +144,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformparam查询列表
      */
+    @UnCheck
     public void getQcFormParamListByPId() {
         renderJsonData(service.getQcFormParamListByPId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -153,8 +152,9 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformtableparam查询列表
      */
+    @UnCheck
     public void getQcFormTableParamListByPId() {
-        /**
+        /*
          * 三种情况
          *  1.新增进来，没有formId也没有新增数据
          *  2.新增进来的，没有formId 但是有新增数据，将新增数据返回 或 修改进来的，有formId，不管是否有新增还是删除直接将页面的数据传入过来
@@ -173,6 +173,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformitem查询列表qcform
      */
+    @UnCheck
     public void getItemCombinedListByPId() {
         renderJsonData(service.getItemCombinedListByPId(getKv()));
     }
@@ -230,12 +231,12 @@ public class QcFormAdminController extends BaseAdminController {
          *  3.默认加载时，是没有数据操作的，直接读取数据
          */
         // 判断是否有新增的值
-       if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
+       if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
             // 查询表格行记录
            List<Map<String, Object>> recordList = qcFormTableParamService.findByFormId(formId);
            // 查询表头数据及参数数据
            set("dataList", recordList);
-        }else if(StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isNotEmpty(JSONObject.parseArray(tableParamJsonStr))){
+        }else if(StrUtil.isNotBlank(tableParamJsonStr) && CollUtil.isNotEmpty(JSONObject.parseArray(tableParamJsonStr))){
            JSONArray jsonArray = JSONObject.parseArray(tableParamJsonStr);
            JSONArray itemJson = JSONObject.parseArray(itemJsonStr);
            Map<String, JSONObject> map = itemJson.stream().collect(Collectors.toMap(r -> ((JSONObject) r).getString("iqcitemid"), r -> (JSONObject) r, (key1, key2) -> key2));

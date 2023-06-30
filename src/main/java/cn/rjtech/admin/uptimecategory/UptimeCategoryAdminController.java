@@ -108,6 +108,7 @@ public class UptimeCategoryAdminController extends BaseAdminController {
         renderJsonData(service.uptimeTplTableDatas(getKv()));
     }
 
+    @UnCheck
     public void selectDatas() {
         Kv kv = getKv();
         set("notiuptimecategoryids", kv.getStr("notiuptimecategoryids"));

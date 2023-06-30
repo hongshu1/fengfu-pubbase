@@ -1,6 +1,6 @@
 package cn.rjtech.admin.spotcheckform;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -123,9 +123,11 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     public void options() {
         renderJsonData(service.options());
     }
+    
     /**
      * 按主表qcformparam查询列表
      */
+    @UnCheck
     public void getQcFormParamListByPId() {
         renderJsonData(service.getQcFormParamListByPId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -133,6 +135,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformtableparam查询列表
      */
+    @UnCheck
     public void getQcFormTableParamListByPId() {
         /**
          * 三种情况
@@ -153,6 +156,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformitem查询列表qcform
      */
+    @UnCheck
     public void getItemCombinedListByPId() {
         renderJsonData(service.getItemCombinedListByPId(getKv()));
     }
@@ -204,12 +208,12 @@ public class SpotCheckFormAdminController extends BaseAdminController {
          *  3.默认加载时，是没有数据操作的，直接读取数据
          */
         // 判断是否有新增的值
-        if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
+        if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
             // 查询表格行记录
             List<Map<String, Object>> recordList = SpotCheckFormTableParamService.findByFormId(formId);
             // 查询表头数据及参数数据
             set("dataList", recordList);
-        }else if(StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isNotEmpty(JSONObject.parseArray(tableParamJsonStr))){
+        }else if(StrUtil.isNotBlank(tableParamJsonStr) && CollUtil.isNotEmpty(JSONObject.parseArray(tableParamJsonStr))){
             JSONArray jsonArray = JSONObject.parseArray(tableParamJsonStr);
             JSONArray itemJson = JSONObject.parseArray(itemJsonStr);
             Map<String, JSONObject> map = itemJson.stream().collect(Collectors.toMap(r -> ((JSONObject) r).getString("iqcitemid"), r -> (JSONObject) r, (key1, key2) -> key2));

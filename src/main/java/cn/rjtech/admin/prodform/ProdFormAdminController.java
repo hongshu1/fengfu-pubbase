@@ -1,27 +1,24 @@
 package cn.rjtech.admin.prodform;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.prodformtableparam.ProdFormTableParamService;
-import cn.rjtech.model.momdata.SpotCheckForm;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.ProdForm;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.tx.Tx;
-import com.jfinal.plugin.activerecord.tx.TxConfig;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.ProdForm;
 
 import java.util.List;
 import java.util.Map;
@@ -205,12 +202,12 @@ public class ProdFormAdminController extends BaseAdminController {
 		 *  3.默认加载时，是没有数据操作的，直接读取数据
 		 */
 		// 判断是否有新增的值
-		if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
+		if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
 			// 查询表格行记录
 			List<Map<String, Object>> recordList = prodFormTableParamService.findByFormId(formId);
 			// 查询表头数据及参数数据
 			set("dataList", recordList);
-		}else if(StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isNotEmpty(JSONObject.parseArray(tableParamJsonStr))){
+		}else if(StrUtil.isNotBlank(tableParamJsonStr) && CollUtil.isNotEmpty(JSONObject.parseArray(tableParamJsonStr))){
 			JSONArray jsonArray = JSONObject.parseArray(tableParamJsonStr);
 			JSONArray itemJson = JSONObject.parseArray(itemJsonStr);
 			Map<String, JSONObject> map = itemJson.stream().collect(Collectors.toMap(r -> ((JSONObject) r).getString("iqcitemid"), r -> (JSONObject) r, (key1, key2) -> key2));

@@ -1,28 +1,21 @@
 package cn.rjtech.admin.scancodereceive;
 
-import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.sysenumeration.SysEnumerationService;
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPureceive;
-import cn.rjtech.model.momdata.SysPureceivedetail;
-import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
-
-import java.util.List;
 
 /**
  * 双单位扫码收货
@@ -143,6 +136,7 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     /**
      * 库区数据源
      */
+    @UnCheck
     public void findWhArea() {
         String WhCode = get("WhCode");
         ValidationUtils.notBlank(WhCode, "请先选择仓库");
@@ -156,6 +150,7 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     /**
      * 获取资源
      */
+    @UnCheck
     public void getResource(){
         String q = get("q");
         if (notOk(q)){
@@ -177,6 +172,7 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     /**
      * 查询双单位条码数据
      */
+    @UnCheck
     public void getBarCodeData(){
         String itemCode = get("itemCode");
         String supplier = get("supplier");
@@ -187,4 +183,5 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
         kv.set("supplier",notOk(supplier)?' ':supplier);
         renderJsonData(service.getBarcodeDatas(kv));
     }
+    
 }

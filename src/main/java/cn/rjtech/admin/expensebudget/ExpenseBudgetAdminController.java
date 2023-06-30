@@ -328,10 +328,11 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     	Kv para = getKv();
     	renderJsonData(service.findEffectivedExpenseBudgetByDeptCode(para));
     }
-   
+
     /**
      * 查询费用预算修改界面的项目数据
-     * */
+     */
+    @UnCheck
     public void findExpenseBudgetItemDatas(@Para(value="iexpenseid") Long iexpenseid){
     	renderJsonData(service.findExpenseBudgetItemDatas(iexpenseid));
     }
@@ -365,15 +366,19 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
         set("previousPeriodItemExpenseBudget",previousPeriodItemExpenseBudget);
     	render("export_previousperiod_expensebudgetitem.html");
     }
+
     /**
      * 导入未完成项目界面查询费用预算项目数据
-     * */
+     */
+    @UnCheck
     public void findUnfinishExpenseBudgetItemDatas(@Para(value="iexpenseid") Long iexpenseid){
     	renderJsonData(service.findUnfinishExpenseBudgetItemDatas(iexpenseid));
     }
+
     /**
      * 导入上期项目界面查询费用预算项目数据
-     * */
+     */
+    @UnCheck
     public void findPreviousPeriodExpenseBudgetItemDatas(@Para(value="iexpenseid") Long iexpenseid){
     	renderJsonData(service.findPreviousPeriodExpenseBudgetItemDatas(iexpenseid));
     }

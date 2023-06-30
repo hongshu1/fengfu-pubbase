@@ -393,6 +393,7 @@ public class InventoryAdminController extends BaseAdminController {
 		renderJsonData(service.inventorySpotCheckList(getKv()));
 	}
 
+    @UnCheck
 	public void findBomCompareByBomMasterInvId(){
 		renderJsonData(bomMasterService.findBomCompareByBomMasterInvId(getKv(), getPageNumber(), getPageSize()));
 	}

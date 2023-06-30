@@ -1,7 +1,6 @@
 package cn.rjtech.admin.purchaseorderm;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -10,9 +9,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
-import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -29,16 +26,12 @@ import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionServ
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
-import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.HttpApiUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.beust.jcommander.ParameterException;
 import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -113,7 +106,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
     }
 
     private void changeData(List<Record> list) {
-        if (CollectionUtil.isEmpty(list)) {
+        if (CollUtil.isEmpty(list)) {
             return;
         }
         // 应付类型
@@ -469,7 +462,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 
         tx(() -> {
             // 删除 先修改细表状态，在删除中间表数据，在修改到货计划细表及主表状态
-            if (CollectionUtil.isNotEmpty(notIds)) {
+            if (CollUtil.isNotEmpty(notIds)) {
                 for (Long purchaseOrderDId : notIds) {
                     PurchaseOrderD purchaseOrderD = purchaseOrderDService.findById(purchaseOrderDId);
                     ValidationUtils.notNull(purchaseOrderD, "采购订单细表数据未找到");
@@ -860,7 +853,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
         List<Record> purchaseOrderRefList = purchaseOrderRefService.findByPurchaseOderMId(id);
         // 修改细表数据
         purchaseOrderDService.removeByPurchaseOrderMId(id);
-        if (CollectionUtil.isNotEmpty(purchaseOrderRefList)) {
+        if (CollUtil.isNotEmpty(purchaseOrderRefList)) {
             List<Long> demandPlanDIds = purchaseOrderRefList.stream()
                 .map(record -> record.getLong(PurchaseOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
             // 修改到货计划细表状态

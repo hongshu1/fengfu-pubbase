@@ -1,6 +1,6 @@
 package cn.rjtech.admin.qcformitem;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -252,7 +252,7 @@ public class QcFormItemService extends BaseService<QcFormItem> {
 	}
 
 	public List<QcFormItem> createQcFormItemList(Long qcFormId, boolean isDelete , JSONArray formItemArray){
-		if (CollectionUtil.isEmpty(formItemArray)){
+		if (CollUtil.isEmpty(formItemArray)){
 			return null;
 		}
 		List<QcFormItem> list = new ArrayList<>();

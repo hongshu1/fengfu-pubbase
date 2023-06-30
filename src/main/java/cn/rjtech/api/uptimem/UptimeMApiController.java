@@ -105,6 +105,15 @@ public class UptimeMApiController extends BaseApiController {
     }
 
     /***
+     * 撤回主纪录
+     */
+    @UnCheck
+    public void revocationUptimeMById(@Para(value = "iautoid") Long iautoid){
+        ValidationUtils.validateId(iautoid,"主键id");
+        renderJBoltApiRet(service.revocationUptimeMById(iautoid));
+    }
+
+    /***
      * 删除主纪录
      */
     @UnCheck

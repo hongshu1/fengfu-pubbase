@@ -8,7 +8,6 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysPuinstore;
-import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -146,6 +145,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
 	/**
 	 * 查看所以退货出库单列表明细
 	 */
+    @UnCheck
 	public void getmaterialReturnLists() {
 		String autoid = get("autoid");
 		String OrgCode = getOrgCode();

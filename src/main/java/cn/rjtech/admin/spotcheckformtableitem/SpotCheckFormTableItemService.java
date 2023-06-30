@@ -1,6 +1,6 @@
 package cn.rjtech.admin.spotcheckformtableitem;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -132,7 +132,7 @@ public class SpotCheckFormTableItemService extends BaseService<SpotCheckFormTabl
 	}
 
 	public List<SpotCheckFormTableItem> createQcFormTableItemList(Long qcFormId, List<SpotCheckFormItem> qcFormItemList, JSONArray jsonArray){
-		if (CollectionUtil.isEmpty(jsonArray)){
+		if (CollUtil.isEmpty(jsonArray)){
 			return null;
 		}
 		Map<Long, SpotCheckFormItem> qcItemMap = qcFormItemList.stream().collect(Collectors.toMap(SpotCheckFormItem::getIQcItemId, Function.identity(), (key1, key2) -> key2));

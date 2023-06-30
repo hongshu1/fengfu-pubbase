@@ -79,13 +79,13 @@ public class ProposaldAdminController extends BaseAdminController {
     }
 
     @UnCheck
-    public void findByiProposalMid(@Para(value = "iproposalmid") Long iproposalmid, @Para(value = "noiniproposalds") String noiniproposalds) {
+    public void findByiProposalMid(@Para(value = "iproposalmid") Long iproposalmid, 
+                                   @Para(value = "noiniproposalds") String noiniproposalds) {
         ValidationUtils.notNull(iproposalmid, "禀议书主表ID为空");
 
-        if (notNull(noiniproposalds))
-        {
+        if (notNull(noiniproposalds)) {
             renderJsonData(service.findByiProposalMid(iproposalmid, noiniproposalds));
-        }else{
+        } else {
             renderJsonData(service.findByiProposalMid(iproposalmid));
         }
     }

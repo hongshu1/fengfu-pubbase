@@ -182,7 +182,7 @@ public class InventoryRoutingSopService extends BaseService<InventoryRoutingSop>
 		/*if (StrUtil.isNotBlank(kv.getStr(InventoryRoutingConfig.ROUTINGSOPJSON))){
 			String str = kv.getStr(InventoryRoutingConfig.ROUTINGSOPJSON);
 			JSONArray jsonArray = JSONObject.parseArray(str);
-			if (CollectionUtil.isEmpty(jsonArray)){
+			if (CollUtil.isEmpty(jsonArray)){
 				return null;
 			}
 			List<Record> recordList = new ArrayList<>();

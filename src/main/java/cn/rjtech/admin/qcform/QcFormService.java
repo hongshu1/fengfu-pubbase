@@ -1,6 +1,6 @@
 package cn.rjtech.admin.qcform;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -9,10 +9,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -22,7 +18,6 @@ import cn.rjtech.admin.qcformtableitem.QcFormTableItemService;
 import cn.rjtech.admin.qcformtableparam.QcFormTableParamService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -32,8 +27,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -534,15 +531,12 @@ public class QcFormService extends BaseService<QcForm> {
             }
         }
         
-        if (CollectionUtil.isNotEmpty(mapList)){
+        if (CollUtil.isNotEmpty(mapList)){
     
-            Collections.sort(mapList, new Comparator<Map<String, Object>>() {
-                @Override
-                public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-                    Integer map1 = Integer.valueOf(o1.get("iseq").toString());
-                    Integer map2 = Integer.valueOf(o2.get("iseq").toString());
-                    return map1.compareTo(map2);
-                }
+            mapList.sort((o1, o2) -> {
+                Integer map1 = Integer.valueOf(o1.get("iseq").toString());
+                Integer map2 = Integer.valueOf(o2.get("iseq").toString());
+                return map1.compareTo(map2);
             });
             return mapList;
         }

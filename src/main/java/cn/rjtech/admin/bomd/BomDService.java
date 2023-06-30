@@ -1,6 +1,6 @@
 package cn.rjtech.admin.bomd;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -184,7 +184,7 @@ public class BomDService extends BaseService<BomD> {
 	
 	public List<Record> createJsTreeBean(List<Record> recordList, String code){
 		List<Record> trees = new ArrayList<>();
-		if (CollectionUtil.isNotEmpty(recordList)){
+		if (CollUtil.isNotEmpty(recordList)){
 			
 			List<Record> allList = dbTemplate("bomd.getBomComparePageData", Kv.by("orgId", getOrgId())).find();
 			Map<Long, List<Record>> compareMap = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
@@ -240,7 +240,7 @@ public class BomDService extends BaseService<BomD> {
 	}
 	
 	public void changeRecord(List<Record> recordList, String code, Boolean flag){
-		if (CollectionUtil.isEmpty(recordList)){
+		if (CollUtil.isEmpty(recordList)){
 			return;
 		}
 		for (Record record : recordList){
@@ -337,7 +337,7 @@ public class BomDService extends BaseService<BomD> {
 	
 	public List<Record> getEffectiveBomCompare(Long orgId, List<Long> invIds){
 		Okv okv = Okv.by("orgId", orgId);
-		if (CollectionUtil.isNotEmpty(invIds) && invIds.size() < 150){
+		if (CollUtil.isNotEmpty(invIds) && invIds.size() < 150){
 			okv.set("invIds", invIds);
 		}
 		return dbTemplate("bomd.getEffectiveBomCompare", okv).find();
@@ -345,7 +345,7 @@ public class BomDService extends BaseService<BomD> {
     
     public Map<Long, List<Record>> getEffectiveBomCompareMap(Long orgId, List<Long> invIds){
         List<Record> recordList = getEffectiveBomCompare(orgId, invIds);
-        if (CollectionUtil.isEmpty(recordList)){
+        if (CollUtil.isEmpty(recordList)){
             return new HashMap<>();
         }
         return recordList.stream().collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID), Collectors.toList()));

@@ -91,15 +91,19 @@ public class InvestmentplanMonthAdjustmentmAdminController extends BaseAdminCont
 	public void openPageChooseInvestmentPlan(){
 		render("choose_investment_plan.html");
 	}
-	/**
+
+    /**
      * 查询未完成项目数据
-     * */
+     */
+    @UnCheck
     public void findUnfinishInvestmentPlanItemDatas(){
     	renderJsonData(service.findUnfinishInvestmentPlanItemDatas(getKv()));
     }
+
     /**
      * 修改详情查看月度实绩项目详情数据
-     * */
+     */
+    @UnCheck
     public void findInvestmentPlanAdjustmentItemDatas(){
     	renderJsonData(service.findInvestmentPlanAdjustmentItemDatas(getKv()));
     }

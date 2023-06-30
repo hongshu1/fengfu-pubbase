@@ -2,7 +2,9 @@ package cn.rjtech.admin.currentstock;
 
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.*;
+import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouch;
