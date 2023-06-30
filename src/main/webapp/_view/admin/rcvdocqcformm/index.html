@@ -18,7 +18,7 @@
     <div class="row">
       <div class="col">
         <form class="form-inline" id="rcvDocQcFormMForm_#(pageId)" style="left: 30px;text-align: left">
-          <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
+          <input type="hidden"  id="iscompleted" name="iscompleted2" value="#(iscompleted??)"/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="crcvdocqcformno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=收料单号=" name="crcvdocno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=供应商名称=" name="cvenname" value=""/>
@@ -33,29 +33,31 @@
                   data-url="admin/user/options"
                   data-text="=检验员="
                   data-value=""
-                  data-value-attr="id"
+                  data-value-attr="text"
                   data-select="#(user.name??)">
           </select>
-
-          <select class="form-control"
-                  name="iscompleted"
-                  data-autoload
-                  data-url="admin/dictionary/options?key=iscompleted"
-                  data-select-type="select2"
-                  data-text="=检验结果="
-                  data-value=""
-                  data-value-attr="sn"
-                  data-select="#(iscompleted)"></select>
 
           <select class="form-control"
                   name="istatus"
                   data-autoload
                   data-url="admin/dictionary/options?key=istatus"
                   data-select-type="select2"
+                  data-text="=检验结果="
+                  data-value=""
+                  data-value-attr="sn"
+                  data-text-attr="name"
+                  data-select="#(istatus??)"></select>
+
+          <select class="form-control"
+                  name="iscompleted"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=iscompleted"
+                  data-select-type="select2"
                   data-text="=状态="
                   data-value=""
                   data-value-attr="sn"
-                  data-select="#(istatus??)"></select>
+                  data-text-attr="name"
+                  data-select="#(iscompleted??)"></select>
 
           <select class="form-control"
                   name="cqcformname"
@@ -64,7 +66,7 @@
                   data-select-type="select2"
                   data-text="=检验表格名称="
                   data-value=""
-                  data-value-attr="iautoid"
+                  data-value-attr="cqcformname"
                   data-text-attr="cqcformname"
                   data-select="#(qcform.cqcformname??)"></select>
 

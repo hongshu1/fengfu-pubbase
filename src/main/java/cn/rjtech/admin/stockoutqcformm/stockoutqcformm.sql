@@ -59,6 +59,9 @@ where t1.IsDeleted = '0'
   #if(cqcformname)
   AND t2.cqcformname =#para(cqcformname)
   #end
+  #if(name)
+  AND t1.cupdatename <= #para(name)
+  #end
   #if(starttime)
   AND t1.dcreatetime >= #para(starttime)
   #end
