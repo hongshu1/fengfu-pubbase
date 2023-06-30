@@ -78,6 +78,12 @@ FROM
         left join (SELECT COUNT(iInventoryRoutingConfigId) equipments ,iInventoryRoutingConfigId configid FROM Bd_InventoryRoutingEquipment GROUP BY iInventoryRoutingConfigId) re on a.iAutoId = re.configid
 WHERE a.isEnabled = 1 AND
         a.iInventoryRoutingId = #para(iinventoryroutingid)
+        #if(ispotcheckformid)
+         and a.iSpotCheckFormId=#para(ispotcheckformid)
+        #end
+         #if(cspotcheckformname)
+         and t2.cSpotCheckFormName=#para(cspotcheckformname)
+        #end
 ORDER BY a.iSeq ASC
 #end
 

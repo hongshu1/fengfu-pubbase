@@ -20,6 +20,7 @@ import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOpe
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
+import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformd.SpotCheckFormDService;
 import cn.rjtech.admin.spotcheckformdline.SpotcheckformdLineService;
 import cn.rjtech.enums.AuditStatusEnum;
@@ -84,6 +85,8 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	private MoDocService moDocService;
 	@Inject
 	private FormApprovalService formApprovalService;
+	@Inject
+	private SpotCheckFormService spotCheckFormService;
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -186,7 +189,9 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 				//通过表格id工序id工单id获取已保存的数据
 
 				for (Record r : list) {
-					SpotCheckFormM m = findBySpotCheckFormIdAndRoutingConfigIdAndModocId(r.getLong("ispotcheckformid"), kv.getLong("modocid"), routingConfigId, 1);
+					SpotCheckForm spotcheckform = spotCheckFormService.findById(r.getStr("ispotcheckformid"));
+					record.set("cspotcheckformname",spotcheckform.getCSpotCheckFormName());
+					SpotCheckFormM m = findBySpotCheckFormIdAndRoutingConfigIdAndModocId(r.getLong("ispotcheckformid"), kv.getLong("modocid"), routingConfigId, kv.getInt("itype"));
 					if (ObjUtil.isNotNull(m)){
 					record.set("spotcheckformmid",m.getIAutoId());
 					record.set("cpersonname",m.getCPersonName());
@@ -197,14 +202,14 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 					}else {
 						record.set("iauditstatus","未生成");
 					}
-					record.set("iSpotCheckFormId",r.getStr("ispotcheckformid"));
-					record.set("itype",r.getStr("iType"));
+					record.set("ispotcheckformid",r.getStr("ispotcheckformid"));
 					record.set("cequipmentnames",keywordStr);
 					record.set("cequipmentids",keywordStr2);
 					record.set("IInventoryId",morouting.getIInventoryId());
 					record.set("routingConfigId",routingConfigId);
 					record.set("modocid",kv.getLong("modocid"));
 				}
+				record.set("itype",kv.getStr("itype"));
 				if (list.size()<=0) {
 					record.set("iauditstatus","未有点检表");
 				}
@@ -301,7 +306,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 						if (!object.getStr("iAutoId").equals(id)) {
 							id=object.getStr("iAutoId");
 							if (StrUtil.isNotBlank(spotcheckformmid)) {
-								SpotCheckFormD checkFormD = spotCheckFormDService.findFirst("select * from PL_SpotCheckFormD where iSpotCheckFormParamId=?", object.getLong("iAutoId"));
+								SpotCheckFormD checkFormD = spotCheckFormDService.findFirst("select * from PL_SpotCheckFormD where iSpotCheckFormMid=?", spotcheckformmid);
 								if (ObjUtil.isNotNull(checkFormD)) {
 									List<SpotcheckformdLine> list = spotcheckformdLineService.findBySpotCheckFormDId(checkFormD.getIAutoId());
 									object.set("cValue",list.get(0).getCValue());
@@ -375,7 +380,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 				//设备名称
 
 				spotCheckFormM2.setISpotCheckFormId(formJsonData.getLong("iprodformid"));
-				spotCheckFormM2.setIType(1);
+				spotCheckFormM2.setIType(formJsonData.getInteger("itype"));
 				//基础数据
 				User user = JBoltUserKit.getUser();
 				Date date = new Date();
