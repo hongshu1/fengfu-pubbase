@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
@@ -95,6 +96,8 @@ public class MoprocessDefectAdminController extends BaseAdminController {
 
         render("add2.html");
     }
+
+    @UnCheck
     public void getModoc(Long imodocid){
         MoDoc moDoc=moDocService.findById(imodocid);
         if(moDoc == null){

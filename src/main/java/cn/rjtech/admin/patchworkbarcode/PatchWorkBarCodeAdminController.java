@@ -3,6 +3,7 @@ package cn.rjtech.admin.patchworkbarcode;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.wms.utils.StringUtils;
@@ -56,6 +57,7 @@ public class PatchWorkBarCodeAdminController extends BaseAdminController {
     /**
      * 加载选择页面的数据
      */
+    @UnCheck
     public void selectDatas() {
         renderJsonData(service.selectDatas(getPageNumber(), getPageSize(), getKv()));
     }

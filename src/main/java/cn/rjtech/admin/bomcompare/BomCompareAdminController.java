@@ -1,6 +1,6 @@
 package cn.rjtech.admin.bomcompare;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -47,7 +47,7 @@ public class BomCompareAdminController extends BaseAdminController {
 	*/
 	public void index(@Para(value = "id") Long id, @Para(value = "isChildren") Boolean isChildren) {
 		Kv kv = getKv();
-		if (ObjectUtil.isNotNull(id)){
+		if (ObjUtil.isNotNull(id)){
 			bomMService.setBomRecord(id, isChildren, true, kv);
 			setAttrs(kv);
 		}

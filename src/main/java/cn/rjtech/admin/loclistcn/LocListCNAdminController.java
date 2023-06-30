@@ -94,6 +94,7 @@ public class LocListCNAdminController extends BaseAdminController {
         renderJson(service.delete(getLong(0)));
     }
 
+    @UnCheck
     public void findByIPid() {
         Long ipid = 0L;
         String ipid1 = get("ipid");
@@ -108,6 +109,7 @@ public class LocListCNAdminController extends BaseAdminController {
         renderJsonData(list);
     }
 
+    @UnCheck
     public void findByNameChild() {
         String name = null;
         if (isOk(get("ccountry"))) { //

@@ -42,6 +42,7 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
 	/**
 	* 数据源
 	*/
+    @UnCheck
 	@CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
@@ -60,6 +61,7 @@ public class InvestmentPlanManageAdminController extends BaseAdminController {
     /**
      * 投资计划编制详情界面查询投资计划项目数据
      * */
+    @UnCheck
     public void findInvestmentPlanItemForDetail(@Para("investmentPlanId") Long investmentPlanId) {
         renderJsonData(service.findInvestmentPlanItemForDetail(investmentPlanId));
     }

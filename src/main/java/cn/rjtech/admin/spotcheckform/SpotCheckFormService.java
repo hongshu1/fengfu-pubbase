@@ -1,9 +1,9 @@
 package cn.rjtech.admin.spotcheckform;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -26,7 +26,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -104,7 +107,7 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 		dbQcForm.setCUpdateName(userName);
 		dbQcForm.setDUpdateTime(date);
 		SpotCheckForm obj = queryByQcName(dbQcForm.getCSpotCheckFormName(), dbQcForm.getIAutoId());
-		ValidationUtils.isTrue(ObjectUtil.isEmpty(obj), "表格名称不能重复");
+		ValidationUtils.isTrue(ObjUtil.isEmpty(obj), "表格名称不能重复");
 		//if(existsName(qcForm.getName(), qcForm.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST)}
 		boolean success = dbQcForm.update();
 		if (success) {
@@ -237,7 +240,7 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 		qcForm.setIsDeleted(false);
 
 		SpotCheckForm obj = queryByQcName(qcForm.getCSpotCheckFormName(), null);
-		ValidationUtils.isTrue(ObjectUtil.isEmpty(obj), "表格名称不能重复");
+		ValidationUtils.isTrue(ObjUtil.isEmpty(obj), "表格名称不能重复");
 		ValidationUtils.notNull(qcForm.getIAutoId(), "未获取到主键id");
 		//if(existsName(qcForm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success = qcForm.save();
@@ -251,7 +254,7 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 	public SpotCheckForm queryByQcName(String qcFormName, Long id){
 		ValidationUtils.notBlank(qcFormName, "表格名称不能为空");
 		String sqlStr = "SELECT * FROM Bd_SpotCheckForm WHERE CSpotCheckFormName = ?";
-		if (ObjectUtil.isNotNull(id)){
+		if (ObjUtil.isNotNull(id)){
 			sqlStr = sqlStr+" AND iAutoId <> '"+id+"'";
 		}
 		return findFirst(sqlStr, qcFormName);
@@ -459,7 +462,7 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 		Long formId = qcFom.getIAutoId();
 		// 判断是否新增
 
-		if (ObjectUtil.isNull(formId)){
+		if (ObjUtil.isNull(formId)){
 			formId = JBoltSnowflakeKit.me.nextId();
 			qcFormNew.setIAutoId(formId);
 		}
@@ -483,7 +486,7 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 
 		tx(() -> {
 			// 新增
-			if (ObjectUtil.isNull(qcFom.getIAutoId())){
+			if (ObjUtil.isNull(qcFom.getIAutoId())){
 				qcFom.setIAutoId(qcFormNew.getIAutoId());
 				save(qcFom, orgId, userId, orgCode, orgName, userName, date);
 			}else {
@@ -564,7 +567,7 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 				}
 			}
 //            jsonArray.sort(Comparator.comparing(obj -> ((JSONObject)obj).getInteger("iseq")));
-		}else if (ObjectUtil.isNotNull(formId)){
+		}else if (ObjUtil.isNotNull(formId)){
 			List<Record> qcFormItemList = getItemCombinedListByPId(Kv.by("iqcformid", formId));
 			List<Record> qcFormParamList = spotCheckFormParamService.getQcFormParamListByPId(formId);
 			Map<Long, List<Record>> itemParamByItemMap = qcFormParamList.stream().collect(Collectors.groupingBy(obj -> obj.getLong("iqcitemid")));
@@ -583,16 +586,13 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 			}
 		}
 
-		if (CollectionUtil.isNotEmpty(mapList)){
+		if (CollUtil.isNotEmpty(mapList)){
 
-			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
-				@Override
-				public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-					Integer map1 = Integer.valueOf(o1.get("iseq").toString());
-					Integer map2 = Integer.valueOf(o2.get("iseq").toString());
-					return map1.compareTo(map2);
-				}
-			});
+			mapList.sort((o1, o2) -> {
+                Integer map1 = Integer.valueOf(o1.get("iseq").toString());
+                Integer map2 = Integer.valueOf(o2.get("iseq").toString());
+                return map1.compareTo(map2);
+            });
 			return mapList;
 		}
 		return null;

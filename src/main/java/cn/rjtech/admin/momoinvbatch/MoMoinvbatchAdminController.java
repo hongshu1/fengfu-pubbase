@@ -142,6 +142,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
     /**
      * 获取工单信息
      */
+    @UnCheck
     public void getModoc(Long imodocid) {
         MoDoc moDoc = moDocService.findById(imodocid);
         if (moDoc == null) {

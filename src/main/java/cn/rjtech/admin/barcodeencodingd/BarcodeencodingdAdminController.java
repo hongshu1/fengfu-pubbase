@@ -62,6 +62,7 @@ public class BarcodeencodingdAdminController extends BaseAdminController {
     /**
      * 根据主表id查询细表数据
      */
+    @UnCheck
     public void getlist(@Para(value = "barcodeencodingmid") Long barcodeencodingmid) {
         renderJsonData(service.getList(barcodeencodingmid));
     }

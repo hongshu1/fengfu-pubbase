@@ -1,11 +1,10 @@
 package cn.rjtech.admin.inventoryrouting;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
@@ -165,7 +164,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 
     public List<Record> dataList(Long iinventoryid) {
 		List<Record> list = dbTemplate("inventoryclass.getRouings", Okv.by("iinventoryid", iinventoryid)).find();
-		if (CollectionUtil.isNotEmpty(list)){
+		if (CollUtil.isNotEmpty(list)){
 			for (Record record :list){
 				Integer iAuditStatus = record.getInt(InventoryRouting.IAUDITSTATUS);
 				ValidationUtils.notNull(iAuditStatus, "该工艺路线缺少审批状态！");
@@ -449,7 +448,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 	
 	public Integer queryAwaitAudit(Long id, Long invId){
 		String sqlStr = "SELECT * FROM Bd_InventoryRouting WHERE iInventoryId = ? AND iAuditStatus IN (1)";
-		if (ObjectUtil.isNotNull(id)){
+		if (ObjUtil.isNotNull(id)){
 			sqlStr = sqlStr.concat(" AND iAutoId <> "+id);
 		}
 		return queryInt(sqlStr, invId);

@@ -1,7 +1,7 @@
 package cn.rjtech.admin.purchaseorderdqty;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -135,13 +135,13 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 	
 	public List<PurchaseorderdQty> getPurchaseorderdQty(Long purchaseOrderDId, JSONArray purchaseorderdQtyJsonArray, int seq){
 		List<PurchaseorderdQty> list = new ArrayList<>();
-		if (CollectionUtil.isEmpty(purchaseorderdQtyJsonArray)){
+		if (CollUtil.isEmpty(purchaseorderdQtyJsonArray)){
 			return null;
 		}
 		for (int i=0; i<purchaseorderdQtyJsonArray.size(); i++){
 			JSONObject jsonObject = purchaseorderdQtyJsonArray.getJSONObject(i);
 			BigDecimal qty = jsonObject.getBigDecimal(PurchaseorderdQty.IQTY.toLowerCase());
-			if (ObjectUtil.isNull(qty) || BigDecimal.ZERO.compareTo(qty) == 0){
+			if (ObjUtil.isNull(qty) || BigDecimal.ZERO.compareTo(qty) == 0){
 				continue;
 			}
 			seq+=10;

@@ -1,6 +1,6 @@
 package cn.rjtech.admin.purchaseorderref;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -116,7 +116,7 @@ public class PurchaseOrderRefService extends BaseService<PurchaseOrderRef> {
 	
 	public List<PurchaseOrderRef> getPurchaseOrderRefList(Long purchaseOrderDId, JSONArray orderRefJsonArray){
 		List<PurchaseOrderRef> purchaseOrderRefList = new ArrayList<>();
-		if (CollectionUtil.isEmpty(orderRefJsonArray)){
+		if (CollUtil.isEmpty(orderRefJsonArray)){
 			return purchaseOrderRefList;
 		}
 		for (int i=0; i<orderRefJsonArray.size(); i++){

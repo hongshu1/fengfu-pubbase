@@ -9,7 +9,6 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.TransVouch;
 import cn.rjtech.util.BillNoUtils;
-import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -58,6 +57,7 @@ public class TransVouchAdminController extends BaseAdminController {
 	/**
 	 * 调拨单列表明细
 	 */
+    @UnCheck
 	public void getTransVouchLines() {
 		String autoid = get("autoid");
 		Kv kv = new Kv();

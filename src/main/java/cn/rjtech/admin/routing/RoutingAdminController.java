@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
@@ -98,16 +99,20 @@ public class RoutingAdminController extends BaseAdminController {
         renderJsonData(inventoryChangeService.inventoryAutocomplete(getPageNumber(), 100, getKv()));
     }
 
+    @UnCheck
     public void findEquipmentModelAll() {
         renderJsonData(equipmentModelService.getAdminDataNoPage(getKv()));
     }
 
-
+    @UnCheck
     public void getRoutingDetails() {
         renderJsonData(service.getRoutingDetails(getKv()));
     }
 
-    // 工艺路线
+    /**
+     * 工艺路线
+     */
+    @UnCheck
     public void findRoutingAll() {
         renderJsonData(service.findRoutingAll(getKv()));
     }
@@ -120,10 +125,12 @@ public class RoutingAdminController extends BaseAdminController {
         render("version_table.html");
     }
 
+    @UnCheck
     public void versionAll() {
         renderJsonData(service.findRoutingVersion(getPageNumber(), getPageSize(), getKv()));
     }
 
+    @UnCheck
     public void getRoutingConfigDetail() {
         renderJsonData(inventoryRoutingConfigService.dataList(getLong(0)));
     }

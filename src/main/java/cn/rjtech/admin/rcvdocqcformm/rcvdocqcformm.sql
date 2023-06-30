@@ -69,6 +69,9 @@ where t1.IsDeleted = '0'
   #if(endtime)
   AND t1.dcreatetime <= #para(endtime)
   #end
+  #if(name)
+  AND t1.cupdatename <= #para(name)
+  #end
 ORDER BY t1.dUpdateTime DESC
 #end
 

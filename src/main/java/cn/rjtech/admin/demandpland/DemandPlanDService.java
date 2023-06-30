@@ -1,6 +1,6 @@
 package cn.rjtech.admin.demandpland;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
@@ -189,7 +189,7 @@ public class DemandPlanDService extends BaseService<DemandPlanD> {
 	}
 	
 	public void batchUpdateGenTypeByIds(List<Long> ids, Integer genType, Integer status){
-		if (CollectionUtil.isEmpty(ids)){
+		if (CollUtil.isEmpty(ids)){
 			return;
 		}
 		for (Long id : ids){

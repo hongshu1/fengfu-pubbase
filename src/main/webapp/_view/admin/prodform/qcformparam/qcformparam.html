@@ -32,8 +32,8 @@
 <td hidden>${data.iproditemid}</td>
 <td>${data.cprodparamname}</td>
 <td style="display: none">${data.iitemseq}</td>
-<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"
-           data-url="admin/operation/toggleIsenabledByQcParam/${data.iautoid}"/>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"
+           data-url="admin/prodParam/toggleIsEnabled/${data.iautoid}"/>
   </td></tr>
 {@/each}
 </textarea>

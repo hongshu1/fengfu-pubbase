@@ -1,12 +1,16 @@
 package cn.rjtech.admin.spotcheckformm;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
@@ -26,16 +30,15 @@ import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -248,16 +251,13 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			}
 		}
 
-		if (CollectionUtil.isNotEmpty(mapList)){
+		if (CollUtil.isNotEmpty(mapList)){
 
-			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
-				@Override
-				public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-					Integer map1 = Integer.valueOf(o1.get("iseq").toString());
-					Integer map2 = Integer.valueOf(o2.get("iseq").toString());
-					return map1.compareTo(map2);
-				}
-			});
+			mapList.sort((o1, o2) -> {
+                Integer map1 = Integer.valueOf(o1.get("iseq").toString());
+                Integer map2 = Integer.valueOf(o2.get("iseq").toString());
+                return map1.compareTo(map2);
+            });
 			return mapList;
 		}
 		return null;
@@ -303,16 +303,13 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			}
 
 		}
-		if (CollectionUtil.isNotEmpty(mapList)){
+		if (CollUtil.isNotEmpty(mapList)){
 
-			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
-				@Override
-				public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-					Integer map1 = Integer.valueOf(o1.get("proditemiseq").toString());
-					Integer map2 = Integer.valueOf(o2.get("proditemiseq").toString());
-					return map1.compareTo(map2);
-				}
-			});
+			mapList.sort((o1, o2) -> {
+                Integer map1 = Integer.valueOf(o1.get("proditemiseq").toString());
+                Integer map2 = Integer.valueOf(o2.get("proditemiseq").toString());
+                return map1.compareTo(map2);
+            });
 			return mapList;
 		}
 		return null;

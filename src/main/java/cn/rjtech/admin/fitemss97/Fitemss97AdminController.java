@@ -8,7 +8,6 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Fitemss97;
-import cn.rjtech.model.momdata.RdStyle;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -66,7 +65,7 @@ public class Fitemss97AdminController extends BaseAdminController {
         renderJsonData(service.getTreeDatas(true, true));
     }
 
-
+    @UnCheck
     public void selectFitemss97() {
         Fitemss97 fitemss97 = service.findById(getKv().getLong("iautoid"));
         renderJsonData(fitemss97);

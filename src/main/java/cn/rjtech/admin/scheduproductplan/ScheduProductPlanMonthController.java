@@ -4,6 +4,7 @@ package cn.rjtech.admin.scheduproductplan;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -119,7 +120,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     }
     //-----------------------------------------------------------------月周生产计划排产-----------------------------------------------
 
-
+    @UnCheck
     public void getApsWeekscheduleList() {
         renderJsonData(service.getApsWeekscheduleList());
     }
@@ -143,6 +144,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     /**
      * 查看计划
      */
+    @UnCheck
     public void getScheduPlanMonthList() {
         renderJson(service.getScheduPlanMonthList(getKv()));
     }
@@ -150,6 +152,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     /**
      * 根据层级获取最近锁定时间
      */
+    @UnCheck
     public void getLockDate() {
         //排产层级
         String level = get("level");
@@ -710,6 +713,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     /**
      *计划选择
      */
+    @UnCheck
     public void selectaprm() {
         set("month",get("month"));
         render("selectaprm.html");

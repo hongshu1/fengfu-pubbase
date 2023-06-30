@@ -1,6 +1,6 @@
 package cn.rjtech.admin.inventoryrouting;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -56,7 +56,7 @@ public class InventoryRoutingAdminController extends BaseAdminController {
 	public void dialog_index() {
 		keepPara();
 		List<Record> list = service.dataList(getLong("iinventoryid"));
-		if (CollectionUtil.isNotEmpty(list)){
+		if (CollUtil.isNotEmpty(list)){
 			set("isAdd", "1");
 		}
 		render("dialog_index.html");

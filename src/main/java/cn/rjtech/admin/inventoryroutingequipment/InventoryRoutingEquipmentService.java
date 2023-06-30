@@ -1,9 +1,8 @@
 package cn.rjtech.admin.inventoryroutingequipment;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -174,7 +173,7 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 		if (StrUtil.isNotBlank(kv.getStr(InventoryRoutingConfig.EQUIPMENTJSON))){
 			String str = kv.getStr(InventoryRoutingConfig.EQUIPMENTJSON);
 			JSONArray jsonArray = JSONObject.parseArray(str);
-			if (CollectionUtil.isEmpty(jsonArray)){
+			if (CollUtil.isEmpty(jsonArray)){
 				return null;
 			}
 			List<Record> recordList = new ArrayList<>();
@@ -184,7 +183,7 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 				record.setColumns(jsonObject.getInnerMap());
 				
 				Long equipmentId = jsonObject.getLong("iequipmentid");
-				if (ObjectUtil.isNotNull(equipmentId)){
+				if (ObjUtil.isNotNull(equipmentId)){
 					Equipment equipment = equipmentService.findById(equipmentId);
 					ValidationUtils.notNull(equipment, "未找到设备信息");
 					record.set(equipment.CEQUIPMENTCODE, equipment.getCEquipmentCode());
@@ -219,14 +218,14 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 		for (Record record : recordList){
 			Long routingConfigId = record.getLong(InventoryRoutingConfig.IAUTOID);
 			Object object = record.get(InventoryRoutingConfig.EQUIPMENTJSONSTR);
-			if (ObjectUtil.isEmpty(object)){
+			if (ObjUtil.isEmpty(object)){
 				continue;
 			}
 			List<JSONObject> itemJson = null;
 			if (object instanceof List){
 				itemJson =(List<JSONObject> )object;
 			}
-			if (CollectionUtil.isEmpty(itemJson)){
+			if (CollUtil.isEmpty(itemJson)){
 				continue;
 			}
 			
@@ -239,7 +238,7 @@ public class InventoryRoutingEquipmentService extends BaseService<InventoryRouti
 			}
 			
 		}
-		if (CollectionUtil.isNotEmpty(equipmentList)){
+		if (CollUtil.isNotEmpty(equipmentList)){
 			batchSave(equipmentList, 500);
 		}
 	}
