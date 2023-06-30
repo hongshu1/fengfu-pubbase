@@ -5,7 +5,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -790,7 +790,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         first5.setIPkgQty(pkgQty.intValue());
         sysassemdetailservice.update(first5);
         // 包装数量为空或者为0，生成一张条码，原始数量/打包数量
-        if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty) <= 0) {
+        if (ObjUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty) <= 0) {
             String barCode = purchaseOrderDBatchService.generateBarCode();
             PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, sourceQty, barCode);
             purchaseOrderDBatchList.add(purchaseOrderDBatch);

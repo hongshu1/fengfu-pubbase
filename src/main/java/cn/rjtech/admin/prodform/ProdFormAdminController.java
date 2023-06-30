@@ -1,7 +1,7 @@
 package cn.rjtech.admin.prodform;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.prodformtableparam.ProdFormTableParamService;
@@ -205,7 +205,7 @@ public class ProdFormAdminController extends BaseAdminController {
 		 *  3.默认加载时，是没有数据操作的，直接读取数据
 		 */
 		// 判断是否有新增的值
-		if (ObjectUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
+		if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
 			// 查询表格行记录
 			List<Map<String, Object>> recordList = prodFormTableParamService.findByFormId(formId);
 			// 查询表头数据及参数数据

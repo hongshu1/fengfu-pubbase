@@ -3,7 +3,7 @@ package cn.rjtech.admin.routing;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -150,7 +150,7 @@ public class RoutingService extends BaseService<BomMaster> {
 			return null;
 		}
 	
-		Map<Long, List<Record>> listMap = recordList.stream().filter(record -> ObjectUtil.isNotNull(record.getLong(InvPart.IPARENTINVID)))
+		Map<Long, List<Record>> listMap = recordList.stream().filter(record -> ObjUtil.isNotNull(record.getLong(InvPart.IPARENTINVID)))
 				.collect(Collectors.groupingBy(record -> record.getLong(InvPart.IPARENTINVID)));
 	
 		subordinate(recordList, listMap);
@@ -204,19 +204,19 @@ public class RoutingService extends BaseService<BomMaster> {
 			Long pId = record.getLong(InvPart.IPID);
 			Long iAutoId = record.getLong(InvPart.IAUTOID);
 			// 虚拟机跳过。父级id为空跳过
-			if (ObjectUtil.isNull(iInventoryId) || ObjectUtil.isNull(pId)){
+			if (ObjUtil.isNull(iInventoryId) || ObjUtil.isNull(pId)){
 				continue;
 			}
 		
 			// 复制值。
 			if (listMap.containsKey(iInventoryId)){
 				
-				Map<Long, List<Record>> map = listMap.get(iInventoryId).stream().filter(obj -> ObjectUtil.isNotNull(obj.getLong(InvPart.IPID))).collect(Collectors.groupingBy(obj -> obj.getLong(InvPart.IPID)));
+				Map<Long, List<Record>> map = listMap.get(iInventoryId).stream().filter(obj -> ObjUtil.isNotNull(obj.getLong(InvPart.IPID))).collect(Collectors.groupingBy(obj -> obj.getLong(InvPart.IPID)));
 				Map<Long, Long> newIdMap = new HashMap<>();
 				for (Record partRecord : listMap.get(iInventoryId)){
 					Long iPId = partRecord.getLong(InvPart.IPID);
 					Long newId = iAutoId;
-					if (ObjectUtil.isNotNull(iPId)){
+					if (ObjUtil.isNotNull(iPId)){
 						newId = JBoltSnowflakeKit.me.nextId();
 					}
 					newIdMap.put(partRecord.getLong(InvPart.IAUTOID), newId);
@@ -226,7 +226,7 @@ public class RoutingService extends BaseService<BomMaster> {
 				
 					Long iPId = partRecord.getLong(InvPart.IPID);
 					// 父id为空跳过
-					if (ObjectUtil.isNull(iPId)){
+					if (ObjUtil.isNull(iPId)){
 						continue;
 					}
 					// 主键id
@@ -311,7 +311,7 @@ public class RoutingService extends BaseService<BomMaster> {
 		kv.remove(InvPart.IPARENTINVID);
 		List<Record> records = detail(kv);
 		
-		Map<Long, List<Record>> listMap = records.stream().filter(record -> ObjectUtil.isNotNull(record.getLong(InvPart.IPARENTINVID)))
+		Map<Long, List<Record>> listMap = records.stream().filter(record -> ObjUtil.isNotNull(record.getLong(InvPart.IPARENTINVID)))
 				.collect(Collectors.groupingBy(record -> record.getLong(InvPart.IPARENTINVID)));
 		
 		subordinate(details, listMap);

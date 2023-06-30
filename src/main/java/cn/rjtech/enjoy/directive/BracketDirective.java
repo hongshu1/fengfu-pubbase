@@ -1,6 +1,6 @@
 package cn.rjtech.enjoy.directive;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import com.jfinal.kit.StrKit;
 import com.jfinal.template.Directive;
 import com.jfinal.template.Env;
@@ -57,7 +57,7 @@ public class BracketDirective extends Directive {
      */
     private void outputBracketValue(Scope scope, Writer writer) {
         Object value = valueExpr.eval(scope);
-        if (ObjectUtil.isNull(value) || value.toString().trim().length() == 0) {
+        if (ObjUtil.isNull(value) || value.toString().trim().length() == 0) {
             outputNothing(writer);
         } else {
             String val = value.toString().trim();

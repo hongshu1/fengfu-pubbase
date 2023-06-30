@@ -3,7 +3,7 @@ package cn.rjtech.admin.qcform;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -117,7 +117,7 @@ public class QcFormService extends BaseService<QcForm> {
         qcForm.setIsDeleted(false);
     
         QcForm obj = queryByQcName(qcForm.getCQcFormName(), null);
-        ValidationUtils.isTrue(ObjectUtil.isEmpty(obj), "表格名称不能重复");
+        ValidationUtils.isTrue(ObjUtil.isEmpty(obj), "表格名称不能重复");
         ValidationUtils.notNull(qcForm.getIAutoId(), "未获取到主键id");
         //if(existsName(qcForm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         boolean success = qcForm.save();
@@ -131,7 +131,7 @@ public class QcFormService extends BaseService<QcForm> {
     public QcForm queryByQcName(String qcFormName, Long id){
         ValidationUtils.notBlank(qcFormName, "表格名称不能为空");
         String sqlStr = "SELECT * FROM Bd_QcForm WHERE cQcFormName = ?";
-        if (ObjectUtil.isNotNull(id)){
+        if (ObjUtil.isNotNull(id)){
             sqlStr = sqlStr+" AND iAutoId <> '"+id+"'";
         }
         return findFirst(sqlStr, qcFormName);
@@ -156,7 +156,7 @@ public class QcFormService extends BaseService<QcForm> {
         dbQcForm.setCUpdateName(userName);
         dbQcForm.setDUpdateTime(date);
         QcForm obj = queryByQcName(dbQcForm.getCQcFormName(), dbQcForm.getIAutoId());
-        ValidationUtils.isTrue(ObjectUtil.isEmpty(obj), "表格名称不能重复");
+        ValidationUtils.isTrue(ObjUtil.isEmpty(obj), "表格名称不能重复");
         //if(existsName(qcForm.getName(), qcForm.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST)}
         boolean success = dbQcForm.update();
         if (success) {
@@ -410,7 +410,7 @@ public class QcFormService extends BaseService<QcForm> {
         Long formId = qcFom.getIAutoId();
         // 判断是否新增
         
-        if (ObjectUtil.isNull(formId)){
+        if (ObjUtil.isNull(formId)){
             formId = JBoltSnowflakeKit.me.nextId();
             qcFormNew.setIAutoId(formId);
         }
@@ -434,7 +434,7 @@ public class QcFormService extends BaseService<QcForm> {
         
         tx(() -> {
             // 新增
-            if (ObjectUtil.isNull(qcFom.getIAutoId())){
+            if (ObjUtil.isNull(qcFom.getIAutoId())){
                 qcFom.setIAutoId(qcFormNew.getIAutoId());
                 save(qcFom, orgId, userId, orgCode, orgName, userName, date);
             }else {
@@ -515,7 +515,7 @@ public class QcFormService extends BaseService<QcForm> {
                 }
             }
 //            jsonArray.sort(Comparator.comparing(obj -> ((JSONObject)obj).getInteger("iseq")));
-        }else if (ObjectUtil.isNotNull(formId)){
+        }else if (ObjUtil.isNotNull(formId)){
             List<Record> qcFormItemList = getItemCombinedListByPId(Kv.by("iqcformid", formId));
             List<Record> qcFormParamList = qcFormParamService.getQcFormParamListByPId(formId);
             Map<Long, List<Record>> itemParamByItemMap = qcFormParamList.stream().collect(Collectors.groupingBy(obj -> obj.getLong("iqcitemid")));

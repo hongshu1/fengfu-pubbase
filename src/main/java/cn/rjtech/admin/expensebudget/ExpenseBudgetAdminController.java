@@ -1,7 +1,7 @@
 package cn.rjtech.admin.expensebudget;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.annotation.CheckDataPermission;
@@ -468,8 +468,8 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     	String dendtime3 = para.getStr("dendtime3");
     	Integer ibudgettype3 = para.getInt("ibudgettype3");
     	//至少选择两种对比方案
-    	Boolean flg = JBoltStringUtil.isNotBlank(dstarttime1) && JBoltStringUtil.isNotBlank(dendtime1) && ObjectUtil.isNotNull(ibudgettype1)
-    			&& JBoltStringUtil.isNotBlank(dstarttime2) && JBoltStringUtil.isNotBlank(dendtime2) && ObjectUtil.isNotNull(ibudgettype2);
+    	Boolean flg = JBoltStringUtil.isNotBlank(dstarttime1) && JBoltStringUtil.isNotBlank(dendtime1) && ObjUtil.isNotNull(ibudgettype1)
+    			&& JBoltStringUtil.isNotBlank(dstarttime2) && JBoltStringUtil.isNotBlank(dendtime2) && ObjUtil.isNotNull(ibudgettype2);
     	ValidationUtils.isTrue(flg, "至少选择两种完善对比方案!");
     	//选择的对比方案起止日期的月份要一致，并且起止日期包含的月份数量要一致
     	Date dstarttime1Date = JBoltDateUtil.toDate(dstarttime1,"yyyy-MM");
@@ -486,11 +486,11 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     	int dendtime2Month = endTime2LocalDate1.getMonthValue();
 		long diffMonth1 = ChronoUnit.MONTHS.between(starTimet1LocalDate, endTime1LocalDate1) + 1;
 		long diffMonth2 = ChronoUnit.MONTHS.between(starTimet2LocalDate, endTime2LocalDate1) + 1;
-		Boolean flg2 = ObjectUtil.equal(dstarttime1Month, dstarttime2Month) 
-				&& ObjectUtil.equal(dendtime1Month, dendtime2Month)
-				&& ObjectUtil.equal(diffMonth1, diffMonth2);
+		Boolean flg2 = ObjUtil.equal(dstarttime1Month, dstarttime2Month) 
+				&& ObjUtil.equal(dendtime1Month, dendtime2Month)
+				&& ObjUtil.equal(diffMonth1, diffMonth2);
 		ValidationUtils.isTrue(flg2, "请正确选择对比方案的起止日期!");
-    	if(JBoltStringUtil.isNotBlank(dstarttime3) && JBoltStringUtil.isNotBlank(dendtime3) && ObjectUtil.isNotNull(ibudgettype3)){
+    	if(JBoltStringUtil.isNotBlank(dstarttime3) && JBoltStringUtil.isNotBlank(dendtime3) && ObjUtil.isNotNull(ibudgettype3)){
     		Date dstarttime3Date = JBoltDateUtil.toDate(dstarttime3,"yyyy-MM");
         	Date dendtime3Date = JBoltDateUtil.toDate(dendtime3,"yyyy-MM");
     		LocalDate starTimet3LocalDate = LocalDate.parse(JBoltDateUtil.format(dstarttime3Date,JBoltDateUtil.YMD));
@@ -498,9 +498,9 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
     		int dstarttime3Month = starTimet3LocalDate.getMonthValue();
         	int dendtime3Month = endTime3LocalDate1.getMonthValue();
         	long diffMonth3 = ChronoUnit.MONTHS.between(starTimet3LocalDate, endTime3LocalDate1) + 1;
-    		Boolean flg3 = ObjectUtil.equal(dstarttime1Month, dstarttime3Month) 
-    				&& ObjectUtil.equal(dendtime1Month, dendtime3Month)
-    				&& ObjectUtil.equal(diffMonth1, diffMonth3);
+    		Boolean flg3 = ObjUtil.equal(dstarttime1Month, dstarttime3Month) 
+    				&& ObjUtil.equal(dendtime1Month, dendtime3Month)
+    				&& ObjUtil.equal(diffMonth1, diffMonth3);
     		ValidationUtils.isTrue(flg3, "请正确选择第三种对比方案的起止日期!");
     	}else{
     		para.remove("dstarttime3");

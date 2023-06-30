@@ -1,7 +1,7 @@
 package cn.rjtech.admin.prodformparam;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.rjtech.model.momdata.QcFormParam;
 import cn.rjtech.model.momdata.QcParam;
@@ -97,7 +97,7 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 
 	public ProdFormParam createQcFormParam(Long id, Long qcFormId, Long qcFormItemId, Long qcItemId, Long qcParamId, Integer itemSeq, Integer itemParamSeq, Boolean isDeleted){
 		ProdFormParam qcFormParam = new ProdFormParam();
-		if (ObjectUtil.isNull(id)){
+		if (ObjUtil.isNull(id)){
 			id = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormParam.setIProdParamId(qcParamId);
@@ -138,7 +138,7 @@ public class ProdFormParamService extends BaseService<ProdFormParam> {
 	}
 
 	public List<Record> getQcFormParamListByPId(Long qcFormId) {
-		if (ObjectUtil.isNull(qcFormId)){
+		if (ObjUtil.isNull(qcFormId)){
 			return null;
 		}
 		return dbTemplate("prodformparam.findByFormId", Okv.by("qcFormId", qcFormId)).find();

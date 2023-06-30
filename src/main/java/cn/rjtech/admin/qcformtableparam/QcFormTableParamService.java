@@ -1,7 +1,7 @@
 package cn.rjtech.admin.qcformtableparam;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -145,7 +145,7 @@ public class QcFormTableParamService extends BaseService<QcFormTableParam> {
 	
 	public QcFormTableParam createQcFormTableParam(Long id, Long qcFormId, Integer seq, Integer type, BigDecimal stdVal, BigDecimal maxVal, BigDecimal minVal, String options, Boolean isDeleted){
 		QcFormTableParam qcFormTableParam = new QcFormTableParam();
-		if (ObjectUtil.isNull(id)){
+		if (ObjUtil.isNull(id)){
 			id = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormTableParam.setIAutoId(id);

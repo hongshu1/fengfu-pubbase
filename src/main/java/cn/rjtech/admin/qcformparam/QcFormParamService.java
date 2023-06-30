@@ -1,7 +1,7 @@
 package cn.rjtech.admin.qcformparam;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -242,7 +242,7 @@ public class QcFormParamService extends BaseService<QcFormParam> {
 	
 	
 	public List<Record> getQcFormParamListByPId(Long qcFormId) {
-		if (ObjectUtil.isNull(qcFormId)){
+		if (ObjUtil.isNull(qcFormId)){
 			return null;
 		}
 		return dbTemplate("qcformparam.findByFormId", Okv.by("qcFormId", qcFormId)).find();
@@ -250,7 +250,7 @@ public class QcFormParamService extends BaseService<QcFormParam> {
 	
 	public QcFormParam createQcFormParam(Long id, Long qcFormId, Long qcFormItemId, Long qcItemId, Long qcParamId, Integer itemSeq, Integer itemParamSeq, Boolean isDeleted){
 		QcFormParam qcFormParam = new QcFormParam();
-		if (ObjectUtil.isNull(id)){
+		if (ObjUtil.isNull(id)){
 			id = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormParam.setIAutoId(id);

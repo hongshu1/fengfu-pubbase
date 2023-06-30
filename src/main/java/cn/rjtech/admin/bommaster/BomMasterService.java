@@ -3,7 +3,7 @@ package cn.rjtech.admin.bommaster;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
@@ -221,7 +221,7 @@ public class BomMasterService extends BaseService<BomMaster> {
         String userName = JBoltUserKit.getUserName();
         DateTime now = DateUtil.date();
         // 主键id为空为 新增或者为修改
-        if (ObjectUtil.isNull(bomMaster.getIAutoId())){
+        if (ObjUtil.isNull(bomMaster.getIAutoId())){
 			return saveForm(bomMaster, tableData, userId, userName, now, invMap, flag);
         }
         return updateForm(bomMaster, tableData, userId, userName, now, invMap, flag);
@@ -316,7 +316,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 			Integer level = bomCompare.getILevel();
 			Long iPid = bomCompare.getIPid();
 			// level 等于1 说明是产品（半成品）下的半成品或部品
-			if (1 == level && ObjectUtil.isNull(iPid)){
+			if (1 == level && ObjUtil.isNull(iPid)){
 				bomCompare.setIPid(bomMasterId);
 			}
 			String code = bomCompare.getCInvLev();
@@ -343,7 +343,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 				continue;
 			}
 			// 不等于null，说明在前面已经赋值了
-			if (ObjectUtil.isNotNull(bomCompare.getIPid())){
+			if (ObjUtil.isNotNull(bomCompare.getIPid())){
 				continue;
 			}
 			String cInvLev = bomCompare.getCInvLev();
@@ -544,7 +544,7 @@ public class BomMasterService extends BaseService<BomMaster> {
         // 片料
         if (StrUtil.isNotBlank(row.getString(BomCompare.BLANKINGITEMID.toLowerCase()))){
         	Long pid = null;
-        	if (ObjectUtil.isNotNull(bomCompare)){
+        	if (ObjUtil.isNotNull(bomCompare)){
         		pid = bomCompare.getIAutoId();
 			}
         	blankBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now, bomMasterId, pid,
@@ -564,10 +564,10 @@ public class BomMasterService extends BaseService<BomMaster> {
 			 * 2.存在片料： 直接去片料的id
 			 */
 			Long pid = null;
-			if (ObjectUtil.isNotNull(bomCompare)){
+			if (ObjUtil.isNotNull(bomCompare)){
 				pid = bomCompare.getIAutoId();
 			}
-			if (ObjectUtil.isNotNull(blankBomCompare)){
+			if (ObjUtil.isNotNull(blankBomCompare)){
 				pid = blankBomCompare.getIAutoId();
 			}
 			slicingBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now,bomMasterId, pid,
@@ -580,13 +580,13 @@ public class BomMasterService extends BaseService<BomMaster> {
         // 卷料
         if (StrUtil.isNotBlank(row.getString(BomCompare.ORIGINALITEMID.toLowerCase()))){
 			Long pid = null;
-			if (ObjectUtil.isNotNull(bomCompare)){
+			if (ObjUtil.isNotNull(bomCompare)){
 				pid = bomCompare.getIAutoId();
 			}
-			if (ObjectUtil.isNotNull(blankBomCompare)){
+			if (ObjUtil.isNotNull(blankBomCompare)){
 				pid = blankBomCompare.getIAutoId();
 			}
-			if (ObjectUtil.isNotNull(slicingBomCompare)){
+			if (ObjUtil.isNotNull(slicingBomCompare)){
 				pid = slicingBomCompare.getIAutoId();
 			}
             BomCompare originalBomCompare = bomCompareService.createBomCompare(JBoltSnowflakeKit.me.nextId(), userId, userName, now,bomMasterId, pid,
@@ -756,7 +756,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		String equipmentModelName = getCellRangeValue(flattenedCells);
 		// 机型名称不为空，则找到对应的机型id
 		EquipmentModel equipmentModel = StrUtil.isNotBlank(equipmentModelName) ? equipmentModelService.findByName(equipmentModelName) : null;
-		if (ObjectUtil.isNotNull(equipmentModel)){
+		if (ObjUtil.isNotNull(equipmentModel)){
 			record.set(BomMaster.IEQUIPMENTMODELID, equipmentModel.getIAutoId());
 		}
 		record.set(BomMaster.EQUIPMENTMODELNAME, equipmentModelName);
@@ -830,7 +830,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		if (StrUtil.isNotBlank(customerName)){
 			String customerStr = customerName.contains("客户：") ? customerName.substring(customerName.lastIndexOf("客户：")) : customerName;
 			Record customerRecord = customerService.findByVendorName(customerStr);
-			if (ObjectUtil.isNotNull(customerRecord)){
+			if (ObjUtil.isNotNull(customerRecord)){
 				record.set(BomMaster.ICUSTOMERID, customerRecord.getLong("cvenid"));
 			}
 			record.set(BomMaster.USTOMERNAME, customerStr);
@@ -854,7 +854,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 	}
 	
 	private String getDateConventStr(Date date){
-		if (ObjectUtil.isNull(date)){
+		if (ObjUtil.isNull(date)){
 			return null;
 		}
 		return DateUtil.formatDate(date);
@@ -903,7 +903,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		// 子件数据从第十一行开始读，下标10
 		for (int i=10; i<=sheet.getLastRowNum(); i++){
 			XSSFRow row = sheet.getRow(i);
-			if (ObjectUtil.isNull(row) || ObjectUtil.isNull(row.getCell(1))){
+			if (ObjUtil.isNull(row) || ObjUtil.isNull(row.getCell(1))){
 				perCacheRecord = null;
 				continue;
 			}
@@ -915,7 +915,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 			// 先获取编码
 			for (int iCode=1; iCode<7; iCode++){
 				XSSFCell cell = row.getCell(iCode);
-				if (ObjectUtil.isNull(cell)){
+				if (ObjUtil.isNull(cell)){
 					continue;
 				}
 				cell.setCellType(CellType.STRING);
@@ -950,7 +950,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 			// 编码全部为空，则跳过（第二层开始查找存货）
 			if (StrUtil.isBlank(codeKey)){
 				// 上一层对象没有记录则直接跳过
-				if (ObjectUtil.isNull(perCacheRecord)){
+				if (ObjUtil.isNull(perCacheRecord)){
 					continue;
 				}
 				buildLastRow(sheet, row,rowRecord);
@@ -1166,7 +1166,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 	 * @param type 0:原材料 1： 分条料 2：漏料
 	 */
 	private void setItemRecord(Record record, Inventory inventory, int type){
-		if (ObjectUtil.isNull(inventory)){
+		if (ObjUtil.isNull(inventory)){
 			return;
 		}
 		switch (type){
@@ -1297,7 +1297,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 	 * @param flag 校验是否存在共用件在审批中
 	 */
 	private void saveCommonCompare(JSONObject invMap, Boolean flag){
-		if (ObjectUtil.isNull(invMap)){
+		if (ObjUtil.isNull(invMap)){
 			return;
 		}
 		ValidationUtils.isTrue(flag, "此物料已关联其它成品/半成品物料BOM且再审批中，不能进行升级版本");
@@ -1356,7 +1356,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 			// 将生效的bom改为失效
 			updateNotEffective(bomMaster.getIInventoryId());
 			BomMaster first = findFirst("select * from Bd_BomMaster where isEffective = 1 and iInventoryId = ?", bomMaster.getIInventoryId());
-			if (ObjectUtil.isNotNull(first)){
+			if (ObjUtil.isNotNull(first)){
 				// 将失效的bom母件记录删除
 				bomMasterInvService.deleteByBomMasterId(first.getIAutoId());
 			}

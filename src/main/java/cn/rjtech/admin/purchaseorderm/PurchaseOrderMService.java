@@ -6,7 +6,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
@@ -143,7 +143,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
             }
             Integer type = record.getInt(PurchaseOrderM.ITYPE);
             SourceTypeEnum sourceTypeEnum = SourceTypeEnum.toEnum(type);
-            if (ObjectUtil.isNotNull(sourceTypeEnum)) {
+            if (ObjUtil.isNotNull(sourceTypeEnum)) {
                 record.set(PurchaseOrderM.TYPESTR, sourceTypeEnum.getText());
             }
         }
@@ -527,7 +527,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 
         // 校验采购合同号是否存在
         Integer count = findOderNoIsNotExists(purchaseOrderM.getCOrderNo());
-        ValidationUtils.isTrue(ObjectUtil.isEmpty(count) || count == 0, "采购订单号已存在");
+        ValidationUtils.isTrue(ObjUtil.isEmpty(count) || count == 0, "采购订单号已存在");
         int seq = 0;
         for (Long inventoryId : invTableMap.keySet()) {
             // 记录供应商地址及备注
@@ -651,7 +651,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 
     public Integer findOderNoIsNotExists(Long id, String orderNo) {
         String sql = "select count(1) from PS_PurchaseOrderM where cOrderNo =? ";
-        if (ObjectUtil.isNotNull(id)) {
+        if (ObjUtil.isNotNull(id)) {
             sql = sql.concat("iAutoId <> " + id);
         }
         return queryInt(sql, orderNo);
@@ -774,7 +774,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
             // 包装数量
             BigDecimal pkgQty = record.getBigDecimal(Inventory.IPKGQTY);
             // 包装数量为空或者为0，生成一张条码，原始数量/打包数量
-            if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty) <= 0) {
+            if (ObjUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty) <= 0) {
                 String barCode = purchaseOrderDBatchService.generateBarCode();
                 PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService
                     .createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, sourceQty, barCode);
