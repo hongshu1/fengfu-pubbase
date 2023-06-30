@@ -99,6 +99,7 @@
                 <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="controls" value="#(controls??)"/>
                 <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="croutingname" value="#(croutingname??)"/>
                 <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="iinventoryid" value="#(iinventoryid??)"/>
+                <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="itype" value="#(itype??)"/>
 
                 <label class="col-sm-1 col-form-label">设备名称</label>
                 <div class="col-2">
@@ -130,8 +131,8 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">点检异常记录：</label>
                 <div class="col">
-                    <span class="form-control">#(recordInfo.ccreatename??)</span>
-                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.ccreatename" value="#(recordInfo.ccreatename??)"/>
+                    <span class="form-control">#(data.cdesc??)</span>
+                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="data.cdesc" value="#(data.cdesc??)"/>
                 </div>
             </div>
         </div>
@@ -139,8 +140,8 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">处理方式：</label>
                 <div class="col">
-                    <span class="form-control">#(recordInfo.dcreatetime??)</span>
-                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="moMopatchweldm.dcreatetime" value="#(recordInfo.dcreatetime??)"/>
+                    <span class="form-control">#(data.cmethod??)</span>
+                    ###<input type="text" disabled data-with-clearbtn="true" autocomplete="off"  class="form-control"    maxlength="255" name="data.cmethod" value="#(data.cmethod??)"/>
                 </div>
             </div>
         </div>

@@ -26,7 +26,8 @@
     {@if data.iauditstatus == '未生成' }
     <a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
-    &spotcheckformmid=${data.spotcheckformmid}&controls=0
+    &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
+    &cspotcheckformname=${data.cspotcheckformname}
     &edit=true"
     data-area="100%,100%"  tooltip data-title="生成"  data-handler="refreshJBoltTable"
     data-dialog-title="生成" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>生成</a>
@@ -35,7 +36,8 @@
    {@if data.iauditstatus == '未审核' }
     <a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
-    &spotcheckformmid=${data.spotcheckformmid}&controls=0
+    &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
+    &cspotcheckformname=${data.cspotcheckformname}
     &edit=true"
     data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable"
     data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
@@ -43,7 +45,8 @@
 {@if data.iauditstatus == '待审核' }
 <a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
-    &spotcheckformmid=${data.spotcheckformmid}&controls=0
+    &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
+    &cspotcheckformname=${data.cspotcheckformname}
     &edit=true"
     data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable"
     data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
@@ -52,6 +55,7 @@
 {@/if}
 
 <td>${data.iauditstatus}</td>
+<td>${data.cspotcheckformname}</td>
 <td>${data.coperationname}</td>
 <td>${data.cequipmentnames}</td>
 <td>${data.cpersonname}</td>
@@ -78,6 +82,7 @@
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="100">操作</th>
                 <th  data-width="100" data-column="iAuditStatus">审核状态</th>
+                <th  data-width="150" data-column="coperationname">点检表格名称</th>
                 <th  data-width="150" data-column="coperationname">工序名称</th>
                 <th  data-width="100" data-column="cequipmentmodelname">设备名称</th>
                 <th  data-width="100" data-column="iSpotCheckFormId">生成人员</th>

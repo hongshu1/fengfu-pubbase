@@ -1,9 +1,11 @@
 package cn.rjtech.api.prodformm;
 
+import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.prodform.ProdFormService;
 import cn.rjtech.admin.prodformitem.ProdFormItemService;
+import cn.rjtech.admin.prodformm.ProdFormMService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.util.ValidationUtils;
@@ -28,6 +30,8 @@ public class ProdFormMApiController extends BaseApiController {
     private ProdFormItemService prodFormItemService;
     @Inject
     private ProdFormService prodFormService;
+    @Inject
+    private ProdFormMService prodFormMService;
     /**
      * 页面数据
      */
@@ -75,24 +79,23 @@ public class ProdFormMApiController extends BaseApiController {
     }
 
     /**
-     * 根据表格id获取对应标题头数据
+     * 新增页面数据
      */
     @UnCheck
-    public void getTitleDatas(@Para( value = "iprodformid") String iprodformid){
+    public void addDatas(@Para( value = "iprodformid") String iprodformid){
         //生产表单项目标题
         List<Record> formItemLists = prodFormItemService.formItemLists(Kv.by("iqcformid", iprodformid));
-        //行转列
-        renderJBoltApiRet( service.lineRoll(formItemLists,iprodformid));
+        List<Record> byIdGetDetail = prodFormService.findByIdGetDetail(iprodformid);
+        renderJBoltApiRet( service.addDatas( prodFormMService.lineRoll2(byIdGetDetail),prodFormMService.lineRoll(formItemLists,iprodformid)));
+    }
+    /**
+     * 编辑页面
+     */
+    public void redact(@Para( value = "iautoid") String iautoid){
+        //生产表单项目标题
+        renderJBoltApiRet(JBoltApiRet.successWithData(prodFormMService.findById(iautoid)));
     }
 
-    /**
-     * 根据表格id获取对应标表体数据
-     */
-    @UnCheck
-    public void getWatchBodyDatas(@Para( value = "iprodformid") String iprodformid){
-        List<Record> byIdGetDetail = prodFormService.findByIdGetDetail(iprodformid);
-        renderJBoltApiRet( service.lineRoll2(byIdGetDetail));
-    }
 
 
     /**

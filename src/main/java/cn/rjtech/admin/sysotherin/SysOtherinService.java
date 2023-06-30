@@ -16,6 +16,7 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -36,7 +37,7 @@ import java.util.*;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-05 17:57
  */
-public class SysOtherinService extends BaseService<SysOtherin> {
+public class SysOtherinService extends BaseService<SysOtherin> implements IApprovalService {
     private final SysOtherin dao = new SysOtherin().dao();
 
     @Override
@@ -134,6 +135,13 @@ public class SysOtherinService extends BaseService<SysOtherin> {
      */
     public Ret delete(Long id) {
         tx(() -> {
+            SysOtherin s = findFirst("select *  from T_Sys_OtherIn where AutoID in (" + id + ")");
+            if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
+            }
+            if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
+            }
             deleteById(id);
             delete("DELETE T_Sys_OtherInDetail   where  MasID = ?", id);
             return true;
@@ -146,6 +154,15 @@ public class SysOtherinService extends BaseService<SysOtherin> {
      */
     public Ret deleteRmRdByIds(String ids) {
         tx(() -> {
+            List<SysOtherin> sysOtherins = find("select *  from T_Sys_OtherIn where AutoID in (" + ids + ")");
+            for (SysOtherin s : sysOtherins) {
+                if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
+                }
+                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                    ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
+                }
+            }
             deleteByIds(ids);
             String[] split = ids.split(",");
             for (String s : split) {
@@ -513,6 +530,121 @@ public class SysOtherinService extends BaseService<SysOtherin> {
         }
     }
 
+    /**
+     * todo  审核通过
+     */
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    /**
+     * 审核不通过
+     */
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    /**
+     * todo 实现反审之前的其他业务操作，如有异常返回错误信息
+     */
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /**
+     * todo 实现反审之前的其他业务操作，如有异常返回错误信息
+     */
+    @Override
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /**
+     * 提审前业务，如有异常返回错误信息
+     */
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 提审后业务处理，如有异常返回错误信息
+     */
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 撤回审核业务处理，如有异常返回错误信息，没走完的，不用做业务出来
+     */
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        return null;
+    }
+
+    /**
+     *  todo 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * todo 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * todo 批量审核（审批）通过，后置业务实现
+     */
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    /**
+     * 批量审批（审核）不通过，后置业务实现
+     */
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    /**
+     * todo 批量撤销审批，后置业务实现，需要做业务出来
+     */
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
 
 
+    public List<Record> billtype(Kv kv) {
+        return dbTemplate("sysotherin.billtype", kv).find();
+    }
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode) {
+        return dbTemplate("sysotherin.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode)).find();
+    }
 }

@@ -54,6 +54,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.ANNUALORDERM_ADD)
     public void add() {
         render("add.html");
     }
@@ -68,6 +69,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.ANNUALORDERM_EDIT)
     public void edit() {
         AnnualOrderM annualOrderM = service.findById(get("iautoid"));
         if (annualOrderM == null) {
@@ -92,6 +94,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.ANNUALORDERM_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -99,6 +102,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.ANNUALORDERM_DELETEBYIDS)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -106,6 +110,7 @@ public class AnnualOrderMAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.ANNUALORDERM_SAVETABLESUBMIT)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }

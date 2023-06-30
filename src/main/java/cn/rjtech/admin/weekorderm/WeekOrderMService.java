@@ -124,7 +124,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
         return paginate;
     }
 
-    private void change(List<Record> records){
+    public void change(List<Record> records){
         if (CollUtil.isEmpty(records)){
             return;
         }
