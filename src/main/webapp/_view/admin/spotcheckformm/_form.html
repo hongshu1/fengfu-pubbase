@@ -13,7 +13,7 @@
             <div class="card-body">
                 <div class="col">
                     #if(readonly != 'readonly')
-                    #if(controls == '0')
+                    #if(controls != '1')
                     <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
                     #end
@@ -29,6 +29,7 @@
     <div class="py-2" style="padding:.5rem 0rem;">
         <span class="py-1"><strong>工单信息</strong></span>
     </div>
+    #if(readonly == 'readonly')
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -83,6 +84,7 @@
             </div>
         </div>
     </div>
+    #end
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -102,10 +104,12 @@
                 <div class="col-2">
                     <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="20" name="spotCheckFormM.cequipmentmodelname" value="#(spotCheckFormM.cequipmentnames??)"/>
                 </div>
+                #if(readonly == 'readonly')
                 <label class="col-sm-1 col-form-label">状态</label>
                 <div class="col-2">
                     <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="20" name="statename" value="#(data.statename??)"/>
                 </div>
+                #end
 
             </div>
         </div>
@@ -120,6 +124,7 @@
     <div class="py-2" style="padding:.5rem 0rem;margin-top: 10px">
 
     </div>
+    #if(readonly == 'readonly')
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -182,6 +187,7 @@
         </div>
 
     </div>
+    #end
 </form>
 #define js()
 #include("_table3_js.html")
