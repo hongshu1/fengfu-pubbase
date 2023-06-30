@@ -71,11 +71,9 @@ public class SpotCheckFormMApiService extends JBoltApiBaseService {
             kv.set("itype",itype);
             //生产表单项目标题
             List<Record> formItemLists = spotCheckFormItemService.formItemLists(Kv.by("iqcformid", ispotcheckformid));
-            List<Map<String, Object>> roll = service.lineRoll(formItemLists, String.valueOf(ispotcheckformid));
-            kv.set("roll",roll);
+            kv.set("lineRoll",formItemLists);
             List<Record> byIdGetDetail = spotCheckFormService.findByIdGetDetail(String.valueOf(ispotcheckformid));
-            List<Map<String, Object>> maps = service.lineRoll2(byIdGetDetail, String.valueOf(spotcheckformmid));
-            kv.set("maps",maps);
+            kv.set("lineRoll2",byIdGetDetail);
         }
         return JBoltApiRet.successWithData(kv);
     }
