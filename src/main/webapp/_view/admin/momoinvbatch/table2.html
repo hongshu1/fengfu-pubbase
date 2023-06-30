@@ -31,8 +31,7 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="moMoinvbatch_toolbar1_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
-                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/momoinvbatch/workByIds?imodocid=#(moDoc.iautoid??)&ids=" data-confirm="批量报工？" class="btn btn-primary btn-sm" ><i class="fa fa-print"></i>批量报工</button>
-
+                <button data-ajaxbtn data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/momoinvbatch/workByIds?imodocid=#(moDoc.iautoid??)&ids=" data-confirm="批量报工？" class="btn btn-primary btn-sm" ><i class="fa fa-print"></i>批量报工</button>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -43,6 +42,7 @@
                data-height="fill"
                data-ajax="true"
                data-url="admin/momoinvbatch/datas?iprintstatus=2"
+               data-ajax-success-handler="checkDatas"
                data-column-resize="true"
                data-row-click-active="true"
                data-column-prepend="1:checkbox:true"

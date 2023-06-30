@@ -623,9 +623,9 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 				compQty = compQty.add(moMoinvbatch.getIQty());
 			}
 
-			moDoc.setICompQty(compQty.add(moDoc.getICompQty()));
+			moDoc.setICompQty(compQty.add(Optional.ofNullable(moDoc.getICompQty()).orElse(BigDecimal.ZERO)));
 			ValidationUtils.isTrue(moDoc.update(),"更新制造工单信息失败");
-			ValidationUtils.isTrue(batchSave(moMoinvbatches).length>0,"更新现品票信息失败");
+			ValidationUtils.isTrue(batchUpdate(moMoinvbatches).length>0,"更新现品票信息失败");
 			return true;
 		});
 		return SUCCESS;
@@ -699,6 +699,7 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 			Boolean printWorkOrderSpotTicketsInAdvance = JBoltGlobalConfigCache.me.getBooleanConfigValue("print_work_order_spot_tickets_in_advance");
 			List<MoMoinvbatch> moinvbatches = getListByIds(ids);
 			MoDoc moDoc = moDocService.findById(imodocid);
+			BigDecimal compQty = BigDecimal.ZERO;
 			for (MoMoinvbatch moMoinvbatch:moinvbatches) {
 				moMoinvbatch.setIPrintStatus(2);
 				moMoinvbatch.setIUpdateBy(JBoltUserKit.getUserId());
@@ -706,9 +707,10 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 				moMoinvbatch.setDUpdateTime(new Date());
 				if (!printWorkOrderSpotTicketsInAdvance) {
 					moMoinvbatch.setIStatus(1);
-					moDoc.setICompQty(moMoinvbatch.getIQty().add(moDoc.getICompQty()));
+					compQty = compQty.add(moMoinvbatch.getIQty());
 				}
 			}
+			moDoc.setICompQty(compQty.add(Optional.ofNullable(moDoc.getICompQty()).orElse(BigDecimal.ZERO)));
 			ValidationUtils.isTrue(moDoc.update(),"更新制造工单信息失败");
 			ValidationUtils.isTrue(batchUpdate(moinvbatches).length > 0, "处理失败,无法打印!");
 			return true;
