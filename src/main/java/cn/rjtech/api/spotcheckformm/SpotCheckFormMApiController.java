@@ -1,22 +1,15 @@
 package cn.rjtech.api.spotcheckformm;
 
-import cn.hutool.core.util.StrUtil;
-import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.inventoryspotcheckform.InventorySpotCheckFormService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformitem.SpotCheckFormItemService;
 import cn.rjtech.admin.spotcheckformm.SpotCheckFormMService;
 import cn.rjtech.base.controller.BaseApiController;
-import cn.rjtech.model.momdata.SpotCheckForm;
-import cn.rjtech.model.momdata.SpotCheckFormM;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
 
-import java.util.List;
-import java.util.Map;
 
 /**
  * 点检管理
