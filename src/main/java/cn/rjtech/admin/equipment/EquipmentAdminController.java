@@ -182,6 +182,7 @@ public class EquipmentAdminController extends BaseAdminController {
         renderJson(service.toggleBoolean(getLong(0), "isEnabled"));
     }
 
+    @UnCheck
     public void selectLine() {
         renderJsonData(service.selectWorkRegs());
     }

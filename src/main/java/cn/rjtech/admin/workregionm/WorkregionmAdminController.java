@@ -61,7 +61,8 @@ public class WorkregionmAdminController extends JBoltBaseController {
 
     /**
      * 产线选择
-     * */
+     */
+    @UnCheck
     public void select_dialog_index() {
         render("select_dialog_index.html");
     }
@@ -217,6 +218,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 查询产线列表
      */
+    @UnCheck
     public void selectWorkRegionMList() {
         renderJsonData(service.selectWorkRegionMList());
     }

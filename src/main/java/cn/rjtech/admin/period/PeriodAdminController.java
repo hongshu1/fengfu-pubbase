@@ -120,6 +120,7 @@ public class PeriodAdminController extends BaseAdminController {
     /**
      * 下拉框联动数据
      */
+    @UnCheck
     public void selectBudgetType(){
         Kv kv = getKv();
         String str = kv.getStr("key");

@@ -43,6 +43,7 @@ public class SaleTypeAdminController extends BaseAdminController {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }
 
+    @UnCheck
     public void selectData() {
         renderJsonData(service.selectData(getKv()));
     }

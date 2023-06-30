@@ -63,6 +63,7 @@ public class RdStyleAdminController extends BaseAdminController {
         render("edit.html");
     }
 
+    @UnCheck
     public void selectRdStyle() {
         RdStyle rdStyle = service.findById(getKv().getLong("autoid"));
         renderJsonData(rdStyle);

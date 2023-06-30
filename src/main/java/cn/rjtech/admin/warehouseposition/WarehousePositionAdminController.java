@@ -11,7 +11,6 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.model.momdata.WarehousePosition;
 import com.jfinal.aop.Before;
-import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
@@ -152,7 +151,7 @@ public class WarehousePositionAdminController extends JBoltBaseController {
 	/**
 	 * 打印
 	 */
-	@Clear
+    @UnCheck
 	public void selectPrint(){
 		renderJson(service.selectPrint(null));
 	}

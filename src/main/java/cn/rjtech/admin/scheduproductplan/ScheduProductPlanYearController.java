@@ -420,6 +420,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      *计划选择
      */
+    @UnCheck
     public void selectaprm() {
         set("month",get("month"));
         render("selectaprm.html");

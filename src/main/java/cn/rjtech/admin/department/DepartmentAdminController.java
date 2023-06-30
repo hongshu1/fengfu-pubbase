@@ -220,6 +220,7 @@ public class DepartmentAdminController extends BaseAdminController {
     /**
      * 下拉框选择人员数据源
      */
+    @UnCheck
     public void selectPerson() {
         String key = get("key");
         Kv kv = new Kv();
