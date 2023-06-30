@@ -1,5 +1,6 @@
 package cn.rjtech.api.prodformm;
 
+import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.prodform.ProdFormService;
@@ -87,6 +88,14 @@ public class ProdFormMApiController extends BaseApiController {
         List<Record> byIdGetDetail = prodFormService.findByIdGetDetail(iprodformid);
         renderJBoltApiRet( service.addDatas( prodFormMService.lineRoll2(byIdGetDetail),prodFormMService.lineRoll(formItemLists,iprodformid)));
     }
+    /**
+     * 编辑页面
+     */
+    public void redact(@Para( value = "iautoid") String iautoid){
+        //生产表单项目标题
+        renderJBoltApiRet(JBoltApiRet.successWithData(prodFormMService.findById(iautoid)));
+    }
+
 
 
     /**
