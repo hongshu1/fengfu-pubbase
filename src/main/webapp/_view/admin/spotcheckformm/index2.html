@@ -4,7 +4,7 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
 <div class="jbolt_page_title">
 <div class="row">
-	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>始业点检表管理</h1></div>
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>首末件点检表管理</h1></div>
 	<div class="col">
 	<form class="form-inline" id="SpotCheckFormM_form_#(pageId)">
 		<input type="text" autocomplete="off"  class="form-control"  placeholder="点检表名称" name="cspotcheckformname" value="" />
@@ -68,7 +68,7 @@
 	<a class=jbolt_table_editbtn
 	href="admin/spotCheckFormM/edit2?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.imodocid}&routingconfigid=${data.imoroutingconfigid}&cequipmentnames=${data.cequipmentnames}
-    &spotcheckformmid=${data.iautoid}&controls=1&readonly=readonly"
+    &spotcheckformmid=${data.iautoid}&controls=1"
   data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情" class=jbolt_table_editbtn></i>查看</a>
 </td>
 
@@ -105,7 +105,7 @@
 	   data-height="fill"
 	   data-ajax="true"
 	   data-conditions-form="SpotCheckFormM_form_#(pageId)"
-	   data-url="admin/spotCheckFormM/datas?itype=1"
+	   data-url="admin/spotCheckFormM/datas?itype=2"
 	   data-rowtpl="SpotCheckFormM_tpl_#(pageId)"
 	   data-copy-to-excel="false"
 	   data-page="SpotCheckFormM_page"

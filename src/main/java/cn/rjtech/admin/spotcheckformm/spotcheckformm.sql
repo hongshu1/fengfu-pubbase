@@ -13,7 +13,7 @@ select a.*,e.cSpotCheckFormName ,f.cInvCode,f.cInvCode1,f.cInvName1,w.cWorkName,
 from PL_SpotCheckFormM a
          left join Bd_InventoryRoutingConfig b on a.iMoRoutingConfigId = b.iAutoId
          left join Mo_MoRouting c on a.iMoDocId= c.iMoDocId
-         left join Bd_InventorySpotCheckForm d on d.iInventoryId = c.iInventoryId
+         left join Bd_InventorySpotCheckForm d on d.iInventoryId = c.iInventoryId and a.iSpotCheckFormId=d.iSpotCheckFormId
          left join Bd_SpotCheckForm e on e.iAutoId = d.iSpotCheckFormId
          left join Bd_Inventory f on f.iAutoId = d.iInventoryId
          left join Mo_MoDoc m on m.iAutoId=a.iMoDocId
@@ -45,5 +45,8 @@ where
     #end
     #if(ecreatetime)
         AND convert(date,a.dCreateTime) <= convert(date,#para(ecreatetime))
+    #end
+        #if(itype)
+      and  a.iType=#para(itype)
     #end
 #end
