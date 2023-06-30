@@ -1,6 +1,7 @@
 #sql("list")
 SELECT t1.*,
        t5.cQcFormName,
+       t3.cInvCode,
        t3.cInvCode1,
        t3.cInvName1,
        t3.cInvStd,
@@ -46,6 +47,9 @@ where t1.IsDeleted = '0'
   #end
   #if(cinvname1)
   AND t3.cinvname1 =#para(cinvname1)
+  #end
+  #if(cinvcode)
+  AND t3.cinvcode =#para(cinvcode)
   #end
   #if(iqcuserid)
   AND t1.iqcuserid =#para(iqcuserid)

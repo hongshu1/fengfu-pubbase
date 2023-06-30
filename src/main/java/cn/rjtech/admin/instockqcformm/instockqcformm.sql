@@ -42,6 +42,9 @@ where t1.IsDeleted = '0'
                      #if(cinvname1)
     AND t3.cinvname1 LIKE CONCAT('%', #para(cinvname1), '%')
                      #end
+                     #if(cinvcode)
+    AND t3.cinvcode LIKE CONCAT('%', #para(cinvcode), '%')
+                        #end
                      #if(iqcuserid)
     AND t1.iqcuserid =#para(iqcuserid)
                      #end
