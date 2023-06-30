@@ -1,7 +1,7 @@
 package cn.rjtech.admin.prodformitem;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.rjtech.model.momdata.QcFormItem;
 import cn.rjtech.model.momdata.SpotCheckFormItem;
@@ -99,7 +99,7 @@ public class ProdFormItemService extends BaseService<ProdFormItem> {
 	}
 	public ProdFormItem createQcFormItem(Long qcFormItemId, Long qcFormId, Long qcItemId, Integer seq, Boolean isDeleted){
 		ProdFormItem qcFormItem = new ProdFormItem();
-		if (ObjectUtil.isNull(qcFormItemId)){
+		if (ObjUtil.isNull(qcFormItemId)){
 			qcFormItemId = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormItem.setIAutoId(qcFormItemId);

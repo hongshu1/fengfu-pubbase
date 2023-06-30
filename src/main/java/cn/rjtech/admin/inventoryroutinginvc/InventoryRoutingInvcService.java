@@ -3,7 +3,7 @@ package cn.rjtech.admin.inventoryroutinginvc;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -148,7 +148,7 @@ public class InventoryRoutingInvcService extends BaseService<InventoryRoutingInv
 				Long invId = jsonObject.getLong("iinventoryid");
 				Record record = new Record();
 				record.setColumns(jsonObject.getInnerMap());
-				if (ObjectUtil.isNotNull(invId)){
+				if (ObjUtil.isNotNull(invId)){
 					Inventory inventory = inventoryService.findById(invId);
 					ValidationUtils.notNull(inventory, "未找到存货信息");
 					record.set(Inventory.CINVCODE, inventory.getCInvCode());
@@ -220,7 +220,7 @@ public class InventoryRoutingInvcService extends BaseService<InventoryRoutingInv
 		for (Record record : recordList){
 			Long routingConfigId = record.getLong(InventoryRoutingConfig.IAUTOID);
 			Object object = record.get(InventoryRoutingConfig.ITEMJSONSTR);
-			if (ObjectUtil.isEmpty(object)){
+			if (ObjUtil.isEmpty(object)){
 				continue;
 			}
 			List<JSONObject> itemJson = null;

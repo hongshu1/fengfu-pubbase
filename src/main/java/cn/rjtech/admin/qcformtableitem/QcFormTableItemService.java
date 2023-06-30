@@ -1,7 +1,7 @@
 package cn.rjtech.admin.qcformtableitem;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -119,7 +119,7 @@ public class QcFormTableItemService extends BaseService<QcFormTableItem> {
 
 	public QcFormTableItem createQcFormTableItem(Long id, Long qcFormId, Long qcFormItemId, Long qcFormParamId, Long qcFormTableParamId){
 		QcFormTableItem qcFormTableItem = new QcFormTableItem();
-		if (ObjectUtil.isNull(id)){
+		if (ObjUtil.isNull(id)){
 			id = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormTableItem.setIAutoId(id);

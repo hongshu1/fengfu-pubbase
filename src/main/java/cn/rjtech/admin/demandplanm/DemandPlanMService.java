@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -283,7 +283,7 @@ public class DemandPlanMService extends BaseService<DemandPlanM> {
 		List<Long> demandPlanDIds = demandPlanDList.stream().map(record -> record.getLong(DemandPlanD.IAUTOID)).collect(Collectors.toList());
 		// 排除
 		Integer count = demandPlanDService.queryNotGenOrderNum(id, demandPlanDIds);
-		if (ObjectUtil.isNotNull(count) && count == 0){
+		if (ObjUtil.isNotNull(count) && count == 0){
 			update(demandPlanM, status);
 		}
 	}

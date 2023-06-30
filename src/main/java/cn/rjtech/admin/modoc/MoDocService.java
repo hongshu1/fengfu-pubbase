@@ -156,7 +156,7 @@ public class MoDocService extends BaseService<MoDoc> {
     moDoc.setIType(2);
     //手工新增没有任务,先占着
     moDoc.setIMoTaskId(1001L);
-    moDoc.setIWorkRegionMid(moDoc.getIWorkShiftMid());
+    moDoc.setIWorkRegionMid(moDoc.getIWorkRegionMid());
     moDoc.setIInventoryId(moDoc.getIInventoryId());
     moDoc.setCMoDocNo(generateBarCode());
     Date date = moDoc.getDPlanDate();

@@ -3,7 +3,7 @@ package cn.rjtech.admin.bomcompare;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -303,7 +303,7 @@ public class BomCompareService extends BaseService<BomCompare> {
 	}
 	
 	private String getStr(BigDecimal value){
-		if (ObjectUtil.isNull(value)){
+		if (ObjUtil.isNull(value)){
 			return null;
 		}
 		return value.stripTrailingZeros().toPlainString();
@@ -324,7 +324,7 @@ public class BomCompareService extends BaseService<BomCompare> {
 	
 	public List<Record> getCommonInv(Long bomMasterId, String invId, String qty, String weight, Integer iAuditStatus, boolean isEffective){
         Okv okv = Okv.by("invId", invId).set("qty", qty).set("weight", weight).set("iAuditStatus", iAuditStatus).set("isEffective", true== isEffective ? 1:0);
-        if (ObjectUtil.isNotNull(bomMasterId)){
+        if (ObjUtil.isNotNull(bomMasterId)){
             okv.set("bomMasterId", bomMasterId);
         }
 	    return dbTemplate("bomcompare.getCommonInv", okv).find();
@@ -361,13 +361,13 @@ public class BomCompareService extends BaseService<BomCompare> {
 				bomM.setCVersion(nextVersion);
 			}
 			// 保存/修改物料清单主表
-			if (ObjectUtil.isNull(bomM.getIAutoId())){
+			if (ObjUtil.isNull(bomM.getIAutoId())){
 				bomMService.save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 			}else{
 				bomMService.update(bomM, userId, userName, now);
 			}
 			// 更改物料清单细表
-			if (ObjectUtil.isNotNull(pId)){
+			if (ObjUtil.isNotNull(pId)){
 				BomD bomD = bomDService.findById(pId);
 				ValidationUtils.notNull(bomD, "未找到引用的子件数据记录");
 				bomD.setIInvPartBomMid(bomM.getIAutoId());
@@ -385,7 +385,7 @@ public class BomCompareService extends BaseService<BomCompare> {
 					bomD.setICodeLevel(String.valueOf(codeLevel));
 					bomD.setDEnableDate(bomM.getDEnableDate());
 					bomD.setDDisableDate(bomM.getDDisableDate());
-					if (ObjectUtil.isNull(bomD.getBProxyForeign())){
+					if (ObjUtil.isNull(bomD.getBProxyForeign())){
 						bomD.setBProxyForeign(false);
 					}
 				}

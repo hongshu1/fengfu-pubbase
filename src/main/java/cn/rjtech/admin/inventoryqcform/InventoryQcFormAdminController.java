@@ -1,6 +1,6 @@
 package cn.rjtech.admin.inventoryqcform;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -82,7 +82,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 			return;
 		}
 		QcForm qcForm = qcFormService.findById(inventoryQcForm.getIQcFormId());
-		if (ObjectUtil.isNotNull(qcForm)){
+		if (ObjUtil.isNotNull(qcForm)){
 			set("qcFormName", qcForm.getCQcFormName());
 		}
 		set("inventoryQcForm",inventoryQcForm);

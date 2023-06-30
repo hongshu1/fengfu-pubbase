@@ -7,7 +7,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.enums.ErrorEnums;
@@ -485,7 +485,7 @@ public class ValidationUtils {
      * @param msg 错误信息
      */
     public static void equals(Object o1, Object o2, String msg) {
-        isTrue(ObjectUtil.equal(o1, o2), msg);
+        isTrue(ObjUtil.equal(o1, o2), msg);
     }
 
     /**

@@ -1,6 +1,6 @@
 package cn.rjtech.admin.inventorycapacity;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -130,7 +130,7 @@ public class InventoryCapacityService extends BaseService<InventoryCapacity> {
 	}
 	
 	public List<Record> findByInvId(Long invId) {
-		if (ObjectUtil.isNull(invId)){
+		if (ObjUtil.isNull(invId)){
 			return null;
 		}
 		return dbTemplate("inventory.findCapacityByInvId", Okv.by("invId", invId)).find();

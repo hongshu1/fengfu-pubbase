@@ -1,7 +1,7 @@
 package cn.rjtech.admin.subcontractorderdqty;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -142,7 +142,7 @@ public class SubcontractorderdQtyService extends BaseService<SubcontractorderdQt
 		for (int i=0; i<subcontractorderdQtyJsonArray.size(); i++){
 			JSONObject jsonObject = subcontractorderdQtyJsonArray.getJSONObject(i);
 			BigDecimal qty = jsonObject.getBigDecimal(SubcontractorderdQty.IQTY.toLowerCase());
-			if (ObjectUtil.isNull(qty) || BigDecimal.ZERO.compareTo(qty) == 0){
+			if (ObjUtil.isNull(qty) || BigDecimal.ZERO.compareTo(qty) == 0){
 				continue;
 			}
 			seq+=10;

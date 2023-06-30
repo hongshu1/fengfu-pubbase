@@ -69,31 +69,32 @@ public class UptimeMApiController extends BaseApiController {
 
 
     /**
-     * 补焊纪录保存接口
+     * 补焊纪录保存及审核接口
      * @param updateOrSaveType 新增或者编辑，新增传1，编辑传0
-     * @param data {
-     *                 "iautoid":"1674253970028417024",
-     *                 "ibasemins":55,
-     *                 "iotmins":10,
-     *                 "irate1":"54.545455",
-     *                 "irate2":"18.181818",
-     *                 "istopmins":25,
-     *                 "iswitchmins":20,
-     *                 "iworkmins":20,
-     *                 "iworkregionmid":"1663734219389444096",
-     *                 "iworkshiftmid":"1646683347910529024"
-     *             }  //表头数据json串，新增时iautoid为空
+     * @param data {  //表头数据json串，新增时iautoid为空
+     *                 "iautoid":"1674253970028417024",  //主键id
+     *                 "ibasemins":55,                   //基本稼动时间（分钟）
+     *                 "iotmins":10,                     //加班时间（分钟）
+     *                 "irate1":"54.545455",             //无机种切换稼动率
+     *                 "irate2":"18.181818",             //有机种切换稼动率
+     *                 "istopmins":25,                   //不稼动时间（分钟）
+     *                 "iswitchmins":20,                 //机种切换时间（分钟）
+     *                 "iworkmins":20,                   //机种切换时间（分钟）
+     *                 "iworkregionmid":"1663734219389444096",  //产线id
+     *                 "iworkshiftmid":"1646683347910529024",   //班次id
+     *                 "iauditstatus":0                         //保存或审核，保存传0，审核传1
+     *             }
      *
-     * @param dataList [
+     * @param dataList [  //表格数据json串，新增时iautoid为空
      *                     {
-     *                         "iautoid":"1674253970569482240",
-     *                         "imins":5,
-     *                         "istdmins":8,
-     *                         "iuptimecategoryid":"1673585765055537152",
-     *                         "iuptimeparamid":"1673585877248974848",
-     *                         "iseq":1
+     *                         "iautoid":"1674253970569482240",    //表格主键id
+     *                         "imins":5,                          //时间（分钟）
+     *                         "istdmins":8,                       //设定值（分钟）
+     *                         "iuptimecategoryid":"1673585765055537152",  //分类名称id
+     *                         "iuptimeparamid":"1673585877248974848",     //项目名称id
+     *                         "iseq":1                                    //顺序值
      *                     }
-     *                 ]  //表格数据json串，新增时iautoid为空
+     *                 ]
      */
     @UnCheck
     public void updateAndSaveApi(@Para(value = "updateOrSaveType") int updateOrSaveType,
