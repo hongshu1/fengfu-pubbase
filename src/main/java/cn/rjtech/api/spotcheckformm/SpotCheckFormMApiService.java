@@ -39,7 +39,9 @@ public class SpotCheckFormMApiService extends JBoltApiBaseService {
         return JBoltApiRet.successWithData(service.getAdminDatas2(kv));
     }
 
-    public JBoltApiRet edit(String coperationname, String iinventoryid, String modocid, String routingconfigid, String cequipmentnames, Long spotcheckformmid, Long ispotcheckformid, String cspotcheckformname, int controls, int itype, String croutingname) {
+    public JBoltApiRet edit(String coperationname, String iinventoryid, String modocid,
+                            String routingconfigid, String cequipmentnames, Long spotcheckformmid,
+                            Long ispotcheckformid, String cspotcheckformname, int itype) {
         Kv kv = new Kv();
         List<Record> list = inventorySpotCheckFormService.pageList(Kv.create().set("iinventoryid",iinventoryid).set("ispotcheckformid",ispotcheckformid)
                 .set("cspotcheckformname",cspotcheckformname)
@@ -61,13 +63,11 @@ public class SpotCheckFormMApiService extends JBoltApiBaseService {
                 record.set("iauditway",checkFormM.getIAuditWay());
             }
             kv.set("spotcheckformm",record);
-            kv.set("croutingname",croutingname);
             kv.set("coperationname",coperationname);
             kv.set("modocid",modocid);
             kv.set("iinventoryid",iinventoryid);
             kv.set("routingconfigid",routingconfigid);
             kv.set("spotcheckformid",spotCheckForm.getIAutoId());
-            kv.set("controls",controls);
             kv.set("itype",itype);
             //生产表单项目标题
             List<Record> formItemLists = spotCheckFormItemService.formItemLists(Kv.by("iqcformid", ispotcheckformid));

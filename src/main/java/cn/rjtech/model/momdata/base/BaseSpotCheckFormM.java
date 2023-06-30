@@ -63,6 +63,10 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
+    /**点检异常记录*/
+    public static final String CDESC = "cDesc";
+    /**处理方法*/
+    public static final String CMETHOD = "cMethod";
 	/**
 	 * 主键ID
 	 */
@@ -503,6 +507,40 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 点检异常记录
+	 */
+	public M setCDesc(java.lang.String cDesc) {
+		set("cDesc", cDesc);
+		return (M)this;
+	}
+
+	/**
+	 * 点检异常记录
+	 */
+	@JBoltField(name="cdesc" ,columnName="cDesc",type="String", remark="点检异常记录", required=false, maxLength=2147483647, fixed=0, order=27)
+	@JSONField(name = "cdesc")
+	public java.lang.String getCDesc() {
+		return getStr("cDesc");
+	}
+
+	/**
+	 * 处理方法
+	 */
+	public M setCMethod(java.lang.String cMethod) {
+		set("cMethod", cMethod);
+		return (M)this;
+	}
+
+	/**
+	 * 处理方法
+	 */
+	@JBoltField(name="cmethod" ,columnName="cMethod",type="String", remark="处理方法", required=false, maxLength=200, fixed=0, order=28)
+	@JSONField(name = "cmethod")
+	public java.lang.String getCMethod() {
+		return getStr("cMethod");
 	}
 
 }

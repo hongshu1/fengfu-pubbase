@@ -381,6 +381,10 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 
 				spotCheckFormM2.setISpotCheckFormId(formJsonData.getLong("iprodformid"));
 				spotCheckFormM2.setIType(formJsonData.getInteger("itype"));
+				//点检记录
+				spotCheckFormM2.setCDesc(formJsonData.getString("cdesc"));
+				spotCheckFormM2.setCMethod(formJsonData.getString("cmethod"));
+
 				//基础数据
 				User user = JBoltUserKit.getUser();
 				Date date = new Date();
@@ -446,6 +450,8 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 				spotCheckFormM.setDUpdateTime(date);
 				spotCheckFormM.setIUpdateBy(user.getId());
 				spotCheckFormM.setISpotCheckFormId(formJsonData.getLong("iprodformid"));
+				spotCheckFormM.setCDesc(formJsonData.getString("cdesc"));
+				spotCheckFormM.setCMethod(formJsonData.getString("cmethod"));
 				ValidationUtils.isTrue(spotCheckFormM.update(), "修改失败");
 				//根据主表id获取数据
 				List<SpotCheckFormD> formDList = spotCheckFormDService.findByPid(spotCheckFormM.getIAutoId());
