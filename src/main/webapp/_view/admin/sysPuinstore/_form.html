@@ -24,6 +24,7 @@
             #if(sysPuinstore.AutoID??)
             <input id="autoid" type="hidden" name="autoid" value="#(sysPuinstore.autoid??)"/>
             #end
+            <input id="ordertype" type="hidden" name="ordertype" value="#(sysPuinstore.ordertype??)"/>
             <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
             <div class="row">
               <div class="col">
@@ -42,7 +43,8 @@
                               class="form-control border-none" readonly="readonly" placeholder="" value="#(sysPuinstore.sourcebillno??)"/>
                       <input id="sourcebillid" name="sourcebillid" type="hidden" value="#(sourcebillid??)"/>
                       <button class="btn btn-primary" data-dialogbtn data-link-para-ele="" data-area="90%,90%"
-                              data-title="选择数据（单选）" id="sysButton" data-url="/admin/purchaseReceiptList/chooseSysPuinstoreData"><i
+                              data-title="选择数据（单选）" id="sysButton"
+                              data-url="/admin/purchaseReceiptList/chooseSysPuinstoreData?ordertype=#(sysPuinstore.ordertype)"><i
                           class="fa fa-search mr-1"></i></button>
                     </div>
                   </div>
@@ -317,7 +319,12 @@
 
   function checkBarcode() {
     LayerMsgBox.loading("执行中......", 2000);
-    var barcode = $("#barcode").val();
+    var data = $("#barcode").val();
+    var barcode = data.trim();
+    if(barcode=='' || barcode == undefined || barcode == null){
+      LayerMsgBox.alert("现品票不能为空")
+      return;
+    }
     var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
     let array = new Array();
     if (null != data) {
@@ -333,7 +340,8 @@
     }
 
     if (barcode) {
-      Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode.trim()}, function (res) {
+      var ordertype = $("#ordertype").val().trim();
+      Ajax.post("admin/materialReceiptList/scanBarcode", {"barcode": barcode.trim(),"orderType":ordertype}, function (res) {
         //扫描的现品票必须归属于同一张采购订单
         let data = res.data;
         let sourcebillno = $("#sourcebillno").val('');
@@ -416,7 +424,7 @@
           required: false,
           placeholder: "=请选择现品票=",
           type: "autocomplete",
-          url: "admin/materialReceiptList/barcodeDatas",
+          url: "admin/purchaseReceiptList/getBarcodeDatas",
           textAttr: "barcode",
           width: 1100,
           sync: "",

@@ -105,7 +105,7 @@ where 1 =1
 #end
 #end
 
-#sql("getMesSysPODetails")
+#sql("getMesSysPODetailsByPO")
 SELECT
     pt.cPTName AS BillType,
     a.cOrderNo AS SourceBillNo,
@@ -125,7 +125,6 @@ FROM
         LEFT JOIN dbo.PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = b.iAutoId
         AND tc.iAutoId = c.iPurchaseOrderdQtyId
         LEFT JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId
-        AND b.isDeleted<>1
         LEFT JOIN Bd_PurchaseType pt ON  a.iPurchaseTypeId = pt.iAutoId
         LEFT JOIN Bd_Vendor ven ON  a.iVendorId = ven.iAutoId
         LEFT JOIN Bd_Department dep on dep.iAutoId = a.iDepartmentId
@@ -140,6 +139,47 @@ and a.cOrderNo = #para(sourcebillno)
 and inv.cinvcode like concat('%',#para(cinvcode),'%')
 #end
 order by a.dUpdateTime desc
+#end
+
+#sql("getMesSysPODetailsByOM")
+select
+    t6.cPTName AS BillType,
+    t1.cOrderNo AS SourceBillNo,
+    t1.iAutoId AS SourceBillID,
+    t1.dOrderDate AS BillDate,
+    t1.iPurchaseTypeId,
+    t7.cVenCode,
+    t7.cVenName,
+    t5.cInvStd,
+    t5.cInvCode,
+    t5.cInvName,
+    t5.cinvcode1,
+    t5.cinvname1,
+    t8.cDepCode,
+    t8.cDepName
+    from
+    PS_SubcontractOrderM t1
+left join PS_SubcontractOrderD t2 on t1.iAutoId=t2.iSubcontractOrderMid
+AND t2.isDeleted<> 1
+left join PS_SubcontractOrderDBatch t3 on t3.iSubcontractOrderDid=t2.iAutoId
+AND t3.isEffective= 1
+left join PS_SubcontractOrderD_Qty t4 on t4.iSubcontractOrderDid=t2.iAutoId
+AND t4.iAutoId = t3.iSubcontractOrderdQtyId
+left join Bd_Inventory t5 on t5.iAutoId=t2.iInventoryId
+left join Bd_PurchaseType t6 on t1.iPurchaseTypeId=t6.iAutoId
+left join Bd_Vendor t7 on t7.iAutoId = t1.iVendorId
+left join Bd_Department t8 on t8.iAutoId = t1.iDepartmentId
+WHERE 1 = 1
+#if(corderno)
+and t1.cOrderNo = #para(corderno)
+#end
+#if(sourcebillno)
+and t1.cOrderNo = #para(sourcebillno)
+#end
+#if(cinvcode)
+and t5.cinvcode like concat('%',#para(cinvcode),'%')
+#end
+order by t1.dUpdateTime desc
 #end
 
 #sql("getPrintData")
@@ -192,15 +232,6 @@ and a.cOrderNo = #para(sourcebillno)
 #end
 #end
 
-# #sql("findPurchaseOrderDBatchByCBarcode")
-# SELECT
-# t1.iautoid as batchAutoid,t1.iPurchaseOrderDid,t1.iinventoryId,
-# t2.cInvCode,t2.cInvName,t2.cInvName1,t2.cInvCode1,t2.cInvStd
-# FROM PS_PurchaseOrderDBatch t1
-# left join bd_inventory t2 on t1.iinventoryId = t1.iAutoId
-# where 1=1 and t1.cbarcode=#para(cbarcode)
-# #end
-
 #sql("findEditAndOnlySeeByAutoid")
 select t1.*,t2.cvenname,t3.cDepName,t4.crdname,t5.cptcode,t5.cptname
     from T_Sys_PUInStore t1
@@ -250,4 +281,94 @@ select u.* from UFDATA_001_2023.dbo.V_Sys_User u where u.userCode = #para(userco
 
 #sql("findU8RdRecord01Id")
 select r.* from UFDATA_001_2023.dbo.RdRecord01 r where r.cCode = #para(cCode)
+#end
+
+#sql("scanPurchaseOrderBarcode")
+select
+    t1.cCompleteBarcode as barcode,
+    t1.iQty as qty,
+    t1.iAutoId as autoid,
+    t1.iinventoryId,
+	t2.iAutoId as SourceBillDid,
+	t3.cOrderNo as SourceBillNo,
+    t3.iBusType as SourceBillType,
+    t3.cDocNo+'-'+CAST(t5.iseq AS NVARCHAR(10)) as SourceBillNoRow,
+    t3.cOrderNo as SourceBillID,
+	t4.cinvcode,
+    t4.cinvname,
+    t4.cInvCode ,
+    t4.cInvCode1,
+    t4.cInvName1,
+    t4.cinvstd,
+	t6.cUomCode,
+    t6.cUomName as purchasecuomname,
+    t6.cUomName as  puunitname
+from PS_PurchaseOrderDBatch t1
+LEFT JOIN PS_PurchaseOrderD t2 on t1.iPurchaseOrderDid=t2.iAutoId
+LEFT JOIN PS_PurchaseOrderM t3 on t2.iPurchaseOrderMid = t3.iAutoId
+LEFT JOIN Bd_Inventory t4 on t1.iinventoryId = t4.iAutoId
+LEFT JOIN PS_PurchaseOrderD_Qty t5 on t5.iPurchaseOrderDid = t3.iAutoId AND t5.iAutoId = t1.iPurchaseOrderdQtyId
+LEFT JOIN Bd_Uom t6 on t4.iPurchaseUomId = t6.iAutoId
+where t1.isEffective = '1'
+#if(corderno)
+and a.cOrderNo = #para(corderno)
+#end
+#if(sourcebillno)
+and a.cOrderNo = #para(sourcebillno)
+#end
+#if(barcode)
+and t1.cCompleteBarcode = #para(barcode)
+#end
+#if(q)
+and (
+    t4.cinvcode like concat('%',#para(q),'%') or t4.cinvcode1 like concat('%',#para(q),'%')
+    or t4.cinvname1 like concat('%',#para(q),'%') or t1.cCompleteBarcode like concat('%',#para(q),'%')
+	)
+#end
+and t4.cOrgCode = #(orgCode)
+#end
+
+#sql("scanSubcontractOrderBarcode")
+select
+    t1.cCompleteBarcode as barcode,
+    t1.iQty as qty,
+    t1.iAutoId as autoid,
+    t1.iinventoryId,
+	t2.iAutoId as SourceBillDid,
+	t3.cOrderNo as SourceBillNo,
+    t3.iBusType as SourceBillType,
+    t3.cDocNo+'-'+CAST(t5.iseq AS NVARCHAR(10)) as SourceBillNoRow,
+    t3.cOrderNo as SourceBillID,
+	t4.cinvcode,
+    t4.cinvname,
+    t4.cInvCode ,
+    t4.cInvCode1,
+    t4.cInvName1,
+    t4.cinvstd,
+	t6.cUomCode,
+    t6.cUomName as purchasecuomname,
+    t6.cUomName as  puunitname
+from PS_SubcontractOrderDBatch t1
+left join PS_SubcontractOrderD t2 on t1.iSubcontractOrderDid = t2.iautoid
+left join PS_SubcontractOrderM t3 on t2.iSubcontractOrderMid = t3.iautoid
+left join Bd_Inventory t4 on t1.iinventoryId = t4.iAutoId
+left join PS_SubcontractOrderD_Qty t5 on t5.iSubcontractOrderDid = t3.iAutoId AND t5.iAutoId = t1.iSubcontractOrderdQtyId
+LEFT JOIN Bd_Uom t6 on t4.iPurchaseUomId = t6.iAutoId
+where t1.isEffective = '1'
+#if(corderno)
+and a.cOrderNo = #para(corderno)
+#end
+#if(sourcebillno)
+and a.cOrderNo = #para(sourcebillno)
+#end
+#if(barcode)
+and t1.cCompleteBarcode = #para(barcode)
+#end
+#if(q)
+and (
+    t4.cinvcode like concat('%',#para(q),'%') or t4.cinvcode1 like concat('%',#para(q),'%')
+	or t4.cinvname1 like concat('%',#para(q),'%') or t1.cCompleteBarcode like concat('%',#para(q),'%')
+	)
+#end
+and t4.cOrgCode = #(orgCode)
 #end
