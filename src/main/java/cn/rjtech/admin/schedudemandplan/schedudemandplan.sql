@@ -165,7 +165,7 @@ SELECT
     b.iVendorId,
     e.cVenCode,
     e.cVenName,
-    c.iPkgQty,
+    b.iPkgQty,
     f.iInnerInStockDays
 FROM Mrp_DemandComputeD AS b
          LEFT JOIN Bd_Inventory AS c ON b.iInventoryId = c.iAutoId
