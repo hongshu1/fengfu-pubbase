@@ -72,11 +72,15 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">销售类型</label>
                                     <div class="col-8">
-                                        <select class="form-control" data-tips="请选择销售类型"
-                                                data-url="admin/dictionary/options?key=sale_type"
-                                                name="weekOrderM.isaletypeid" data-autoload data-text="=请选择销售类型="
-                                                data-value-attr="sn" data-value=""
-                                                data-select="#(weekOrderM.isaletypeid??)"></select>
+                                        <select class="form-control"
+                                                name="weekOrderM.isaletypeid"
+                                                data-autoload
+                                                data-url="/admin/saletype/selectData"
+                                                data-value-attr="iautoid"
+                                                data-text-attr="cstname"
+                                                data-text="=请选择="
+                                                data-select="#(weekOrderM.isaletypeid??)">
+                                        </select>
                                     </div>
                                 </div>
                             </div>

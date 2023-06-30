@@ -11,11 +11,11 @@
 <div class="jbolt_page_content">
     <div class="row">
         <div class="col-10 text-left">
-            <form class="form-inline text-left" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
+            <form class="form-inline text-left" onsubmit="return false;" id="StockCheckVouchForm_#(pageId)" action="#(action)" method="post">
 <!--                #if(readonly != 'readonly')-->
 <!--                <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>-->
 <!--                #end-->
-                #if(SysStockchekvouch.autoid??)
+                #if(stockchekvouch.autoid??)
                 ### 参数列表
                 ### uri:                    接口URI
                 ### formSn:                 表单名
@@ -24,29 +24,20 @@
                 ### permissionKeyPrefix:    权限key
                 ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
                 ### className:              实现审批业务的类名
-                #include("/_view/_common/_approval_btns.html", uri="/admin/stockcheckvouch", formSn="T_Sys_StockCheckVouch", o=SysStockchekvouch, primaryKeyName="AutoID", className="cn.rjtech.admin.currentstock.CurrentStockService",permissionKeyPrefix="current_stock")
+                #include("/_view/_common/_approval_btns.html", uri="/admin/stockcheckvouch", formSn="T_Sys_StockCheckVouch", o=stockchekvouch, primaryKeyName="AutoID", className="cn.rjtech.admin.currentstock.CurrentStockService",permissionKeyPrefix="current_stock")
                 #end
                 <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
-                #if(SysStockchekvouch.autoid??)
-                <input type="hidden" id="SysStockchekvouchAutoid" name="SysStockchekvouch.autoid" value="#(SysStockchekvouch.autoid??)"/>
+                #if(stockchekvouch.autoid??)
+                <input type="hidden" id="stockchekvouchAutoid" name="stockchekvouch.autoid" value="#(stockchekvouch.autoid??)"/>
                 #end
+                <input type="hidden" id="whcode" name="whcode" value="#(stockchekvouch.whcode??)"/>
+                <input type="hidden" id="poscodes" name="poscodes" value="#(stockchekvouch.poscodes??)"/>
 
                 <input type="text" autocomplete="off" class="form-control" placeholder="=库位名称=" name="posname" value=""/>
                 <input type="text" autocomplete="off" class="form-control" placeholder="=盘点状态=" name="status" value=""/>
                 <input type="text" autocomplete="off" class="form-control" placeholder="=料品分类=" name="addinvclass" value=""/>
                 <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="invcode" value=""/>
                 <input type="text" autocomplete="off" class="form-control" placeholder="=存货名称=" name="invname" value=""/>
-
-                <select class="form-control"
-                        data-autoload
-                        data-url="admin/enums/isApp"
-                        name="isapp"
-                        id="isapp"
-                        data-value=""
-                        onchange="isAppChange()"
-                        data-select="#(isapp??)">
-                </select>
-
                 <button id="query" type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
 
             </form>
@@ -55,28 +46,34 @@
 </div>
 
 <div class="jbolt_page_content">
+<textarea class="jb_tpl_box" id="StockCheckVouchDetail_tpl_#(pageId)">
+        <!-- JBoltTable的数据模板定义-->
 
-    <!-- JBoltTable的数据模板定义-->
-    <textarea class="jb_tpl_box" id="fhRowtpl_#(pageId)">
-		{@each datas as data,index}
-        <tr data-id="${data.autoid}" onclick="masterTableTrTriggerShowSlaveExt(this,'${data.autoid}')">
-            <td style="width: 30px;max-width: 30px">${pageNumber,pageSize,index | rownum}</td>
-			<td style="width: 150px;max-width: 150px">${data.posname}</td>
-            <td style="width: 150px;max-width: 150px">${data.invclasscode}</td>
-			<td style="width: 150px;max-width: 150px">${data.addinvclass}</td>
-			<td style="width: 150px;max-width: 150px">${data.invcode}</td>
-			<td style="width: 150px;max-width: 150px">${data.invname}</td>
-
-			<td style="width: 150px;max-width: 150px">${data.invstd}</td>
-			<td style="width: 110px;max-width: 110px">${data.unitname}</td>
-			<td style="width: 110px;max-width: 110px">${data.totalrealqty}</td>
-			<td style="width: 110px;max-width: 110px">${data.qty, 2|number_format}</td>
-			<td style="width: 130px;max-width: 130px" >${data.isiqc1}</td>
-			<td style="width: 110px;max-width: 110px" >${data.status}</td>
-		</tr>
-		{@/each}
+    {@each datas as data,index}
+        <tr data-id="${data.autoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.posname}</td>
+            <td>${data.cinvccode}</td>
+            <td>${data.cinvcname}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.imaxcapacity}</td>
+            <td>${data.realqty}</td>
+            <td>${data.adjustqty}</td>
+            <td>
+                {@if data.adjustqty != null }
+                <span>已盘点</span>
+                {@else if data.adjustqty == null}
+                <span>未盘点</span>
+                {@/if}
+            </td>
+        </tr>
+    {@/each}
 	</textarea>
-
+<!--${data.adjustqty}-->
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="fh_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
@@ -96,8 +93,8 @@
            data-url="admin/currentstock/invDatas?mid=#(bill.autoid)"
            data-column-resize="true"
            data-column-prepend="1:radio:true"
-           data-conditions-form="stockForm"
-           data-rowtpl="fhRowtpl_#(pageId)"
+           data-conditions-form="StockCheckVouchForm_#(pageId)"
+           data-rowtpl="StockCheckVouchDetail_tpl_#(pageId)"
            data-toolbar="fh_toolbar_#(pageId)"
            data-editable-option="getEditableTableOptions_#(pageId)"
            data-editable="true"
@@ -110,12 +107,13 @@
             <th style="width: 150px;max-width: 150px" data-width="150" data-column="addinvclass">存货分类名称</th>
             <th style="width: 150px;max-width: 150px" data-width="150" data-column="invcode">存货编码</th>
 
-            <th style="width: 150px;max-width: 150px" data-width="150" data-column="invname">部品名称</th>
+            <th style="width: 150px;max-width: 150px" data-width="150" data-column="cinvcode1">客户部番</th>
+            <th style="width: 150px;max-width: 150px" data-width="150" data-column="invname1">部品名称</th>
             <th style="width: 150px;max-width: 150px" data-width="150" data-column="invstd">规格</th>
-            <th style="width: 110px;max-width: 110px" data-width="110" data-column="unitname">库存单位</th>
-            <th style="width: 110px;max-width: 110px" data-column="totalrealqty">盘点数量</th>
-            <th style="width: 110px;max-width: 110px" data-column="qty">库存数量</th>
+            <th style="width: 110px;max-width: 110px" data-width="110" data-column="unitname">主计量单位</th>
 
+            <th style="width: 110px;max-width: 110px" data-column="totalrealqty">库存数量</th>
+            <th style="width: 110px;max-width: 110px" data-column="qty">盘点数量</th>
             <th style="width: 130px;max-width: 130px" data-column="isiqc1">盈亏数量</th>
             <th style="width: 110px;max-width: 110px" data-column="status">盘点状态</th>
         </tr>
@@ -146,7 +144,7 @@
 
 
     function submitAllTables_#(pageId)(){
-        var autoid=$("#SysStockchekvouchAutoid").val();
+        var autoid=$("#stockchekvouchAutoid").val();
         var sourceid=$("#stockcheckvouchdid").val();
         //获取选中表格数据
         var para = jboltTableGetCheckedDatas('#stock__table_#(pageId)');
@@ -355,18 +353,6 @@
             clicked = false;
         }
     }
-    /**
-     * 是否APP更改
-     * */
-    function isAppChange() {
-        var isapp=$("#isapp").val();
-        $("#isapp2").val(isapp);
-        $("#query").click();
-
-        // clearJboltTable('#stock__table_#(pageId)');
-        jboltTableClear('#stock__table_#(pageId)');
-    }
-
 </script>
 #end
 

@@ -29,7 +29,7 @@ import java.util.*;
  * @author: chentao
  * @date: 2023-03-30 11:26
  */
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.SCHEDUPRODUCTPLANYEAR)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/scheduproductplanyear", viewPath = "/_view/admin/scheduproductplan")
 public class ScheduProductPlanYearController extends BaseAdminController {

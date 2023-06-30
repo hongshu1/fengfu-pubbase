@@ -13,6 +13,7 @@ import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
+import cn.rjtech.admin.weekorderm.WeekOrderMService;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
@@ -59,7 +60,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     private InventoryQcFormService inventoryQcFormService;
     @Inject
     private StockoutQcFormMService stockoutQcFormMService;
-
+    @Inject
+    private WeekOrderMService weekOrderMService;
     @Override
     protected ManualOrderM dao() {
         return dao;
@@ -77,7 +79,11 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
      * @param pageSize   每页几条数据
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        return dbTemplate("manualorderm.list", kv).paginate(pageNumber, pageSize);
+
+
+        Page<Record> paginate = dbTemplate("manualorderm.list", kv).paginate(pageNumber, pageSize);
+        weekOrderMService.change(paginate.getList());
+        return paginate;
     }
 
     /**
