@@ -75,7 +75,23 @@
                         <label for="r_isenabled_false">暗盘</label>
                     </div>
                 </div>
-
+            <label class="col-2 col-form-label">负责人</label>
+            <div class="col-10 text-center">
+                <select class="form-control"
+                        data-autoload
+                        data-rule="select"
+                        multiple="multiple"
+                        data-select-type="select2"
+                        data-url="admin/department/selectPerson"
+                        data-text="=请选择="
+                        data-value=""
+                        data-setvalueto="cdepperson"
+                        data-text-attr="cpsnname,cpsnnum"
+                        data-value-attr="cpsnnum"
+                        data-select="#(department.cdepperson??)">
+                </select>
+                <input type="hidden" id="cdepperson" name="cdepperson" value="#(cdepperson??)">
+            </div>
         </div>
     </form>
 </div>

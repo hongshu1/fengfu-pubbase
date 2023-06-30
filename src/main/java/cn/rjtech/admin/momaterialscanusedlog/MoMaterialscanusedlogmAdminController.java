@@ -144,8 +144,16 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 	/**
 	 * 获取齐料检查已扫描现品票
 	 */
-	public void getMaterialScanUsedLog(){
+	public void getBarcodeAllBycBarcode(){
 		Page<Record> page=service.getBarcodeAllBycBarcode(getPageNumber(),getPageSize(),getKv());
 		renderJsonData(page);
+	}
+
+	/**
+	 * 插入已扫描现品票你数据源
+	 */
+	public void getMaterialScanUsedLog(){
+		Record record=service.getMaterialScanUsedLog(getKv());
+		renderJsonData(record);
 	}
 }

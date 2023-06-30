@@ -2,7 +2,7 @@ package cn.rjtech.admin.qcform;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
@@ -230,7 +230,7 @@ public class QcFormAdminController extends BaseAdminController {
          *  3.默认加载时，是没有数据操作的，直接读取数据
          */
         // 判断是否有新增的值
-       if (ObjectUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
+       if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
             // 查询表格行记录
            List<Map<String, Object>> recordList = qcFormTableParamService.findByFormId(formId);
            // 查询表头数据及参数数据

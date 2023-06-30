@@ -3,7 +3,7 @@ package cn.rjtech.admin.department;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -94,7 +94,7 @@ public class DepartmentService extends BaseService<Department> {
 
         short depGrade = 0;
         Long iPid = department.getIPid();
-        if (ObjectUtil.isNotNull(iPid)){
+        if (ObjUtil.isNotNull(iPid)){
             Department pDepartment = findById(iPid);
             if(pDepartment.getIDepGrade()==null){
                 pDepartment.setIDepGrade(depGrade);
@@ -139,7 +139,7 @@ public class DepartmentService extends BaseService<Department> {
 
         short depGrade = 0;
         Long iPid = department.getIPid();
-        if (ObjectUtil.isNotNull(iPid)){
+        if (ObjUtil.isNotNull(iPid)){
             Department pDepartment = findById(iPid);
             if(pDepartment.getIDepGrade()==null){
                 pDepartment.setIDepGrade(depGrade);
@@ -436,7 +436,7 @@ public class DepartmentService extends BaseService<Department> {
                         List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
                         for (Department department2 : departments1) {
                             Long iautoid1 = department2.get("iautoid");
-                            if (ObjectUtil.isNotNull(iautoid)) {
+                            if (ObjUtil.isNotNull(iautoid)) {
                                 List<Department> departments2 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid1)).find();
                                 if (departments2.size()==0){
                                     department2.setBDepEnd(true);
@@ -475,11 +475,11 @@ public class DepartmentService extends BaseService<Department> {
                         List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
                         for (Department department2 : departments1) {
                             Long iautoid1 = department2.get("iautoid");
-                            if (ObjectUtil.isNotNull(iautoid)) {
+                            if (ObjUtil.isNotNull(iautoid)) {
                                 List<Department> departments2 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid1)).find();
                                 for (Department department3 : departments2) {
                                     Long iautoid2 = department3.get("iautoid");
-                                    if (ObjectUtil.isNotNull(iautoid)) {
+                                    if (ObjUtil.isNotNull(iautoid)) {
                                         List<Department> departments3 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid2)).find();
                                         if (departments3.size()==0){
                                             department3.setBDepEnd(true);
@@ -519,15 +519,15 @@ public class DepartmentService extends BaseService<Department> {
                         List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
                         for (Department department2 : departments1) {
                             Long iautoid1 = department2.get("iautoid");
-                            if (ObjectUtil.isNotNull(iautoid)) {
+                            if (ObjUtil.isNotNull(iautoid)) {
                                 List<Department> departments2 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid1)).find();
                                 for (Department department3 : departments2) {
                                     Long iautoid2 = department3.get("iautoid");
-                                    if (ObjectUtil.isNotNull(iautoid2)) {
+                                    if (ObjUtil.isNotNull(iautoid2)) {
                                         List<Department> departments3 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid2)).find();
                                         for (Department department4 : departments3) {
                                             Long iautoid3 = department4.get("iautoid");
-                                            if (ObjectUtil.isNotNull(iautoid3)){
+                                            if (ObjUtil.isNotNull(iautoid3)){
                                                 List<Department> departments4 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid3)).find();
                                                 if (departments4.size()==0){
                                                     department4.setBDepEnd(true);
@@ -570,19 +570,19 @@ public class DepartmentService extends BaseService<Department> {
                         List<Department> departments1 = daoTemplate("department.selectByIautoid",Kv.by("ipid",ipid)).find();
                         for (Department department2 : departments1) {
                             Long iautoid1 = department2.get("iautoid");
-                            if (ObjectUtil.isNotNull(iautoid)) {
+                            if (ObjUtil.isNotNull(iautoid)) {
                                 List<Department> departments2 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid1)).find();
                                 for (Department department3 : departments2) {
                                     Long iautoid2 = department3.get("iautoid");
-                                    if (ObjectUtil.isNotNull(iautoid2)) {
+                                    if (ObjUtil.isNotNull(iautoid2)) {
                                         List<Department> departments3 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid2)).find();
                                         for (Department department4 : departments3) {
                                             Long iautoid3 = department4.get("iautoid");
-                                            if (ObjectUtil.isNotNull(iautoid3)){
+                                            if (ObjUtil.isNotNull(iautoid3)){
                                                 List<Department> departments4 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid3)).find();
                                                 for (Department department5 : departments4) {
                                                     Long iautoid4 = department5.get("iautoid");
-                                                    if (ObjectUtil.isNotNull(iautoid4)){
+                                                    if (ObjUtil.isNotNull(iautoid4)){
                                                         List<Department> departments5 = daoTemplate("department.selectByIautoid", Kv.by("ipid", iautoid4)).find();
                                                         if (departments5.size()==0){
                                                             department5.setBDepEnd(true);

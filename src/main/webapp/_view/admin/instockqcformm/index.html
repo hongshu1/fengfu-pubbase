@@ -31,7 +31,7 @@
               style="left: 30px;text-align: left">
           <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="cinvqcformno" value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="cbarcode" value=""/>
@@ -223,7 +223,7 @@
       return;
     }
 
-    let url = "admin/instockqcformm/findDetailByBarcode?cbarcode=" + cbarcode;
+    let url = "admin/instockqcformm/findDetailByBarcode?cbarcode=" + cbarcode.trim();
     Ajax.get(url, function (res) {
       if (res.state == 'ok') {
         var data = res.data;

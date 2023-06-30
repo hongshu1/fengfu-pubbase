@@ -86,11 +86,12 @@
     <td>
       #(for.count)
     </td>
+
     #for(item:data.compares??)
     <td >
-      <input disabled type="text" autocomplete="off"  class="form-control" name="cProdParamName" value="#(item.cProdParamName??)">
-      <input hidden type="text" autocomplete="off"  class="form-control" name="ProdParamid" value="#(item.ProdParamid??)">
-      <input hidden type="text" autocomplete="off"  class="form-control" name="prodformtableparamid" value="#(item.iAutoId??)">
+      <input disabled type="text" autocomplete="off"  class="form-control" name="cqcparamname" value="#(item.cqcparamname??)">
+      <input hidden type="text" autocomplete="off"  class="form-control" name="spotcheckparamid" value="#(item.spotcheckparamid??)">
+      <input hidden type="text" autocomplete="off"  class="form-control" name="spotcheckformtableparamid" value="#(item.iautoid??)">
     </td>
     #end
     <td hidden>
@@ -114,7 +115,7 @@
     #end
     #if(data.itype==2)
     <td>
-      <input type="text" autocomplete="off"   disabled  class="form-control"  name="cvalue" value="#(data.cvalue??)">
+      <input type="text" autocomplete="off"     class="form-control"  name="cvalue" value="#(data.cvalue??)">
     </td>
     #end
     #if(data.itype==3)

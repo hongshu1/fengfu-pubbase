@@ -1,7 +1,7 @@
 package cn.rjtech.admin.prodformtableparam;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.rjtech.admin.prodformtableitem.ProdFormTableItemService;
 import cn.rjtech.model.momdata.*;
@@ -120,7 +120,7 @@ public class ProdFormTableParamService extends BaseService<ProdFormTableParam> {
 	}
 	public ProdFormTableParam createQcFormTableParam(Long id, Long qcFormId, Integer seq, Integer type, BigDecimal stdVal, BigDecimal maxVal, BigDecimal minVal, String options, Boolean isDeleted){
 		ProdFormTableParam qcFormTableParam = new ProdFormTableParam();
-		if (ObjectUtil.isNull(id)){
+		if (ObjUtil.isNull(id)){
 			id = JBoltSnowflakeKit.me.nextId();
 		}
 		qcFormTableParam.setIAutoId(id);

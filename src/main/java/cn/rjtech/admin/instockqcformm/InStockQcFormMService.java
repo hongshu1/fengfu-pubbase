@@ -530,6 +530,15 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
 
         InStockQcFormM stockQcFormM = findByCBarcodeAndInvcode(cbarcode, record.getStr("iinventoryid"));
         ValidationUtils.isTrue(stockQcFormM == null, cbarcode + "：数据记录已存在，不需要新增！！！");
+        if(StrUtil.isBlank(record.getStr("cinvcode1"))){
+            record.set("cinvcode1","");
+        }
+        if (StrUtil.isBlank(record.getStr("iqty"))){
+            record.set("iqty","");
+        }
+        if (StrUtil.isBlank(record.getStr("cinvname1"))){
+            record.set("cinvname1","");
+        }
         return record;
     }
 

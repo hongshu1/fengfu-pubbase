@@ -4,7 +4,6 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
         <div class="row">
-            <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>始业点检表管理</h1></div>
             <div class="col">
                 <form class="form-inline" id="SpotCheckFormM_form_#(pageId)">
                 </form>
@@ -20,18 +19,34 @@
 <tr data-id="${data.iAutoId}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-<a href="admin/spotCheckFormM/edit?inventoryspotcheckformid=${data.iautoid}&
-    cinvcode=${data.cinvcode}&cmodocno=${data.cmodocno}&croutingname=${data.croutingname}&edit=true"
+<a class=jbolt_table_editbtn href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
+    &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
+    &spotcheckformmid=${data.spotcheckformmid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情"><i class="fa fa-eye"></i>查看</a>
+
+    {@if data.iauditstatus == '0' }
+    <a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
+    &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
+    &spotcheckformmid=${data.spotcheckformmid}
+    &edit=true"
     data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable"
     data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+    {@/if}
+{@if data.iauditstatus == '1' }
+<a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
+    &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
+    &spotcheckformmid=${data.spotcheckformmid}
+    &edit=true"
+    data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable"
+    data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
+    	<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=PL_SpotCheckFormM&primaryKeyName=iautoid&formAutoId=${data.spotcheckformmid}&permissionKey=spotcheckformm_withdraw&className=cn.rjtech.admin.spotcheckformm.SpotCheckFormMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
 </td>
+{@/if}
+
 <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
 <td>${data.coperationname}</td>
-<td>${data.cequipmentmodelname}</td>
-<td>${data.cOperationName}</td>
-<td>${data.cRcvDocNo}</td>
-<td>${data.cCreateName}</td>
-<td>${data.dCreateTime}</td>
+<td>${data.cequipmentnames}</td>
+<td>${data.cpersonname}</td>
+<td>${data.dcreatetime2}</td>
 </tr>
 {@/each}
 </textarea>
@@ -43,10 +58,10 @@
                data-height="fill"
                data-ajax="true"
                data-conditions-form="SpotCheckFormM_form_#(pageId)"
-               data-url="admin/spotCheckFormM/datas2?cinvcode=#(cinvcode??)&cmodocno=#(cmodocno??)&croutingname=#(croutingname)"
+               data-url="admin/spotCheckFormM/datas2?modocid=#(modocid??)"
                data-rowtpl="SpotCheckFormM_tpl_#(pageId)"
                data-copy-to-excel="false"
-               data-page="SpotCheckFormM_page"
+               ###data-page="SpotCheckFormM_page"
                data-toolbar="SpotCheckFormM_toolbar_#(pageId)"
         >
             <thead class="fw-normal" >

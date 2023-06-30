@@ -1,6 +1,6 @@
 package cn.rjtech.admin.department;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -113,21 +113,21 @@ public class DepartmentAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        if (ObjectUtil.isNotNull(department.getIDutyUserId())) {
+        if (ObjUtil.isNotNull(department.getIDutyUserId())) {
             Person person = personService.findById(department.getIDutyUserId());
-            if (ObjectUtil.isNotNull(person)) {
+            if (ObjUtil.isNotNull(person)) {
                 set("cdeppersonname", person.getCpsnName());
             }
         }
-        if (ObjectUtil.isNotNull(department.getCDepLeader())) {
+        if (ObjUtil.isNotNull(department.getCDepLeader())) {
             Person person = personService.findById(department.getCDepLeader());
-            if (ObjectUtil.isNotNull(person)) {
+            if (ObjUtil.isNotNull(person)) {
                 set("cdepleadername", person.getCpsnName());
             }
         }
-        if (ObjectUtil.isNotNull(department.getIPid())) {
+        if (ObjUtil.isNotNull(department.getIPid())) {
             Department pDepartment = service.findById(department.getIPid());
-            if (ObjectUtil.isNotNull(pDepartment)) {
+            if (ObjUtil.isNotNull(pDepartment)) {
                 set("pname", pDepartment.getCDepName());
             }
         }

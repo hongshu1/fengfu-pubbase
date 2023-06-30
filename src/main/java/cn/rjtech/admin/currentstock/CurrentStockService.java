@@ -5,17 +5,17 @@ import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.service.base.BaseU8RecordService;
+import cn.jbolt.core.service.base.BaseService;
+
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltDateUtil;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.stockcheckdetail.StockCheckDetailService;
 import cn.rjtech.admin.stockcheckvouchdetail.StockCheckVouchDetailService;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.StockCheckDetail;
-import cn.rjtech.model.momdata.StockCheckVouch;
-import cn.rjtech.model.momdata.StockCheckVouchDetail;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -39,7 +39,19 @@ import java.util.logging.Logger;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2021-11-12 16:01
  */
-public class CurrentStockService extends BaseU8RecordService implements IApprovalService {
+public class CurrentStockService  extends BaseService<StockCheckVouch> implements IApprovalService {
+
+	private final StockCheckVouch dao = new StockCheckVouch().dao();
+
+	@Override
+	protected StockCheckVouch dao() {
+		return dao;
+	}
+
+	@Override
+	protected int systemLogTargetType() {
+		return ProjectSystemLogTargetType.NONE.getValue();
+	}
 
 	Logger log = Logger.getLogger("CurrentStockService");
 	@Inject
@@ -83,6 +95,11 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	}
 
 
+	public Page<Record> getdatas(Integer pageNumber, Integer pageSize, Kv kv) {
+		kv.set("organizecode",getOrgCode());
+		Page<Record> paginate = dbTemplate("currentstock.getdatas", kv).paginate(pageNumber, pageSize);
+		return paginate;
+	}
 
 
 	public Page<Record> CurrentStockByDatas(Integer pageNumber, Integer pageSize, Kv kv) {
@@ -378,11 +395,11 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 
 	/**仓库*/
 	public List<Record> autocompleteWareHouse(Kv kv) {
-		return dbTemplate("currentstock.autocompleteWareHouse", kv.set("organizecode", getOrgCode())).find();
+		return dbTemplate("currentstock.autocompleteWareHouse", kv).find();
 	}
 	/**库位*/
 	public List<Record> autocompletePosition(Kv kv) {
-		return dbTemplate("currentstock.autocompletePosition", kv.set("organizecode", getOrgCode())).find();
+		return dbTemplate("currentstock.autocompletePosition", kv).find();
 	}
 	/**盘点人*/
 	public List<Record> autocompleteUser(Kv kv) {
@@ -458,6 +475,7 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 	 * 盘点单
 	 * */
 	public Ret save2(StockCheckVouch stockcheckvouch){
+		final Long[] AutoIDs = {null};
 		tx(() -> {
 			Date now=new Date();
 			String userName = JBoltUserKit.getUserName();
@@ -471,64 +489,52 @@ public class CurrentStockService extends BaseU8RecordService implements IApprova
 			//组织编码
 			stockcheckvouch.setOrganizeCode(orgCode);
 			String code = BillNoUtils.genCurrentNo();
-			//盘点人
-			stockcheckvouch.setCheckPerson(userName);
 			//单号
 			stockcheckvouch.setBillNo(code);
 			ValidationUtils.isTrue(stockcheckvouch.save(),"主表保存失败!");
 
-			Long mid = stockcheckvouch.getAutoId();
-
-
-			String poscodes = stockcheckvouch.getPoscodes();
-
-			String poscodeSql="";
-			if(poscodes!=null){
-				String[] split = poscodes.split(",");
-				for (String poscode : split) {
-					poscodeSql+="'"+poscode+"',";
-				}
-				if(poscodeSql.length()>0){
-					poscodeSql=poscodeSql.substring(0,poscodeSql.length()-1);
-				}
-			}
-
-			if(StringUtils.isEmpty(poscodeSql)){
-				poscodeSql=null;
-			}
-			String whCode = stockcheckvouch.getWhCode();
-			List<Record> list = CurrentStockd(whCode, poscodeSql);
-			for (Record record : list) {
-				String poscode = record.getStr("poscode");
-				StockCheckVouchDetail stockcheckvouchdetail=new StockCheckVouchDetail();
-				stockcheckvouchdetail.put(record);
-				stockcheckvouchdetail.setMasID(Long.valueOf(String.valueOf(mid)));
-				stockcheckvouchdetail.setCreateDate(now);
-				stockcheckvouchdetail.setCreatePerson(userName);
-				stockcheckvouchdetail.setPosCode(poscode);
-				BigDecimal num = stockcheckvouchdetail.getNum();
-				if(num==null){
-					stockcheckvouchdetail.setNum(BigDecimal.ZERO);
-				}
-				ValidationUtils.isTrue(stockcheckvouchdetail.save(),"细表保存失败!");
-			}
+			AutoIDs[0] = stockcheckvouch.getAutoId();
+//
+//
+//			String poscodes = stockcheckvouch.getPoscodes();
+//
+//			String poscodeSql="";
+//			if(poscodes!=null){
+//				String[] split = poscodes.split(",");
+//				for (String poscode : split) {
+//					poscodeSql+="'"+poscode+"',";
+//				}
+//				if(poscodeSql.length()>0){
+//					poscodeSql=poscodeSql.substring(0,poscodeSql.length()-1);
+//				}
+//			}
+//
+//			if(StringUtils.isEmpty(poscodeSql)){
+//				poscodeSql=null;
+//			}
+//			String whCode = stockcheckvouch.getWhCode();
+//			List<Record> list = CurrentStockd(whCode, poscodeSql);
+//			for (Record record : list) {
+//				String poscode = record.getStr("poscode");
+//				StockCheckVouchDetail stockcheckvouchdetail=new StockCheckVouchDetail();
+//				stockcheckvouchdetail.put(record);
+//				stockcheckvouchdetail.setMasID(Long.valueOf(String.valueOf(mid)));
+//				stockcheckvouchdetail.setCreateDate(now);
+//				stockcheckvouchdetail.setCreatePerson(userName);
+//				stockcheckvouchdetail.setPosCode(poscode);
+//				BigDecimal num = stockcheckvouchdetail.getNum();
+//				if(num==null){
+//					stockcheckvouchdetail.setNum(BigDecimal.ZERO);
+//				}
+//				ValidationUtils.isTrue(stockcheckvouchdetail.save(),"细表保存失败!");
+//			}
 			return true;
 		});
-		return SUCCESS;
+		return SUCCESS.set("AutoID", AutoIDs[0]);
 	}
 
 
 
-
-	@Override
-	protected String getTableName() {
-		return null;
-	}
-
-	@Override
-	protected String getPrimaryKey() {
-		return null;
-	}
 
 
 	/**

@@ -108,6 +108,7 @@
 					"data-async='true' " +
 					"data-open-level='-1' " +
 					"data-handler='mgrTreehandlerFn'"+
+					"data-search-input='searchBackGoodsTypeInput_#(pageId)' "+
 					"data-read-url='admin/fitemss97/mgrTree?sn="+sn+"'" +
 					"data-change-handler='fitemss97Click'>" +
 					"</div>"
@@ -122,16 +123,18 @@
 			autoid = data.id;
 			let url = "admin/fitemss97/selectFitemss97?iautoid="+autoid;
 			Ajax.get(url,function(res){
-				if (res.state === 'ok'&& res.data!=undefined){
+				if (res.state === 'ok'&& res.data.isourceid!=0){
 					let table = res.data;
 					console.log(res.data);
 					$("#citemcode").val(table.citemcode);
 					$("#citemname").val(table.citemname);
 					$("#coderule").val(table.citemccode+'-'+table.citemcode);
-				}else if(res.state === 'ok'&& res.data==undefined){
+				}else if(res.state === 'ok'&& res.data.isourceid==0){
+					let table = res.data;
+					console.log(res.data);
 					$("#citemcode").val(null);
-					$("#citemname").val(null);
-					$("#coderule").val(null);
+					$("#citemname").val(table.citemname);
+					$("#coderule").val(table.citemccode);
 				}else {
 					LayerMsgBox.error("接口错误！");
 				}

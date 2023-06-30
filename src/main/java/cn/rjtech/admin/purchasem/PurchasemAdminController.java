@@ -1,6 +1,6 @@
 package cn.rjtech.admin.purchasem;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
@@ -134,7 +134,7 @@ public class PurchasemAdminController extends BaseAdminController {
         // 控制详情页面对子表数据的操作
         set("details", true);
         Integer ireftype = rc.getInt("ireftype");
-        if(ObjectUtil.equal(PurchaseRefTypeEnum.PROPOSAL.getValue(), ireftype))
+        if(ObjUtil.equal(PurchaseRefTypeEnum.PROPOSAL.getValue(), ireftype))
         	render("details.html");
         else
         	render("ref_budget_form.html");

@@ -6,6 +6,7 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.Fitemss97;
 import cn.rjtech.model.momdata.Fitemss97sub;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -35,11 +36,31 @@ public class Fitemss97subAdminController extends BaseAdminController {
     }
 
     /**
+     * 右表
+     */
+    public void fitemss97subTable(){
+        render("_table_fitemss97sub.html");
+    }
+
+
+
+
+
+
+    /**
      * 数据源
      */
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
+
+    /**
+     * 树结构数据源
+     */
+    public void mgrTree() {
+        renderJsonData(service.getMgrTree( getInt("openLevel", 0),get("sn",null)));
+    }
+
 
     /**
      * 新增

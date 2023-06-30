@@ -59,21 +59,16 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 		/**
 		 * 项目大类目录
 		 */
-		List<Record> records = dbTemplate("fitemss97.findfitemss97classList",Kv.by("sn",sn)).find();
-
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
-		for (Record record :records) {
-			JsTreeBean parent = new JsTreeBean(record.getStr("cItemCcode"), "#", record.getStr("cItemCname"), null, "", false);
-			jsTreeBeanList.add(parent);
-			List<Record> subRecords = dbTemplate("fitemss97.findfitemss97List",Kv.by("citemccode",record.get("cItemCcode"))).find();
-			for (Record subRecord : subRecords) {
-				Long id = subRecord.getLong("iAutoId");
-				Object pid = subRecord.getStr("iSourceId");
-				String text = "[" + subRecord.getStr("citemcode") + "]" + subRecord.getStr("citemname");
-				String type = subRecord.getStr("citemcode");
-				JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
-				jsTreeBeanList.add(jsTreeBean);
-			}
+
+		List<Record> subRecords = dbTemplate("fitemss97.findfitemss97List",Kv.by("citemccode",sn)).find();
+		for (Record subRecord : subRecords) {
+			Long id = subRecord.getLong("iAutoId");
+			Object pid = subRecord.getStr("iSourceId");
+			String text = "[" + subRecord.getStr("citemcode") + "]" + subRecord.getStr("citemname");
+			String type = subRecord.getStr("citemcode");
+			JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
+			jsTreeBeanList.add(jsTreeBean);
 		}
 
 		return jsTreeBeanList;

@@ -21,21 +21,13 @@
             <div class="col">
                 <form class="form-inline text-left" id="moallocateformesForm_#(pageId)" onsubmit="return false;" method="post">
                     <input type="hidden" id="states" name="state" value="" />
-                    <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
 
-
-
-
-
-
-
-
-
-                    <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 搜索</button>
 
                 </form>
             </div>
             <div class="col-md-auto">
+                <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
+                <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 搜索</button>
             </div>
         </div>
 
@@ -89,7 +81,7 @@
                            data-page="moallocateformesPage_#(pageId)"
                            data-row-dblclick-active="true"
                            data-row-dblclick-handler="moallocateformesDblclick"
-
+                            id="momaterialscanusedlogM_#(pageId)"
                     >
                         <thead class="thead-blue">
                         <tr>
@@ -131,6 +123,10 @@
     function moallocateformesDblclick(table,tr,trId,rowDta){
         $(tr).data('url','admin/moallocateformes/edit?billno='+rowDta.billno).data('area','100%,100%').data('title','详情').data('btn','close');
         DialogUtil.openBy(tr);
+    }
+
+    function instRows(res){
+        jboltTableInsertRow('momaterialscanusedlogM_#(pageId)', res, false, false, true);
     }
 
     function handleChange() {

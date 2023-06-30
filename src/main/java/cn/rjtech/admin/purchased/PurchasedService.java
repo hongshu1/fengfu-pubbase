@@ -2,7 +2,7 @@ package cn.rjtech.admin.purchased;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltDateUtil;
@@ -251,7 +251,7 @@ public class PurchasedService extends BaseService<Purchased> {
             item.put("ibudgetmoney", ibudgetmoney);
             item.put("ibudgetmoneyhidden", ibudgetmoney);
             Long iprojectcardid = item.getLong("iprojectcardid");
-            item.put("ibudgetalreadypurchasemoney", ObjectUtil.equal(item.getInt("isubitem"), IsEnableEnum.NO.getValue()) ? getIBudgetalreadypurchasemoney(iprojectcardid,ipurchaseid):BigDecimal.ZERO);
+            item.put("ibudgetalreadypurchasemoney", ObjUtil.equal(item.getInt("isubitem"), IsEnableEnum.NO.getValue()) ? getIBudgetalreadypurchasemoney(iprojectcardid,ipurchaseid):BigDecimal.ZERO);
             item.put("index", i + 1);
             item.put("ddemandate", JBoltDateUtil.format(item.getDate("ddemandate"), "YYYY-MM-dd"));
 
@@ -289,7 +289,7 @@ public class PurchasedService extends BaseService<Purchased> {
     		for (Purchased purchased : list) {
     			Long iprojectcardid = purchased.getIprojectcardid();
     			ProjectCard projectcard = projectCardService.findById(iprojectcardid);
-    			if(ObjectUtil.equal(projectcard.getIservicetype(), ServiceTypeEnum.EXPENSE_BUDGET.getValue())){
+    			if(ObjUtil.equal(projectcard.getIservicetype(), ServiceTypeEnum.EXPENSE_BUDGET.getValue())){
     				ExpenseBudgetItem expenseBudgetItem =  expenseBudgetItemService.findById(purchased.getIsourceid());
     				ExpenseBudget expenseBudget = expenseBudgetService.findById(expenseBudgetItem.getIexpenseid());
     				Record refDepartmentRc = depRefService.findIsDefaultEndDepRecord(expenseBudget.getCDepCode());
