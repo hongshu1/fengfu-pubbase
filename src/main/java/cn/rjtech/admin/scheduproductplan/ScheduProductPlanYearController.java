@@ -2,6 +2,7 @@ package cn.rjtech.admin.scheduproductplan;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -18,7 +19,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -47,7 +47,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
 
         set("cplanorderno",cplanorderno);
         set("icustomerid",icustomerid);
-        if (StringUtils.isBlank(cplanorderno)){
+        if (StrUtil.isBlank(cplanorderno)){
             startyear = DateUtils.formatDate(new Date(),"yyyy");
         }
         set("startyear",startyear);
@@ -280,7 +280,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
         String cinvcode1 = get("cinvcode1");
         String cinvname1 = get("cinvname1");
 
-        if (StringUtils.isBlank(startyear)){
+        if (StrUtil.isBlank(startyear)){
             startyear = DateUtils.getYear();
         }
 

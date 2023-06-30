@@ -2,6 +2,7 @@ package cn.rjtech.admin.modoc;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -34,7 +35,6 @@ import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
@@ -349,7 +349,7 @@ public class MoDocService extends BaseService<MoDoc> {
           moMoroutingconfig.setICreateBy(userId);
           moMoroutingconfig.setDCreateTime(dCreateTime);
           moMoroutingconfigService.save(moMoroutingconfig);
-          if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
+          if (StrUtil.isNotBlank(rowid) && rowid.equals(iautoid)) {
             iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
           }
 
@@ -424,7 +424,7 @@ public class MoDocService extends BaseService<MoDoc> {
 
                 iPersonId = p.getIAutoId();
               } else {
-                if (StringUtils.isNotBlank(r.getStr("cpsn_num"))) {
+                if (StrUtil.isNotBlank(r.getStr("cpsn_num"))) {
                   Record p = personService.getpersonByCpsnnum(r.getStr("cpsn_num"));
                   if (p == null) {
                     throw new ParameterException("存在无效人员信息");
@@ -476,7 +476,7 @@ public class MoDocService extends BaseService<MoDoc> {
     if (!isOk(moDoc.getDPlanDate())) {
       return Ret.fail("缺少计划日期,请重新选择人员在提交");
     }
-    if (!isOk(moDoc.getIAutoId()) && StringUtils.isBlank(moDoc.getCMoDocNo())) {
+    if (!isOk(moDoc.getIAutoId()) && StrUtil.isBlank(moDoc.getCMoDocNo())) {
       return addDoc(jBoltTable, rowid);
     }
     MoDoc oldModoc = findById(moDoc.getIAutoId());
@@ -666,7 +666,7 @@ public class MoDocService extends BaseService<MoDoc> {
         moMoroutingconfig.setCCreateName(JBoltUserKit.getUserName());
         moMoroutingconfig.setDCreateTime(dCreateTime);
         moMoroutingconfigService.save(moMoroutingconfig);
-        if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
+        if (StrUtil.isNotBlank(rowid) && rowid.equals(iautoid)) {
           iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
         }
 
@@ -722,7 +722,7 @@ public class MoDocService extends BaseService<MoDoc> {
       } else {
         moMoroutingconfig = moMoroutingconfigService.findById(iautoid);
         if (moMoroutingconfig != null) {
-          if (StringUtils.isNotBlank(rowid) && rowid.equals(iautoid)) {
+          if (StrUtil.isNotBlank(rowid) && rowid.equals(iautoid)) {
             iMoRoutingConfigId = moMoroutingconfig.getIAutoId();
             //删除原有人员信息
             moMoroutingconfigPersonService.deleteBy(Okv.create().set(MoMoroutingconfigPerson.IMOROUTINGCONFIGID, moMoroutingconfig.getIAutoId()));
@@ -749,7 +749,7 @@ public class MoDocService extends BaseService<MoDoc> {
 
               iPersonId = p.getIAutoId();
             } else {
-              if (StringUtils.isNotBlank(r.getStr("cpsn_num"))) {
+              if (StrUtil.isNotBlank(r.getStr("cpsn_num"))) {
                 Record p = personService.getpersonByCpsnnum(r.getStr("cpsn_num"));
                 if (p == null) {
                   throw new ParameterException("存在无效人员信息");

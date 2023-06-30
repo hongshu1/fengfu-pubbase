@@ -1,6 +1,7 @@
 package cn.rjtech.admin.scheduproductplan;
 
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -19,7 +20,6 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang.StringUtils;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -258,10 +258,10 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         startDate = isOk(get("startDate")) ? get("startDate") : startDate;
         endDate = isOk(get("endDate")) ? get("endDate") : endDate;
         LocalDate localDate = LocalDate.now();
-        if (StringUtils.isBlank(startDate)){
+        if (StrUtil.isBlank(startDate)){
             startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
         }
-        if (StringUtils.isBlank(endDate)){
+        if (StrUtil.isBlank(endDate)){
             endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
         }
 
@@ -333,10 +333,10 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         String active = get("active");
 
         LocalDate localDate = LocalDate.now();
-        if (StringUtils.isBlank(startdate)){
+        if (StrUtil.isBlank(startdate)){
             startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
         }
-        if (StringUtils.isBlank(enddate)){
+        if (StrUtil.isBlank(enddate)){
             enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
         }
 
@@ -450,10 +450,10 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         String enddate = get("enddate");
         int active = isOk(get("active")) ? getInt("active") : 1;
         LocalDate localDate = LocalDate.now();
-        if (StringUtils.isBlank(startdate)){
+        if (StrUtil.isBlank(startdate)){
             startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
         }
-        if (StringUtils.isBlank(enddate)){
+        if (StrUtil.isBlank(enddate)){
             enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
         }
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
@@ -522,10 +522,10 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         String active = get("active");
 
         LocalDate localDate = LocalDate.now();
-        if (StringUtils.isBlank(startdate)){
+        if (StrUtil.isBlank(startdate)){
             startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
         }
-        if (StringUtils.isBlank(enddate)){
+        if (StrUtil.isBlank(enddate)){
             enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
         }
 
@@ -633,10 +633,10 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         String startdate = get("startdate");
         String enddate = get("enddate");
         LocalDate localDate = LocalDate.now();
-        if (StringUtils.isBlank(startdate)){
+        if (StrUtil.isBlank(startdate)){
             startdate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
         }
-        if (StringUtils.isBlank(enddate)){
+        if (StrUtil.isBlank(enddate)){
             enddate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
         }
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序

@@ -1,5 +1,6 @@
 package cn.rjtech.admin.instockqcformm;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -26,7 +27,6 @@ import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
 import cn.rjtech.model.momdata.base.BaseInstockqcformdLine;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -35,9 +35,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jxls.util.Util;
 
 import java.io.File;
@@ -510,7 +508,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         //1、删除
         List<InStockQcFormD> inStockQcFormDList = inStockQcFormDService.findByIInStockQcFormMid(iautoid);
         List<Long> collect = inStockQcFormDList.stream().map(BaseInStockQcFormD::getIAutoId).collect(Collectors.toList());
-        String ids = StringUtils.join(collect, ",");
+        String ids = CollUtil.join(collect, ",");
         boolean tx = tx(() -> {
             //删除从表
             inStockQcFormDService.deleteByIds(ids);
@@ -626,12 +624,12 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         StringBuilder cMeasurePurpose = new StringBuilder();
         String[] split = inStockQcFormMRecord.getStr("cmeasurepurpose").split(",");
         for (String s : split) {
-            if (StringUtils.isNotBlank(s)) {
+            if (StrUtil.isNotBlank(s)) {
                 String text = CMeasurePurposeEnum.toEnum(Integer.parseInt(s)).getText();
                 cMeasurePurpose.append(text).append(",");
             }
         }
-        inStockQcFormMRecord.set("cmeasurepurpose", StringUtils.isNotBlank(cMeasurePurpose.toString())
+        inStockQcFormMRecord.set("cmeasurepurpose", StrUtil.isNotBlank(cMeasurePurpose.toString())
             ? cMeasurePurpose.substring(0, cMeasurePurpose.lastIndexOf(",")) : cMeasurePurpose.toString());
         //4、明细表数据
         List<Record> recordList = getTableDatas(Kv.by("iinstockqcformid", iautoid));
@@ -727,7 +725,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
 
     public boolean checkCValueIsNotBlank(String cvalue) {
         boolean isblank = false;
-        if (StringUtils.isNotBlank(cvalue)) {
+        if (StrUtil.isNotBlank(cvalue)) {
             return isblank = true;
         }
         return isblank;

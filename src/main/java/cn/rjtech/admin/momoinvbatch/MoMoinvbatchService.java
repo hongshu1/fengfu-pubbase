@@ -1,5 +1,6 @@
 package cn.rjtech.admin.momoinvbatch;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltGlobalConfigCache;
 import cn.jbolt.core.db.sql.Sql;
@@ -18,7 +19,6 @@ import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 工单现品票 Service
@@ -373,9 +372,9 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 
   }
 	public Ret subListPrint(String ids, Long imodocid, String workleader, String jobname) {
-		if(StringUtils.isBlank(ids)){
-			return  fail("未选中数据");
-		}
+        if (StrUtil.isBlank(ids)) {
+            return fail("未选中数据");
+        }
 		if(notOk(imodocid)){
 			return  fail("缺少工单ID");
 		}

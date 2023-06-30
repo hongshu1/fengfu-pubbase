@@ -1,5 +1,6 @@
 package cn.rjtech.admin.weekorderm;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -16,7 +17,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 客户订单-周间客户订单
@@ -98,7 +98,7 @@ public class WeekOrderMAdminController extends BaseAdminController {
      * 关闭
      */
     public void closeWeekOrder(@Para(value = "iautoid") String iAutoId) {
-        if (StringUtils.isEmpty(iAutoId)) {
+        if (StrUtil.isBlank(iAutoId)) {
             renderFail(JBoltMsg.PARAM_ERROR);
             return;
         }
