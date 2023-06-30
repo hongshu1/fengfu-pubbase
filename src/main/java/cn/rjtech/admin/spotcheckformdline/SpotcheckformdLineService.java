@@ -108,4 +108,5 @@ public class SpotcheckformdLineService extends BaseService<SpotcheckformdLine> {
 	public List<SpotcheckformdLine> findBySpotCheckFormDId(Long formDIAutoId) {
 		return  find("select * from PL_SpotCheckFormD_Line where iSpotCheckFormDid=?",formDIAutoId);
 	}
+
 }

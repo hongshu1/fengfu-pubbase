@@ -17,8 +17,8 @@ SELECT t1.*,
             WHEN t1.istatus=2 THEN '不合格'
             WHEN t1.istatus=3 THEN '合格' END
 FROM PL_InStockQcFormM t1
-    left JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
-    LEFT JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
+         LEFT JOIN Bd_QcForm t2 ON t1.iQcFormId = t2.iAutoId
+    inner JOIN Bd_Inventory t3 ON t1.iInventoryId = t3.iAutoId
     LEFT JOIN Bd_Equipment t4 ON t3.iEquipmentModelId = t4.iAutoId
     LEFT JOIN Bd_Uom t5 on t3.iInventoryUomId1 = t5.iautoid
     LEFT JOIN Bd_InventoryQcForm t6 on t1.iqcformid = t6.iqcformid and t1.iInventoryId = t6.iInventoryId
@@ -42,6 +42,9 @@ where t1.IsDeleted = '0'
                      #if(cinvname1)
     AND t3.cinvname1 LIKE CONCAT('%', #para(cinvname1), '%')
                      #end
+                     #if(cinvcode)
+    AND t3.cinvcode LIKE CONCAT('%', #para(cinvcode), '%')
+                        #end
                      #if(iqcuserid)
     AND t1.iqcuserid =#para(iqcuserid)
                      #end
@@ -153,9 +156,9 @@ from
      (SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion,cCompleteBarcode from PS_PurchaseOrderDBatch
       UNION ALL
       SELECT iAutoId,iinventoryId,cBarcode,iQty,cVersion,cCompleteBarcode from PS_SubcontractOrderDBatch) t1
-inner join Bd_Inventory t2 on t1.iinventoryId = t2.iAutoId
+left join Bd_Inventory t2 on t1.iinventoryId = t2.iAutoId
 left join Bd_InventoryQcForm t3 on t2.iAutoId = t3.iinventoryId
-inner join Bd_QcForm t4 on t3.iQcFormId = t4.iautoid
+left join Bd_QcForm t4 on t3.iQcFormId = t4.iautoid
 where t1.ccompletebarcode = #para(ccompletebarcode)
 order by t3.dupdatetime desc
 #end

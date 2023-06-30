@@ -1,5 +1,6 @@
 package cn.rjtech.admin.spotcheckformd;
 
+import cn.rjtech.model.momdata.ProdFormD;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +10,9 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.SpotCheckFormD;
+
+import java.util.List;
+
 /**
  * 制造管理-点检表单行配置
  * @ClassName: SpotCheckFormDService
@@ -105,4 +109,7 @@ public class SpotCheckFormDService extends BaseService<SpotCheckFormD> {
 		return null;
 	}
 
+	public List<SpotCheckFormD> findByPid(Long pid) {
+		return  find("select * from PL_SpotCheckFormD where iSpotCheckFormMid=?",pid);
+	}
 }

@@ -468,8 +468,12 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 
 
 	public Page<Record>  getBarcodeAllBycBarcode(int pageNumber, int pageSize, Kv keywords) {
-		Page<Record> page=dbTemplate("momaterialsscansum.getBarcodeAllBycBarcode",keywords).paginate(pageNumber,pageSize);
+		Page<Record> page=dbTemplate("momaterialscanusedlog.getBarcodeAllBycBarcode",keywords).paginate(pageNumber,pageSize);
 		return page;
+	}
 
+	public Record  getMaterialScanUsedLog(Kv keywords) {
+		Record record=dbTemplate("momaterialscanusedlog.getMaterialScanUsedLog",keywords).findFirst();
+		return record;
 	}
 }

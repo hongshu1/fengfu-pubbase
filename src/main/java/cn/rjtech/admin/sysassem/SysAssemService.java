@@ -501,7 +501,8 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     }
 
     public void commonSaveSysAssemModel(SysAssem sysAssem, SysPuinstore puinstore) {
-        //sysAssem.setAutoID();
+        Date date = new Date();
+        sysAssem.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         sysAssem.setBillType(puinstore.getBillType());
         sysAssem.setOrganizeCode(getOrgCode());
         sysAssem.setBillNo(puinstore.getBillNo());
@@ -511,16 +512,16 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         //sysAssem.setORdCode();//出库类型
         sysAssem.setMemo(puinstore.getMemo());
         sysAssem.setCcreatename(JBoltUserKit.getUserName());
-        sysAssem.setDcreatetime(new Date());
-        //sysAssem.setAuditPerson();
-        //sysAssem.setAuditDate();
-        sysAssem.setState("1");
-        //sysAssem.setIAuditWay();
-        //sysAssem.setDSubmitTime();
+        sysAssem.setCupdatename(JBoltUserKit.getUserName());
+        sysAssem.setDcreatetime(date);
+        sysAssem.setDupdatetime(date);
+        sysAssem.setIupdateby(JBoltUserKit.getUserId());
+        sysAssem.setIcreateby(JBoltUserKit.getUserId());
+        sysAssem.setIAuditWay(1); //审核
+        sysAssem.setIAuditStatus(1);//待审核
+        sysAssem.setDSubmitTime(puinstore.getDSubmitTime());
         sysAssem.setIAuditStatus(0);
-        //sysAssem.setDAuditTime();
-        //sysAssem.setIsDeleted();
-
+        sysAssem.setIsDeleted(false);
     }
 
     /**

@@ -34,7 +34,9 @@ and c.poscode in (#(poscodeSql))
 #end
 
 
-
+#sql("getdatas")
+select * from T_Sys_StockCheckVouch where 1=1 and isDeleted='0'
+#end
 
 
 
@@ -64,27 +66,36 @@ order by dcreatetime desc
 
 
 #sql("autocompleteWareHouse")
-SELECT w.whname, w.whcode
-FROM V_Sys_WareHouse w
-WHERE w.OrganizeCode = #para(organizecode)
-#if(q)
-and( w.whname like concat ('%',#para(q),'%') or w.whcode like concat ('%',#para(q),'%'))
-#end
-group by w.whname, w.whcode
+SELECT
+    wh.iAutoId,
+    wh.cWhCode AS whcode,
+    wh.cWhName AS whname
+FROM
+    Bd_Warehouse wh
+WHERE 1=1
+    AND  wh.isDeleted = 0
+    AND  wh.isEnabled = 1
+    AND  wh.cOrgCode = #para(OrgCode)
+    #if(q)
+        and( w.cWhName like concat ('%',#para(q),'%') or w.cWhCode like concat ('%',#para(q),'%'))
+    #end
+ORDER BY
+    wh.dCreateTime DESC
 #end
 
 #sql("autocompletePosition")
-SELECT p.PosCode, p.PosName
-FROM V_Sys_Position p
-left join V_Sys_WareHouse w on w.whcode = p.whcode
-WHERE p.OrganizeCode = #para(organizecode)
+SELECT
+    p.cAreaCode AS PosCode,
+    p.cAreaName AS PosName
+FROM
+    Bd_Warehouse wh
+        LEFT JOIN Bd_Warehouse_Area p ON p.iWarehouseId = wh.iAutoId
+WHERE 1=1
+        AND p.cOrgCode = #para(OrgCode)
 #if(q)
 and p.PosName like concat ('%',#para(q),'%')
 #end
-#if(whcode)
-and w.whcode=#para(whcode)
-#end
-group by p.PosCode, p.PosName
+and wh.cWhCode=#para(whcode)
 #end
 
 

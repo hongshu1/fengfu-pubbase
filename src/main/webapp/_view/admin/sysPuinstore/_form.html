@@ -5,15 +5,14 @@
       <div class="card">
         <div class="card-body">
           <div class="col">
-            <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary" ><i
-                class="fa fa-refresh"></i> 保存</button>
+            <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary"> 保存</button>
 
             #if(sysPuinstore.autoid??)
             #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUInStore", o=sysPuinstore, primaryKeyName="AutoID",
             className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="syspuinstore")
             #end
 
-            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
+            <button onclick="closeHandler()" class="btn btn-outline-secondary"> 关闭</button>
           </div>
         </div>
       </div>
@@ -250,7 +249,7 @@
                  value="#(barcode??)"/>
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-          <button onclick="checkBarcode()" class="btn btn-primary btn-sm">扫码</button>
+          <button onclick="checkBarcode()" class="btn btn-primary btn-sm">搜索</button>
         </div>
       </div>
     </div>
@@ -334,7 +333,7 @@
     }
 
     if (barcode) {
-      Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode}, function (res) {
+      Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode.trim()}, function (res) {
         //扫描的现品票必须归属于同一张采购订单
         let data = res.data;
         let sourcebillno = $("#sourcebillno").val('');
