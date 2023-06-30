@@ -98,6 +98,7 @@ public class BomMAdminController extends BaseAdminController {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
 
+    @UnCheck
 	public void getTreeDatas(){
 		renderJsonData(service.getTreeDatas(getKv()));
 	}
@@ -105,15 +106,18 @@ public class BomMAdminController extends BaseAdminController {
 	public void updateIsView(){
 		renderJsonData(service.updateIsView(getLong(0)));
 	}
-	
+
+    @UnCheck
 	public void getVersionRecord() {
 		renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
 	}
-	
+
+    @UnCheck
 	public void getBomComparePageData(){
 		renderJsonData(bomDService.getBomComparePageData(getPageNumber(), getPageSize(), getKv()));
 	}
-	
+
+    @UnCheck
 	public void findByVersionList(@Para(value = "iinventoryid") Long invId){
 		renderJsonData(service.findByVersionList(getOrgId(), invId));
 	}
@@ -135,15 +139,18 @@ public class BomMAdminController extends BaseAdminController {
 		
 		renderJsonData(service.submitForm(formJsonData, tableJsonData));
 	}
-	
+
+    @UnCheck
 	public void findByBomMasterId(){
         Long id = getLong(0);
         BomData bomData = bomDataService.getBomData(id);
         ValidationUtils.notNull(bomData, JBoltMsg.DATA_NOT_EXIST);
         renderJsonData(JSONObject.parseArray(bomData.getCData()));
     }
-    
+
+    @UnCheck
     public void getTreeTableDatas(){
 		renderJsonData(bomDService.getTreeTableDatas(getKv()));
 	}
+    
 }

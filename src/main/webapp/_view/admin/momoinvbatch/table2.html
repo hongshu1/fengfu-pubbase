@@ -18,10 +18,10 @@
 <td>${data.cbarcode}</td>
  <td>${data.cversion}</td>
 <td>${data.iqty}</td>
-<td>${data.istatus}</td>
+<td>${data.istatusname}</td>
 <td>
-    <a href="admin/momoinvbatch/updateWork/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="补打" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-pencil"></i>补打</a>
-    #if(index == 1)
+    <a href="javascript:void(0);" onclick="jboltTableRemoveRow()" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-print"></i>补打</a>
+    #if(index == 0)
     <a href="admin/momoinvbatch/withdraw?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="撤回" data-handler="refreshJBoltTable" data-confirm="确定撤回？" class="jbolt_table_delbtn"><i class="fa fa-pencil"></i>撤回</a>
     #end
 </td>
@@ -31,17 +31,18 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="moMoinvbatch_toolbar1_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
-                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/momoinvbatch/workByIds?ids=" data-confirm="批量报工？" class="btn btn-primary btn-sm" ><i class="fa fa-print"></i>批量报工</button>
-
+                <button data-ajaxbtn data-handler="refreshPjaxContainer" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/momoinvbatch/workByIds?imodocid=#(moDoc.iautoid??)&ids=" data-confirm="批量报工？" class="btn btn-primary btn-sm" ><i class="fa fa-print"></i>批量报工</button>
             </div>
             <div class="clearfix"></div>
         </div>
 
         <table class="jbolt_table jbolt_main_table table-center hover_info"
+               id="table2_#(pageId)"
                data-jbolttable
                data-height="fill"
                data-ajax="true"
-               data-url="admin/momoinvbatch/datas?iprintstatus=2"
+               data-url="admin/momoinvbatch/datas?iprintstatus=2&imodocid=#(moDoc.iautoid)"
+               data-ajax-success-handler="checkDatas"
                data-column-resize="true"
                data-row-click-active="true"
                data-column-prepend="1:checkbox:true"
@@ -67,9 +68,6 @@
             <tbody>
             </tbody>
         </table>
-
-
-
     </div>
 </div>
 

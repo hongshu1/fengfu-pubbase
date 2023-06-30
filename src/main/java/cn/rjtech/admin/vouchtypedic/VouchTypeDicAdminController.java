@@ -37,6 +37,7 @@ public class VouchTypeDicAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("cVTChName"), get("cBTChName")));
     }

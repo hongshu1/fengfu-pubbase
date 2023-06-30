@@ -320,9 +320,6 @@
 
         function updateItemParamSeq(isRefresh){
             var datas = jboltTableGetAllDatas('#jbolt_table_prod_qcformparam_split');
-            console.log(datas)
-            console.log(JSON.stringify(datas))
-            console.log(6666)
             if (isNotEmpty(datas)){
                 setItemParamSeq('#jbolt_table_prod_qcformparam_split', datas, itemSort('#jbolt_table_QcFormItem_split'), isRefresh);
             }

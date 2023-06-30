@@ -3,6 +3,7 @@ package cn.rjtech.admin.momaterialsscansum;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MoMaterialscanlog;
@@ -93,6 +94,7 @@ public class MoMaterialscanlogAdminController extends BaseAdminController {
 	/**
 	 * 获取备料现品票明细（未扫描）
 	 */
+    @UnCheck
 	public void getMoMaterialNotScanLogList(){
 		renderJsonData(service.getMoMaterialNotScanLogList(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -108,10 +110,10 @@ public class MoMaterialscanlogAdminController extends BaseAdminController {
 	/**
 	 * 齐料检查主页数据
 	 */
+    @UnCheck
 	public void getBarcodeAll(){
 		Page<Record> page=service.getBarcodeAll(getPageNumber(),getPageSize(),getKv());
 		renderJsonData(page);
 	}
-
 
 }

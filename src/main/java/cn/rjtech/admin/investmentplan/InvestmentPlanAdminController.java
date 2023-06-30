@@ -331,23 +331,25 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     	}
 	}
 
-	/**
+    /**
      * 投资计划编制编辑界面查询投资计划项目数据
-     * */
+     */
+    @UnCheck
     public void findInvestmentPlanItemDatas(@Para(value="iplanid") Long iplanid){
     	renderJsonData(service.findInvestmentPlanItemDatas(iplanid));
     }
-    
+
     /**
      * 投资计划编制详情界面查询投资计划项目数据
-     * */
+     */
+    @UnCheck
     public void findInvestmentPlanItemForDetail(@Para("investmentPlanId") Long investmentPlanId) {
         renderJsonData(service.findInvestmentPlanItemForDetail(investmentPlanId));
     }
-   
+
     /**
      * 查询部门生效的投资计划主表数据
-     * */
+     */
     @UnCheck
     public void findNewestInvestmentByDeptCode(){
     	Kv para = getKv();
@@ -364,43 +366,40 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     	set("unfinishItemInvestmentPlan",unfinishItemInvestmentPlan);
     	render("export_unfinish_investmentplanitem.html");
     }
+
     /**
      * 导入未完成项目界面 - 查询未完成项目数据
-     * */
+     */
+    @UnCheck
     public void findUnfinishInvestmentPlanItemDatas(@Para(value="iplanid") Long iplanid){
     	renderJsonData(service.findUnfinishInvestmentPlanItemDatas(iplanid));
     }
-/*    *//**
-     * 提交审核
-     * *//*
-    @CheckPermission(PermissionKey.INVESTMENT_PLAN_FORMULATE_SUBMIT)
-    public void submit(){
-    	Long iplanid = getLong(0);
-    	renderJson(service.submit(iplanid));
-    }*/
     
     @CheckPermission(PermissionKey.INVESTMENT_BUDGET_ACTUAL_DIFFERENCE)
     public void budgetActualDifferenceIndex(){
     	render("budget_actual_difference.html");
     }
+
     /**
      * 投资预实差异管理表数据查询
-     * */
+     */
     @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findBudgetActualDifferenceDatas(){
     	renderJsonData(service.findBudgetActualDifferenceDatas(getKv()));
     }
+
     /**
      * 投资汇总表首页
-     * */
+     */
     @CheckPermission(PermissionKey.INVESTMENT_PLAN_SUMMARY)
     public void investmentPlanGroupSummaryIndex(){
     	render("investment_plan_summary.html");
     }
+
     /**
      * 投资汇总表数据查询
-     * */
+     */
     @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findInvestmentPlanGroupSummaryDatas(){
@@ -409,17 +408,18 @@ public class InvestmentPlanAdminController extends BaseAdminController {
 		ValidationUtils.notNull(ibudgetyear, "请选择预算年度!");
     	renderJsonData(service.findInvestmentPlanGroupSummaryDatas(para));
     }
-    
-	/**
-	 * 投资情况查询表首页
-	 * */
+
+    /**
+     * 投资情况查询表首页
+     */
     @CheckPermission(PermissionKey.INVESTMENT_PLAN_SITUATION_INDEX)
     public void investmentPlanSituationIndex(){
     	render("investment_plan_situation.html");
     }
-	/**
-	 * 投资情况查询表table页面
-	 * */
+
+    /**
+     * 投资情况查询表table页面
+     */
     @UnCheck
     public void investmentPlanSituationTableIndex(){
     	Kv para = getKv();
@@ -439,51 +439,56 @@ public class InvestmentPlanAdminController extends BaseAdminController {
         set("pageId", JBoltRandomUtil.randomNumber(6));
     	render("investment_plan_situation_table.html");
     }
-    
-	/**
-	 * 投资情况查询表
-	 * */
+
+    /**
+     * 投资情况查询表
+     */
     @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findInvestmentPlanItemSituationDatas(){
     	renderJsonData(service.findInvestmentPlanItemSituationDatas(getKv()));
     }
-    
+
     /**
      * 执行进度跟踪表首页
-     * */
+     */
     @CheckPermission(PermissionKey.EXECUTION_PROGRESS_TRACKING)
     public void executionProgressTrackingIndex(){
     	render("execution_progress_tracking_V2.html");
     }
+
     /**
      * 执行进度跟踪表-费用tab页面
-     * */
+     */
     @UnCheck
     public void executionProgressTrackingExpense(){
     	render("execution_progress_tracking_expense.html");
     }
+
     /**
      * 执行进度跟踪表-投资tab页面
-     * */
+     */
     @UnCheck
     public void executionProgressTrackingInvestment(){
     	render("execution_progress_tracking_investment.html");
     }
+
     /**
      * 执行进度跟踪表-费用tab数据查询
-     * */
+     */
     @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findExecutionProgressTrackingExpenseDatas(){
     	renderJsonData(service.findExecutionProgressTrackingExpenseDatas(getKv()));
     }
+
     /**
      * 执行进度跟踪表-投资tab数据查询
-     * */
+     */
     @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void findExecutionProgressTrackingInvestmentDatas(){
     	renderJsonData(service.findExecutionProgressTrackingInvestmentDatas(getKv()));
     }
+    
 }

@@ -27,7 +27,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -530,13 +533,10 @@ public class QcFormService extends BaseService<QcForm> {
         
         if (CollUtil.isNotEmpty(mapList)){
     
-            Collections.sort(mapList, new Comparator<Map<String, Object>>() {
-                @Override
-                public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-                    Integer map1 = Integer.valueOf(o1.get("iseq").toString());
-                    Integer map2 = Integer.valueOf(o2.get("iseq").toString());
-                    return map1.compareTo(map2);
-                }
+            mapList.sort((o1, o2) -> {
+                Integer map1 = Integer.valueOf(o1.get("iseq").toString());
+                Integer map2 = Integer.valueOf(o2.get("iseq").toString());
+                return map1.compareTo(map2);
             });
             return mapList;
         }

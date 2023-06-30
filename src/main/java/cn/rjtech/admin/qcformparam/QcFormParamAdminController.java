@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.QcFormParam;
@@ -40,6 +41,7 @@ public class QcFormParamAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getBoolean("isDeleted")));
     }
@@ -143,6 +145,7 @@ public class QcFormParamAdminController extends BaseAdminController {
         renderJson(service.down(getLong(0)));
     }
 
+    @UnCheck
     public void getQcFormParamListByPId(@Para(value = "iqcformid") Long qcFormId) {
         renderJsonData(service.getQcFormParamListByPId(qcFormId));
     }

@@ -170,6 +170,7 @@ public class SysAssemAdminController extends BaseAdminController {
 	/**
 	 * 获取资源
 	 */
+    @UnCheck
 	public void getResource(){
 		String q = get("q");
 		if (notOk(q)){
@@ -191,6 +192,7 @@ public class SysAssemAdminController extends BaseAdminController {
 	/**
 	 * 条码获取资源
 	 */
+    @UnCheck
 	public void getBarcode(){
 		String barcode = get("barcode");
 		if (notOk(barcode)){
@@ -212,6 +214,7 @@ public class SysAssemAdminController extends BaseAdminController {
 	/**
 	 * 查询双单位条码数据
 	 */
+    @UnCheck
 	public void getBarCodeData(){
 		//订单编号
 		String sourcebillno = get("sourcebillno");

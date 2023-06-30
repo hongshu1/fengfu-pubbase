@@ -144,6 +144,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformparam查询列表
      */
+    @UnCheck
     public void getQcFormParamListByPId() {
         renderJsonData(service.getQcFormParamListByPId(getPageNumber(), getPageSize(), getKv()));
     }
@@ -151,8 +152,9 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformtableparam查询列表
      */
+    @UnCheck
     public void getQcFormTableParamListByPId() {
-        /**
+        /*
          * 三种情况
          *  1.新增进来，没有formId也没有新增数据
          *  2.新增进来的，没有formId 但是有新增数据，将新增数据返回 或 修改进来的，有formId，不管是否有新增还是删除直接将页面的数据传入过来
@@ -171,6 +173,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 按主表qcformitem查询列表qcform
      */
+    @UnCheck
     public void getItemCombinedListByPId() {
         renderJsonData(service.getItemCombinedListByPId(getKv()));
     }

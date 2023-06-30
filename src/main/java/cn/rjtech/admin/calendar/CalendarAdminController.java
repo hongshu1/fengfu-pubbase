@@ -45,6 +45,7 @@ public class CalendarAdminController extends JBoltBaseController {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }
 
+    @UnCheck
     public void getTakeDateListByYear() {
         renderJsonData(service.getTakeDateListByYear(getKv()));
     }

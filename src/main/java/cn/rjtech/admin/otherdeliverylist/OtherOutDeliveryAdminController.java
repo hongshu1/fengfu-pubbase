@@ -56,6 +56,7 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 	/**
 	 * 其他出库单列表-明细
 	 */
+    @UnCheck
 	public void getOtherOutLines() {
 		String autoid = get("autoid");
 		Kv kv = new Kv();
@@ -151,6 +152,7 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 	 * 获取项目大类目录数据
 	 * 通过关键字匹配
 	 */
+    @UnCheck
 	public void getCItemCCodeLines() {
 		String orgCode =  getOrgCode();
 		renderJsonData(service.getCItemCCodeLines(get("q"),get("orgCode",orgCode)));
@@ -162,8 +164,10 @@ public class OtherOutDeliveryAdminController extends BaseAdminController {
 	 * 通过关键字匹配
 	 * autocomplete组件使用
 	 */
+    @UnCheck
 	public void getItemCodeLines() {
 		Kv kv = getKv();
 		renderJsonData(service.getItemCodeLines(kv));
 	}
+    
 }

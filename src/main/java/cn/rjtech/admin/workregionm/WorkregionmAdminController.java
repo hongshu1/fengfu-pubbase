@@ -61,7 +61,8 @@ public class WorkregionmAdminController extends JBoltBaseController {
 
     /**
      * 产线选择
-     * */
+     */
+    @UnCheck
     public void select_dialog_index() {
         render("select_dialog_index.html");
     }
@@ -69,6 +70,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas() {
         renderJsonData(service.pageList(getPageNumber(), getPageSize(), getKv()));
     }
@@ -216,18 +218,22 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 查询产线列表
      */
+    @UnCheck
     public void selectWorkRegionMList() {
         renderJsonData(service.selectWorkRegionMList());
     }
 
+    @UnCheck
     public void findByWarehouse() {
         renderJsonData(warehouseService.findByWarehouse());
     }
 
+    @UnCheck
     public void findByWareHouseId() {
         renderJsonData(warehouseAreaService.findByWareHouseId(getLong("iWarehouseId")));
     }
 
+    @UnCheck
     public void findPersonPage() {
         renderJsonData(personService.paginateDatas(getPageNumber(), getPageSize(), getKv()));
     }

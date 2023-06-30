@@ -35,6 +35,7 @@ public class CodingRuleDAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @UnCheck
     public void datas(@Para(value = "icodingrulemid") Long icodingrulemid) {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), icodingrulemid));
     }

@@ -24,8 +24,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.text.html.Option;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -162,6 +160,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 入库类别
      */
+    @UnCheck
     public void selectRdCode() {
         renderJsonData(service.selectRdCode(getKv()));
     }

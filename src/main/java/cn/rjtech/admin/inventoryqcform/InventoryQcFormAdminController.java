@@ -7,6 +7,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.MultipleUploadFile;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.admin.qcform.QcFormService;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -246,6 +247,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	/**
 	 * 检验表格数据源
 	 */
+    @UnCheck
 	public void getFormList(){
 		renderJsonData(service.getFormList(getKv()));
 	}
