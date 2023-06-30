@@ -40,6 +40,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
     @Inject
     private CusOrderSumService cusOrderSumService;
 
+
     /**
      * 首页
      */
