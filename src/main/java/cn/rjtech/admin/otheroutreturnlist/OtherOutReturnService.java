@@ -23,13 +23,13 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 /**
  * 出库管理-特殊领料出库 Service
+ *
  * @ClassName: OtherOutService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-22 16:33
@@ -51,10 +51,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate("otheroutreturnlist.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
@@ -79,8 +75,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	/**
 	 * 更新
-	 * @param otherOut
-	 * @return
 	 */
 	public Ret update(OtherOut otherOut) {
 		if(otherOut==null || notOk(otherOut.getAutoID())) {
@@ -100,8 +94,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		return deleteByIds(ids,true);
@@ -109,8 +101,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		return deleteById(id,true);
@@ -120,7 +110,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 	 * 删除数据后执行的回调
 	 * @param otherOut 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(OtherOut otherOut, Kv kv) {
@@ -132,7 +121,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 	 * 检测是否可以删除
 	 * @param otherOut 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanDelete(OtherOut otherOut, Kv kv) {
@@ -142,7 +130,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	/**
 	 * 设置返回二开业务所属的关键systemLog的targetType 
-	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
@@ -153,10 +140,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	/**
 	 * 特殊领料单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
 	public Page<Record> getOtherOutLinesReturnLines(int pageNumber, int pageSize, Kv kv){
 		return dbTemplate("otheroutreturnlist.getOtherOutLinesReturnLines",kv).paginate(pageNumber, pageSize);
@@ -164,17 +147,13 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 	}
 
 	public List<Record> treturnQty(Kv kv) {
-		List<Record> treturnQty = dbTemplate("otheroutreturnlist.treturnQty",kv).find();
-	return treturnQty;
+        return dbTemplate("otheroutreturnlist.treturnQty",kv).find();
 	}
-
 
 	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
-
-
 
 		// 这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
 
@@ -326,10 +305,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
 	public Page<Record> getReturnDataS(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate("otheroutreturnlist.getReturnDataS",kv).paginate(pageNumber, pageSize);
@@ -337,8 +312,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	/**
 	 * 删除行数据
-	 * @param autoId
-	 * @return
 	 */
 	public Ret deleteList(String autoId) {
 		tx(() -> {
@@ -347,42 +320,40 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 			return true;
 		});
 		return SUCCESS;
-
 	}
 
 	public List<OtherOut> getpushu(Kv kv) {
-		List<OtherOut> lists = daoTemplate("otheroutreturnlist.pushu", kv).find();
-		return lists;
+        return daoTemplate("otheroutreturnlist.pushu", kv).find();
 	}
 
 	//推送u8数据接口
 	public Ret pushU8(OtherOut otherout, List<OtherOutDetail> otheroutdetail) {
 		if(!CollectionUtils.isNotEmpty(otheroutdetail)){
-			return Ret.fail("数据不能为空");
+			return fail("数据不能为空");
 		}
 
 		User user = JBoltUserKit.getUser();
 		JSONObject data = new JSONObject();
 
 		data.set("userCode",user.getUsername());
-		data.set("organizeCode",this.getdeptid());
+		data.set("organizeCode",this.getCorgcode());
 		data.set("token","");
 
 		JSONObject preallocate = new JSONObject();
 
 
 		preallocate.set("userCode",user.getUsername());
-		preallocate.set("organizeCode",this.getdeptid());
+		preallocate.set("organizeCode",this.getCorgcode());
 		preallocate.set("CreatePerson",user.getId());
 		preallocate.set("CreatePersonName",user.getName());
 		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
 		preallocate.set("tag","OtherOut");
 		preallocate.set("type","OtherOut");
 
-		data.put("PreAllocate",preallocate);
+		data.set("PreAllocate",preallocate);
 
 		ArrayList<Object> maindata = new ArrayList<>();
-		otheroutdetail.stream().forEach(s -> {
+		otheroutdetail.forEach(s -> {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.set("invstd","");
 			jsonObject.set("owhcode",otherout.getWhcode());
@@ -427,20 +398,12 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		return Ret.fail("上传u8失败");
+		return fail("上传u8失败");
 	}
 
-	//通过当前登录人名称获取部门id
-	public String getdeptid(){
-		String dept = "001";
-		User user = JBoltUserKit.getUser();
-		Person person = personservice.findFirstByUserId(user.getId());
-		if(null != person && "".equals(person)){
-			dept = person.getCOrgCode();
-		}
-		return dept;
+	public String getCorgcode(){
+		Person person = personservice.findFirstByUserId(JBoltUserKit.getUserId());
+		return null == person ? null : person.getCOrgCode();
 	}
-
-
 
 }

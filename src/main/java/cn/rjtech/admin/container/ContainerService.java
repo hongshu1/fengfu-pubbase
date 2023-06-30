@@ -29,7 +29,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Date;
@@ -362,7 +361,7 @@ public class ContainerService extends BaseService<Container> {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
         //记号判空
-		if (mark == null|| StringUtils.isBlank(mark)) {
+		if (mark == null|| StrUtil.isBlank(mark)) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 

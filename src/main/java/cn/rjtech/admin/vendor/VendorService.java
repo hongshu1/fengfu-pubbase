@@ -1,6 +1,7 @@
 package cn.rjtech.admin.vendor;
 
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -18,15 +19,12 @@ import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -118,7 +116,7 @@ public class VendorService extends BaseService<Vendor> {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         //供应商编码不能重复
-        ValidationUtils.isTrue(StringUtils.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
+        ValidationUtils.isTrue(StrUtil.isBlank(findcVenCodeInfo(vendor.getCVenCode())), vendor.getCVenCode() + " 供应商编码不能重复！");
         boolean success = vendor.save();
         return ret(success);
     }
@@ -134,13 +132,13 @@ public class VendorService extends BaseService<Vendor> {
         vendor.setDCreateTime(date);
         vendor.setDUpdateTime(date);
         vendor.setCOrgName(getOrgName());
-        vendor.setCOrgCode(getOrgCode());//StringUtils.isNotBlank(getOrgCode())?getOrgCode():"999"
+        vendor.setCOrgCode(getOrgCode());//StrUtil.isNotBlank(getOrgCode())?getOrgCode():"999"
         vendor.setIsDeleted(false);
         vendor.setIsEnabled(true);
         vendor.setISource(SourceEnum.MES.getValue());
         vendor.setIOMWhId(warehouse.getIAutoId());//委外仓id
         vendor.setCOMWhCode(warehouse.getCWhCode());//委外仓编码
-        vendor.setCCountry(StringUtils.isNotBlank(vendor.getCCountry()) ? vendor.getCCountry() : "中国");
+        vendor.setCCountry(StrUtil.isNotBlank(vendor.getCCountry()) ? vendor.getCCountry() : "中国");
         Person person = personService.findById(vendor.getIDutyPersonId());
         vendor.setCVenPPerson(null != person ? person.getCpsnNum() : ""); //专管业务员编码
     }
@@ -169,7 +167,7 @@ public class VendorService extends BaseService<Vendor> {
                 Vendor vendor1 = findById(udpateVendor.getIAutoId());
                 if (!vendor1.getCVenCode().equals(udpateVendor.getCVenCode())) {
                     ValidationUtils
-                        .isTrue(StringUtils.isBlank(findcVenCodeInfo(udpateVendor.getCVenCode())),
+                        .isTrue(StrUtil.isBlank(findcVenCodeInfo(udpateVendor.getCVenCode())),
                             udpateVendor.getCVenCode() + " 供应商编码不能重复！");
                 }
                 String[] split = udpateVendor.getCProvince().split(",");
@@ -224,7 +222,7 @@ public class VendorService extends BaseService<Vendor> {
                 saveVendor.setCVenName(fromRecord.getStr("cvenname"));
                 saveVendor.setCVenAbbName(fromRecord.getStr("cvenabbname"));
                 saveVendor.setDVenDevDate(
-                    StringUtils.isNotBlank(fromRecord.getStr("dvendevdate")) ? fromRecord.getDate("dvendevdate") : new Date());
+                    StrUtil.isNotBlank(fromRecord.getStr("dvendevdate")) ? fromRecord.getDate("dvendevdate") : new Date());
                 saveVendor.setCCurrency(fromRecord.getStr("ccurrency"));
                 saveVendor.setCVCCode(fromRecord.getStr("cvccode"));
                 saveVendor.setCVenMnemCode(fromRecord.getStr("cVenMnemCode"));
@@ -236,7 +234,7 @@ public class VendorService extends BaseService<Vendor> {
                 Warehouse warehouse = warehouseService.findByWhCode(saveVendor.getCOMWhCode());
                 saveVendorModel(saveVendor, warehouse);
                 //这里需要根据自己的需要 从Form这个JSON里去获取自己需要的数据
-                if (StringUtils.isNotBlank(fromRecord.getStr("cprovince"))) {
+                if (StrUtil.isNotBlank(fromRecord.getStr("cprovince"))) {
                     String[] split = fromRecord.getStr("cprovince").split(",");
                     setSplitCProvince(saveVendor, split);
                 }

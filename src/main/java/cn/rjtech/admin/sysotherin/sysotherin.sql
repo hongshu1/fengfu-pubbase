@@ -65,3 +65,15 @@ where 1=1
     order by a.dupdatetime desc
 #end
 
+
+
+#sql("billtype")
+SELECT  *
+from Bd_VouchTypeDic
+where isDeleted = 0
+	#if(q)
+		and (cBTID like concat('%',#para(q),'%') OR cBTChName like concat('%',#para(q),'%'))
+	#end
+	order by iAutoId desc
+#end
+

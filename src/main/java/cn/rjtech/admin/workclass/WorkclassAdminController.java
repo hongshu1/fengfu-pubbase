@@ -1,5 +1,6 @@
 package cn.rjtech.admin.workclass;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -20,7 +21,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -99,7 +99,7 @@ public class WorkclassAdminController extends JBoltBaseController {
         String[] ids = get("ids").split(",");
         for (String id : ids) {
             String checkResult = checkOperationIsUse(Long.valueOf(id));
-            if (StringUtils.isNotBlank(checkResult)) {
+            if (StrUtil.isNotBlank(checkResult)) {
                 renderFail(checkResult);
                 return;
             }

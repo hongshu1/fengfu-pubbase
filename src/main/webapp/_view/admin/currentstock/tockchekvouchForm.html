@@ -1,103 +1,167 @@
-<div class="jbolt_page_title">
-    <div class="row">
-        <div class="col-md-auto">
-            <h5>条码明细</h5>
-        </div>
-        <div class="col-md-auto">
-        </div>
-    </div>
-</div>
-
-<div class="jbolt_page_content">
-    <div class="row">
-        <div class="col-10 text-left">
-            <form class="form-inline text-left" onsubmit="return false;" id="tockchekvouchForm" action="#(action)" method="post">
-                <input hidden id='stockcheckvouchdid' name="stockcheckvouchdid">
-                <input hidden id='whcode' name="whcode" value="#(bill.whcode)">
-                <input hidden id='isapp2' name="isapp2" value="#(isapp)">
-                <input type="text" autocomplete="off" class="form-control" placeholder="=条码=" name="barcode" value=""/>
-                <button type="submit" class="btn btn-light" id="dTable"><i class="fa fa-search"></i> 查询</button>
-
-            </form>
-        </div>
-    </div>
-</div>
-<div class="jbolt_page_content">
-
-    <!-- JBoltTable的数据模板定义-->
-    <textarea class="jb_tpl_box" id="stock_#(pageId)">
-		{@each datas as data,index}
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="StockCheckVouchBarcode_tpl_#(pageId)">
+    {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-             <td>
-                ${data.invcode}
-            </td>
-			<td>${data.invname}</td>
-			<td>${data.invstd}</td>
-			<td>${data.unitname}</td>
-
-			<td>${data.realqty2}</td>
-			<td>${data.qty}</td>
-			<td>${data.adjustqty2}</td>
-
-
-			<td>${data.barcode}</td>
-			<td>${data.batch}</td>
-			<td>${data.createdate}</td>
-			<td>${data.source}</td>
-		</tr>
-		{@/each}
-	</textarea>
-    <!-- 工具条 toolbar -->
-    <div class="jbolt_table_toolbar" id="stock_toolbar_#(pageId)">
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <!--
-                        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>新增行</button>
-            -->
-        </div>
-
-        <div class="clearfix"></div>
-    </div>
-
-    <table class="jbolt_table jbolt_main_table table-center"
-           id="stock__table_#(pageId)"
-           data-jbolttable
-           data-height="250"
-           data-ajax="true"
-           data-width="auto"
-           data-url="admin/currentstock/barcodeDatas"
-           data-column-resize="true"
-           data-column-prepend="1:checkbox:true"
-           data-conditions-form="tockchekvouchForm"
-           data-rowtpl="stock_#(pageId)"
-           data-toolbar="stock_toolbar_#(pageId)"
-           data-page="PuDeliveryDetailPage_#(pageId)"
-           data-editable-option="currentstock_Barcode_#(pageId)"
-           data-editable="true"
-    >
-        <thead class="thead-blue">
-        <tr>
-            <th data-width="30" data-min-width="60" data-column="index">序号</th>
-            <th data-width="150" data-column="invcode">存货编码</th>
-
-            <th data-width="150" data-column="invname">存货名称</th>
-            <th data-width="150" data-column="invstd">规格</th>
-            <th data-width="110" data-column="unitname">库存单位</th>
-
-
-            <th data-width="110" data-column="realqty2">实盘数量</th>
-            <th data-width="110" data-column="qty">数量</th>
-            <th data-width="110" data-column="adjustqty2">调整数量</th>
-
-
-            <th data-width="320" data-column="barcode">条码</th>
-            <th data-width="110" data-column="batch">批次号</th>
-            <th data-width="200" data-column="createdate">生产日期</th>
-            <th data-width="80" data-column="source">来源</th>
+            <td>${data.posname}</td>
+            <td>${data.cinvcode}</td>
+            <td>${data.cinvcode1}</td>
+            <td>${data.cinvname1}</td>
+            <td>${data.cinvstd}</td>
+            <td>${data.cuomname}</td>
+            <td>${data.imaxcapacity}</td><!--数量-->
+            <td>${data.iqty}</td> <!--实盘数量-->
+            <td>${data.barcode}</td> <!--现品票-->
+            <td>${data.cversion}</td> <!--批次号-->
+            <td>${data.dplandate}</td> <!--生产日期-->
         </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
+    {@/each}
+</textarea>
 
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="input-group-append">
+                    <input  type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="=现品票扫码="
+                           maxlength="50" id="barcode" name="barcode" value="#(barcode??)"/>
+                    <button  id="Search" onclick="barcode_#(pageId)(this)" class="btn btn-outline-secondary"><i class="fa fa-search"></i>搜索</button>
+                </div>
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="StockCheckVouchBarcode_split_toolbar_#(pageId)" #if(materialsOut.sourcebilldid??) #else style="display: none" #end >
+                    <div  class="" role="group" aria-label="btn-group" >
+                        <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true, barcodes)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>批量删除</button>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table table-center"
+                       id="jbolt_table_StockCheckVouchBarcode_split_#(pageId)"
+                       data-jbolttable
+                       data-height="200"
+                       data-ajax="true"
+                       data-column-resize="true"
+                       data-url="admin/currentstock/getStockCheckVouchBarcodeLines?autoid=#(stockchekvouch.autoid??)"
+                       data-column-prepend="1:checkbox:true"
+                       data-conditions-form="StockCheckVouchForm_#(pageId)"
+                       data-rowtpl="StockCheckVouchBarcode_tpl_#(pageId)"
+                       data-toolbar="StockCheckVouchBarcode_split_toolbar_#(pageId)"
+                       data-editable="true"
+                       data-editable-option="getEditableTableOptions_split_#(pageId)">
+                    <thead class="fw-normal">
+                    <tr>
+                        <th style="width: 60px;max-width: 60px" data-width="60" data-column="index">序号</th>
+                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="posname">库位名称</th>
+                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="invcode">存货编码</th>
+                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="cinvcode1">客户部番</th>
+                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="invname">部品名称</th>
+                        <th style="width: 150px;max-width: 150px" data-width="150" data-column="invstd">规格</th>
+                        <th style="width: 110px;max-width: 110px" data-width="110" data-column="unitname">主计量单位</th>
+                        <th style="width: 110px;max-width: 110px" data-column="imaxcapacity">数量</th>
+                        <th style="width: 110px;max-width: 110px" data-column="iqty">实盘数量</th>
+                        <th style="width: 110px;max-width: 110px" data-column="barcode">现品票</th>
+                        <th style="width: 110px;max-width: 110px" data-column="cversion">批次号</th>
+                        <th style="width: 110px;max-width: 110px" data-column="dplandate">生产日期</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function barcode_#(pageId)(ele){
+        LayerMsgBox.loading("执行中......",2000);
+        debugger;
+        var whcode = $("#whcode").val();
+        var poscodes = $("#poscodes").val();
+        var barcode = $("#barcode").val();
+        var autoid = $("#autoid").val();
+        var detailHidden = $("#detailHidden").val();
+
+        //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("jbolt_table_StockCheckVouchBarcode_split_#(pageId)",["barcode"]);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].barcode+"'");
+            }
+            for (let i = 0; i < array.length; i++) {
+                let a =  "'"+barcode+"'";
+                if (a == array[i]){
+                    LayerMsgBox.error("已存在相同["+barcode+"]现品票！！！",2000);
+                    return false;
+                }
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
+        }
+        if (barcode) {
+            Ajax.post("admin/currentstock/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden,"whcode":whcode,"poscodes":poscodes},
+                function (res) {
+                    jboltTableInsertRow("jbolt_table_StockCheckVouchBarcode_split_#(pageId)", res.data, false, true, true)
+                    $("#barcode").val('');
+                }, function (err) {
+                })
+        } else {
+            LayerMsgBox.alert("请输入条码")
+        }
+    }
+
+    function barcodes(){
+
+        // //扫入多条现品票判断是否存在
+        let data = getJboltTableAllDatas("jbolt_table_StockCheckVouchBarcode_split_#(pageId)",["barcode"]);
+        console.log(data);
+        let array = new Array();
+        if (data != null){
+            for (let i = 0; i < data.length; i++) {
+                array.push("'"+data[i].barcode+"'");
+            }
+            //通过逗号分开，一个一个加进数组中
+            let codes = array.join(',');
+            $("#barcodes").val(codes);
+        } else {
+            $("#barcodes").val('');
+        }
+        return true;
+    }
+    /*去后端执行提交功能*/
+    function getEditableTableOptions_split_#(pageId)(){
+        var editableTableOptions={
+            //初始行数
+            // initRowCount:10,
+            //限制最大数 默认30
+            maxRowCount:1000,
+            trigger:"click",
+            submit:{
+                withForm: ["materialsOutForm_#(pageId)"],
+                type:"multi",//cell|all|multi
+                name:"table2"
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iautoid",
+                },
+                iqty: {
+                    type:"amount",
+                    placeholder:'数量',
+                    required:true,
+                    summary:[{
+                        dir:"v",
+                        tofixed:2,
+                        roundtag:"round",
+                        removezero:true,
+                        formula:"sum"
+                    }],
+                },
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

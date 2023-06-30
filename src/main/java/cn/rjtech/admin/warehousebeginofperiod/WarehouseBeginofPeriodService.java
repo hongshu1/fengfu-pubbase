@@ -8,6 +8,7 @@ import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.para.JBoltPara;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodedetail.BarcodedetailService;
 import cn.rjtech.admin.barcodemaster.BarcodemasterService;
@@ -19,14 +20,11 @@ import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
-import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.common.model.Barcodedetail;
 import cn.rjtech.common.model.Barcodemaster;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -319,7 +317,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         List<Kv> kvList = JSON.parseArray(datas, Kv.class);
 
         String barcode = checkByBarcode(kvList);
-        ValidationUtils.isTrue(!StringUtils.isNotBlank(barcode), barcode + "：条码已存在，不能重复");
+        ValidationUtils.isTrue(!StrUtil.isNotBlank(barcode), barcode + "：条码已存在，不能重复");
 
         Date now = new Date();
         Ret rets = new Ret();
@@ -495,7 +493,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             String qty = trimMethods(record.getStr("qty"));//生成条码库存数量
             String barcode = trimMethods(record.getStr("barcode"));//条码号
             String reportfilename = trimMethods(record.getStr("reportFileName"));//打印模板标签
-            ValidationUtils.isTrue(StringUtils.isNotBlank(barcode), barcode + "：条码号不能为空");
+            ValidationUtils.isTrue(StrUtil.isNotBlank(barcode), barcode + "：条码号不能为空");
 //            if (StrUtil.isBlank(barcode)) {
 //                return fail("条码号不能为空");
 //            }
@@ -548,8 +546,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             kvList.add(kv);
         }
         String barcode = checkByBarcode(kvList);
-        ValidationUtils.isTrue(StringUtils.isBlank(barcode), barcode + "：库存中已经存在，不能重复");
-        /*if (StringUtils.isNotBlank(barcode)) {
+        ValidationUtils.isTrue(StrUtil.isBlank(barcode), barcode + "：库存中已经存在，不能重复");
+        /*if (StrUtil.isNotBlank(barcode)) {
             fail(barcode + "：库存中已经存在，不能重复");
             return ret(false);
         }*/

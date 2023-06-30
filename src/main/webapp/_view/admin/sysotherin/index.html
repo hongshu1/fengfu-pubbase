@@ -76,8 +76,9 @@
                     class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除
             </button>
             #include("/_view/_common/_batch_approval_btns.html",
-            formSn="T_Sys_OtherIn",uri="admin/otherInList",primaryKeyName="AutoID",
-            className="cn.rjtech.admin.sysotherin.SysOtherinService")
+            formSn="T_Sys_OtherIn",primaryKeyName="AutoID",
+            className="cn.rjtech.admin.sysotherin.SysOtherinService", permissionKeyPrefix="sysotherin")
+
         </div>
         <table class="jbolt_table jbolt_main_table  table-center "
                data-jbolttable data-width="fill"

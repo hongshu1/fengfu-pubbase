@@ -20,7 +20,6 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.tx.Tx;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
@@ -152,50 +151,12 @@ public class SysOtherinAdminController extends BaseAdminController {
         renderJson(service.submit(iautoid));
     }
 
-    /**
-     * 撤回已提审
-     */
-    public void withdraw(Long iAutoId) {
-        ValidationUtils.validateId(iAutoId, "iAutoId");
-
-        // renderJson(service.withdraw(iAutoId));
-    }
 
     /**
-     * 批量审核通过（批量审批也走这里）
+     * 查询业务类型类型
      */
-    public void batchApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.process(ids));
+    public void billtype() {
+        renderJsonData(service.billtype(getKv()));
     }
-
-    /**
-     * 批量反审核
-     */
-    public void batchReverseApprove(@Para(value = "ids") String ids) {
-        if (StringUtils.isEmpty(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.noProcess(ids));
-    }
-
-    /**
-     * 审批通过
-     */
-    public void approve(String ids) {
-        renderJson(service.approve(getLong(0)));
-
-    }
-    /**
-     * 审批不通过
-     */
-    public void reject(String ids) {
-        renderJson(service.reject(getLong(0)));
-    }
-
 
 }

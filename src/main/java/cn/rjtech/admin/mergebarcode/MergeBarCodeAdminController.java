@@ -20,7 +20,7 @@ import com.jfinal.plugin.activerecord.Record;
  * @ClassName: MergeBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MERGE_BARCODE)
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/mergeBarcode", viewPath = "_view/admin/mergebarcode")
