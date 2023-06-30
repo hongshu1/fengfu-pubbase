@@ -31,7 +31,7 @@ import com.jfinal.upload.UploadFile;
  * @ClassName: GenBarCodeAdminController
  * @author: 佛山市瑞杰科技有限公司
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.WAREHOUSEBEGINOFPERIOD)
 @Before(JBoltAdminAuthInterceptor.class)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/warehousebeginofperiod", viewPath = "_view/admin/warehousebeginofperiod")
