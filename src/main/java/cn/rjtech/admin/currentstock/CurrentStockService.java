@@ -1,5 +1,6 @@
 package cn.rjtech.admin.currentstock;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -19,7 +20,6 @@ import cn.rjtech.admin.sysotherin.SysOtherindetailService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
-import cn.rjtech.model.momdata.StockCheckDetail;
 import cn.rjtech.model.momdata.StockCheckVouch;
 import cn.rjtech.model.momdata.StockCheckVouchBarcode;
 import cn.rjtech.model.momdata.StockCheckVouchDetail;
@@ -28,7 +28,6 @@ import cn.rjtech.model.momdata.SysOtherindetail;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -36,7 +35,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -79,8 +77,6 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
     OtherOutDeliveryService       otherOutDeliveryService;//其它出库单
     @Inject
     OtherOutDetailService         otherOutDetailService;//其它出库单-明细表
-    @Inject
-    StockCheckDetailService       stockCheckDetailService;//todo 弃用，请改为stockCheckVouchDetailService查询
 
     @Inject
     UserService userService;
