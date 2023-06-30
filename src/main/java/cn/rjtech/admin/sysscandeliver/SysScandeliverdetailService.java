@@ -133,4 +133,25 @@ public class SysScandeliverdetailService extends BaseService<SysScandeliverdetai
 		return records;
 	}
 
+
+//	===================
+
+	/**
+	 * 获取行信息
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> getLine(Kv kv){
+		return dbTemplate("sysscandeliver.getLine", kv).find();
+	}
+
+	/**
+	 * 获取订单行数据
+	 * @param kv
+	 * @return
+	 */
+	public List<Record> getOrderLine(Kv kv){
+		return dbTemplate("sysscandeliver.getOrderLine", kv).find();
+	}
+
 }
