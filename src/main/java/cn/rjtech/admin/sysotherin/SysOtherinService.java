@@ -638,4 +638,13 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     public List<Record> billtype(Kv kv) {
         return dbTemplate("sysotherin.billtype", kv).find();
     }
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode) {
+        return dbTemplate("sysotherin.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode)).find();
+    }
 }
