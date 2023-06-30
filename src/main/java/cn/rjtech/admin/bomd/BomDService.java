@@ -1,8 +1,8 @@
 package cn.rjtech.admin.bomd;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -160,7 +160,7 @@ public class BomDService extends BaseService<BomD> {
 	}
 	
 	public Page<Record> getBomComparePageData(Integer pageNumber, Integer pageSize, Kv kv) {
-		if (ObjectUtil.isNull(kv.getLong(BomD.IBOMMID))){
+		if (ObjUtil.isNull(kv.getLong(BomD.IBOMMID))){
 			return emptyPage(pageSize);
 		}
 		Page<Record> paginate = dbTemplate("bomd.getBomComparePageData", kv).paginate(pageNumber, pageSize);
@@ -169,7 +169,7 @@ public class BomDService extends BaseService<BomD> {
 	}
 	
 	public List<Record> getTreeTableDatas(Kv kv) {
-		if (ObjectUtil.isNull(kv.getLong(BomD.IBOMMID))){
+		if (ObjUtil.isNull(kv.getLong(BomD.IBOMMID))){
 			return new ArrayList<>();
 		}
 		List<Record> recordList = dbTemplate("bomd.getBomComparePageData", kv).find();
@@ -184,7 +184,7 @@ public class BomDService extends BaseService<BomD> {
 	
 	public List<Record> createJsTreeBean(List<Record> recordList, String code){
 		List<Record> trees = new ArrayList<>();
-		if (CollectionUtil.isNotEmpty(recordList)){
+		if (CollUtil.isNotEmpty(recordList)){
 			
 			List<Record> allList = dbTemplate("bomd.getBomComparePageData", Kv.by("orgId", getOrgId())).find();
 			Map<Long, List<Record>> compareMap = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
@@ -198,7 +198,7 @@ public class BomDService extends BaseService<BomD> {
 				}
 				Long compareId = record.getLong(BomD.IINVPARTBOMMID);
 				// 判断版本号是否为空
-				if (ObjectUtil.isNotNull(compareId)){
+				if (ObjUtil.isNotNull(compareId)){
 					recursiveTraversal(record, trees, compareMap.get(compareId), compareMap);
 				}
 				record.set(BomD.IPID, "0");
@@ -229,7 +229,7 @@ public class BomDService extends BaseService<BomD> {
 				recursiveTraversal(record, trees, compareMap.get(id), compareMap);
 			}
 			// 判断版本号是否为空
-			if (ObjectUtil.isNotNull(compareId)){
+			if (ObjUtil.isNotNull(compareId)){
 				recursiveTraversal(record, trees, compareMap.get(compareId), compareMap);
 			}
 			Record newRecord = new Record();
@@ -240,7 +240,7 @@ public class BomDService extends BaseService<BomD> {
 	}
 	
 	public void changeRecord(List<Record> recordList, String code, Boolean flag){
-		if (CollectionUtil.isEmpty(recordList)){
+		if (CollUtil.isEmpty(recordList)){
 			return;
 		}
 		for (Record record : recordList){
@@ -251,17 +251,17 @@ public class BomDService extends BaseService<BomD> {
 			Integer isVirtual = record.getInt(BomD.ISVIRTUAL);
 			Integer bProxyForeign = record.getInt(BomD.BPROXYFOREIGN);
 			
-			if (ObjectUtil.isNotNull(partType)){
+			if (ObjUtil.isNotNull(partType)){
 				PartTypeEnum partTypeEnum = PartTypeEnum.toEnum(partType);
 				ValidationUtils.notNull(partTypeEnum, "未知材料类别");
 				record.set(Inventory.PARTTYPENAME, partTypeEnum.getText());
 			}
-			if (ObjectUtil.isNotNull(isVirtual)){
+			if (ObjUtil.isNotNull(isVirtual)){
 				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(isVirtual);
 				ValidationUtils.notNull(isEnableEnum, "未知虚拟件类型");
 				record.set(Inventory.ISVIRTALNAME, isEnableEnum.getText());
 			}
-			if (ObjectUtil.isNotNull(bProxyForeign)){
+			if (ObjUtil.isNotNull(bProxyForeign)){
 				IsEnableEnum isEnableEnum = IsEnableEnum.toEnum(bProxyForeign);
 				ValidationUtils.notNull(isEnableEnum, "未知加工类型");
 				record.set(Inventory.BPROXYFOREIGNNAME, isEnableEnum.getText());
@@ -276,7 +276,7 @@ public class BomDService extends BaseService<BomD> {
 	 */
 	private void setCodeLevel(Record record, String code){
 		
-		if (ObjectUtil.isNull(code)){
+		if (ObjUtil.isNull(code)){
 			code =record.getStr(BomD.CCODE);
 		}
 		String codeKey = BomD.CCODE.concat(code);
@@ -337,7 +337,7 @@ public class BomDService extends BaseService<BomD> {
 	
 	public List<Record> getEffectiveBomCompare(Long orgId, List<Long> invIds){
 		Okv okv = Okv.by("orgId", orgId);
-		if (CollectionUtil.isNotEmpty(invIds) && invIds.size() < 150){
+		if (CollUtil.isNotEmpty(invIds) && invIds.size() < 150){
 			okv.set("invIds", invIds);
 		}
 		return dbTemplate("bomd.getEffectiveBomCompare", okv).find();
@@ -345,7 +345,7 @@ public class BomDService extends BaseService<BomD> {
     
     public Map<Long, List<Record>> getEffectiveBomCompareMap(Long orgId, List<Long> invIds){
         List<Record> recordList = getEffectiveBomCompare(orgId, invIds);
-        if (CollectionUtil.isEmpty(recordList)){
+        if (CollUtil.isEmpty(recordList)){
             return new HashMap<>();
         }
         return recordList.stream().collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID), Collectors.toList()));

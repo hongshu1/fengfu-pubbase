@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -23,14 +23,14 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
     public static final String ITYPE = "iType";
     /**点检表格ID*/
     public static final String ISPOTCHECKFORMID = "iSpotCheckFormId";
-    /**收料单ID*/
+    /**生产订单ID*/
     public static final String IMODOCID = "iMoDocId";
     /**工序工艺ID*/
     public static final String IMOROUTINGCONFIGID = "iMoRoutingConfigId";
     /**工序名称*/
     public static final String COPERATIONNAME = "cOperationName";
-    /**收料单号*/
-    public static final String CRCVDOCNO = "cRcvDocNo";
+    /**生产订单号*/
+    public static final String CMODOCNO = "cMoDocNo";
     /**生产人员ID*/
     public static final String IPERSONID = "iPersonId";
     /**生产人员名称*/
@@ -63,8 +63,6 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
-    /**附件;多个“,”分隔*/
-    public static final String CATTACHMENTS = "cAttachments";
 	/**
 	 * 主键ID
 	 */
@@ -168,7 +166,7 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
 	}
 
 	/**
-	 * 收料单ID
+	 * 生产订单ID
 	 */
 	public M setIMoDocId(java.lang.Long iMoDocId) {
 		set("iMoDocId", iMoDocId);
@@ -176,9 +174,9 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
 	}
 
 	/**
-	 * 收料单ID
+	 * 生产订单ID
 	 */
-	@JBoltField(name="imodocid" ,columnName="iMoDocId",type="Long", remark="收料单ID", required=true, maxLength=19, fixed=0, order=7)
+	@JBoltField(name="imodocid" ,columnName="iMoDocId",type="Long", remark="生产订单ID", required=true, maxLength=19, fixed=0, order=7)
 	@JSONField(name = "imodocid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIMoDocId() {
 		return getLong("iMoDocId");
@@ -219,20 +217,20 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
 	}
 
 	/**
-	 * 收料单号
+	 * 生产订单号
 	 */
-	public M setCRcvDocNo(java.lang.String cRcvDocNo) {
-		set("cRcvDocNo", cRcvDocNo);
+	public M setCMoDocNo(java.lang.String cMoDocNo) {
+		set("cMoDocNo", cMoDocNo);
 		return (M)this;
 	}
 
 	/**
-	 * 收料单号
+	 * 生产订单号
 	 */
-	@JBoltField(name="crcvdocno" ,columnName="cRcvDocNo",type="String", remark="收料单号", required=true, maxLength=40, fixed=0, order=10)
-	@JSONField(name = "crcvdocno")
-	public java.lang.String getCRcvDocNo() {
-		return getStr("cRcvDocNo");
+	@JBoltField(name="cmodocno" ,columnName="cMoDocNo",type="String", remark="生产订单号", required=true, maxLength=40, fixed=0, order=10)
+	@JSONField(name = "cmodocno")
+	public java.lang.String getCMoDocNo() {
+		return getStr("cMoDocNo");
 	}
 
 	/**
@@ -505,23 +503,6 @@ public abstract class BaseSpotCheckFormM<M extends BaseSpotCheckFormM<M>> extend
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
-	}
-
-	/**
-	 * 附件;多个“,”分隔
-	 */
-	public M setCAttachments(java.lang.String cAttachments) {
-		set("cAttachments", cAttachments);
-		return (M)this;
-	}
-
-	/**
-	 * 附件;多个“,”分隔
-	 */
-	@JBoltField(name="cattachments" ,columnName="cAttachments",type="String", remark="附件;多个“,”分隔", required=false, maxLength=2147483647, fixed=0, order=27)
-	@JSONField(name = "cattachments")
-	public java.lang.String getCAttachments() {
-		return getStr("cAttachments");
 	}
 
 }

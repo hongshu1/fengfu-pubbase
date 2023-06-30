@@ -3,7 +3,7 @@ package cn.rjtech.admin.formuploadcategory;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.common.util.CACHE;
@@ -65,7 +65,7 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize,Kv para) {
 		Page<Record> paginate = dbTemplate("formuploadcategory.list",para).paginate(pageNumber, pageSize);
 		for (Record record : paginate.getList()) {
-			if (ObjectUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))){
+			if (ObjUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))){
 				record.set("iworkregionmid",workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
 			}
 		}
@@ -225,7 +225,7 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	 */
 	public JBoltExcel exportExcel(List<Record> datas) {
 		for (Record record : datas) {
-			if (ObjectUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))){
+			if (ObjUtil.isNotNull(workregionmService.findById(record.getStr("iworkregionmid")))){
 				record.set("iworkregionmid",workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
 			}
 		}

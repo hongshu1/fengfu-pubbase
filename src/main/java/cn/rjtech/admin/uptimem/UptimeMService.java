@@ -327,6 +327,11 @@ public class UptimeMService extends BaseService<UptimeM> implements IApprovalSer
 		return mid;
 	}
 
+	public Ret revocationUptimeMById(Long id) {
+		update("UPDATE PL_UptimeM SET iAuditStatus = 0 WHERE iAutoId = ?",id);
+		return SUCCESS;
+	}
+
 
 
 

@@ -1,18 +1,15 @@
 package cn.rjtech.admin.purchaseorderm;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
-import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -29,16 +26,12 @@ import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionServ
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
-import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.HttpApiUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.beust.jcommander.ParameterException;
 import com.google.zxing.BarcodeFormat;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -113,7 +106,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
     }
 
     private void changeData(List<Record> list) {
-        if (CollectionUtil.isEmpty(list)) {
+        if (CollUtil.isEmpty(list)) {
             return;
         }
         // 应付类型
@@ -143,7 +136,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
             }
             Integer type = record.getInt(PurchaseOrderM.ITYPE);
             SourceTypeEnum sourceTypeEnum = SourceTypeEnum.toEnum(type);
-            if (ObjectUtil.isNotNull(sourceTypeEnum)) {
+            if (ObjUtil.isNotNull(sourceTypeEnum)) {
                 record.set(PurchaseOrderM.TYPESTR, sourceTypeEnum.getText());
             }
         }
@@ -469,7 +462,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 
         tx(() -> {
             // 删除 先修改细表状态，在删除中间表数据，在修改到货计划细表及主表状态
-            if (CollectionUtil.isNotEmpty(notIds)) {
+            if (CollUtil.isNotEmpty(notIds)) {
                 for (Long purchaseOrderDId : notIds) {
                     PurchaseOrderD purchaseOrderD = purchaseOrderDService.findById(purchaseOrderDId);
                     ValidationUtils.notNull(purchaseOrderD, "采购订单细表数据未找到");
@@ -527,7 +520,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 
         // 校验采购合同号是否存在
         Integer count = findOderNoIsNotExists(purchaseOrderM.getCOrderNo());
-        ValidationUtils.isTrue(ObjectUtil.isEmpty(count) || count == 0, "采购订单号已存在");
+        ValidationUtils.isTrue(ObjUtil.isEmpty(count) || count == 0, "采购订单号已存在");
         int seq = 0;
         for (Long inventoryId : invTableMap.keySet()) {
             // 记录供应商地址及备注
@@ -651,7 +644,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 
     public Integer findOderNoIsNotExists(Long id, String orderNo) {
         String sql = "select count(1) from PS_PurchaseOrderM where cOrderNo =? ";
-        if (ObjectUtil.isNotNull(id)) {
+        if (ObjUtil.isNotNull(id)) {
             sql = sql.concat("iAutoId <> " + id);
         }
         return queryInt(sql, orderNo);
@@ -774,7 +767,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
             // 包装数量
             BigDecimal pkgQty = record.getBigDecimal(Inventory.IPKGQTY);
             // 包装数量为空或者为0，生成一张条码，原始数量/打包数量
-            if (ObjectUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty) <= 0) {
+            if (ObjUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty) <= 0) {
                 String barCode = purchaseOrderDBatchService.generateBarCode();
                 PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService
                     .createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, sourceQty, barCode);
@@ -860,7 +853,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
         List<Record> purchaseOrderRefList = purchaseOrderRefService.findByPurchaseOderMId(id);
         // 修改细表数据
         purchaseOrderDService.removeByPurchaseOrderMId(id);
-        if (CollectionUtil.isNotEmpty(purchaseOrderRefList)) {
+        if (CollUtil.isNotEmpty(purchaseOrderRefList)) {
             List<Long> demandPlanDIds = purchaseOrderRefList.stream()
                 .map(record -> record.getLong(PurchaseOrderRef.IDEMANDPLANDID)).collect(Collectors.toList());
             // 修改到货计划细表状态

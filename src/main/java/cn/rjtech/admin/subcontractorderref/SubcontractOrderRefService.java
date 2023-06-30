@@ -1,6 +1,6 @@
 package cn.rjtech.admin.subcontractorderref;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -116,7 +116,7 @@ public class SubcontractOrderRefService extends BaseService<SubcontractOrderRef>
 	
 	public List<SubcontractOrderRef> getSubcontractOrderRefList(Long iSubContractOrderDid, JSONArray orderRefJsonArray){
 		List<SubcontractOrderRef> subcontractOrderRefList = new ArrayList<>();
-		if (CollectionUtil.isEmpty(orderRefJsonArray)){
+		if (CollUtil.isEmpty(orderRefJsonArray)){
 			return subcontractOrderRefList;
 		}
 		for (int i=0; i<orderRefJsonArray.size(); i++){

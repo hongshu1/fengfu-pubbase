@@ -1,6 +1,6 @@
 package cn.rjtech.admin.prodformm;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -31,8 +31,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -172,16 +174,13 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 			}
 		}
 
-		if (CollectionUtil.isNotEmpty(mapList)){
+		if (CollUtil.isNotEmpty(mapList)){
 
-			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
-				@Override
-				public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-					Integer map1 = Integer.valueOf(o1.get("iseq").toString());
-					Integer map2 = Integer.valueOf(o2.get("iseq").toString());
-					return map1.compareTo(map2);
-				}
-			});
+			mapList.sort((o1, o2) -> {
+                Integer map1 = Integer.valueOf(o1.get("iseq").toString());
+                Integer map2 = Integer.valueOf(o2.get("iseq").toString());
+                return map1.compareTo(map2);
+            });
 			return mapList;
 		}
 		return null;
@@ -226,16 +225,13 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 
 			}
 		}
-		if (CollectionUtil.isNotEmpty(mapList)){
+		if (CollUtil.isNotEmpty(mapList)){
 
-			Collections.sort(mapList, new Comparator<Map<String, Object>>() {
-				@Override
-				public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-					Integer map1 = Integer.valueOf(o1.get("proditemiseq").toString());
-					Integer map2 = Integer.valueOf(o2.get("proditemiseq").toString());
-					return map1.compareTo(map2);
-				}
-			});
+			mapList.sort((o1, o2) -> {
+                Integer map1 = Integer.valueOf(o1.get("proditemiseq").toString());
+                Integer map2 = Integer.valueOf(o2.get("proditemiseq").toString());
+                return map1.compareTo(map2);
+            });
 			return mapList;
 		}
 		return null;

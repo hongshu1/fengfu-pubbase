@@ -12,6 +12,9 @@ WHERE t1.IsDeleted='0'
 #if(iautoid)
   and t1.iautoid = #para(iautoid)
 #end
+#if(iinventoryid)
+  and t1.iInventoryId = #para(iinventoryid)
+#end
 #if(itype)
   and t1.itype = #para(itype)
 #end
@@ -49,4 +52,22 @@ SELECT t1.*, t2.iautoid as spotcheckformiautoid, t2.cSpotCheckFormName,
               and t1.iautoid= #para(iautoid)
               #end
             ORDER BY t1.dUpdateTime DESC
+#end
+
+#sql("findByInventoryIdAndOperationName")
+select * from
+
+        Bd_InventorySpotCheckForm  a
+         left join Bd_InventorySpotCheckForm_Operation b on b.iInventorySpotCheckFormId=a.iAutoId
+         left join Bd_Operation c on  b.iOperationId=c.iAutoId
+
+where
+      1=1
+      #if(iinventoryid)
+        and a. iInventoryId=#para(iinventoryid)
+      #end
+      #if(itye)
+      and  a.iType=#para(itye)
+      #end
+
 #end

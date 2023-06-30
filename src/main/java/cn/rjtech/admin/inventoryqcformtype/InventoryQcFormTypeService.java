@@ -1,7 +1,7 @@
 package cn.rjtech.admin.inventoryqcformtype;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
@@ -120,14 +120,14 @@ public class InventoryQcFormTypeService extends BaseService<InventoryQcFormType>
 	}
 	
 	public <T> int removeByInventoryQcFormId(T inventoryQcFormId){
-		if (ObjectUtil.isNull(inventoryQcFormId)){
+		if (ObjUtil.isNull(inventoryQcFormId)){
 			return 0;
 		}
 		return delete("delete  Bd_InventoryQcFormType where iInventoryQcFormId=?", inventoryQcFormId);
 	}
 
 	public <T> int removeByInventoryQcFormId(List<T> inventoryQcFormIds){
-		if (CollectionUtil.isEmpty(inventoryQcFormIds)){
+		if (CollUtil.isEmpty(inventoryQcFormIds)){
 			return 0;
 		}
 		int deleteCount = 0;
@@ -139,7 +139,7 @@ public class InventoryQcFormTypeService extends BaseService<InventoryQcFormType>
 	}
 	
 	public List<InventoryQcFormType> getQcFormTypeList(List<InventoryQcForm> qcFormList, Map<String, String> inspectionMap){
-		if (CollectionUtil.isEmpty(qcFormList) || CollectionUtil.isEmpty(inspectionMap)){
+		if (CollUtil.isEmpty(qcFormList) || CollUtil.isEmpty(inspectionMap)){
 			return null;
 		}
 		List<InventoryQcFormType> qcFormTypeList = new ArrayList<>();

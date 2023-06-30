@@ -182,7 +182,7 @@ public class InventoryRoutingSopService extends BaseService<InventoryRoutingSop>
 		/*if (StrUtil.isNotBlank(kv.getStr(InventoryRoutingConfig.ROUTINGSOPJSON))){
 			String str = kv.getStr(InventoryRoutingConfig.ROUTINGSOPJSON);
 			JSONArray jsonArray = JSONObject.parseArray(str);
-			if (CollectionUtil.isEmpty(jsonArray)){
+			if (CollUtil.isEmpty(jsonArray)){
 				return null;
 			}
 			List<Record> recordList = new ArrayList<>();
@@ -192,7 +192,7 @@ public class InventoryRoutingSopService extends BaseService<InventoryRoutingSop>
 				record.setColumns(jsonObject.getInnerMap());
 				
 				Long equipmentId = jsonObject.getLong("iequipmentid");
-//				if (ObjectUtil.isNotNull(equipmentId)){
+//				if (ObjUtil.isNotNull(equipmentId)){
 //					Equipment equipment = equipmentService.findById(equipmentId);
 //					ValidationUtils.notNull(equipment, "未找到设备信息");
 //					record.set(equipment.CEQUIPMENTCODE, equipment.getCEquipmentCode());

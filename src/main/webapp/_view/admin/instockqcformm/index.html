@@ -19,7 +19,7 @@
     <div class="row">
       <form class="form-inline" id="scanInStockQcFormMForm_#(pageId)" onsubmit="return false;" method="post"
             style="margin-left: 15px;margin-top: 20px;margin-bottom: 20px">
-        <input id="cbarcode" name="cbarcode" type="text" autocomplete="off" class="form-control" placeholder="=现品票扫描=" name="cinvqcformno" value=""/>
+        <input id="cbarcode" name="cbarcode" type="text" autocomplete="off" class="form-control" placeholder="=现品票扫描=" value=""/>
 
         <button type="button" class="btn btn-outline-secondary" onclick="scanBarcode()">搜索</button>
       </form>
@@ -29,9 +29,9 @@
       <div class="col">
         <form class="form-inline" id="inStockQcFormMForm_#(pageId)" onsubmit="return false;" method="post"
               style="left: 30px;text-align: left">
-          <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
+          <input type="text" hidden id="iscompleted" name="iscompleted2" value="#(iscompleted??)"/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="cinvqcformno" value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=现品票=" name="cbarcode" value=""/>
@@ -44,7 +44,7 @@
                   data-url="admin/user/options"
                   data-text="=检验员="
                   data-value=""
-                  data-value-attr="id"
+                  data-value-attr="text"
                   data-select="#(user.name??)">
           </select>
 
@@ -56,6 +56,7 @@
                   data-text="=检验结果="
                   data-value=""
                   data-value-attr="sn"
+                  data-text-attr="name"
                   data-select="#(istatus??)"></select>
 
           <select class="form-control"
@@ -74,7 +75,7 @@
                   data-select-type="select2"
                   data-text="=检验表格名称="
                   data-value=""
-                  data-value-attr="iautoid"
+                  data-value-attr="cqcformname"
                   data-text-attr="cqcformname"
                   data-select="#(qcform.cqcformname??)"></select>
 

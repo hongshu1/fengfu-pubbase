@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSpotcheckformdLine<M extends BaseSpotcheckformdLine<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**检验项目配置*/
@@ -81,7 +81,7 @@ public abstract class BaseSpotcheckformdLine<M extends BaseSpotcheckformdLine<M>
 	/**
 	 * 填写值
 	 */
-	@JBoltField(name="cvalue" ,columnName="cValue",type="String", remark="填写值", required=true, maxLength=200, fixed=0, order=4)
+	@JBoltField(name="cvalue" ,columnName="cValue",type="String", remark="填写值", required=false, maxLength=200, fixed=0, order=4)
 	@JSONField(name = "cvalue")
 	public java.lang.String getCValue() {
 		return getStr("cValue");

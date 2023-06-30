@@ -1,6 +1,6 @@
 package cn.rjtech.admin.subcontractorderm;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
@@ -89,21 +89,21 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     record.set(SubcontractOrderM.DBEGINDATE, beginDate);
     record.set(SubcontractOrderM.DENDDATE, endDate);
 
-    if (ObjectUtil.isNotNull(vendor.getITaxRate())) {
+    if (ObjUtil.isNotNull(vendor.getITaxRate())) {
       record.set(SubcontractOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());
     }
 
     record.set(SubcontractOrderM.CCURRENCY, vendor.getCCurrency());
     Exch exch = exchService.getNameByLatestExch(getOrgId(), vendor.getCCurrency());
     // 汇率
-    if (ObjectUtil.isNotNull(exch)) {
+    if (ObjUtil.isNotNull(exch)) {
       record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
     }
     record.set(SubcontractOrderM.IDEPARTMENTID, vendor.getCVenDepart());
     record.set(SubcontractOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
 
     Person person = personService.findById(vendor.getIDutyPersonId());
-    if (ObjectUtil.isNotNull(person)) {
+    if (ObjUtil.isNotNull(person)) {
       set("personname", person.getCpsnName());
     }
     set("subcontractOrderM", record);
@@ -143,7 +143,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
       return;
     }
     Person person = personService.findById(subcontractOrderM.getIDutyUserId());
-    if (ObjectUtil.isNotNull(person)) {
+    if (ObjUtil.isNotNull(person)) {
       set("personname", person.getCpsnName());
     }
 
@@ -153,10 +153,10 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     if (StrUtil.isNotBlank(isView)) {
       set("isView", 1);
     }
-    if (ObjectUtil.isNotNull(subcontractOrderM.getITaxRate())) {
+    if (ObjUtil.isNotNull(subcontractOrderM.getITaxRate())) {
       subcontractOrderM.setITaxRate(subcontractOrderM.getITaxRate().stripTrailingZeros());
     }
-    if (ObjectUtil.isNotNull(subcontractOrderM.getIExchangeRate())) {
+    if (ObjUtil.isNotNull(subcontractOrderM.getIExchangeRate())) {
       subcontractOrderM.setIExchangeRate(subcontractOrderM.getIExchangeRate().stripTrailingZeros());
     }
     set("subcontractOrderM", subcontractOrderM);
@@ -175,7 +175,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
       return;
     }
     Person person = personService.findById(subcontractOrderM.getIDutyUserId());
-    if (ObjectUtil.isNotNull(person)) {
+    if (ObjUtil.isNotNull(person)) {
       set("personname", person.getCpsnName());
     }
 

@@ -1,6 +1,7 @@
 #sql("list")
 SELECT t1.*,
        t2.cQcFormName,
+       t3.cinvcode,
        t3.cInvCode1,
        t3.cInvName1,
        t3.cInvStd,
@@ -34,14 +35,17 @@ where t1.IsDeleted = '0'
   #if(crcvdocno)
   AND t1.crcvdocno =#para(crcvdocno)
   #end
+  #if(cinvcode)
+  AND t3.cinvcode LIKE CONCAT('%', #para(cinvcode), '%')
+  #end
   #if(cinvaddcode)
-  AND t3.cinvaddcode =#para(cinvaddcode)
+  AND t3.cinvaddcode LIKE CONCAT('%', #para(cinvaddcode), '%')
   #end
   #if(cinvcode1)
-  AND t3.cinvcode1 =#para(cinvcode1)
+  AND t3.cinvcode1 LIKE CONCAT('%', #para(cinvcode1), '%')
   #end
   #if(cinvname1)
-  AND t3.cinvname1 =#para(cinvname1)
+  AND t3.cinvname1 LIKE CONCAT('%', #para(cinvname1), '%')
   #end
   #if(iqcuserid)
   AND t1.iqcuserid =#para(iqcuserid)
@@ -54,6 +58,9 @@ where t1.IsDeleted = '0'
   #end
   #if(cqcformname)
   AND t2.cqcformname =#para(cqcformname)
+  #end
+  #if(name)
+  AND t1.cupdatename <= #para(name)
   #end
   #if(starttime)
   AND t1.dcreatetime >= #para(starttime)

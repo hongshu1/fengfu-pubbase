@@ -1,11 +1,10 @@
 package cn.rjtech.admin.qcform;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -24,7 +23,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.upload.UploadFile;
 
 import java.util.List;
 import java.util.Map;
@@ -230,12 +228,12 @@ public class QcFormAdminController extends BaseAdminController {
          *  3.默认加载时，是没有数据操作的，直接读取数据
          */
         // 判断是否有新增的值
-       if (ObjectUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
+       if (ObjUtil.isNotNull(formId) && (StrUtil.isBlank(tableParamJsonStr) || StrUtil.isNotBlank(tableParamJsonStr) && CollUtil.isEmpty(JSONObject.parseArray(tableParamJsonStr))) ){
             // 查询表格行记录
            List<Map<String, Object>> recordList = qcFormTableParamService.findByFormId(formId);
            // 查询表头数据及参数数据
            set("dataList", recordList);
-        }else if(StrUtil.isNotBlank(tableParamJsonStr) && CollectionUtil.isNotEmpty(JSONObject.parseArray(tableParamJsonStr))){
+        }else if(StrUtil.isNotBlank(tableParamJsonStr) && CollUtil.isNotEmpty(JSONObject.parseArray(tableParamJsonStr))){
            JSONArray jsonArray = JSONObject.parseArray(tableParamJsonStr);
            JSONArray itemJson = JSONObject.parseArray(itemJsonStr);
            Map<String, JSONObject> map = itemJson.stream().collect(Collectors.toMap(r -> ((JSONObject) r).getString("iqcitemid"), r -> (JSONObject) r, (key1, key2) -> key2));

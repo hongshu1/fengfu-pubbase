@@ -3,7 +3,7 @@ package cn.rjtech.admin.workregionm;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -432,7 +432,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
                     .eq(Workregionm.ISDELETED, 0)
                     .eq(Workregionm.IORGID, getOrgId()));
         }
-        if (ObjectUtil.isEmpty(workRegionMIdList)) {
+        if (ObjUtil.isEmpty(workRegionMIdList)) {
             return new ArrayList<>();
         }
         return find(selectSql()
@@ -483,13 +483,13 @@ public class WorkregionmService extends BaseService<Workregionm> {
                 .eq(Team.ISENABLED, 1)
                 .eq(Team.ISDELETED, 0)
                 .eq(Team.IORGID, getOrgId()));
-        if (ObjectUtil.isNotEmpty(teamList)) {
+        if (ObjUtil.isNotEmpty(teamList)) {
             workRegionMIdList.addAll(teamList.stream().map(r -> r.getLong(Team.IWORKREGIONMID)).collect(Collectors.toList()));
         }
         List<Workregionm> workRegionMList = find(selectSql()
                 .eq(Workregionm.IPERSONID, person.getIautoid())
                 .eq(Workregionm.IORGID, getOrgId()));
-        if (ObjectUtil.isNotEmpty(workRegionMList)) {
+        if (ObjUtil.isNotEmpty(workRegionMList)) {
             workRegionMIdList.addAll(workRegionMList.stream().map(BaseWorkregionm::getIautoid).collect(Collectors.toList()));
         }
         return workRegionMIdList;*/

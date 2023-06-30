@@ -16,8 +16,8 @@
                     <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
                     #include("/_view/_common/_approval_btns.html", uri="/admin/spotCheckFormM",
-                    formSn="PL_spotCheckFormM", primaryKeyName="iAutoId", o=spotCheckFormM,
-                    permissionKeyPrefix="spotCheckFormM",  className="cn.rjtech.admin.spotCheckFormM.spotCheckFormMService")
+                    formSn="PL_SpotCheckFormM", primaryKeyName="iAutoId", o=spotCheckFormM,
+                    permissionKeyPrefix="spotcheckformm",  className="cn.rjtech.admin.spotcheckformm.SpotCheckFormMService")
 
                     <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
@@ -32,12 +32,16 @@
             <div class="form-group row">
                 <label class="col-sm-1 col-form-label">工序名称</label>
                 <div class="col-2">
-                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="spotCheckFormM.coperationname" value="#(spotCheckFormM.coperationname??)"/>
-                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="10" name="iprodformid" value="#(spotcheckformid??)"/>
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="200" name="spotCheckFormM.coperationname" value="#(spotCheckFormM.coperationname??)"/>
+                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="iprodformid" value="#(spotcheckformid??)"/>
+                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="routingconfigid" value="#(routingconfigid??)"/>
+                    <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="modocid" value="#(modocid??)"/>
                 </div>
+                <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="coperationname" value="#(spotCheckFormM.coperationname??)"/>
+
                 <label class="col-sm-1 col-form-label">设备名称</label>
                 <div class="col-2">
-                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="spotCheckFormM.cequipmentmodelname" value="#(spotCheckFormM.cequipmentmodelname??)"/>
+                    <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="20" name="spotCheckFormM.cequipmentmodelname" value="#(spotCheckFormM.cequipmentnames??)"/>
                 </div>
 
             </div>
@@ -48,7 +52,7 @@
 
 
     <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
-        #ajaxPortal("/admin/spotCheckFormM/table3?spotcheckformid="+(spotcheckformid??''),"qcformtable_portal_" + pageId, true)
+        #ajaxPortal("/admin/spotCheckFormM/table3?spotcheckformid="+(spotcheckformid??'')+"&spotcheckformmid="+(spotCheckFormM.iautoid??''),"qcformtable_portal_" + pageId, true)
     </div>
 </form>
 #define js()
@@ -74,6 +78,12 @@
         }
         var tableData = getTableData();
         var formData1 = formToJson('#spotCheckFormMForm');
+        let coperationname = $("input[name='spotCheckFormM.coperationname']").val();
+        for (let i = 0; i < formData1.length; i++) {
+            var datum = formData1[i];
+            datum.coperationname=coperationname;
+        }
+        console.log(formData1);
         Ajax.post('/admin/spotCheckFormM/submitForm', {
             formJsonData: JSON.stringify(formData1),
             tableJsonData: JSON.stringify(tableData)

@@ -18,11 +18,11 @@
     <div class="row">
       <div class="col">
         <form class="form-inline" id="rcvDocQcFormMForm_#(pageId)" style="left: 30px;text-align: left">
-          <input type="text" hidden id="iscompleted" name="iscompleted" value=""/>
+          <input type="hidden"  id="iscompleted" name="iscompleted2" value="#(iscompleted??)"/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="crcvdocqcformno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=收料单号=" name="crcvdocno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=供应商名称=" name="cvenname" value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvaddcode" value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1" value=""/>
           <select class="form-control"
@@ -33,29 +33,31 @@
                   data-url="admin/user/options"
                   data-text="=检验员="
                   data-value=""
-                  data-value-attr="id"
+                  data-value-attr="text"
                   data-select="#(user.name??)">
           </select>
-
-          <select class="form-control"
-                  name="iscompleted"
-                  data-autoload
-                  data-url="admin/dictionary/options?key=iscompleted"
-                  data-select-type="select2"
-                  data-text="=检验结果="
-                  data-value=""
-                  data-value-attr="sn"
-                  data-select="#(iscompleted)"></select>
 
           <select class="form-control"
                   name="istatus"
                   data-autoload
                   data-url="admin/dictionary/options?key=istatus"
                   data-select-type="select2"
+                  data-text="=检验结果="
+                  data-value=""
+                  data-value-attr="sn"
+                  data-text-attr="name"
+                  data-select="#(istatus??)"></select>
+
+          <select class="form-control"
+                  name="iscompleted"
+                  data-autoload
+                  data-url="admin/dictionary/options?key=iscompleted"
+                  data-select-type="select2"
                   data-text="=状态="
                   data-value=""
                   data-value-attr="sn"
-                  data-select="#(istatus??)"></select>
+                  data-text-attr="name"
+                  data-select="#(iscompleted??)"></select>
 
           <select class="form-control"
                   name="cqcformname"
@@ -64,7 +66,7 @@
                   data-select-type="select2"
                   data-text="=检验表格名称="
                   data-value=""
-                  data-value-attr="iautoid"
+                  data-value-attr="cqcformname"
                   data-text-attr="cqcformname"
                   data-select="#(qcform.cqcformname??)"></select>
 
@@ -124,7 +126,7 @@
   <td title="${data.crcvdocqcformno}">${data.crcvdocqcformno}</td>
   <td title="${data.crcvdocno}">${data.crcvdocno}</td>
   <td title="${data.cvenname}">${data.cvenname}</td>
-  <td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
+  <td title="${data.cinvcode}">${data.cinvcode}</td>
   <td title="${data.cinvcode1}">${data.cinvcode1}</td>
   <td title="${data.cinvname1}">${data.cinvname1}</td>
   <td title="${data.cinvstd}">${data.cinvstd}</td>
@@ -160,7 +162,7 @@
         <th data-width="180" data-column="cRcvDocQcFormNo">检验单号</th>
         <th data-width="180" data-column="cRcvDocNo">收料单号</th>
         <th data-width="180" data-column="cVenName">供应商名称</th>
-        <th data-width="180" data-column="cInvAddCode">存货编码</th>
+        <th data-width="180" data-column="cinvcode">存货编码</th>
         <th data-width="180" data-column="cInvCode1">客户部番</th>
         <th data-width="180" data-column="cInvName1">部品名称</th>
         <th data-width="180" data-column="cInvStd">规格</th>

@@ -1,9 +1,8 @@
 package cn.rjtech.admin.inventoryqcform;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
@@ -464,7 +463,7 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
             if (jBoltTable.deleteIsNotBlank()) {
                 deleteByIds(jBoltTable.getDelete());
-                inventoryQcFormTypeService.removeByInventoryQcFormId(CollectionUtil.toList(jBoltTable.getDelete()));
+                inventoryQcFormTypeService.removeByInventoryQcFormId(CollUtil.toList(jBoltTable.getDelete()));
             }
             return true;
         });
@@ -536,7 +535,7 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                 ret.setFail().set("msg", errorMsg.toString());
                 return false;
             }
-//            if (ObjectUtil.isNotNull(lineId)){
+//            if (ObjUtil.isNotNull(lineId)){
 //                // 保存文件 获取fileId
 //                Long fileId = jboltFile.getId();
 //                InventoryQcForm inventoryQcForm = findById(lineId);
@@ -632,7 +631,7 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
             String cTypeNames = record.getStr("cTypeNames");
             BigDecimal iQcFormId = record.getBigDecimal("iQcFormId");
             QcForm byId = qcFormService.findById(iQcFormId);
-            if (ObjectUtil.isNull(byId)){
+            if (ObjUtil.isNull(byId)){
                 ValidationUtils.error(""+iQcFormId+"检验表格id不存在");
             }
 
