@@ -190,6 +190,18 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
                 moRecod.set("cworkname", workregionm.getCWorkName());
             }
         }
+        // 作业人员
+        String psnName = moDocService.getPsnNameById(moDoc.getIAutoId());
+        moRecod.set("psnname", psnName);
+        // 产线组长
+        if (isOk(moDoc.getIDutyPersonId()))
+        {
+            Person person = personService.findById(moDoc.getIDutyPersonId());
+            if (person != null) {
+                moRecod.set("cdutypersonname", person.getCpsnName());
+            }
+        }
+
 
         // 班次
         if (isOk(moDoc.getIWorkShiftMid())) {

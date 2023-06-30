@@ -36,7 +36,7 @@
                                 </div>
                                 <label class="col-sm-2 col-form-label">客户部番:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    #(moDoc.cnvcode1??)
+                                    #(moDoc.cinvcode1??)
                                 </div>
                                 <label class="col-sm-2 col-form-label">部品名称:</label>
                                 <div class="col-sm-2 col-form-label">
@@ -63,33 +63,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">完工数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" name="moDoc.iCompQty" value="#(moDoc.icompqty??0)">
+                                    #(moDoc.icompqty??0)
                                 </div>
                                 <label class="col-sm-2 col-form-label">差异数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" id="remainder" value="#(moDoc.iqty-moDoc.icompqty??0)">
+                                    #(moDoc.iqty-moDoc.icompqty??0)
                                 </div>
                                 <label class="col-sm-2 col-form-label">包装数量:</label>
                                 <div class="col-sm-2 col-form-label">
-                                    <input disabled="disabled" name="ipkgqty" value="#(moDoc.ipkgqty??moDoc.iqty)">
+                                    #(moDoc.ipkgqty??moDoc.iqty)
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">作业人员:</label>
-                                <input type="text" autocomplete="off" class="form-control"
-                                       data-autocomplete
-                                       name="moMoinvbatch.jobname"
-                                       readonly="readonly"
-                                       data-url="admin/person/autocomplete"
-                                       data-link-para-ele="#capplypersoncode"
-                                       data-sync-ele="capplypersoncode"
-                                       data-text-attr="cpsnname"
-                                       data-value-attr="cpsnnum"
-                                       placeholder="=作业人员="
-                                       value="#(moMoinvbatch.jobname??)"
-                                       data-column-attr="cpsnnum,cpsnname">
+                                <div class="col-sm-2 col-form-label">
+                                    #(moDoc.psnname??)
+                                </div>
                                 <label class="col-sm-2 col-form-label">产线组长:</label>
                                 <div class="col-sm-2 col-form-label">
+                                    #(moDoc.cdutypersonname??)
                                 </div>
                             </div>
                         </form>
@@ -102,7 +94,7 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="card">
-                <div class="card-header"><b>未打印现品票</b></div>
+                <div class="card-header"><h5><b>未打印现品票</b></h5></div>
                 <div class="card-body">
                     #include("table1.html")
                 </div>
@@ -110,7 +102,7 @@
         </div>
         <div class="col-lg-6">
             <div class="card">
-                <div class="card-header"><b>已打印现品票</b></div>
+                <div class="card-header"><h5><b>已打印现品票</b></h5></div>
                 <div class="card-body">
                     #include("table2.html")
                 </div>
