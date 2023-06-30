@@ -105,13 +105,17 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 					 @Para(value = "routingconfigid") String routingconfigid,
 					 @Para(value = "cequipmentnames") String cequipmentnames,
 					 @Para(value = "spotcheckformmid") Long spotcheckformmid,
+					 @Para(value = "ispotcheckformid") Long ispotcheckformid,
+					 @Para(value = "cspotcheckformname") String cspotcheckformname,
 					 @Para(value = "controls") int controls,
+					 @Para(value = "itype") int itype,
 					 @Para(value = "croutingname") String croutingname) {
 		if(routingconfigid == null){
 			renderFail("请在【点检建模】配置点检表后，再完成点检操作！");
 			return;
 		}
-		List<Record> list = inventorySpotCheckFormService.pageList(Kv.create().set("iinventoryid",iinventoryid)
+		List<Record> list = inventorySpotCheckFormService.pageList(Kv.create().set("iinventoryid",iinventoryid).set("ispotcheckformid",ispotcheckformid)
+						.set("cspotcheckformname",cspotcheckformname)
 				.set("page", 1).set("pageSize", 5)).getList();
 		if (list.size()>0) {
 			Record record = list.get(0);
@@ -137,6 +141,7 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 			set("routingconfigid",routingconfigid);
 			set("spotcheckformid",spotCheckForm.getIAutoId());
 			set("controls",controls);
+			set("itype",itype);
 		}
 		keepPara();
 		render("edit.html");

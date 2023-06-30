@@ -133,7 +133,8 @@
               if (ret.state === 'ok') {
                   var data = ret.data;
                   if (data) {
-                      jboltTableInsertRow('#jbolt_table_#(pageId)', data);
+                      jboltTableClear('#jbolt_table_#(pageId)');
+                      jboltTableInsertRow('#jbolt_table_#(pageId)', data, false, false, true);
                   }
               }
           },

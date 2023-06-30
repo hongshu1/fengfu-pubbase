@@ -65,3 +65,67 @@ where 1=1
     order by a.dupdatetime desc
 #end
 
+
+
+#sql("billtype")
+SELECT  *
+from Bd_VouchTypeDic
+where isDeleted = 0
+	#if(q)
+		and (cBTID like concat('%',#para(q),'%') OR cBTChName like concat('%',#para(q),'%'))
+	#end
+	order by iAutoId desc
+#end
+
+
+#sql("getBarcodeDatas")
+select top #(limit)
+    m.cOrderNo as sourcebillno,
+    a.cCompleteBarcode as barcode,
+    b.cInvCode ,
+    b.cInvAddCode,
+    b.cInvCode1,
+    b.cInvName1,
+	b.cInvName,
+    a.dPlanDate as plandate,
+    b.cInvStd as cinvstd,
+    a.iQty as qty,
+    a.iQty as qtys,
+    a.iAutoId as autoid,
+    m.cOrderNo as SourceBillNo,
+    m.iBusType as SourceBillType,
+    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
+    m.cOrderNo as SourceBillID,
+    d.iAutoId as SourceBillDid,
+    m.iVendorId,
+	v.cVenCode as vencode,
+	v.cVenName as venname,
+	 uom.cUomCode,uom.cUomName,
+	config.iWarehouseId,
+	area.cAreaCode as poscode
+FROM PS_PurchaseOrderDBatch a
+LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
+LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
+LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
+LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
+LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+LEFT JOIN Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
+LEFT JOIN Bd_Warehouse_Area area on area.iAutoId =config.iWarehouseAreaId
+LEFT JOIN T_Sys_OtherInDetail oid on oid.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
+where a.isEffective = '1'
+    #if(q)
+		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
+			or b.cinvname1 like concat('%',#para(q),'%') or a.cCompleteBarcode like concat('%',#para(q),'%')
+			or v.cVenCode like concat('%',#para(q),'%')
+		)
+	#end
+
+		AND b.cOrgCode = #(orgCode)
+        AND pd.AutoID IS NULL
+        AND oid.AutoID IS NULL
+
+
+#end
+

@@ -14,7 +14,7 @@ import com.jfinal.core.Path;
  * @author: chentao
  * @date: 2023-05-02 10:00
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.DEMAND_PLAN2)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/mrpdemandcomputem", viewPath = "/_view/admin/schedudemandplan")
 public class MrpDemandcomputemAdminController extends BaseAdminController {

@@ -32,7 +32,7 @@ import java.math.BigDecimal;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-31 15:35
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MOMOINVBATCH)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/momoinvbatch", viewPath = "/_view/admin/momoinvbatch")
 public class MoMoinvbatchAdminController extends BaseAdminController {

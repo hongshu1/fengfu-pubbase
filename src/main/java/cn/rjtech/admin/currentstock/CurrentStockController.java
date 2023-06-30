@@ -2,6 +2,7 @@ package cn.rjtech.admin.currentstock;
 
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -9,9 +10,14 @@ import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouch;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.tx.Tx;
+
+import java.util.Date;
 
 
 /**
@@ -49,6 +55,35 @@ public class CurrentStockController extends BaseAdminController {
 		keepPara();
 
 		render("currentstockbyselect.html");
+	}
+
+
+	/**
+	 * 盘点条码 明细
+	 */
+	@UnCheck
+	public void getStockCheckVouchBarcodeLines() {
+		String autoid = get("autoid");
+		String OrgCode = getOrgCode();
+		Kv kv = new Kv();
+		kv.set("autoid",autoid== null? "" :autoid);
+		kv.set("OrgCode",OrgCode);
+		renderJsonData(service.getStockCheckVouchBarcodeLines(kv));
+	}
+
+	/**
+	 * 根据条码带出其他数据
+	 */
+	@UnCheck
+	public void barcode(@Para(value = "barcode") String barcode,
+						@Para(value = "autoid") Long autoid,
+						@Para(value = "detailHidden") String detailHidden,
+						@Para(value = "poscodes") String poscodes, //库区
+						@Para(value = "whcode") String whcode //仓库
+						) {
+		ValidationUtils.notBlank(barcode, "请扫码");
+
+		renderJsonData(service.barcode(Kv.by("barcode", barcode).set("autoid",autoid).set("detailHidden",detailHidden).set("whcode",whcode).set("poscodes",poscodes)));
 	}
 	/**
 	 * 选择数据源
@@ -96,7 +131,7 @@ public class CurrentStockController extends BaseAdminController {
 	   Kv kv = getKv();
 	   String autoid = kv.getStr("autoid");
 	   StockCheckVouch stockChekVouch = stockChekVouchService.findById(autoid);
-	   set("SysStockchekvouch", stockChekVouch);
+	   set("stockchekvouch", stockChekVouch);
 	   set("bill", stockChekVouch);
 	   set("isapp",0);
 	   render("stockEdit.html");
@@ -113,6 +148,14 @@ public class CurrentStockController extends BaseAdminController {
 		kv.set("whcode", get("whcode") == null ? "" : get("whcode"));
 		kv.setIfNotNull("OrgCode",getOrgCode());
 		renderJsonData(service.autocompletePosition(kv));
+	}
+
+	/**
+	 * JBoltTable 可编辑表格整体提交 多表格
+	 */
+	@Before(Tx.class)
+	public void saveTableSubmit() {
+		renderJson(service.saveTableSubmit(getJBoltTables(), JBoltUserKit.getUser(), new Date()));
 	}
 
     @UnCheck

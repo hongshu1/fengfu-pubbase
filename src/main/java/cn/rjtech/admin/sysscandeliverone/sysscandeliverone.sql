@@ -140,6 +140,19 @@ from (select t1.cOrderNo    as SourceBillNo,
         and t1.iOrgId = '#(orgId)'
         ###and t1.iAuditStatus = '2'
         ###and t1.IsDeleted = '0'
+        union all
+        select t1.cOrderNo as SourceBillNo,
+       t1.iAutoId  as SourceBillID,
+       ''          as SourceBillType,
+       ''          as saleName,
+       ''          as BillType,
+       ''          as busName
+        from Co_MonthOrderM t1
+        where 1 = 1
+          and t1.iCustomerId = '#(cusid)'
+          and t1.iOrgId = '#(orgId)'
+          ###and t1.iAuditStatus = '2'
+          ###and t1.IsDeleted = '0'
         ) t
 where 1=1
 #if(orderNo)
@@ -173,10 +186,44 @@ from (select t1.iAutoId  as SourceBillDid,
       from Co_ManualOrderD t1
       where iManualOrderMid = '#(orderId)'
         ###and t1.isDeleted = '0'
-        ) t
+      union all
+      select t1.iAutoId  as SourceBillDid,
+       t1.cInvCode as InvCode,
+       t1.iInventoryId,
+       ''          as billDate,
+       0           as qty,
+       t1.iSum     as planQty
+        from Co_MonthOrderD t1
+        where iMonthOrderMid = '#(orderId)'
+         ###and t1.isDeleted = '0'
+         ) t
          left join (
     select InvCode, sum(Qty) as deliveryQty from T_Sys_SaleDeliverDetail where isDeleted = '0' group by InvCode
 ) delivery on t.InvCode = delivery.InvCode
          left join Bd_Inventory b on t.iInventoryId = b.iAutoId
          left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+#end
+
+#sql("getResource")
+select t1.AutoID,
+             t1.Barcode as oldBarcode,
+             t1.cCompleteBarcode as Barcode,
+             t1.InvCode as cInvCode,
+             t1.Qty,
+             t2.Whcode,
+             b.cInvCode1,
+             b.cInvName1,
+             b.cInvStd,
+             uom.cUomName,
+             w.cWhName
+      from T_Sys_ProductInDetail t1
+               left join T_Sys_ProductIn t2 on t1.MasID = t2.AutoID
+               left join Bd_Inventory b on t1.InvCode = b.cInvCode
+               left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
+               left join Bd_Warehouse w on t2.Whcode = w.cWhCode
+where 1=1
+        and t1.isDeleted = '0'
+        and t2.isDeleted = '0'
+        ###and t2.iAuditStatus = '2'
+        and t1.cCompleteBarcode = '#(barcode)'
 #end

@@ -1,7 +1,7 @@
 #sql("CurrentStockByDatas")
 select c.*, inv.InvName
-from V_Sys_CurrentStock c
-left join V_Sys_Inventory inv on c.Invcode = inv.InvCode
+from UFDATA_001_2023.dbo.V_Sys_CurrentStock c
+left join UFDATA_001_2023.dbo.V_Sys_Inventory inv on c.Invcode = inv.InvCode
 where c.OrganizeCode = #para(organizecode) #if(whcode)
 and c.whcode =#para(whcode)
 #end
@@ -22,8 +22,8 @@ and inv.invname like concat ('%',#para(invname),'%')
 
 #sql("CurrentStockd")
 select c.*, inv.InvName
-from V_Sys_CurrentStock c
-left join V_Sys_Inventory inv on c.Invcode = inv.InvCode
+from UFDATA_001_2023.dbo.V_Sys_CurrentStock c
+left join UFDATA_001_2023.dbo.V_Sys_Inventory inv on c.Invcode = inv.InvCode
 where c.OrganizeCode = #para(organizecode)
 #if(whcode)
 and c.whcode =#para(whcode)
@@ -35,7 +35,7 @@ and c.poscode in (#(poscodeSql))
 
 
 #sql("getdatas")
-select * from T_Sys_StockCheckVouch where 1=1 and isDeleted='0'
+select * from T_Sys_StockCheckVouch where 1=1 and isDeleted='0' order by dcreatetime desc
 #end
 
 
@@ -43,7 +43,7 @@ select * from T_Sys_StockCheckVouch where 1=1 and isDeleted='0'
 #sql("datas")
 select s.*, w.whname
 from #(getMomdataDbName()).dbo.T_Sys_StockCheckVouch s
-left join V_Sys_WareHouse w
+left join UFDATA_001_2023.dbo.V_Sys_WareHouse w
 on s.whcode=w.whcode
 where s.isDeleted='0'
 #if(checktype)
@@ -121,7 +121,7 @@ p.PosName,
 d.*
 from
 #(getMomdataDbName()).dbo.T_Sys_StockCheckVouchDetail d
-left join V_Sys_Inventory inv
+left join UFDATA_001_2023.dbo.V_Sys_Inventory inv
 on inv.invcode=d.invcode
 LEFT JOIN  #(getMomdataDbName()).dbo.T_Sys_Position p ON p.PosCode = d.PosCode
 where masid=#(mid)
@@ -149,24 +149,7 @@ order by d.poscode, d.invcode
 #end
 
 
-#sql("barcodeDatas")
-SELECT inv.invname,
-inv.invstd,
-inv.unitName
-inv.InvClassCode,
-d.*
-FROM
-#(getMomdataDbName()).dbo.T_Sys_StockCheckDetail d
-LEFT JOIN V_Sys_Inventory inv
-ON inv.invcode = d.invcode
-WHERE
-d.sourceid = #para(stockcheckvouchdid)
-and generatetype is null
-#if(barcode)
-and d.barcode =#para(barcode)
-#end
 
-#end
 
 
 #sql("barcodeDatas_total")
@@ -202,7 +185,7 @@ SELECT top 10
 bc.invcode, bcpos.qty, bcpos.barcode, bcpos.chgdate as createdate, bcpos.whcode, bcpos.poscode, 'web' as source, null as realqty, null as adjustqty, null as sourceid, null as autoid
 FROM
 #(getMomdataDbName()).dbo.T_Sys_StockBarcodePosition bcpos
-INNER JOIN V_Sys_BarcodeDetail bc
+INNER JOIN UFDATA_001_2023.dbo.V_Sys_BarcodeDetail bc
 ON bc.barcode= bcpos.barcode
 where 1=1
 and bcpos.whcode=#para(whcode)
@@ -210,8 +193,8 @@ and bcpos.poscode=#para(poscode)
 and bcpos.invcode=#para(invcode)
 and bcpos.barcode not in (select barcode from #(getMomdataDbName()).dbo.T_Sys_StockCheckDetail)) t
 
-LEFT JOIN v_sys_inventory inv ON inv.invcode = t.invcode
-left join V_Sys_WareHouse w on w.whcode = t.whcode
+LEFT JOIN UFDATA_001_2023.dbo.v_sys_inventory inv ON inv.invcode = t.invcode
+left join UFDATA_001_2023.dbo.V_Sys_WareHouse w on w.whcode = t.whcode
 LEFT JOIN #(getMomdataDbName()).dbo.T_Sys_Position p
 ON p.PosCode = t.PosCode and p.poscode!= null
 #end
@@ -226,7 +209,7 @@ p.PosName,
 d.*
 from
 #(getMomdataDbName()).dbo.T_Sys_StockCheckVouchDetail d
-left join V_Sys_Inventory inv
+left join UFDATA_001_2023.dbo.V_Sys_Inventory inv
 on inv.invcode=d.invcode
 LEFT JOIN  #(getMomdataDbName()).dbo.T_Sys_Position p ON p.PosCode = d.PosCode
 where masid in (#(ids)) and ( p.OrganizeCode=#para(orgcode) OR p.OrganizeCode IS NULL)
@@ -234,13 +217,101 @@ order by d.poscode, d.invcode
 #end
 
 
-#sql("findCheckVouchDetailByMasIdAndInvcode")
-select t1.* from T_Sys_StockCheckVouchDetail t1
-where 1=1
-#if(masid)
-    and t1.maid = #para(masid)
+    #sql("paginateAdminDatas")
+SELECT
+    area.cAreaName AS posname,
+    class.cInvCCode,
+    class.cInvCName,
+    t3.cInvCode,
+    t3.cInvCode1,
+    t3.cInvName1,
+    t3.cInvStd,
+    uom.cUomName,
+    area.iMaxCapacity
+FROM
+    Bd_Inventory t3
+        LEFT JOIN Bd_InventoryClass class ON t3.iInventoryClassId = class.iAutoId
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = t3.iAutoId
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = t3.iInventoryUomId1
+WHERE t3.isDeleted = 0
+    and wh.cWhCode = #para(whcode)
+    #if(poscode)
+    and area.cAreaCode IN(#(poscode))
+    #end
+    #end
+
+#sql("getStockCheckVouchBarcodeLines")
+SELECT *
+FROM T_Sys_StockCheckVouch t1
+         LEFT JOIN T_Sys_StockCheckVouchBarcode t2 ON t2.MasID = t1.AutoId
+where 1 = 1
+AND t1.OrganizeCode = #para(OrgCode)
+AND t2.MasID = #para(autoid)
+
 #end
-#if(invcode)
-    and t1.invcode = #para(invcode)
-#end
+
+    #sql("barcodeDatas")
+SELECT
+    wh.cWhCode AS whcode,
+    wh.cWhName AS whname,
+    area.cAreaCode AS poscode,
+    area.cAreaName AS posname,
+    class.cInvCCode,
+    class.cInvCName,
+    t3.cInvCode,
+    t3.cInvCode1,
+    t3.cInvName1,
+    t3.cInvStd,
+    uom.cUomName,
+    area.iMaxCapacity,
+    t4.iQty,
+    t4.iQty AS Qty,
+    t4.cCompleteBarcode AS barcode,
+    t4.cVersion,
+    t4.dPlanDate
+
+FROM
+    Bd_Inventory t3
+        LEFT JOIN (
+        SELECT
+            iAutoId as PoId,
+            iPurchaseOrderDid,
+            iinventoryId,
+            cCompleteBarcode,
+            iQty,
+            cVersion,
+            dPlanDate,
+            cSourceld,
+            cSourceBarcode
+        FROM
+            PS_PurchaseOrderDBatch UNION ALL
+        SELECT
+            iAutoId as PoId,
+            iSubcontractOrderDid,
+            iinventoryId,
+            cCompleteBarcode,
+            iQty,
+            cVersion,
+            dPlanDate,
+            cSourceld,
+            cSourceBarcode
+        FROM
+            PS_SubcontractOrderDBatch
+    ) t4 ON t3.iautoid = t4.iinventoryId
+
+        LEFT JOIN Bd_InventoryClass class ON t3.iInventoryClassId = class.iAutoId
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = t3.iAutoId
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = t3.iInventoryUomId1
+WHERE t3.isDeleted = 0
+        and wh.cWhCode = #para(whcode)
+    #if(poscode)
+        and area.cAreaCode IN(#(poscode))
+    #end
+    #if(barcode)
+	    and t4.cCompleteBarcode = #para(barcode)
+	#end
 #end

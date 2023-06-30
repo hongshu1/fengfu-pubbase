@@ -6,7 +6,7 @@
     <div class="jbolt_page_title">
         <div class="row">
             <div class="col-md-auto">
-                <h1>出库管理-特殊领料单列表</h1>
+                <h1>出库管理-特殊领料单出库列表</h1>
             </div>
             <div class="col">
                 <form class="form-inline" id="otherOutForm_#(pageId)"   onsubmit="return false;" method="post">
@@ -40,7 +40,7 @@
                     <input type="hidden" id="barcodes" name="barcodes" value="" />
                     <button onclick="barcode_#(pageId)()" class="btn btn-outline-secondary btn-xs"><i class="fa fa-search" id="suBmit1"></i> 查询</button>
                     <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-                    <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1" onclick="submitAllTables_#(pageId)()"> 提交备料</button>
+                    <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1" onclick="submitAllTables_#(pageId)()"> 提交领料</button>
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">出库部门：</label>
                         <div class="col-sm-3 col-form-label">
@@ -284,7 +284,7 @@
 <script>
     function barcode_#(pageId)(){
         if (!document.getElementById("billno").value) {
-            LayerMsgBox.error("请选择备料单");
+            LayerMsgBox.error("请选择领料单");
             return;
         }
         LayerMsgBox.loading("查询中......", 500);
