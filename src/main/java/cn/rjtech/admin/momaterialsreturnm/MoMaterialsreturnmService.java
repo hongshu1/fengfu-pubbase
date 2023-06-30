@@ -1,11 +1,13 @@
 package cn.rjtech.admin.momaterialsreturnm;
 
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.extend.config.Message;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -422,9 +424,17 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	}
 
 	public Ret saveTableSubmit(JBoltTable jBoltTable) {
+
+
 		MoMaterialsreturnm form = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
 
+		if (ObjectUtil.isNull(jBoltTable.getSaveRecordList())) {
+			ValidationUtils.error("保存数据为空，保存失败");
+		}
+
 		List<Record> save = jBoltTable.getSaveRecordList();
+
+
 
 		MoMaterialsreturnm row=new MoMaterialsreturnm();
 
@@ -551,7 +561,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 		return null;
 	}
 
-	public List<Record> getModandMomlist(String imodocid) {
-		return dbTemplate("momaterialsreturnm.getModandMomlist",Kv.by("imodocid",imodocid)).find();
+	public List<Record> getModandMomlist(String iautoid) {
+		return dbTemplate("momaterialsreturnm.getModandMomlist",Kv.by("iautoid",iautoid)).find();
 	}
 }
