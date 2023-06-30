@@ -63,7 +63,7 @@ public class UptimeMApiController extends BaseApiController {
     @UnCheck
     public void getUptimeMInfoList(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.validateId(iautoid,"主键id");
-        Kv kv = Kv.by("iautoid",iautoid);
+        Kv kv = Kv.by("mid",iautoid).set("iautoid",iautoid);
         renderJBoltApiRet(service.getUptimeMInfoList(kv));
     }
 
