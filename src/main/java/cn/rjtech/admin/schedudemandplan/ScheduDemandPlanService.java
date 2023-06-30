@@ -914,6 +914,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			}
 			Long invId = invInfo.getLong("invId");
 			Long iVendorId = invInfo.getLong("iVendorId");
+			int iPkgQty = invInfo.getInt("iPkgQty");
 
 			Map<String,BigDecimal> dateQtyMap = invPlanDateInAllMap.get(inv);
 			for (String date : dateQtyMap.keySet()){
@@ -927,6 +928,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				demandcomputed.setIDemandComputeMid(1L);
 				demandcomputed.setIVendorId(iVendorId);
 				demandcomputed.setIInventoryId(invId);
+				demandcomputed.setIPkgQty(iPkgQty);
 				demandcomputed.setIYear(year);
 				demandcomputed.setIMonth(month);
 				demandcomputed.setIDate(day);
@@ -939,6 +941,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			Record invInfo = invInfoMap.get(inv);
 			Long invId = invInfo.getLong("invId");
 			Long iVendorId = invInfo.getLong("iVendorId");
+			int iPkgQty = invInfo.getInt("iPkgQty");
 
 			Map<String,BigDecimal> dateQtyMap = invDaoHuoDateMap.get(inv);
 			for (String date : dateQtyMap.keySet()){
@@ -957,6 +960,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					demandcomputed.setIDemandComputeMid(1L);
 					demandcomputed.setIVendorId(iVendorId);
 					demandcomputed.setIInventoryId(invId);
+					demandcomputed.setIPkgQty(iPkgQty);
 					demandcomputed.setIYear(year);
 					demandcomputed.setIMonth(month);
 					demandcomputed.setIDate(day);
@@ -970,6 +974,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			Record invInfo = invInfoMap.get(inv);
 			Long invId = invInfo.getLong("invId");
 			Long iVendorId = invInfo.getLong("iVendorId");
+			int iPkgQty = invInfo.getInt("iPkgQty");
 
 			Map<String,BigDecimal> dateQtyMap = invShiJiDateMap.get(inv);
 			for (String date : dateQtyMap.keySet()){
@@ -988,6 +993,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					demandcomputed.setIDemandComputeMid(1L);
 					demandcomputed.setIVendorId(iVendorId);
 					demandcomputed.setIInventoryId(invId);
+					demandcomputed.setIPkgQty(iPkgQty);
 					demandcomputed.setIYear(year);
 					demandcomputed.setIMonth(month);
 					demandcomputed.setIDate(day);
@@ -1001,6 +1007,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			Record invInfo = invInfoMap.get(inv);
 			Long invId = invInfo.getLong("invId");
 			Long iVendorId = invInfo.getLong("iVendorId");
+			int iPkgQty = invInfo.getInt("iPkgQty");
 
 			Map<String,BigDecimal> dateQtyMap = invChaYiDateMap.get(inv);
 			for (String date : dateQtyMap.keySet()){
@@ -1019,6 +1026,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					demandcomputed.setIDemandComputeMid(1L);
 					demandcomputed.setIVendorId(iVendorId);
 					demandcomputed.setIInventoryId(invId);
+					demandcomputed.setIPkgQty(iPkgQty);
 					demandcomputed.setIYear(year);
 					demandcomputed.setIMonth(month);
 					demandcomputed.setIDate(day);
@@ -1032,6 +1040,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			Record invInfo = invInfoMap.get(inv);
 			Long invId = invInfo.getLong("invId");
 			Long iVendorId = invInfo.getLong("iVendorId");
+			int iPkgQty = invInfo.getInt("iPkgQty");
 
 			Map<String,BigDecimal> dateQtyMap = invZaiKuDateMap.get(inv);
 			for (String date : dateQtyMap.keySet()){
@@ -1050,6 +1059,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					demandcomputed.setIDemandComputeMid(1L);
 					demandcomputed.setIVendorId(iVendorId);
 					demandcomputed.setIInventoryId(invId);
+					demandcomputed.setIPkgQty(iPkgQty);
 					demandcomputed.setIYear(year);
 					demandcomputed.setIMonth(month);
 					demandcomputed.setIDate(day);

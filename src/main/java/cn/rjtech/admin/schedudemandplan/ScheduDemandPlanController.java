@@ -31,7 +31,7 @@ import java.util.Map;
  * @author: chentao
  * @date: 2023-05-02 10:00
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.DEMAND_ALGORITHM)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/schedudemandplan", viewPath = "/_view/admin/schedudemandplan")
 public class ScheduDemandPlanController extends BaseAdminController {
