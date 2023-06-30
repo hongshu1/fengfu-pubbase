@@ -425,71 +425,61 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 		MoMaterialsreturnm form = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
 
 		List<Record> save = jBoltTable.getSaveRecordList();
-		List<Record> save1 = jBoltTable.getSaveRecordList();
 
-		for (Record row : save) {
+		MoMaterialsreturnm row=new MoMaterialsreturnm();
 
-
-			row.remove("cinvaddcode");
-			row.remove("cinvcode");
-			row.remove("cinvname");
-			row.remove("cmemo");
-			row.remove("iqty");
-			row.remove("iscannedqty");
-			row.remove("iuomclassid");
-			row.remove("type");
-
-			row.set("IAutoId",JBoltSnowflakeKit.me.nextId());
-			row.set("IMaterialsReturnMid",row.get("iAutoId"));
-			row.set("IMoDocId",form.get("IMoDocId"));
-			row.set("IInventoryId",row.get("iInventoryId"));
-			row.set("IQty",row.get("iqtys"));
-			row.set("Cbarcode",row.getStr("cBarcode"));
-			row.remove("iqtys");
+		Date now=new Date();
+		String cmemo=null;
+		for (Record record : save) {
+			cmemo = record.get("cmemo");
 		}
+		row.set("IMoDocId",form.get("IMoDocId"));
+		row.set("IAuditWay",1);
+		row.set("DSubmitTime",now);
+		row.set("IAuditStatus",1);
+		row.set("DAuditTime",now);
+		row.set("CMemo",cmemo);
 
-		for (Record row : save1) {
-			Date now=new Date();
+		MoMaterialsreturnm iAutoId = row.set("IAutoId", JBoltSnowflakeKit.me.nextId());
+		row.set("COrgCode",getOrgCode());
+		row.set("IOrgId",getOrgId());
+		row.set("COrgName",getOrgName());
+		row.set("ICreateBy",JBoltUserKit.getUserId());
+		row.set("CCreateName",JBoltUserKit.getUserName());
+		row.set("DCreateTime",now);
+		row.set("IUpdateBy",JBoltUserKit.getUserId());
+		row.set("CUpdateName",JBoltUserKit.getUserName());
+		row.set("DUpdateTime",now);
+		row.set("IsDeleted",false);
 
 
-			row.remove("cinvaddcode");
-			row.remove("cinvcode");
-			row.remove("cinvname");
-			row.remove("iqty");
-			row.remove("iscannedqty");
-			row.remove("iuomclassid");
-			row.remove("type");
-			row.remove("iinventoryid");
-			row.remove("iqtys");
-			row.remove("cbarcode");
-			row.remove("iautoid");
+		for (int i = 0; i < save.size(); i++) {
 
-			row.set("IMoDocId",form.get("IMoDocId"));
-			row.set("IAuditWay",1);
-			row.set("DSubmitTime",now);
-			row.set("IAuditStatus",1);
-			row.set("DAuditTime",now);
-			row.set("CMemo",row.getStr("cmemo"));
+			Record record = save.get(i);
 
-			row.set("IAutoId",JBoltSnowflakeKit.me.nextId());
-			row.set("COrgCode",getOrgCode());
-			row.set("IOrgId",getOrgId());
-			row.set("COrgName",getOrgName());
-			row.set("ICreateBy",JBoltUserKit.getUserId());
-			row.set("CCreateName",JBoltUserKit.getUserName());
-			row.set("DCreateTime",now);
-			row.set("IUpdateBy",JBoltUserKit.getUserId());
-			row.set("CUpdateName",JBoltUserKit.getUserName());
-			row.set("DUpdateTime",now);
-			row.set("IsDeleted",false);
+			record.remove("cinvaddcode");
+			record.remove("cinvcode");
+			record.remove("cinvname");
+			record.remove("cmemo");
+			record.remove("iqty");
+			record.remove("iscannedqty");
+			record.remove("iuomclassid");
+			record.remove("type");
 
+			record.set("IAutoId",JBoltSnowflakeKit.me.nextId());
+			record.set("IMaterialsReturnMid",iAutoId.get("IAutoId"));
+			record.set("IMoDocId",form.get("IMoDocId"));
+			record.set("IInventoryId",record.get("iInventoryId"));
+			record.set("IQty",record.get("iqtys"));
+			record.set("cbarcode",record.get("cbarcode"));
+			record.remove("iqtys");
 		}
 
 
 		tx(() -> {
 
 			materialsreturndService.batchSaveRecords(save);
-			materialsreturnmService.batchSaveRecords(save1);
+			row.save();
 			return true;
 		});
 
@@ -560,5 +550,8 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 	public String postBatchBackout(List<Long> formAutoIds) {
 		return null;
 	}
-    
+
+	public List<Record> getModandMomlist(String imodocid) {
+		return dbTemplate("momaterialsreturnm.getModandMomlist",Kv.by("imodocid",imodocid)).find();
+	}
 }

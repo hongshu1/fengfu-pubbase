@@ -157,9 +157,12 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
 	public void getmomaterialscanusedlogList() {
 		renderJsonData(service.getBycBarcodeList());
 	}
-
 	public void saveTableSubmit() {
 		renderJson(service.saveTableSubmit(getJBoltTable()));
+	}
+
+	public void getmomaterialscanuseMList(){
+		renderJson(service.getModandMomlist(get("imodocid")));
 	}
 
 }
