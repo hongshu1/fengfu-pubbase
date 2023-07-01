@@ -10,6 +10,7 @@
 #if(readonly != 'readonly' && (purchasem.iauditstatus??0 == 1 || purchasem.iauditstatus??0 == 2))
 #set(readonly = 'readonly')
 #end
+#set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_title">
 	    <div class="row">
 	        <div class="col-12">
@@ -176,7 +177,27 @@
 			   	</div>
 		   	</div>
 	   	</div>
-#include("purchaseds.html")
+	   	
+	    <div class="jbolt_tab_view">
+	        <div class="jbolt_tab_links">
+	            <a class="jbolt_tab_link active" href="#jbolt_tabcontent1_purchase">申购项目</a>
+	            <a class="jbolt_tab_link" href="#jbolt_tabcontent2_purchase">附件</a>
+	        </div>
+	
+	        <div class="jbolt_tab_contents">
+	
+	            <div class="jbolt_tab_content active" id="jbolt_tabcontent1_purchase">
+	                #include("purchaseds.html")
+	            </div>
+	
+	            <div class="jbolt_tab_content" id="jbolt_tabcontent2_purchase">
+	                ### 申购单 附件
+	                #render("purchase_attachment.html")
+	            </div>
+	
+	        </div>
+	
+	    </div>	   	
 </div>
 #define js()
 #@hiprintjs()
@@ -201,7 +222,7 @@
     function saveData(ele) {
     	//var index = LayerMsgBox.loading('执行中...');
     	finishEditingCells(ele);
-        jboltTableSubmit(ele);
+    	purchaseMultiTableSubmitForm();
     }
     /**
      * 新增/修改/提审
@@ -213,7 +234,39 @@
             parent.refreshPjaxContainer();
         });
     }
+    function closeHandler(){
+    	parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
+    }
+	function purchaseMultiTableSubmitForm(){
+   	 var tables = ["jbolt_table_#(pageId)", "jbolt_table_purchaseattachments_#(pageId)"];
+        jboltTableSubmitMulti(tables, "admin/purchasem/saveTableSubmit", function(res) {
+         	// 表格保存之后，判断是否需要提审处理
+         	var ret = res.data;
+            if (ret.state === 'ok') {
+                // 提交审核（审批）调用
+                if (submit) {
+                    // 提审
+                    submit_#(pageId)(ret.data.iautoid, function (data) {
+                    	var url = '/admin/purchasem/details/' + ret.data.iautoid + '-_jb_rqtype_dialog';
+                        successHandler('提审成功', url);
+                    });
+                } else {
+                	var url = '/admin/purchasem/instrumentEdit/' + ret.data.iautoid + '-_jb_rqtype_dialog';
+                    successHandler(ret.msg, url);
+                }
 
+            }else{
+            	LayerMsgBox.alert("申购金额已超禀议金额10%或500,请追加禀议",2);
+            	Ajax.get("admin/purchasem/getMoney?ifirstsourceproposalid=#(purchasem.ifirstsourceproposalid??)&ipurchasemid=#(purchasem.iautoid??)",function(failres){
+					$("#ialreadypurchasenatmoney").val(failres.data.ialreadypurchasenatmoney);
+					$("#ibudgetalreadypurchasemoney").val(failres.data.ibudgetalreadypurchasemoney);
+					$("#inatmoney").change();
+				});
+            }
+        });
+   }
+    
     function getEdiTableOptions() {
         var editableTableOptions = {
             trigger: "click",
@@ -221,8 +274,9 @@
             maxRowCount: 20,
             submit: {
                 withForm: ["purchasemForm"],
-                type: "all",
-                url: "admin/purchasem/saveTableSubmit",
+                type: "multi",
+                name: 'purchaseds'
+               /*  url: "admin/purchasem/saveTableSubmit",
                 success: function (res) {
                     if(res.state == 'ok'){
                     	// 提交审核（审批）调用
@@ -244,7 +298,7 @@
         					$("#inatmoney").change();
         				});
                     }
-                }
+                } */
             },
             hsummaryFirstByAutoCalc: true,
             cols: {
@@ -623,5 +677,7 @@
 
 
 </script>
+### 禀议书 附件 可编辑表格 js
+#render("purchase_attachment_tablejs.html")
 #end
 

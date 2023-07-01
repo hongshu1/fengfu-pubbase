@@ -514,7 +514,7 @@ public class PurchasemAdminController extends BaseAdminController {
     @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableSubmit() {
-        renderJson(service.saveTableSubmit(getJBoltTable()));
+        renderJsonData(service.saveTableSubmit(getJBoltTables()));
     }
 
     /**
@@ -726,5 +726,13 @@ public class PurchasemAdminController extends BaseAdminController {
    	Purchasem purchasem = service.findById(getLong("iautoid"));
    	set("purchasem", purchasem);
    	render("approve_process_index.html");
+   }
+   
+   /**
+    * 上传附件页面
+    */
+   @UnCheck
+   public void attachment() {
+       render("purchase_attachment_add.html");
    }
 }
