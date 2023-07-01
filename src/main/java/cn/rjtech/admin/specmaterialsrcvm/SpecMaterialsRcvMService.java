@@ -5,7 +5,9 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.specmaterialsrcvd.SpecMaterialsRcvDService;
+import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SpecMaterialsRcvD;
 import cn.rjtech.model.momdata.SpecMaterialsRcvM;
@@ -39,6 +41,9 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
 
   @Inject
   private SpecMaterialsRcvDService specMaterialsRcvDService;
+
+  @Inject
+  private DepartmentService departmentService;
 
   /**
    * 后台管理分页查询
@@ -268,7 +273,7 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
         SpecMaterialsRcvD specMaterialsRcvD = new SpecMaterialsRcvD();
         specMaterialsRcvD.setISpecRcvMid(specMaterialsRcvM.getIAutoId());
         specMaterialsRcvD.setIInventoryId(record.getLong("iautoid"));
-        specMaterialsRcvD.setIQty(record.getBigDecimal("qty"));
+        specMaterialsRcvD.setIQty(record.getBigDecimal("iqty"));
         specMaterialsRcvD.save();
       });
       return true;
@@ -294,9 +299,20 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
    */
   public Record getSpecMaterialsRcvDatas(Long id) {
     SpecMaterialsRcvM specMaterialsRcvm = findById(id);
+    Department department = departmentService.findByid(specMaterialsRcvm.getIDepartmentId());
     Record record = new Record();
+    record.put("cspecrcvdocno", specMaterialsRcvm.getCSpecRcvDocNo());
+    record.put("ddemanddate", specMaterialsRcvm.getDDemandDate());
+    if (department != null) {
+      record.put("cdepname", department.getCDepName());
+    } else {
+      record.put("cdepname", " ");
+    }
     record.put("creason", specMaterialsRcvm.getCReason());
     record.put("cspecadvicesns", specMaterialsRcvm.getCSpecAdviceSns());
+
+    record.put("ccreatename", specMaterialsRcvm.getCCreateName());
+    record.put("dcreatetime", specMaterialsRcvm.getDCreateTime());
     record.put("rcvd", dbTemplate("specmaterialsrcvm.getRcvdDatasByRevmId", Kv.by("id", id)).find());
     return record;
   }
