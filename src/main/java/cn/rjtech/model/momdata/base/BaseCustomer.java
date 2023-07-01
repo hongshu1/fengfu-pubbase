@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -115,26 +115,40 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
     public static final String DUPDATETIME = "dUpdateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
-	/**客户分类ID*/
-	public static final String ICUSTOMERCLASSID = "iCustomerClassId";
-	/**
-	 * 助记码
-	 */
-	public static final String MNEMONICCODE = "mnemonicCode";
-	/**
-	 * 供应商编码
-	 */
-	public static final String CVENCODE = "cVenCode";
-    /**
-     * 供应商名称
-     */
+    /**分类ID*/
+    public static final String ICUSTOMERCLASSID = "iCustomerClassId";
+    /**助记码*/
+    public static final String MNEMONICCODE = "mnemonicCode";
+    /**供应商编码*/
+    public static final String CVENCODE = "cVenCode";
+    /**供应商名称*/
     public static final String CVENNAME = "cVenName";
-	/**
-	 * 客户属性
-	 */
+    /**客户属性*/
     public static final String CCUSATTRIBUTE = "cCusAttribute";
-	/**客户等级(字典值)*/
-	public static final String CCUSTOMERLEVELSN = "cCustomerLevelSn";
+    /**客户级别*/
+    public static final String CCUSTOMERLEVELSN = "cCustomerLevelSn";
+    /**供应商ID*/
+    public static final String CVENID = "cVenId";
+    /**客户工作天数*/
+    public static final String IWORKDAYS = "iWorkDays";
+    /**所属地区*/
+    public static final String CAREA = "cArea";
+    /**对应供应商*/
+    public static final String CRELVENDOR = "cRelVendor";
+    /**联系人编码*/
+    public static final String CCUSCONTACTCODE = "cCusContactCode";
+    /**结算方式编码*/
+    public static final String CCUSSSCODE = "cCusSSCode";
+    /**是否国外：0. 否 1. 是*/
+    public static final String BCUSOVERSEAS = "bCusOverseas";
+    /**是否服务：0. 否 1. 是*/
+    public static final String BSERVICEATTRIBUTE = "bServiceAttribute";
+    /**是否国内：0. 否 1. 是*/
+    public static final String BCUSDOMESTIC = "bCusDomestic";
+    /**来源；1. MES 2. U8*/
+    public static final String ISOURCE = "iSource";
+    /**来源ID*/
+    public static final String ISOURCEID = "iSourceId";
 	/**
 	 * 主键ID
 	 */
@@ -707,7 +721,7 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
 	/**
 	 * 部门编码
 	 */
-	@JBoltField(name="ccusdepart" ,columnName="cCusDepart",type="String", remark="部门编码", required=false, maxLength=12, fixed=0, order=34)
+	@JBoltField(name="ccusdepart" ,columnName="cCusDepart",type="String", remark="部门编码", required=false, maxLength=30, fixed=0, order=34)
 	@JSONField(name = "ccusdepart")
 	public java.lang.String getCCusDepart() {
 		return getStr("cCusDepart");
@@ -1020,22 +1034,21 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
 	}
 
 	/**
-	 * 客户分类ID
+	 * 分类ID
 	 */
-	public M setIcustomerclassid(java.lang.Long icustomerclassid) {
-		set("iCustomerClassId", icustomerclassid);
+	public M setICustomerClassId(java.lang.Long iCustomerClassId) {
+		set("iCustomerClassId", iCustomerClassId);
 		return (M)this;
 	}
 
 	/**
-	 * 客户分类ID
+	 * 分类ID
 	 */
-	@JBoltField(name="icustomerclassid" ,columnName="iCustomerClassId",type="Long", remark="客户分类ID", required=true, maxLength=19, fixed=0, order=2)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public java.lang.Long getIcustomerclassid() {
+	@JBoltField(name="icustomerclassid" ,columnName="iCustomerClassId",type="Long", remark="分类ID", required=false, maxLength=19, fixed=0, order=53)
+	@JSONField(name = "icustomerclassid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getICustomerClassId() {
 		return getLong("iCustomerClassId");
 	}
-
 
 	/**
 	 * 助记码
@@ -1048,66 +1061,45 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
 	/**
 	 * 助记码
 	 */
-	@JBoltField(name="mnemoniccode" ,columnName="mnemonicCode",type="String", remark="助记码", required=false, maxLength=100, fixed=0, order=17)
+	@JBoltField(name="mnemoniccode" ,columnName="mnemonicCode",type="String", remark="助记码", required=false, maxLength=255, fixed=0, order=54)
 	@JSONField(name = "mnemoniccode")
 	public java.lang.String getMnemonicCode() {
 		return getStr("mnemonicCode");
 	}
 
-    /**
-     * 供应商编码
-     */
-    public M setCVenCode(java.lang.String cVenCode) {
-        set("cVenCode", cVenCode);
-        return (M)this;
-    }
-
-    /**
-     * 供应商编码
-     */
-    @JBoltField(name="cvencode" ,columnName="cVenCode",type="String", remark="供应商编码", required=false, maxLength=100,
-            fixed=0, order=17)
-    @JSONField(name = "cvencode")
-    public java.lang.String getCVenCode() {
-        return getStr("cVenCode");
-    }
-
-    /**
-     * 供应商名称
-     */
-    public M setCVenName(java.lang.String cVenName) {
-        set("cVenName", cVenName);
-        return (M)this;
-    }
-
-    /**
-     * 供应商名称
-     */
-    @JBoltField(name="cvenname" ,columnName="cVenName",type="String", remark="供应商名称", required=false, maxLength=100,
-            fixed=0, order=17)
-    @JSONField(name = "cvenname")
-    public java.lang.String getCVenName() {
-        return getStr("cVenName");
-    }
-
 	/**
-	 * 供应商ID
+	 * 供应商编码
 	 */
-	public M setVendorId(java.lang.Long vendorId) {
-		set("vendorId", vendorId);
+	public M setCVenCode(java.lang.String cVenCode) {
+		set("cVenCode", cVenCode);
 		return (M)this;
 	}
 
 	/**
-	 * 供应商ID
+	 * 供应商编码
 	 */
-	@JBoltField(name="vendorid" ,columnName="vendorId",type="Long", remark="供应商ID", required=true, maxLength=19,
-			fixed=0, order=1)
-	@JSONField(name = "vendorid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getVendorId() {
-		return getLong("vendorId");
+	@JBoltField(name="cvencode" ,columnName="cVenCode",type="String", remark="供应商编码", required=false, maxLength=20, fixed=0, order=55)
+	@JSONField(name = "cvencode")
+	public java.lang.String getCVenCode() {
+		return getStr("cVenCode");
 	}
 
+	/**
+	 * 供应商名称
+	 */
+	public M setCVenName(java.lang.String cVenName) {
+		set("cVenName", cVenName);
+		return (M)this;
+	}
+
+	/**
+	 * 供应商名称
+	 */
+	@JBoltField(name="cvenname" ,columnName="cVenName",type="String", remark="供应商名称", required=false, maxLength=98, fixed=0, order=56)
+	@JSONField(name = "cvenname")
+	public java.lang.String getCVenName() {
+		return getStr("cVenName");
+	}
 
 	/**
 	 * 客户属性
@@ -1120,27 +1112,214 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
 	/**
 	 * 客户属性
 	 */
-	@JBoltField(name="ccusattribute" ,columnName="cCusAttribute",type="String", remark="客户属性", required=false,
-			maxLength=10, fixed=0, order=41)
+	@JBoltField(name="ccusattribute" ,columnName="cCusAttribute",type="String", remark="客户属性", required=false, maxLength=10, fixed=0, order=57)
 	@JSONField(name = "ccusattribute")
 	public java.lang.String getCCusAttribute() {
 		return getStr("cCusAttribute");
 	}
 
 	/**
-	 * 客户等级(字典值)
+	 * 客户级别
 	 */
-	public M setCcustomerlevelsn(java.lang.String ccustomerlevelsn) {
-		set("cCustomerLevelSn", ccustomerlevelsn);
+	public M setCCustomerLevelSn(java.lang.String cCustomerLevelSn) {
+		set("cCustomerLevelSn", cCustomerLevelSn);
 		return (M)this;
 	}
 
 	/**
-	 * 客户等级(字典值)
+	 * 客户级别
 	 */
-	@JBoltField(name="ccustomerlevelsn" ,columnName="cCustomerLevelSn",type="String", remark="客户等级(字典值)", required=true, maxLength=255, fixed=0, order=9)
-	public java.lang.String getCcustomerlevelsn() {
+	@JBoltField(name="ccustomerlevelsn" ,columnName="cCustomerLevelSn",type="String", remark="客户级别", required=false, maxLength=10, fixed=0, order=58)
+	@JSONField(name = "ccustomerlevelsn")
+	public java.lang.String getCCustomerLevelSn() {
 		return getStr("cCustomerLevelSn");
+	}
+
+	/**
+	 * 供应商ID
+	 */
+	public M setCVenId(java.lang.Long cVenId) {
+		set("cVenId", cVenId);
+		return (M)this;
+	}
+
+	/**
+	 * 供应商ID
+	 */
+	@JBoltField(name="cvenid" ,columnName="cVenId",type="Long", remark="供应商ID", required=false, maxLength=19, fixed=0, order=59)
+	@JSONField(name = "cvenid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getCVenId() {
+		return getLong("cVenId");
+	}
+
+	/**
+	 * 客户工作天数
+	 */
+	public M setIWorkDays(java.lang.Integer iWorkDays) {
+		set("iWorkDays", iWorkDays);
+		return (M)this;
+	}
+
+	/**
+	 * 客户工作天数
+	 */
+	@JBoltField(name="iworkdays" ,columnName="iWorkDays",type="Integer", remark="客户工作天数", required=false, maxLength=10, fixed=0, order=60)
+	@JSONField(name = "iworkdays")
+	public java.lang.Integer getIWorkDays() {
+		return getInt("iWorkDays");
+	}
+
+	/**
+	 * 所属地区
+	 */
+	public M setCArea(java.lang.String cArea) {
+		set("cArea", cArea);
+		return (M)this;
+	}
+
+	/**
+	 * 所属地区
+	 */
+	@JBoltField(name="carea" ,columnName="cArea",type="String", remark="所属地区", required=false, maxLength=50, fixed=0, order=61)
+	@JSONField(name = "carea")
+	public java.lang.String getCArea() {
+		return getStr("cArea");
+	}
+
+	/**
+	 * 对应供应商
+	 */
+	public M setCRelVendor(java.lang.String cRelVendor) {
+		set("cRelVendor", cRelVendor);
+		return (M)this;
+	}
+
+	/**
+	 * 对应供应商
+	 */
+	@JBoltField(name="crelvendor" ,columnName="cRelVendor",type="String", remark="对应供应商", required=false, maxLength=10, fixed=0, order=62)
+	@JSONField(name = "crelvendor")
+	public java.lang.String getCRelVendor() {
+		return getStr("cRelVendor");
+	}
+
+	/**
+	 * 联系人编码
+	 */
+	public M setCCusContactCode(java.lang.String cCusContactCode) {
+		set("cCusContactCode", cCusContactCode);
+		return (M)this;
+	}
+
+	/**
+	 * 联系人编码
+	 */
+	@JBoltField(name="ccuscontactcode" ,columnName="cCusContactCode",type="String", remark="联系人编码", required=false, maxLength=20, fixed=0, order=63)
+	@JSONField(name = "ccuscontactcode")
+	public java.lang.String getCCusContactCode() {
+		return getStr("cCusContactCode");
+	}
+
+	/**
+	 * 结算方式编码
+	 */
+	public M setCCusSSCode(java.lang.String cCusSSCode) {
+		set("cCusSSCode", cCusSSCode);
+		return (M)this;
+	}
+
+	/**
+	 * 结算方式编码
+	 */
+	@JBoltField(name="ccussscode" ,columnName="cCusSSCode",type="String", remark="结算方式编码", required=false, maxLength=10, fixed=0, order=64)
+	@JSONField(name = "ccussscode")
+	public java.lang.String getCCusSSCode() {
+		return getStr("cCusSSCode");
+	}
+
+	/**
+	 * 是否国外：0. 否 1. 是
+	 */
+	public M setBCusOverseas(java.lang.Boolean bCusOverseas) {
+		set("bCusOverseas", bCusOverseas);
+		return (M)this;
+	}
+
+	/**
+	 * 是否国外：0. 否 1. 是
+	 */
+	@JBoltField(name="bcusoverseas" ,columnName="bCusOverseas",type="Boolean", remark="是否国外：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=65)
+	@JSONField(name = "bcusoverseas")
+	public java.lang.Boolean getBCusOverseas() {
+		return getBoolean("bCusOverseas");
+	}
+
+	/**
+	 * 是否服务：0. 否 1. 是
+	 */
+	public M setBServiceAttribute(java.lang.Boolean bServiceAttribute) {
+		set("bServiceAttribute", bServiceAttribute);
+		return (M)this;
+	}
+
+	/**
+	 * 是否服务：0. 否 1. 是
+	 */
+	@JBoltField(name="bserviceattribute" ,columnName="bServiceAttribute",type="Boolean", remark="是否服务：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=66)
+	@JSONField(name = "bserviceattribute")
+	public java.lang.Boolean getBServiceAttribute() {
+		return getBoolean("bServiceAttribute");
+	}
+
+	/**
+	 * 是否国内：0. 否 1. 是
+	 */
+	public M setBCusDomestic(java.lang.Boolean bCusDomestic) {
+		set("bCusDomestic", bCusDomestic);
+		return (M)this;
+	}
+
+	/**
+	 * 是否国内：0. 否 1. 是
+	 */
+	@JBoltField(name="bcusdomestic" ,columnName="bCusDomestic",type="Boolean", remark="是否国内：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=67)
+	@JSONField(name = "bcusdomestic")
+	public java.lang.Boolean getBCusDomestic() {
+		return getBoolean("bCusDomestic");
+	}
+
+	/**
+	 * 来源；1. MES 2. U8
+	 */
+	public M setISource(java.lang.Integer iSource) {
+		set("iSource", iSource);
+		return (M)this;
+	}
+
+	/**
+	 * 来源；1. MES 2. U8
+	 */
+	@JBoltField(name="isource" ,columnName="iSource",type="Integer", remark="来源；1. MES 2. U8", required=true, maxLength=10, fixed=0, order=68)
+	@JSONField(name = "isource")
+	public java.lang.Integer getISource() {
+		return getInt("iSource");
+	}
+
+	/**
+	 * 来源ID
+	 */
+	public M setISourceId(java.lang.String iSourceId) {
+		set("iSourceId", iSourceId);
+		return (M)this;
+	}
+
+	/**
+	 * 来源ID
+	 */
+	@JBoltField(name="isourceid" ,columnName="iSourceId",type="String", remark="来源ID", required=false, maxLength=32, fixed=0, order=69)
+	@JSONField(name = "isourceid")
+	public java.lang.String getISourceId() {
+		return getStr("iSourceId");
 	}
 
 }

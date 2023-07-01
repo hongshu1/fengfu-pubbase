@@ -217,11 +217,6 @@
 	hideParentLayerDialogBtn(0);
 	hideParentLayerDialogBtn(1);
 
-	function closeHandler(){
-		parent.layer.close(parent.layer.getFrameIndex(window.name));
-		window.parent.refreshJBoltTable();
-	}
-
 	// 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
 	var submit = false;
 	function submitThisForm_#(pageId)(s) {

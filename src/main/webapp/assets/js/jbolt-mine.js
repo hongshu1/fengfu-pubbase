@@ -838,6 +838,11 @@ function zoomPage() {
     }
 }
 
+function closeHandler() {
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+    window.parent.refreshJBoltTable();
+}
+
 ;(function ($) {
 
     $.fn.tablesMergeCell = function(options, mergecel) {

@@ -3,7 +3,7 @@
 	<div class="form-group row">
 
 		<button onclick="submitForm(this)" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交打印</button>
-		<button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
+		<button onclick="parent.layer.close(parent.layer.getFrameIndex(window.name));" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i>关闭</button>
 	</div>
 	<div class="form-group row">
 		<input type="hidden" name="moMoinvbatch.iautoid" value="#(moMoinvbatch.iautoid??)" />
@@ -89,12 +89,7 @@
 
 <script>
 	hideParentLayerDialogBtn(0);
-	function closeHandler() {
-
-
-		parent.layer.close(parent.layer.getFrameIndex(window.name));
-		//window.parent.refreshJBoltTable();
-	}
+    
 	function submitForm(ele){
 		LayerMsgBox.confirm("确认提交此数据?",function(){
 			// submitThisForms();

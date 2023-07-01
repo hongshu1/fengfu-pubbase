@@ -1,11 +1,14 @@
 <form onsubmit="return false;" id="customermForm" action="#(action)" method="post">
+    
     <input type="hidden" name="customerm.iautoid" id="iautoida" value="#(customerm.iautoid??)" />
+    
     <!--	<div class="form-group row">-->
     <!--		<label class="col-sm-2 col-form-label">客户分类ID</label>-->
     <!--		<div class="col">-->
     <!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入客户分类ID" maxlength="19" name="customerm.icustomerclassid" value="#(customerm.icustomerclassid??)"/>-->
     <!--		</div>-->
     <!--	</div>-->
+    
     <div class="form-group row">
         <label class="col-sm-1 col-form-label">客户分类</label>
         <div class="col-2">
@@ -25,39 +28,29 @@
 
         <label class="col-sm-1 col-form-label">客户编码</label>
         <div class="col-2">
-            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"
-                   data-rule="required" placeholder="请输入客户编码" maxlength="255" name="customerm.ccuscode"
-                   value="#(customerm.ccuscode??)"/>
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入客户编码" maxlength="255" name="customerm.ccuscode" value="#(customerm.ccuscode??)"/>
         </div>
 
         <label class="col-sm-1 col-form-label">客户名称</label>
         <div class="col-2">
-            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"
-                   data-rule="required" placeholder="请输入客户名称" maxlength="255" name="customerm.ccusname"
-                   value="#(customerm.ccusname??)"/>
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入客户名称" maxlength="255" name="customerm.ccusname" value="#(customerm.ccusname??)"/>
         </div>
 
         <label class="col-sm-1 col-form-label">简称</label>
         <div class="col-2">
-            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"
-                   data-rule="required" placeholder="请输入简称" maxlength="255" name="customerm.ccusabbname"
-                   value="#(customerm.ccusabbname??)"/>
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" data-rule="required" placeholder="请输入简称" maxlength="255" name="customerm.ccusabbname" value="#(customerm.ccusabbname??)"/>
         </div>
     </div>
-
 
     <div class="form-group row">
         <label class="col-sm-1 col-form-label">助记码</label>
         <div class="col-2">
-            <input type="text"  autocomplete="off"  class="form-control"
-                   placeholder="请输入助记码" maxlength="255" name="customerm.mnemoniccode"
-                   value="#(customerm.mnemoniccode??)"/>
+            <input type="text"  autocomplete="off"  class="form-control" placeholder="请输入助记码" maxlength="255" name="customerm.mnemoniccode" value="#(customerm.mnemoniccode??)"/>
         </div>
 
         <label class="col-sm-1 col-form-label">地区</label>
         <div class="col-2">
-            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"
-                   placeholder="请输入地区" maxlength="255" name="customerm.ccounty" value="#(customerm.ccounty??)"/>
+            <input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入地区" maxlength="255" name="customerm.ccounty" value="#(customerm.ccounty??)"/>
         </div>
 
         <label class="col-sm-1 col-form-label">分管部门</label>
@@ -129,6 +122,7 @@
             <input type="hidden" id="cvencode" name="customerm.cvencode" value="#(customerm.cvencode??)" />
             <input type="hidden" id="cvenname" name="customerm.cvenname" value="#(customerm.cvenname??)" />
             <input type="hidden" id="cvenid" name="customerm.cvenid" value="#(customerm.cvenid??)" />
+            
             <input type="text" autocomplete="off" value="#(customerm.cvenname??)" class="form-control"
                    placeholder="=请选择对应供应商="
                    data-jboltinput
@@ -238,14 +232,12 @@
         <label class="col-sm-1 col-form-label" >是否启用</label>
         <div class="col"  style="padding-top: 1px;">
             <div class="radio radio-primary  radio-inline">
-                <input #if(customerm.isenabled=='1'??) checked #end id="r_isenabled_true" type="radio"
-                       name="customerm.isenabled" value="true"/>
+                <input #if(customerm.isenabled=='1'??) checked #end id="r_isenabled_true" type="radio" name="customerm.isenabled" value="true"/>
                 <label for="r_isenabled_true">是</label>
             </div>
 
             <div class="radio radio-primary  radio-inline">
-                <input #if(customerm.isenabled=='0'??) checked #end id="r_isenabled_false" type="radio"
-                       name="customerm.isenabled" value="false"/>
+                <input #if(customerm.isenabled=='0'??) checked #end id="r_isenabled_false" type="radio" name="customerm.isenabled" value="false"/>
                 <label for="r_isenabled_false">否</label>
             </div>
         </div>
@@ -254,10 +246,10 @@
     <div class="form-group row">
         <label class="col-sm-1 col-form-label">备注</label>
         <div class="col">
-            <input type="text" class="form-control"  placeholder="请输入备注" maxlength="255" name="customerm.cmemo"
-                   value="#(customerm.cmemo??)"/>
+            <input type="text" class="form-control"  placeholder="请输入备注" maxlength="255" name="customerm.cmemo" value="#(customerm.cmemo??)"/>
         </div>
     </div>
+    
 </form>
 #define js()
 <script>
@@ -266,22 +258,22 @@
      * 校验单元格
      * @returns {boolean}
      */
-    function checkTd(){
+    function checkTd() {
         //执行item表格 每一个修改了的行里是否有必填的没有填写
-        var trs=$("#jbolt_table_CustomerWorkDays_#(pageId)").find("tr[data-changed='true']");
-        if(isOk(trs)){
-            var tds,tempTr,tempTd,tempText,hasInvalid=false,count=0;
-            trs.each(function(){
-                tempTr=$(this);
-                tds=tempTr.find("td[data-changed='true'][class='is-invalid']");
-                if(isOk(tds)){
+        var trs = $("#jbolt_table_CustomerWorkDays_#(pageId)").find("tr[data-changed='true']");
+        if (isOk(trs)) {
+            var tds, tempTr, hasInvalid = false, count = 0;
+            trs.each(function () {
+                tempTr = $(this);
+                tds = tempTr.find("td[data-changed='true'][class='is-invalid']");
+                if (isOk(tds)) {
                     hasInvalid = true;
                     count++;
                 }
-                console.log('count',count);
+                console.log('count', count);
             });
-            if(hasInvalid){
-                LayerMsgBox.error("客户行事历表格中存在["+count+"]个不符合的数值,请先修改再作提交",2000);
+            if (hasInvalid) {
+                LayerMsgBox.error("客户行事历表格中存在[" + count + "]个不符合的数值,请先修改再作提交", 2000);
                 return false;
             }
         }
@@ -292,9 +284,8 @@
      * 提交方法
      */
     function submitThisForm() {
-        // jboltTableSubmit('#jbolt_table_customerd_split_#(pageId)');
-        if (checkTd()){
-            var tables = ["jbolt_table_customerd_split_#(pageId)","jbolt_table_CustomerWorkDays_#(pageId)"];
+        if (checkTd()) {
+            var tables = ["jbolt_table_customerd_split_#(pageId)", "jbolt_table_CustomerWorkDays_#(pageId)"];
             jboltTableSubmitMulti(tables, "/admin/customer/updateEditTable", function (res) {
                 // alert("看到这个消息说明多个表格都提交成功了");
                 if (res.state === 'ok') {
@@ -310,6 +301,4 @@
         }
     }
 </script>
-<!--#include("/_view/_admin/common/_formjs.html",formId="customermForm")-->
 #end
-

@@ -229,11 +229,6 @@
         jboltTableSubmit("#sysPuinstoreform_TableId_#(pageId)");
     }
 
-    function closeHandler() {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
-
     /*
     * 提交审批，推送至u8入库
     *

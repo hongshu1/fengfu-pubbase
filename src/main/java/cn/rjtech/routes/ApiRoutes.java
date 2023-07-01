@@ -1,6 +1,6 @@
 package cn.rjtech.routes;
 
-import cn.rjtech.admin.formapproval.FormApprovalApiController;
+import cn.rjtech.api.formapproval.FormApprovalApiController;
 import cn.rjtech.api.appversion.AppversionApiController;
 import cn.rjtech.api.formuploadcategory.FormUploadCategoryApiController;
 import cn.rjtech.api.formuploadm.FormUploadMApiController;
@@ -21,6 +21,8 @@ import cn.rjtech.api.stockoutdefect.StockoutDefectApiController;
 import cn.rjtech.api.stockoutqcformm.StockOutQcFormMApiController;
 import cn.rjtech.api.upload.UploadApiController;
 import cn.rjtech.api.uptimem.UptimeMApiController;
+import cn.rjtech.api.prodformm.ProdFormMApiController;
+import cn.rjtech.api.spotcheckformm.SpotCheckFormMApiController;
 import cn.rjtech.api.user.UserApiController;
 import cn.rjtech.api.workregion.WorkRegionmApiController;
 import cn.rjtech.common.CommonApiController;
@@ -73,6 +75,11 @@ public class ApiRoutes extends Routes {
         this.add("/api/uptimem", UptimeMApiController.class);
         //审批流/审核
         this.add("/api/formapproval", FormApprovalApiController.class);
+
+        this.add("/api/prodformm", ProdFormMApiController.class);
+
+        this.add("/api/spotcheckformm", SpotCheckFormMApiController.class);
+
 
         this.add("/web/common/print", PrintController.class);
     }

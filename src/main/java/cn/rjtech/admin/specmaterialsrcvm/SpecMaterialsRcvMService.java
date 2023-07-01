@@ -1,14 +1,27 @@
 package cn.rjtech.admin.specmaterialsrcvm;
 
+import cn.hutool.core.date.DateTime;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltModelKit;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.model.momdata.SpecMaterialsRcvM;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.specmaterialsrcvd.SpecMaterialsRcvDService;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,7 +31,7 @@ import java.util.List;
  * @author: RJ
  * @date: 2023-04-24 10:24
  */
-public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
+public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> implements IApprovalService {
 
   private final SpecMaterialsRcvM dao = new SpecMaterialsRcvM().dao();
 
@@ -26,6 +39,12 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
   protected SpecMaterialsRcvM dao() {
     return dao;
   }
+
+  @Inject
+  private SpecMaterialsRcvDService specMaterialsRcvDService;
+
+  @Inject
+  private DepartmentService departmentService;
 
   /**
    * 后台管理分页查询
@@ -208,5 +227,229 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
   public Page<Record> getInventoryDatasByDocid(Long imodocid, Integer pageNumber, Integer pageSize, String cinvcode, String cinvcode1, String cinvname1) {
     return dbTemplate("specmaterialsrcvm.getInventoryDatasByDocid", Kv.by("imodocid", imodocid).set("cinvcode", cinvcode).
         set("cinvcode1", cinvcode1).set("cinvname1", cinvname1)).paginate(pageNumber, pageSize);
+  }
+
+  public Ret saveSpecMaterialsRcv(String rcvm, String rcvd, String type, Long id) {
+    JSONObject jsonObject1 = JSONObject.parseObject(rcvm);
+    List<Record> records2 = JBoltModelKit.getFromRecords(JSONArray.parseArray(rcvd));
+    tx(() -> {
+      SpecMaterialsRcvM specMaterialsRcvM;
+      if (type.equals("2")) {
+        specMaterialsRcvM = findById(id);
+        List<Record> records1 = dbTemplate("specmaterialsrcvm.getRcvdIdByRevmId", Kv.by("id", id)).find();
+        records1.forEach(record -> {
+          SpecMaterialsRcvD specMaterialsRcvD = specMaterialsRcvDService.findById(record.getLong("iautoid"));
+          specMaterialsRcvD.delete();
+        });
+      } else {
+        specMaterialsRcvM = new SpecMaterialsRcvM();
+        specMaterialsRcvM.setIOrgId(jsonObject1.getLong("orgid"));
+        specMaterialsRcvM.setCOrgCode(jsonObject1.getString("orgcode"));
+        specMaterialsRcvM.setCOrgName(jsonObject1.getString("orgname"));
+
+        specMaterialsRcvM.setIMoDocId(jsonObject1.getLong("imodocid"));
+//      Record department = dbTemplate("specmaterialsrcvm.getDepartmentIdByPersonId", Kv.by("id", jsonObject1.getLong("icreateby"))).findFirst();
+//      ValidationUtils.notNull(department, "未找到当前登录人员【" + jsonObject1.getString("ccreatename") + "】的部门信息");
+        specMaterialsRcvM.setIDepartmentId(jsonObject1.getLong("imodocid"));
+        specMaterialsRcvM.setCSpecRcvDocNo(BillNoUtils.getcDocNo(jsonObject1.getLong("orgid"), "TSLL", 6));
+        specMaterialsRcvM.setDDemandDate(new DateTime());
+        specMaterialsRcvM.setCReason(jsonObject1.getString("creason"));
+        specMaterialsRcvM.setCSpecAdviceSns(jsonObject1.getString("cspecadvicesns"));
+        specMaterialsRcvM.setIStatus(jsonObject1.getInteger("istatus"));
+        specMaterialsRcvM.setIAuditWay(2);
+        specMaterialsRcvM.setDSubmitTime(new DateTime());
+        specMaterialsRcvM.setIAuditStatus(jsonObject1.getInteger("istatus") == 1 ? 0 : 1);
+        specMaterialsRcvM.setDAuditTime(new DateTime());
+        specMaterialsRcvM.setICreateBy(jsonObject1.getLong("icreateby"));
+        specMaterialsRcvM.setCCreateName(jsonObject1.getString("ccreatename"));
+        specMaterialsRcvM.setDCreateTime(new DateTime());
+        specMaterialsRcvM.setIUpdateBy(jsonObject1.getLong("icreateby"));
+        specMaterialsRcvM.setCUpdateName(jsonObject1.getString("ccreatename"));
+        specMaterialsRcvM.setDUpdateTime(new DateTime());
+        specMaterialsRcvM.setIsDeleted(false);
+        specMaterialsRcvM.save();
+      }
+
+      records2.forEach(record -> {
+        SpecMaterialsRcvD specMaterialsRcvD = new SpecMaterialsRcvD();
+        specMaterialsRcvD.setISpecRcvMid(specMaterialsRcvM.getIAutoId());
+        specMaterialsRcvD.setIInventoryId(record.getLong("iautoid"));
+        specMaterialsRcvD.setIQty(record.getBigDecimal("iqty"));
+        specMaterialsRcvD.save();
+      });
+      return true;
+    });
+    return SUCCESS;
+  }
+
+  public Ret deleteSpecMaterialsRcv(Long id) {
+    tx(() -> {
+      SpecMaterialsRcvM specMaterialsRcvm = findById(id);
+      specMaterialsRcvm.setIsDeleted(true);
+      specMaterialsRcvm.update();
+      return true;
+    });
+    return SUCCESS;
+  }
+
+  /**
+   * 根据特殊领料ID查询主细表数据
+   *
+   * @param id 主表ID
+   * @return
+   */
+  public Record getSpecMaterialsRcvDatas(Long id) {
+    SpecMaterialsRcvM specMaterialsRcvm = findById(id);
+    Department department = departmentService.findByid(specMaterialsRcvm.getIDepartmentId());
+    Record record = new Record();
+    record.put("cspecrcvdocno", specMaterialsRcvm.getCSpecRcvDocNo());
+    record.put("ddemanddate", specMaterialsRcvm.getDDemandDate());
+    if (department != null) {
+      record.put("cdepname", department.getCDepName());
+    } else {
+      record.put("cdepname", " ");
+    }
+    record.put("creason", specMaterialsRcvm.getCReason());
+    record.put("cspecadvicesns", specMaterialsRcvm.getCSpecAdviceSns());
+
+    record.put("ccreatename", specMaterialsRcvm.getCCreateName());
+    record.put("dcreatetime", specMaterialsRcvm.getDCreateTime());
+    record.put("rcvd", dbTemplate("specmaterialsrcvm.getRcvdDatasByRevmId", Kv.by("id", id)).find());
+    return record;
+  }
+
+  public Ret revocationSpecMaterialsRcvMById(Long id) {
+    update("UPDATE Mo_SpecMaterialsRcvM SET iAuditStatus = 0 WHERE iAutoId = ?",id);
+    return SUCCESS;
+  }
+
+
+
+
+
+
+
+
+
+
+  @Override
+  public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+    SpecMaterialsRcvM specMaterialsRcvm = findById(formAutoId);
+    // 审核状态修改
+    specMaterialsRcvm.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+    specMaterialsRcvm.setIUpdateBy(JBoltUserKit.getUserId());
+    specMaterialsRcvm.setCUpdateName(JBoltUserKit.getUserName());
+    specMaterialsRcvm.setDUpdateTime(new Date());
+//    specMaterialsRcvm.setIAuditBy(JBoltUserKit.getUserId());
+//    specMaterialsRcvm.setCAuditName(JBoltUserKit.getUserName());
+    specMaterialsRcvm.setDSubmitTime(new Date());
+    specMaterialsRcvm.update();
+    return null;
+  }
+
+  @Override
+  public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+    SpecMaterialsRcvM specMaterialsRcvm = findById(formAutoId);
+    // 审核状态修改
+    specMaterialsRcvm.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+    specMaterialsRcvm.setIUpdateBy(JBoltUserKit.getUserId());
+    specMaterialsRcvm.setCUpdateName(JBoltUserKit.getUserName());
+    specMaterialsRcvm.setDUpdateTime(new Date());
+//    specMaterialsRcvm.setIAuditBy(JBoltUserKit.getUserId());
+//    specMaterialsRcvm.setCAuditName(JBoltUserKit.getUserName());
+    specMaterialsRcvm.setDSubmitTime(new Date());
+    specMaterialsRcvm.update();
+    return null;
+  }
+
+  @Override
+  public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+    return null;
+  }
+
+  @Override
+  public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+    return null;
+  }
+
+  @Override
+  public String preSubmitFunc(long formAutoId) {
+    SpecMaterialsRcvM specMaterialsRcvm = findById(formAutoId);
+    switch (AuditStatusEnum.toEnum(specMaterialsRcvm.getIAuditStatus())) {
+      // 已保存
+      case NOT_AUDIT:
+        // 不通过
+      case REJECTED:
+
+        break;
+      default:
+        return "订单非已保存状态";
+    }
+    return null;
+  }
+
+  @Override
+  public String postSubmitFunc(long formAutoId) {
+    return null;
+  }
+
+  @Override
+  public String postWithdrawFunc(long formAutoId) {
+    return null;
+  }
+
+  @Override
+  public String withdrawFromAuditting(long formAutoId) {
+    ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
+    return null;
+  }
+
+  @Override
+  public String preWithdrawFromAuditted(long formAutoId) {
+    return null;
+  }
+
+  @Override
+  public String postWithdrawFromAuditted(long formAutoId) {
+    return null;
+  }
+
+  @Override
+  public String postBatchApprove(List<Long> formAutoIds) {
+    for (Long formAutoId : formAutoIds) {
+      SpecMaterialsRcvM specMaterialsRcvM = findById(formAutoId);
+      // 审核状态修改
+      specMaterialsRcvM.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+      specMaterialsRcvM.setIUpdateBy(JBoltUserKit.getUserId());
+      specMaterialsRcvM.setCUpdateName(JBoltUserKit.getUserName());
+      specMaterialsRcvM.setDUpdateTime(new Date());
+//      formUploadM.setIAuditBy(JBoltUserKit.getUserId());
+//      formUploadM.setCAuditName(JBoltUserKit.getUserName());
+      specMaterialsRcvM.setDSubmitTime(new Date());
+      specMaterialsRcvM.update();
+    }
+    return null;
+  }
+
+  @Override
+  public String postBatchReject(List<Long> formAutoIds) {
+    for (Long formAutoId : formAutoIds) {
+      SpecMaterialsRcvM specMaterialsRcvM = findById(formAutoId);
+      // 审核状态修改
+      specMaterialsRcvM.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+      specMaterialsRcvM.setIUpdateBy(JBoltUserKit.getUserId());
+      specMaterialsRcvM.setCUpdateName(JBoltUserKit.getUserName());
+      specMaterialsRcvM.setDUpdateTime(new Date());
+//      specMaterialsRcvM.setIAuditBy(JBoltUserKit.getUserId());
+//      specMaterialsRcvM.setCAuditName(JBoltUserKit.getUserName());
+      specMaterialsRcvM.setDSubmitTime(new Date());
+      specMaterialsRcvM.update();
+    }
+    return null;
+  }
+
+  @Override
+  public String postBatchBackout(List<Long> formAutoIds) {
+    return null;
   }
 }
