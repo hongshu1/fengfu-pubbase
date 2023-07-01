@@ -266,6 +266,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                 rcvDocQcFormM.setIStatus(1);
                 //设变号
                 rcvDocQcFormM.setCDcNo(iq.get("cDcCode"));
+            }else {
+                rcvDocQcFormM.setIStatus(0);
             }
         } else {
             rcvDocQcFormM.setIStatus(0);
