@@ -83,8 +83,19 @@
                                     </div>
                                 </div>
                             </div>
-
-
+                            #if(readonly == 'readonly')
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">供应商</label>
+                                    <div class="col-9">
+                                        <input type="text" data-notnull="true" data-tips="请输供应商" disabled
+                                               data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                               placeholder="请输供应商" maxlength="40" name="venname"
+                                               value="#(venname??)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            #end
 
                             <div class="col-md-4">
                                 <div class="form-group row">

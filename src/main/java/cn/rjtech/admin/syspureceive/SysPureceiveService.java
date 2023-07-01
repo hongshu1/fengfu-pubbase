@@ -132,6 +132,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return null;
     }
 
+
+
+    public String getVenName(String vencode) {
+        Vendor first = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode);
+        return first.getCVenName();
+    }
     /**
      * 检测是否可以删除
      *

@@ -99,11 +99,12 @@ public class SysPureceiveAdminController extends BaseAdminController {
         }
 
         // 关联查询用户名字
-        if (null != sysPureceive.getIcreateby()) {
-            set("username", sysenumerationservice.getUserName(sysPureceive.getIcreateby()));
+        if (null != sysPureceive.getVenCode()) {
+            set("venname", service.getVenName(sysPureceive.getVenCode()));
         }
         set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         set("sysPureceive", sysPureceive);
+        keepPara();
         render("edit.html");
     }
 
