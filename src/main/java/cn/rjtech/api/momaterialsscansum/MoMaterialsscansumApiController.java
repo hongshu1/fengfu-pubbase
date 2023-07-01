@@ -10,10 +10,9 @@ import com.jfinal.core.paragetter.Para;
 import io.github.yedaxia.apidocs.ApiDoc;
 
 /**
- * @ClassName :
- * @Description : *齐料检查
- * @Author : dongjunjun
- * @Date: 2023-05-24
+ * 齐料检查
+ *
+ * @author Kephon
  */
 @ApiDoc
 public class MoMaterialsscansumApiController extends BaseApiController {

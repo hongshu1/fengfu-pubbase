@@ -1,4 +1,4 @@
-package cn.rjtech.admin.formapproval;
+package cn.rjtech.api.formapproval;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -8,6 +8,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.cache.AuditFormConfigCache;
 import cn.rjtech.entity.vo.base.NullDataResult;

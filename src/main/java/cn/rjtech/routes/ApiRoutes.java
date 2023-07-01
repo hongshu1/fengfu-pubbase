@@ -1,6 +1,6 @@
 package cn.rjtech.routes;
 
-import cn.rjtech.admin.formapproval.FormApprovalApiController;
+import cn.rjtech.api.formapproval.FormApprovalApiController;
 import cn.rjtech.api.appversion.AppversionApiController;
 import cn.rjtech.api.formuploadcategory.FormUploadCategoryApiController;
 import cn.rjtech.api.formuploadm.FormUploadMApiController;
