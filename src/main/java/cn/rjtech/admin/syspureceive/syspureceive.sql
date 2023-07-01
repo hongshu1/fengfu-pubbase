@@ -373,7 +373,8 @@ INNER JOIN Bd_QcForm qc ON qc.iAutoId = t1.iQcFormId
 INNER JOIN Bd_Inventory inv on inv.iAutoId = t1.iInventoryId
 LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iUomClassId
 left join Bd_EquipmentModel t2 on inv.iEquipmentModelId = t2.iAutoId
-WHERE t1.IsDeleted = '0' and t1.cTypeIds ='1'
+WHERE t1.IsDeleted = '0'
+    AND t1.cTypeIds like '%1%'
    	#if(cinvcode)
 		and inv.cInvCode = #para(cinvcode)
 	#end
