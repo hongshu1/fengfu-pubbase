@@ -96,5 +96,12 @@ public class SysAssemdetailAdminController extends BaseAdminController {
 	public void findEditTableDatas(){
 		renderJsonData(service.findEditTableDatas(getKv()));
 	}
+
+	/**
+	 * 根据从表id获取生成条码后的相关信息
+	 */
+	public void findEditTablenumberdetails(){
+		service.findEditTablenumberdetails(getLong(0));
+	}
     
 }

@@ -6,6 +6,7 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 
@@ -33,6 +34,9 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
     protected SysAssemdetail dao() {
         return dao;
     }
+
+    @Inject
+    private PurchaseOrderDBatchService purchaseOrderDBatchService;
 
     @Inject
     private SysAssemService sysassemservice;
@@ -153,9 +157,11 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         if (records != null && !records.isEmpty()) {
             for (int t = 0; t < records.size(); t++) {
                 Record record = records.get(t);
+                // 获取条码表的存货编码
                 String cinvcode = record.getStr("cinvcode");
-                // 判断有没有条码 (转换后的数据)
+                // 根据条码的存货编码判断，没有存货编码 (转换后的数据)
                 if (cinvcode == null || "".equals(cinvcode)) {
+                    //获取从表转换后的存货编码
                     String invcode = record.getStr("invcode");
                     Record firstRecord = findFirstRecord(
                         "select t3.cinvname,t3.cInvCode ,t3.cInvCode1,t3.cInvName1,t3.cInvStd as cinvstd,\n" +
@@ -176,11 +182,22 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
                         "select * from Bd_Warehouse_Area where cAreaCode = '" + record.getStr("poscodeh") + "'");
                     record.set("poscode", poscode.getStr("careacode"));
                     record.set("posname", poscode.getStr("careaname"));
-                }
 
+                    //查出转换的生成条码的数量
+                    Record number = findFirstRecord("select count(1) as number  from PS_PurchaseOrderDBatch where iPurchaseOrderdQtyId = '"+ record.getStr("autoid")+"'");
+                    if(number != null && !"".equals(number)){
+                        record.set("number",number.getStr("number"));
+                    }
+                }
             }
         }
         return records;
+    }
+    public List<Record> findEditTablenumberdetails(Long id){
+        List<Record> record = findRecord("select a.cCompleteBarcode as barcode,a.iQty as qty,b.dcreatetime  from PS_PurchaseOrderDBatch a" +
+                " left join T_Sys_AssemDetail b on a.iPurchaseOrderdQtyId = b.autoid"+
+                " where a.iPurchaseOrderdQtyId ='"+id+"'");
+        return record;
     }
 
     /**
