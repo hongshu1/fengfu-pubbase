@@ -532,7 +532,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     public List<Record> getResource(Kv kv){
         kv.setIfNotNull("orgCode", getOrgCode());
         List<Record> list = dbTemplate("sysassem.getResource", kv).find();
-        ValidationUtils.isTrue(list.size()!=0, "找不到该现品票信息");
+        ValidationUtils.notNull(list, "找不到该现品票信息");
         return list;
     }
 
@@ -544,7 +544,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     public Record getBarcode(Kv kv){
         kv.setIfNotNull("orgCode", getOrgCode());
         Record list = dbTemplate("sysassem.getBarcode", kv).findFirst();
-        ValidationUtils.isTrue(list.size()!=0, "找不到该现品票信息");
+        ValidationUtils.notNull(list, "找不到该现品票信息");
         return list;
     }
 
