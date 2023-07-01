@@ -37,7 +37,7 @@ ORDER BY so.dupdatetime DESC
 #end
 
 #sql("dList")
-SELECT  t1.*, t2.*,v.cVenName as venname,t1.WhCode as whcodeh,t1.poscode as poscodeh
+SELECT  t1.*, t2.*,v.cVenName as venname,t1.WhCode as whcodeh,t1.poscode as poscodeh, 0 as number
 FROM T_Sys_AssemDetail t1
          LEFT JOIN (
          select b.cInvCode1,
