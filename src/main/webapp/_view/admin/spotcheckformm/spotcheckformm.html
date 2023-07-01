@@ -19,9 +19,12 @@
 <tr data-id="${data.iAutoId}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-<a class=jbolt_table_editbtn href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
+<a class=jbolt_table_editbtn href="admin/spotCheckFormM/edit?
+    iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
-    &spotcheckformmid=${data.spotcheckformmid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情"><i class="fa fa-eye"></i>查看</a>
+    &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
+    &cspotcheckformname=${data.cspotcheckformname}"
+    data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情"><i class="fa fa-eye"></i>查看</a>
 
     {@if data.iauditstatus == '未生成' }
     <a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
