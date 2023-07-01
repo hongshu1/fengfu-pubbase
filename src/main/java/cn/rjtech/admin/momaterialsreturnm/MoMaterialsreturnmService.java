@@ -1,7 +1,6 @@
 package cn.rjtech.admin.momaterialsreturnm;
 
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -14,6 +13,8 @@ import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.momaterialsreturnd.MoMaterialsreturndService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.cache.AuditFormConfigCache;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
@@ -60,9 +61,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
      * 后台管理分页查询
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("momaterialsreturnm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
-
-        return paginate;
+        return dbTemplate("momaterialsreturnm.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
     }
 
     /**
@@ -371,65 +370,45 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
     }
 
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
-        MoMaterialsreturnm form = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
-
-        if (ObjectUtil.isNull(jBoltTable.getSaveRecordList())) {
-            ValidationUtils.error("保存数据为空，保存失败");
-        }
+        MoMaterialsreturnm moMaterialsreturnm = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
+        ValidationUtils.notNull(moMaterialsreturnm, JBoltMsg.PARAM_ERROR);
+        ValidationUtils.validateId(moMaterialsreturnm.getIMoDocId(), "缺少生产订单ID参数");
 
         List<Record> save = jBoltTable.getSaveRecordList();
-
-
-        MoMaterialsreturnm row = new MoMaterialsreturnm();
+        ValidationUtils.notEmpty(save, "缺少表格保存的内容");
 
         Date now = new Date();
-        String cmemo = null;
-        for (Record record : save) {
-            cmemo = record.get("cmemo");
-        }
-        row.set("IMoDocId", form.get("IMoDocId"));
-        row.set("IAuditWay", 1);
-        row.set("DSubmitTime", now);
-        row.set("IAuditStatus", 1);
-        row.set("DAuditTime", now);
-        row.set("CMemo", cmemo);
 
-        MoMaterialsreturnm iAutoId = row.set("IAutoId", JBoltSnowflakeKit.me.nextId());
-        row.set("COrgCode", getOrgCode());
-        row.set("IOrgId", getOrgId());
-        row.set("COrgName", getOrgName());
-        row.set("ICreateBy", JBoltUserKit.getUserId());
-        row.set("CCreateName", JBoltUserKit.getUserName());
-        row.set("DCreateTime", now);
-        row.set("IUpdateBy", JBoltUserKit.getUserId());
-        row.set("CUpdateName", JBoltUserKit.getUserName());
-        row.set("DUpdateTime", now);
-        row.set("IsDeleted", false);
+        moMaterialsreturnm.setIAuditWay(AuditFormConfigCache.ME.getAuditWay(table()));
+        moMaterialsreturnm.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
 
+        moMaterialsreturnm.setCOrgCode(getOrgCode());
+        moMaterialsreturnm.setIOrgId(getOrgId());
+        moMaterialsreturnm.setCOrgName(getOrgName());
+        moMaterialsreturnm.setICreateBy(JBoltUserKit.getUserId());
+        moMaterialsreturnm.setCCreateName(JBoltUserKit.getUserName());
+        moMaterialsreturnm.setDCreateTime(now);
+        moMaterialsreturnm.setIUpdateBy(JBoltUserKit.getUserId());
+        moMaterialsreturnm.setCUpdateName(JBoltUserKit.getUserName());
+        moMaterialsreturnm.setDUpdateTime(now);
 
         for (Record record : save) {
-            record.remove("cinvaddcode");
-            record.remove("cinvcode");
-            record.remove("cinvname");
-            record.remove("cmemo");
-            record.remove("iqty");
-            record.remove("iscannedqty");
-            record.remove("iuomclassid");
-            record.remove("type");
-
-            record.set("IAutoId", JBoltSnowflakeKit.me.nextId());
-            record.set("IMaterialsReturnMid", iAutoId.get("IAutoId"));
-            record.set("IMoDocId", form.get("IMoDocId"));
-            record.set("IInventoryId", record.get("iInventoryId"));
-            record.set("IQty", record.get("iqtys"));
-            record.set("cbarcode", record.get("cbarcode"));
-            record.remove("iqtys");
+            record.remove("cinvaddcode", "cinvcode", "cinvname", "cmemo", "iqty", "iscannedqty", "iuomclassid", "type")
+                    .set("IAutoId", JBoltSnowflakeKit.me.nextId())
+                    .set("IMaterialsReturnMid", moMaterialsreturnm.getIAutoId())
+                    .set("IMoDocId", moMaterialsreturnm.getIMoDocId())
+                    .set("IInventoryId", record.get("iInventoryId"))
+                    .set("IQty", record.get("iqtys"))
+                    .set("cbarcode", record.get("cbarcode"))
+                    .remove("iqtys");
         }
 
         tx(() -> {
 
+            moMaterialsreturnm.save();
+            
             materialsreturndService.batchSaveRecords(save);
-            row.save();
+            
             return true;
         });
 
@@ -504,5 +483,5 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
     public List<Record> getModandMomlist(String iautoid) {
         return dbTemplate("momaterialsreturnm.getModandMomlist", Kv.by("iautoid", iautoid)).find();
     }
-    
+
 }

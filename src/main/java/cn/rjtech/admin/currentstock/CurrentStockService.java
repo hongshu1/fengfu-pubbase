@@ -1,13 +1,8 @@
 package cn.rjtech.admin.currentstock;
-
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt.common.model.UserExtend;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.kit.OrgAccessKit;
-import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
@@ -21,8 +16,6 @@ import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.admin.sysotherin.SysOtherinService;
 import cn.rjtech.admin.sysotherin.SysOtherindetailService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.main.UserOrg;
-import cn.rjtech.model.main.UserThirdparty;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
@@ -34,7 +27,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,51 +80,26 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 		return paginate;
 	}
 
+
+
     /**
-     * 应盘料品,已盘料品,未盘料品,盘盈料品,盘亏料品.实时计算
-     */
-    public Page<Record> datas_calculate(Integer pageNumber, Integer pageSize, Kv kv) {
-        Page<Record> paginate = datas(pageNumber, pageSize, kv);
-        List<Record> list = paginate.getList();
-        String sqlAutoid = "";
-        for (Record record : list) {
-            Long autoid = record.getLong("autoid");
-            sqlAutoid += "'" + autoid + "',";
-        }
-        sqlAutoid = sqlAutoid.substring(0, sqlAutoid.length() - 1);
-        //物料清单
-        List<Record> invList = invDatasByIds(sqlAutoid);
-
-        return paginate;
-    }
-
-
-    public Page<Record> getdatas(Integer pageNumber, Integer pageSize, Kv kv) {
+     * 盘点表主表 数据明细
+     * */
+    public Page<Record> getStockCheckVouchDatas(Integer pageNumber, Integer pageSize, Kv kv) {
         kv.set("organizecode", getOrgCode());
-        Page<Record> paginate = dbTemplate("currentstock.getdatas", kv).paginate(pageNumber, pageSize);
-        return paginate;
+        return dbTemplate("currentstock.getdatas", kv).paginate(pageNumber, pageSize);
     }
 
 
     public Page<Record> CurrentStockByDatas(Integer pageNumber, Integer pageSize, Kv kv) {
         kv.set("organizecode", getOrgCode());
-        Page<Record> paginate = dbTemplate("currentstock.CurrentStockByDatas", kv).paginate(pageNumber, pageSize);
-        return paginate;
+        return dbTemplate("currentstock.CurrentStockByDatas", kv).paginate(pageNumber, pageSize);
     }
 
-    /**
-     * 盘点单新增时候复制细表数据
-     */
-    public List<Record> CurrentStockd(String whcode, String poscodeSql) {
-        Kv kv = Kv.by("organizecode", getOrgCode()).set("whcode", whcode).set("poscodeSql", poscodeSql);
-        List<Record> list = dbTemplate("currentstock.CurrentStockd", kv).find();
-        return list;
-    }
+
 
 	/**
 	 * 盘点条码 明细
-	 * @param kv
-	 * @return
 	 */
 	public List<Record> getStockCheckVouchBarcodeLines(Kv kv){
 		return dbTemplate("currentstock.getStockCheckVouchBarcodeLines",kv).find();
@@ -145,6 +112,18 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 	 */
 	public Record barcode(Kv kv) {
 ////		先查询条码是否已添加
+
+        //多个库区处理
+        String Str = kv.getStr("poscodes");
+        if (Str != null) {
+            String[] split = Str.split(",");
+            String poscode = "";
+            for (String id : split) {
+                poscode += "'" + id + "',";
+            }
+            poscode = poscode.substring(0, poscode.length() - 1);
+            kv.setIfNotNull("poscode",poscode);
+        }
 		Record first = dbTemplate("currentstock.barcodeDatas", kv).findFirst();
 		if(null == first){
 			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "该现品票没有库存！！！");
@@ -152,33 +131,30 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 		return first;
 	}
 
-
-	/**
-	 * 盘点单物料清单列表
-	 * */
-	public List<Record> invDatas(Kv kv) {
-		String isApp = kv.getStr("isapp");
+    /**
+     * 盘点单物料详情列表 数据明细
+     * */
+	public List<Record> StockCheckVouchDetailDatas(Kv kv) {
 		kv.set("orgcode",getOrgCode());
+        Record Detail = dbTemplate("currentstock.Detail", kv).findFirst();
+        //多个库区处理
+		String posCodes = kv.getStr("poscodes");
+        if (posCodes != null) {
+            String[] split = posCodes.split(",");
+            String poscode = "";
+            for (String id : split) {
+                poscode += "'" + id + "',";
+            }
+            poscode = poscode.substring(0, poscode.length() - 1);
+            kv.setIfNotNull("poscode",poscode);
+        }
+        if (isNull( Detail.get("masid"))){
+            return warehouseData(kv);
+        }else {
+            return invTotalDatas(kv);
+        }
 
-		//多个库区处理
-		String poscodes = kv.getStr("poscodes");
-		String[] split = poscodes.split(",");
-		String str="";
-		for (int i = 0; i < split.length; i++) {
-			if(i==split.length-1){
-				str =str+"'" + split[i] +"'";
-				break;
-			}
-			str = str+"'" + split[i] +"',";
-		}
-		kv.setIfNotNull("poscode",str);
-		List<Record> list= new ArrayList<>();
-
-			list= invTotalDatas(kv);
-		return list;
 	}
-
-
 
 
 
@@ -187,8 +163,14 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 	 * 盘点单物料清单列表
 	 * */
 	public List<Record> invTotalDatas(Kv kv) {
-		List<Record> list = dbTemplate("currentstock.paginateAdminDatas", kv).find();
-		return list;
+        return dbTemplate("currentstock.paginateAdminDatas", kv).find();
+	}
+
+	/**
+	 * 盘点单物料清单列表
+	 * */
+	public List<Record> warehouseData(Kv kv) {
+        return dbTemplate("currentstock.WarehouseData", kv).find();
 	}
 
 
@@ -355,13 +337,13 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         //构造数据
         Date date = new Date();
         //创建时间
-        stockchekvouch.setDCreateTime(date);
+        stockchekvouch.setDcreatetime(date);
         String dateStr = JBoltDateUtil.format(date, "yyyy-MM-dd");
         stockchekvouch.setBillDate(dateStr);
         String userName = JBoltUserKit.getUserName();
         //创建人
-        stockchekvouch.setCCreateName(userName);
-        stockchekvouch.setICreateBy(JBoltUserKit.getUserId());
+        stockchekvouch.setCcreatename(userName);
+        stockchekvouch.setIcreateby(JBoltUserKit.getUserId());
         String orgCode = getOrgCode();
         //组织编码
         stockchekvouch.setOrganizeCode(orgCode);
@@ -393,7 +375,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             // ValidationUtils.isTrue(notExists(columnName, value), JBoltMsg.DATA_SAME_NAME_EXIST);
             stockchekvouch.setOrganizeCode(getOrgCode());
             stockchekvouch.setBillNo(BillNoUtils.genCurrentNo());
-            stockchekvouch.setDCreateTime(new Date());
+            stockchekvouch.setDcreatetime(new Date());
             ValidationUtils.isTrue(stockchekvouch.save(), ErrorMsg.SAVE_FAILED);
 
             // TODO 其他业务代码实现
@@ -436,15 +418,13 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 
     }
 
-    public Ret saveTableSubmit(JBoltTableMulti jBoltTable, User loginUser, Date now) {
+    public Ret saveTableSubmit(JBoltTableMulti jBoltTable) {
 
 
         // 盘点明细
         JBoltTable StockCheckVouchDetail = jBoltTable.getJBoltTable("table1");
         // 盘点条码
         JBoltTable StockCheckVouchBarcode = jBoltTable.getJBoltTable("table2");
-        // 主表form
-        StockCheckVouch stockCheckVouch = StockCheckVouchDetail.getFormModel(StockCheckVouch.class, "stockchekvouch");
 
 
         if (StockCheckVouchDetail.paramsIsNotBlank()) {
@@ -464,13 +444,164 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         System.out.println("deleteTable===>" + StockCheckVouchDetail.getDelete());
         System.out.println("form===>" + StockCheckVouchDetail.getForm());
 
+
+        //  检查填写是否有误
+        List<Record> detailSaveRecordList = StockCheckVouchDetail.getSaveRecordList();
+        List<Record> detailUpdateRecordList = StockCheckVouchDetail.getUpdateRecordList();
+        List<Record> detailRecordList = new ArrayList<>();
+
+        if (StockCheckVouchDetail.saveIsNotBlank()) {
+            detailRecordList.addAll(detailSaveRecordList);
+        }
+
+        if (StockCheckVouchDetail.updateIsNotBlank()) {
+            detailRecordList.addAll(detailUpdateRecordList);
+        }
+
         System.out.println("saveTable===>" + StockCheckVouchBarcode.getSave());
         System.out.println("updateTable===>" + StockCheckVouchBarcode.getUpdate());
         System.out.println("deleteTable===>" + StockCheckVouchBarcode.getDelete());
         System.out.println("form===>" + StockCheckVouchBarcode.getForm());
 
+        //  检查填写是否有误
+        List<Record> barcodeSaveRecordList = StockCheckVouchBarcode.getSaveRecordList();
+        List<Record> barcodeUpdateRecordList = StockCheckVouchBarcode.getUpdateRecordList();
+        List<Record> barcodeRecordList = new ArrayList<>();
+
+        if (StockCheckVouchBarcode.saveIsNotBlank()) {
+            barcodeRecordList.addAll(barcodeSaveRecordList);
+        }
+
+        if (StockCheckVouchBarcode.updateIsNotBlank()) {
+            barcodeRecordList.addAll(barcodeUpdateRecordList);
+        }
+
+        final Long[] AutoIDs = {null};
+        tx(()->{
+            Long headerId = null;
+            // 获取Form对应的数据
+            if (StockCheckVouchDetail.formIsNotBlank()) {
+                // 主表form
+                StockCheckVouch stockCheckVouch = StockCheckVouchDetail.getFormModel(StockCheckVouch.class, "stockchekvouch");
+
+                //	行数据为空 不保存
+                if (stockCheckVouch.getAutoId() == null && !StockCheckVouchDetail.saveIsNotBlank() && !StockCheckVouchDetail.updateIsNotBlank() && !StockCheckVouchDetail.deleteIsNotBlank()) {
+                    ValidationUtils.error( "请先添加行数据！");
+                }
 
 
+                if (stockCheckVouch.getAutoId() == null) {
+//					保存
+//					审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+                    stockCheckVouch.setIAuditStatus(0);
+
+                    //创建人
+                    stockCheckVouch.setIcreateby(userId);
+                    stockCheckVouch.setCcreatename(userName);
+                    stockCheckVouch.setDcreatetime(nowDate);
+
+                    //更新人
+                    stockCheckVouch.setIupdateby(userId);
+                    stockCheckVouch.setCupdatename(userName);
+                    stockCheckVouch.setDupdatetime(nowDate);
+
+                    stockCheckVouch.setOrganizeCode(OrgCode);
+                    stockCheckVouch.setIsDeleted(false);
+                    save(stockCheckVouch);
+                    headerId = stockCheckVouch.getAutoId();
+                }else {
+                    //更新人
+//					保存
+//					审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+                    stockCheckVouch.setIAuditStatus(0);
+                    //更新人
+                    stockCheckVouch.setIupdateby(userId);
+                    stockCheckVouch.setCupdatename(userName);
+                    stockCheckVouch.setDupdatetime(nowDate);
+                    update(stockCheckVouch);
+                    headerId = stockCheckVouch.getAutoId();
+                }
+                AutoIDs[0] = stockCheckVouch.getAutoId();
+            }
+
+            /***
+             * 盘点明细
+             * */
+            // 获取待保存数据 执行保存
+            if (StockCheckVouchDetail.saveIsNotBlank()) {
+                List<StockCheckVouchDetail> lines = StockCheckVouchDetail.getSaveModelList(StockCheckVouchDetail.class);
+
+                Long finalHeaderId = headerId;
+                lines.forEach(stockCheckVouchDetail -> {
+                    stockCheckVouchDetail.setMasID(finalHeaderId);
+                    //创建人
+                    stockCheckVouchDetail.setIcreateby(userId);
+                    stockCheckVouchDetail.setDcreatetime(nowDate);
+                    stockCheckVouchDetail.setCcreatename(userName);
+                    //更新人
+                    stockCheckVouchDetail.setIupdateby(userId);
+                    stockCheckVouchDetail.setDupdatetime(nowDate);
+                    stockCheckVouchDetail.setCupdatename(userName);
+                });
+                stockCheckVouchDetailService.batchSave(lines);
+            }
+            // 获取待更新数据 执行更新
+            if (StockCheckVouchDetail.updateIsNotBlank()) {
+                List<StockCheckVouchDetail> lines = StockCheckVouchDetail.getUpdateModelList(StockCheckVouchDetail.class);
+
+                lines.forEach(stockCheckVouchDetail -> {
+                    //更新人
+                    stockCheckVouchDetail.setIupdateby(userId);
+                    stockCheckVouchDetail.setDupdatetime(nowDate);
+                    stockCheckVouchDetail.setCupdatename(userName);
+                });
+                stockCheckVouchDetailService.batchUpdate(lines);
+            }
+            // 获取待删除数据 执行删除
+            if (StockCheckVouchDetail.deleteIsNotBlank()) {
+                stockCheckVouchDetailService.deleteByIds(StockCheckVouchDetail.getDelete());
+            }
+
+            /***
+             * 条码明细
+             * */
+            // 获取待保存数据 执行保存
+            if (StockCheckVouchBarcode.saveIsNotBlank()) {
+                List<StockCheckVouchBarcode> lines = StockCheckVouchBarcode.getSaveModelList(StockCheckVouchBarcode.class);
+
+                Long finalHeaderId = headerId;
+                lines.forEach(stockCheckVouchBarcode -> {
+                    stockCheckVouchBarcode.setMasID(finalHeaderId);
+                    //创建人
+                    stockCheckVouchBarcode.setIcreateby(userId);
+                    stockCheckVouchBarcode.setDcreatetime(nowDate);
+                    stockCheckVouchBarcode.setCcreatename(userName);
+                    //更新人
+                    stockCheckVouchBarcode.setIupdateby(userId);
+                    stockCheckVouchBarcode.setDupdatetime(nowDate);
+                    stockCheckVouchBarcode.setCupdatename(userName);
+                });
+                stockCheckVouchBarcodeService.batchSave(lines);
+            }
+            // 获取待更新数据 执行更新
+            if (StockCheckVouchBarcode.updateIsNotBlank()) {
+                List<StockCheckVouchBarcode> lines = StockCheckVouchBarcode.getUpdateModelList(StockCheckVouchBarcode.class);
+
+                lines.forEach(stockCheckVouchBarcode -> {
+                    //更新人
+                    stockCheckVouchBarcode.setIupdateby(userId);
+                    stockCheckVouchBarcode.setDupdatetime(nowDate);
+                    stockCheckVouchBarcode.setCupdatename(userName);
+                });
+                stockCheckVouchBarcodeService.batchUpdate(lines);
+            }
+            // 获取待删除数据 执行删除
+            if (StockCheckVouchBarcode.deleteIsNotBlank()) {
+                stockCheckVouchBarcodeService.deleteByIds(StockCheckVouchBarcode.getDelete());
+            }
+
+            return true;
+        });
         return SUCCESS;
     }
 
@@ -487,9 +618,9 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             stockcheckvouch.setBillDate(JBoltDateUtil.format(now, "yyyy-MM-dd"));
             stockcheckvouch.setIAuditStatus(0);
             //创建人
-            stockcheckvouch.setCCreateName(JBoltUserKit.getUserName());
-            stockcheckvouch.setICreateBy(JBoltUserKit.getUserId());
-            stockcheckvouch.setDCreateTime(now);
+            stockcheckvouch.setCcreatename(JBoltUserKit.getUserName());
+            stockcheckvouch.setIcreateby(JBoltUserKit.getUserId());
+            stockcheckvouch.setDcreatetime(now);
             String orgCode = getOrgCode() + "";
             //组织编码
             stockcheckvouch.setOrganizeCode(orgCode);
@@ -497,42 +628,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             //单号
             stockcheckvouch.setBillNo(code);
             ValidationUtils.isTrue(stockcheckvouch.save(), "主表保存失败!");
-
             AutoIDs[0] = stockcheckvouch.getAutoId();
-//
-//
-//			String poscodes = stockcheckvouch.getPoscodes();
-//
-//			String poscodeSql="";
-//			if(poscodes!=null){
-//				String[] split = poscodes.split(",");
-//				for (String poscode : split) {
-//					poscodeSql+="'"+poscode+"',";
-//				}
-//				if(poscodeSql.length()>0){
-//					poscodeSql=poscodeSql.substring(0,poscodeSql.length()-1);
-//				}
-//			}
-//
-//			if(StrUtil.isBlank(poscodeSql)){
-//				poscodeSql=null;
-//			}
-//			String whCode = stockcheckvouch.getWhCode();
-//			List<Record> list = CurrentStockd(whCode, poscodeSql);
-//			for (Record record : list) {
-//				String poscode = record.getStr("poscode");
-//				StockCheckVouchDetail stockcheckvouchdetail=new StockCheckVouchDetail();
-//				stockcheckvouchdetail.put(record);
-//				stockcheckvouchdetail.setMasID(Long.valueOf(String.valueOf(mid)));
-//				stockcheckvouchdetail.setCreateDate(now);
-//				stockcheckvouchdetail.setCreatePerson(userName);
-//				stockcheckvouchdetail.setPosCode(poscode);
-//				BigDecimal num = stockcheckvouchdetail.getNum();
-//				if(num==null){
-//					stockcheckvouchdetail.setNum(BigDecimal.ZERO);
-//				}
-//				ValidationUtils.isTrue(stockcheckvouchdetail.save(),"细表保存失败!");
-//			}
             return true;
         });
         return SUCCESS.set("AutoID", AutoIDs[0]);
@@ -550,13 +646,13 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             //构造数据
             Date date = new Date();
             //创建时间
-            stockcheckvouch.setDCreateTime(date);
+            stockcheckvouch.setDcreatetime(date);
             String dateStr = JBoltDateUtil.format(date, "yyyy-MM-dd");
             stockcheckvouch.setBillDate(dateStr);
             String userName = JBoltUserKit.getUserName();
             //创建人
-            stockcheckvouch.setCCreateName(userName);
-            stockcheckvouch.setICreateBy(JBoltUserKit.getUserId());
+            stockcheckvouch.setCcreatename(userName);
+            stockcheckvouch.setIcreateby(JBoltUserKit.getUserId());
             String orgId = getOrgId() + "";
             //组织编码
             stockcheckvouch.setOrganizeCode(orgId);
@@ -572,7 +668,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             List<Record> saveRecordList = jBoltTable.getSaveRecordList();
             for (Record record : saveRecordList) {
                 StockCheckVouchDetail stockcheckvouchdetail = new StockCheckVouchDetail();
-                stockcheckvouchdetail.setMasID(Long.valueOf(String.valueOf(autoId)));
+                stockcheckvouchdetail.setMasID(autoId);
                 //库位
                 String poscode = record.getStr("poscode");
                 stockcheckvouchdetail.setPosCode(poscode);

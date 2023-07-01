@@ -72,7 +72,7 @@ public class CurrentStockController extends BaseAdminController {
 	}
 
 	/**
-	 * 根据条码带出其他数据
+	 * 根据现品票带出其他数据
 	 */
 	@UnCheck
 	public void barcode(@Para(value = "barcode") String barcode,
@@ -85,33 +85,21 @@ public class CurrentStockController extends BaseAdminController {
 
 		renderJsonData(service.barcode(Kv.by("barcode", barcode).set("autoid",autoid).set("detailHidden",detailHidden).set("whcode",whcode).set("poscodes",poscodes)));
 	}
-	/**
-	 * 选择数据源
-	 * */
-	public void CurrentStockByDatas(){
-		renderJsonData(service.CurrentStockByDatas(getPageNumber(),getPageSize(),getKv()));
 
-	}
-	/**
-	 * 列表也数据
-	 * */
-	public void datas() {
-		renderJsonData(service.datas_calculate(getPageNumber(),getPageSize(),getKv()));
-	}
 
 
 	/**
-	 * 列表也数据
+	 * 盘点表主表 数据明细
 	 * */
-	public void getdatas() {
-		renderJsonData(service.getdatas(getPageNumber(),getPageSize(),getKv()));
+	public void getStockCheckVouchDatas() {
+		renderJsonData(service.getStockCheckVouchDatas(getPageNumber(),getPageSize(),getKv()));
 	}
 
 	/**
-	 * 盘点单物料详情列表
+	 * 盘点单物料详情列表 数据明细
 	 * */
-	public void invDatas() {
-		renderJsonData(service.invDatas(getKv()));
+	public void StockCheckVouchDetailDatas() {
+		renderJsonData(service.StockCheckVouchDetailDatas(getKv()));
 	}
 
 
@@ -155,7 +143,7 @@ public class CurrentStockController extends BaseAdminController {
 	 */
 	@Before(Tx.class)
 	public void saveTableSubmit() {
-		renderJson(service.saveTableSubmit(getJBoltTables(), JBoltUserKit.getUser(), new Date()));
+		renderJson(service.saveTableSubmit(getJBoltTables()));
 	}
 
     @UnCheck
@@ -179,7 +167,7 @@ public class CurrentStockController extends BaseAdminController {
 	   stockcheckvouch.setWhCode(whcode);
 	   stockcheckvouch.setPoscodes(poscode);
 	   stockcheckvouch.setCheckPerson(cdepperson);
-	   stockcheckvouch.setIsDeleted("0");
+	   stockcheckvouch.setIsDeleted(false);
 	   ValidationUtils.notNull(whcode,"仓库为空!");
 	   ValidationUtils.notNull(checktype,"盘点方式为空!");
 
@@ -217,7 +205,7 @@ public class CurrentStockController extends BaseAdminController {
 	 */
 	public void delete(Kv kv) {
 		StockCheckVouch mid = stockChekVouchService.findById(kv.get("mid"));
-		mid.setIsDeleted("1");
+		mid.setIsDeleted(false);
 		stockChekVouchService.update(mid);
 	}
 }

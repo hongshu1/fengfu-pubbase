@@ -1308,7 +1308,7 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
 	/**
 	 * 来源ID
 	 */
-	public M setISourceId(java.lang.Long iSourceId) {
+	public M setISourceId(java.lang.String iSourceId) {
 		set("iSourceId", iSourceId);
 		return (M)this;
 	}
@@ -1316,10 +1316,10 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
 	/**
 	 * 来源ID
 	 */
-	@JBoltField(name="isourceid" ,columnName="iSourceId",type="Long", remark="来源ID", required=false, maxLength=19, fixed=0, order=69)
-	@JSONField(name = "isourceid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getISourceId() {
-		return getLong("iSourceId");
+	@JBoltField(name="isourceid" ,columnName="iSourceId",type="String", remark="来源ID", required=false, maxLength=32, fixed=0, order=69)
+	@JSONField(name = "isourceid")
+	public java.lang.String getISourceId() {
+		return getStr("iSourceId");
 	}
 
 }

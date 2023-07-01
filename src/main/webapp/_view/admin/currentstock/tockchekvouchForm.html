@@ -4,7 +4,7 @@
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.posname}</td>
-            <td>${data.cinvcode}</td>
+            <td>${data.invcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
             <td>${data.cinvstd}</td>
@@ -14,6 +14,7 @@
             <td>${data.barcode}</td> <!--现品票-->
             <td>${data.cversion}</td> <!--批次号-->
             <td>${data.dplandate}</td> <!--生产日期-->
+            <td hidden>${data.poscode}</td> <!--库区编码-->
         </tr>
     {@/each}
 </textarea>
@@ -43,7 +44,6 @@
                        data-column-resize="true"
                        data-url="admin/currentstock/getStockCheckVouchBarcodeLines?autoid=#(stockchekvouch.autoid??)"
                        data-column-prepend="1:checkbox:true"
-                       data-conditions-form="StockCheckVouchForm_#(pageId)"
                        data-rowtpl="StockCheckVouchBarcode_tpl_#(pageId)"
                        data-toolbar="StockCheckVouchBarcode_split_toolbar_#(pageId)"
                        data-editable="true"
@@ -129,7 +129,7 @@
         // 表格
         var $table = $('#jbolt_table_#(pageId)');
         // 根据存货编码匹配单元格
-        var $td = $("table#jbolt_table_#(pageId) td:contains('" + data.cinvcode + "')").first();
+        var $td = $("table#jbolt_table_#(pageId) td:contains('" + data.invcode + "')").first();
         
         var datas = jboltTableGetAllDatas('#jbolt_table_StockCheckVouchBarcode_split_#(pageId)');
         console.log(datas);
@@ -137,14 +137,14 @@
         var qtySum = 0;
 
         $.each(datas, function (index, row) {
-            if (row.cinvcode === data.cinvcode) {
-                qtySum += parseFloat(row.iqty);
+            if (row.invcode === data.invcode) {
+                qtySum += parseFloat(row.qty);
             }
         });
 
         var cols = [
-            {column: "realqty", text: qtySum, value: qtySum},
-            {column: "tips", text: '已盘点', value: "已盘点"},
+            {column: "stockqty", text: qtySum, value: qtySum},
+            {column: "stockstatus", text: '已盘点', value: "已盘点"},
         ];
 
         // 修改指定单元格数据
@@ -202,10 +202,10 @@
                     handler: function (table, td, text, value, jsonData) {
                         let iqty = jsonData.iqty;
                         console.log(iqty);
-                        
+
                         let qty = (typeof +value === 'number' && !isNaN(value)) ? value : 0;
                         console.log('实盘数量===>', qty);
-                        
+
                         if (qty > iqty) {
                             showFormEleErrorStyle(td, "请输入实盘数量小于或等于数量的！！！");
                             return false;

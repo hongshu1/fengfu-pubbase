@@ -26,7 +26,6 @@ import cn.rjtech.model.momdata.VendorClass;
 import cn.rjtech.model.momdata.base.BaseVendor;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -158,7 +157,7 @@ public class VendorClassService extends BaseService<VendorClass> {
     public Record findRecordByCVCCode(String cvccode) {
         return dbTemplate("vendorclass.findRecordByCVCCode", Kv.by("cvccode", cvccode)).findFirst();
     }
-
+    
     public VendorClass findByCVCCode(String cvccode) {
         return daoTemplate("vendorclass.findRecordByCVCCode", Kv.by("cvccode", cvccode)).findFirst();
     }
@@ -280,6 +279,7 @@ public class VendorClassService extends BaseService<VendorClass> {
 
         // 使用字段配置维护
         List<Record> vendorClasses = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
+
         if (notOk(vendorClasses)) {
             if (errorMsg.length() > 0) {
                 return fail(errorMsg.toString());

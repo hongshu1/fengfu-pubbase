@@ -8,6 +8,7 @@ import cn.rjtech.api.general.GeneralApiController;
 import cn.rjtech.api.instockdefect.InStockDefectApiController;
 import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
 import cn.rjtech.api.modoc.ModocApiController;
+import cn.rjtech.api.momaterialsreturnm.MoMaterialsreturnmApiController;
 import cn.rjtech.api.momaterialsscansum.MoMaterialsscansumApiController;
 import cn.rjtech.api.momopatchweldm.MoMopatchweldmApiController;
 import cn.rjtech.api.moroutingconfigoperation.MoMoroutingconfigOperationApiController;
@@ -21,6 +22,8 @@ import cn.rjtech.api.stockoutdefect.StockoutDefectApiController;
 import cn.rjtech.api.stockoutqcformm.StockOutQcFormMApiController;
 import cn.rjtech.api.upload.UploadApiController;
 import cn.rjtech.api.uptimem.UptimeMApiController;
+import cn.rjtech.api.prodformm.ProdFormMApiController;
+import cn.rjtech.api.spotcheckformm.SpotCheckFormMApiController;
 import cn.rjtech.api.user.UserApiController;
 import cn.rjtech.api.workregion.WorkRegionmApiController;
 import cn.rjtech.common.CommonApiController;
@@ -74,7 +77,13 @@ public class ApiRoutes extends Routes {
         //审批流/审核
         this.add("/api/formapproval", FormApprovalApiController.class);
 
+        this.add("/api/prodformm", ProdFormMApiController.class);
+
+        this.add("/api/spotcheckformm", SpotCheckFormMApiController.class);
+
+
         this.add("/web/common/print", PrintController.class);
+        this.add("/api/momaterialsreturnm", MoMaterialsreturnmApiController.class);
     }
 
 }

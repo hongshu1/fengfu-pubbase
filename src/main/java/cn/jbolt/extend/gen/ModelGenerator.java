@@ -19,13 +19,13 @@ public class ModelGenerator extends JFinalModelGenerator{
 		//数据源配置名称 默认主数据源是main 其他的在extend_datasource.setting里配置的
 		String configName="momdata";
 		//指定本次运行直接生成的表名 忽略其它所有表 数组为空 表示忽略此强制设定 当需要单个指定生成时才需要这个
-		String[] tableNames = new String[] {/* "jb_user","jb_application" */ "Bd_ForeignCurrency"};
+		String[] tableNames = new String[] {/* "jb_user","jb_application" */ "T_Sys_StockCheckVouchDetail"};
 		//哪些前缀名的要生成
 		String[] tableNamesPrefixes = new String[] {/* "jb_","pl_" */};
 		//是否包含数据库视图生成 默认不生
 		boolean generateView = false;
 		//生成的Model java类需要去掉的前缀 多个用逗号隔开 内置已经去掉了核心表的前缀jb_
-		String removedTableNamePrefixes="Bd_";
+		String removedTableNamePrefixes="T_Sys_";
 		//默认ID生成模式
 		String idGenMode=JBoltIDGenMode.SNOWFLAKE;//auto|snowflake|sequence
 		//生成Model放在哪个包下
