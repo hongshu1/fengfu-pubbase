@@ -708,11 +708,6 @@
         submitThisForm();
     }
 
-    function closeHandler() {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
-
     function submitApproveWeek() {
         Ajax.get('/admin/weekorderm/approve?ids=' + $("input[name='weekOrderM.iAutoId']").val(), function (ret) {
             if (ret.state === 'ok') {

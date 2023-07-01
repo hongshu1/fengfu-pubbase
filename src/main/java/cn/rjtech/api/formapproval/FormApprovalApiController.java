@@ -1,4 +1,4 @@
-package cn.rjtech.admin.formapproval;
+package cn.rjtech.api.formapproval;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -6,23 +6,18 @@ import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.cache.AuditFormConfigCache;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.formapproval.FormApprovalVo;
 import cn.rjtech.enums.FormAuditConfigTypeEnum;
-import cn.rjtech.model.momdata.FormApproval;
 import cn.rjtech.util.MsgEventUtil;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
-import com.jfinal.kit.Ret;
 import io.github.yedaxia.apidocs.ApiDoc;
 
 import java.util.List;
@@ -34,6 +29,7 @@ import java.util.List;
  * @author: RJ
  * @date: 2023-06-18 17:26
  */
+@ApiDoc
 @CheckPermission(PermissionKey.FORM_APPROVAL_PERMISSION)
 @UnCheckIfSystemAdmin
 public class FormApprovalApiController extends BaseApiController {

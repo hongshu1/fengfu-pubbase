@@ -152,7 +152,7 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         QcForm qcForm = qcFormService.findById(iQcFormId);
         ValidationUtils.notNull(qcForm, "【质量建模-质量表格设置】检验表格不存在");
 
-        List<Map<String, Object>> recordList = findByIQcFormId(iQcFormId);
+        List<Kv> recordList = findByIQcFormId(iQcFormId);
         ValidationUtils.notEmpty(recordList, qcForm.getCQcFormName() + "：【质量建模-质量表格设置】没有维护需要检验的项目");
 
         if (!inventoryQcForm.getCTypeIds().contains("1")) {
@@ -167,11 +167,9 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         rcvDocQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
 
         List<RcvDocQcFormD> formDList = new ArrayList<>();
-        for (Map<String, Object> map : recordList) {
+        for (Kv map : recordList) {
             RcvDocQcFormD qcFormD = new RcvDocQcFormD();
-            rcvDocQcFormDService.saveRcvDocQcFormDModel(qcFormD, iautoid, iQcFormId, map.get("iseq"),
-                map.get("itype"), map.get("istdval"), map.get("imaxval"), map.get("iminval"),
-                map.get("coptions"), map.get("iqcformtableparamid"));
+            rcvDocQcFormDService.saveRcvDocQcFormDModel(qcFormD, iautoid, iQcFormId, map.getInt("iseq"), map.getInt("itype"), map.getBigDecimal("istdval"), map.getBigDecimal("imaxval"), map.getBigDecimal("iminval"), map.getStr("coptions"), map.get("iqcformtableparamid"));
             formDList.add(qcFormD);
         }
 
@@ -603,14 +601,15 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
     }
 
     /*查询检验项目、检验参数*/
-    public List<Map<String, Object>> findByIQcFormId(Long iqcformId) {
+    public List<Kv> findByIQcFormId(Long iqcformId) {
         List<Record> records = findRecords("SELECT * FROM Bd_QcFormTableParam WHERE iQcFormId = ?  ORDER BY iSeq ASC", iqcformId);
         List<QcFormTableItem> qcFormTableItemList = qcFormTableItemService.findByFormId(iqcformId);
 
-        List<Map<String, Object>> mapList = new ArrayList<>();
+        List<Kv> kvList = new ArrayList<>();
 
         for (Record record : records) {
             Long id = record.getLong(QcFormTableParam.IAUTOID);
+            
             for (QcFormTableItem qcFormTableItem : qcFormTableItemList) {
                 // 校验当前id是否存在
                 if (ObjUtil.equal(id, qcFormTableItem.getIQcFormTableParamId())) {
@@ -618,9 +617,10 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
                     record.set("iqcformtableparamid", id);
                 }
             }
-            mapList.add(record.getColumns());
+            
+            kvList.add(Kv.create().set(record.getColumns()));
         }
-        return mapList;
+        return kvList;
     }
 
     /*参数项目名称：检查项目、规格公差、检查方法*/

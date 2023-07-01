@@ -234,10 +234,7 @@
 #include("/_view/_admin/common/_formjs.html",formId="expenseBudgetDetailForm")
 <script>
 hideParentLayerDialogBtn(0);
-function closeHandler(){
-	parent.layer.close(parent.layer.getFrameIndex(window.name));
-    window.parent.refreshJBoltTable();
-}
+
 //获得配置参数
 function getEditableTableOptions_#(pageId)(){
     var editableTableOptions={

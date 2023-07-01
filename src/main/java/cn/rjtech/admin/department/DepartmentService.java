@@ -283,12 +283,12 @@ public class DepartmentService extends BaseService<Department> {
     private JBoltExcelSheet createJboltExcelSheetTpl() {
         JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create("sheet");
         jBoltExcelSheet.setHeaders(
-                JBoltExcelHeader.create("cdepcode", "部门编码", 20), 
-                JBoltExcelHeader.create("cdepname", "部门名称", 20), 
-                JBoltExcelHeader.create("cdeptype", "部门类型", 20), 
-                JBoltExcelHeader.create("cpersonname", "负责人", 20), 
-                JBoltExcelHeader.create("isapsinvoled", "是否参与排产", 15), 
-                JBoltExcelHeader.create("dcreatetime", "创建时间", 20), 
+                JBoltExcelHeader.create("cdepcode", "部门编码", 20),
+                JBoltExcelHeader.create("cdepname", "部门名称", 20),
+                JBoltExcelHeader.create("cdeptype", "部门类型", 20),
+                JBoltExcelHeader.create("cpersonname", "负责人", 20),
+                JBoltExcelHeader.create("isapsinvoled", "是否参与排产", 15),
+                JBoltExcelHeader.create("dcreatetime", "创建时间", 20),
                 JBoltExcelHeader.create("cdepmemo", "备注", 20)
         );
         return jBoltExcelSheet;
@@ -332,13 +332,13 @@ public class DepartmentService extends BaseService<Department> {
         }
         return convertToModelTree(departmentList, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
-    
+
     public List<Department> treeDatasForProposalSystem(Kv kv) {
         List<Department> datas = daoTemplate("department.list", kv).find();
         return datas;
     }
 
-    
+
     /**
      * 根据部门编码查询部门名称
      */
@@ -359,7 +359,7 @@ public class DepartmentService extends BaseService<Department> {
 
         return queryColumn(sql);
     }
-    
+
     public Department findByCdepName(String cdepname) {
         Sql sql = selectSql()
                 .eq("cdepname", cdepname)
@@ -624,5 +624,14 @@ public class DepartmentService extends BaseService<Department> {
 
         return queryLong(sql);
     }
-    
+
+    /**
+     * 根据部门ID获取部门信息
+     * @param id
+     * @return
+     */
+    public Department findByid(Long id){
+        return dao.findById(id);
+    }
+
 }

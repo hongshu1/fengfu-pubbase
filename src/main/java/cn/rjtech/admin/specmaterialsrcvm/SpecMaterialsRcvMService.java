@@ -1,9 +1,21 @@
 package cn.rjtech.admin.specmaterialsrcvm;
 
+import cn.hutool.core.date.DateTime;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.specmaterialsrcvd.SpecMaterialsRcvDService;
+import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.SpecMaterialsRcvD;
 import cn.rjtech.model.momdata.SpecMaterialsRcvM;
+import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -26,6 +38,12 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
   protected SpecMaterialsRcvM dao() {
     return dao;
   }
+
+  @Inject
+  private SpecMaterialsRcvDService specMaterialsRcvDService;
+
+  @Inject
+  private DepartmentService departmentService;
 
   /**
    * 后台管理分页查询
@@ -208,5 +226,94 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> {
   public Page<Record> getInventoryDatasByDocid(Long imodocid, Integer pageNumber, Integer pageSize, String cinvcode, String cinvcode1, String cinvname1) {
     return dbTemplate("specmaterialsrcvm.getInventoryDatasByDocid", Kv.by("imodocid", imodocid).set("cinvcode", cinvcode).
         set("cinvcode1", cinvcode1).set("cinvname1", cinvname1)).paginate(pageNumber, pageSize);
+  }
+
+  public Ret saveSpecMaterialsRcv(String rcvm, String rcvd, String type, Long id) {
+    JSONObject jsonObject1 = JSONObject.parseObject(rcvm);
+    List<Record> records2 = JBoltModelKit.getFromRecords(JSONArray.parseArray(rcvd));
+    tx(() -> {
+      SpecMaterialsRcvM specMaterialsRcvM;
+      if (type.equals("2")) {
+        specMaterialsRcvM = findById(id);
+        List<Record> records1 = dbTemplate("specmaterialsrcvm.getRcvdIdByRevmId", Kv.by("id", id)).find();
+        records1.forEach(record -> {
+          SpecMaterialsRcvD specMaterialsRcvD = specMaterialsRcvDService.findById(record.getLong("iautoid"));
+          specMaterialsRcvD.delete();
+        });
+      } else {
+        specMaterialsRcvM = new SpecMaterialsRcvM();
+        specMaterialsRcvM.setIOrgId(jsonObject1.getLong("orgid"));
+        specMaterialsRcvM.setCOrgCode(jsonObject1.getString("orgcode"));
+        specMaterialsRcvM.setCOrgName(jsonObject1.getString("orgname"));
+
+        specMaterialsRcvM.setIMoDocId(jsonObject1.getLong("imodocid"));
+//      Record department = dbTemplate("specmaterialsrcvm.getDepartmentIdByPersonId", Kv.by("id", jsonObject1.getLong("icreateby"))).findFirst();
+//      ValidationUtils.notNull(department, "未找到当前登录人员【" + jsonObject1.getString("ccreatename") + "】的部门信息");
+        specMaterialsRcvM.setIDepartmentId(jsonObject1.getLong("imodocid"));
+        specMaterialsRcvM.setCSpecRcvDocNo(BillNoUtils.getcDocNo(jsonObject1.getLong("orgid"), "TSLL", 6));
+        specMaterialsRcvM.setDDemandDate(new DateTime());
+        specMaterialsRcvM.setCReason(jsonObject1.getString("creason"));
+        specMaterialsRcvM.setCSpecAdviceSns(jsonObject1.getString("cspecadvicesns"));
+        specMaterialsRcvM.setIStatus(jsonObject1.getInteger("istatus"));
+        specMaterialsRcvM.setIAuditWay(2);
+        specMaterialsRcvM.setDSubmitTime(new DateTime());
+        specMaterialsRcvM.setIAuditStatus(jsonObject1.getInteger("istatus") == 1 ? 0 : 1);
+        specMaterialsRcvM.setDAuditTime(new DateTime());
+        specMaterialsRcvM.setICreateBy(jsonObject1.getLong("icreateby"));
+        specMaterialsRcvM.setCCreateName(jsonObject1.getString("ccreatename"));
+        specMaterialsRcvM.setDCreateTime(new DateTime());
+        specMaterialsRcvM.setIUpdateBy(jsonObject1.getLong("icreateby"));
+        specMaterialsRcvM.setCUpdateName(jsonObject1.getString("ccreatename"));
+        specMaterialsRcvM.setDUpdateTime(new DateTime());
+        specMaterialsRcvM.setIsDeleted(false);
+        specMaterialsRcvM.save();
+      }
+
+      records2.forEach(record -> {
+        SpecMaterialsRcvD specMaterialsRcvD = new SpecMaterialsRcvD();
+        specMaterialsRcvD.setISpecRcvMid(specMaterialsRcvM.getIAutoId());
+        specMaterialsRcvD.setIInventoryId(record.getLong("iautoid"));
+        specMaterialsRcvD.setIQty(record.getBigDecimal("iqty"));
+        specMaterialsRcvD.save();
+      });
+      return true;
+    });
+    return SUCCESS;
+  }
+
+  public Ret deleteSpecMaterialsRcv(Long id) {
+    tx(() -> {
+      SpecMaterialsRcvM specMaterialsRcvm = findById(id);
+      specMaterialsRcvm.setIsDeleted(true);
+      specMaterialsRcvm.update();
+      return true;
+    });
+    return SUCCESS;
+  }
+
+  /**
+   * 根据特殊领料ID查询主细表数据
+   *
+   * @param id 主表ID
+   * @return
+   */
+  public Record getSpecMaterialsRcvDatas(Long id) {
+    SpecMaterialsRcvM specMaterialsRcvm = findById(id);
+    Department department = departmentService.findByid(specMaterialsRcvm.getIDepartmentId());
+    Record record = new Record();
+    record.put("cspecrcvdocno", specMaterialsRcvm.getCSpecRcvDocNo());
+    record.put("ddemanddate", specMaterialsRcvm.getDDemandDate());
+    if (department != null) {
+      record.put("cdepname", department.getCDepName());
+    } else {
+      record.put("cdepname", " ");
+    }
+    record.put("creason", specMaterialsRcvm.getCReason());
+    record.put("cspecadvicesns", specMaterialsRcvm.getCSpecAdviceSns());
+
+    record.put("ccreatename", specMaterialsRcvm.getCCreateName());
+    record.put("dcreatetime", specMaterialsRcvm.getDCreateTime());
+    record.put("rcvd", dbTemplate("specmaterialsrcvm.getRcvdDatasByRevmId", Kv.by("id", id)).find());
+    return record;
   }
 }
