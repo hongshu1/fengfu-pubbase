@@ -1,6 +1,5 @@
 package cn.rjtech.api.momaterialsscansum;
 
-import cn.jbolt.core.api.OpenAPI;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
@@ -25,7 +24,6 @@ public class MoMaterialsscansumApiController extends BaseApiController {
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
-    @OpenAPI
     public void addBarcode(@Para(value = "barcode") String barcoce,
                            @Para(value = "imodocid") Long imodocid) {
         renderJBoltApiRet(moMaterialsscansumApiService.add(barcoce, imodocid));
