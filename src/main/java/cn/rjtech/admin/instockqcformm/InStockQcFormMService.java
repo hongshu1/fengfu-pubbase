@@ -263,7 +263,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         QcForm qcForm = qcFormService.findById(iQcFormId);
         ValidationUtils.notNull(qcForm, "【质量建模-质量表格设置】检验表格不存在");
 
-        List<Map<String, Object>> recordList = rcvDocQcFormMService.findByIQcFormId(iQcFormId);
+        List<Kv> recordList = rcvDocQcFormMService.findByIQcFormId(iQcFormId);
         ValidationUtils.notEmpty(recordList, qcForm.getCQcFormName() + "：【质量建模-质量表格设置】没有维护需要检验的项目");
 
         if (!inventoryQcForm.getCTypeIds().contains("2")) {
@@ -271,7 +271,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         }
 
         ArrayList<InStockQcFormD> inStockQcFormDS = new ArrayList<>();
-        for (Map<String, Object> map : recordList) {
+        for (Kv map : recordList) {
             InStockQcFormD inStockQcFormD = new InStockQcFormD();
             inStockQcFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
             inStockQcFormD.setIInStockQcFormMid(iautoid);
@@ -283,9 +283,9 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
 //            inStockQcFormD.setCQcFormParamIds(record.getStr("cQcFormParamIds"));
             Object itype = map.get("itype");
             inStockQcFormD.setIType(itype != null ? strToInt(itype) : null);
-            inStockQcFormD.setIStdVal(rcvDocQcFormDService.objToBig(map.get("istdval")));
-            inStockQcFormD.setIMaxVal(rcvDocQcFormDService.objToBig(map.get("imaxval")));
-            inStockQcFormD.setIMinVal(rcvDocQcFormDService.objToBig(map.get("iminval")));
+            inStockQcFormD.setIStdVal(map.getBigDecimal("istdval"));
+            inStockQcFormD.setIMaxVal(map.getBigDecimal("imaxval"));
+            inStockQcFormD.setIMinVal(map.getBigDecimal("iminval"));
             inStockQcFormD.setCOptions(StrUtil.toString(map.get("coptions")));
             inStockQcFormDS.add(inStockQcFormD);
         }
@@ -294,6 +294,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormM.setDUpdateTime(new Date());
         inStockQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
         inStockQcFormM.setCInvQcFormNo(JBoltSnowflakeKit.me.nextIdStr());//减压单号
+        
         boolean result = tx(() -> {
             inStockQcFormDService.batchSave(inStockQcFormDS);
             //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检-1”
@@ -405,11 +406,10 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         return ret(result);
     }
 
-    public Boolean achiveSerializeSubmitList(JSONArray serializeSubmitList, Long instockqcformmid,
-                                             String cmeasurepurpose, String cmeasurereason, String cmeasureunit,
-                                             String cmemo, String cdcno, String isok) {
+    public Boolean achiveSerializeSubmitList(JSONArray serializeSubmitList, Long instockqcformmid, String cmeasurepurpose, String cmeasurereason, String cmeasureunit, String cmemo, String cdcno, String isok) {
         List<InstockqcformdLine> saveInstockLines = new ArrayList<>();
         List<InstockqcformdLine> updateInstockLines = new ArrayList<>();
+        
         boolean tx = tx(() -> {
             for (int i = 0; i < serializeSubmitList.size(); i++) {
                 JSONObject jsonObject = serializeSubmitList.getJSONObject(i);
@@ -435,6 +435,7 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
                     }
                 }
             }
+            
             //保存line表
             if (!saveInstockLines.isEmpty()) {
                 instockqcformdLineService.batchSave(saveInstockLines);
