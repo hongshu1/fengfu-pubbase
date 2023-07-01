@@ -538,7 +538,7 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 新增/修改禀议书
      */
-    @CheckPermission(PermissionKey.PROPOSALM_SUBMIT)
+    @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void saveTableSubmit() {
         renderJson(service.saveTableSubmit(getJBoltTables(), JBoltUserKit.getUser(), new Date()));
@@ -577,6 +577,7 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 上传附件页面
      */
+    @UnCheck
     public void attachment() {
         render("proposald_attachment_add.html");
     }

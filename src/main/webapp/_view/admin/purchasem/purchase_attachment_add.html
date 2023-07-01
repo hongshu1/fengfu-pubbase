@@ -18,14 +18,14 @@
                          data-handler="uploadFile"
                          data-maxsize="204800"
                          data-upload-success-handler="uploadFiles"
-                         data-url="/admin/proposalattachment/uploadFile"
+                         data-url="/admin/purchaseattachment/uploadFile"
                          data-value="#(proposalattachment.attachmenturi??)"></div>
                     <!-- <small class="form-text text-muted text-ceter">文件大小不超过20M</small> -->
                 </div>
             </fieldset>
         </div>
 
-        <form onsubmit="return false;" id="proposalAttachmentForm" method="post">
+        <form onsubmit="return false;" id="purchaseAttachmentForm" method="post">
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">附件名称</label>
@@ -52,10 +52,11 @@
     }
 
     function submitThisForm() {
-        var $form = $('#proposalAttachmentForm');
+        var $form = $('#purchaseAttachmentForm');
         // 校验表单
         if (FormChecker.check($form)) {
             var data = $form.serializeJSON();
+            console.log(JSON.stringify(data));
 
             parent.insertAttachment(data);
 

@@ -1,0 +1,50 @@
+<script>
+    function insertAttachment(data) {
+        jboltTableInsertRow('#jbolt_table_purchaseattachments_#(pageId)', data);
+    }
+
+    #if(attachments)
+    function attachmentTableAjaxSuccessHandler_#(pageId)(table) {
+        jboltTableInsertRow(table, #json(attachments));
+    }
+    #end
+
+    // 获得配置参数
+    function getEditableTableOptionsPg_#(pageId)() {
+        var editableTableOptions = {
+            trigger:"click",
+            // 初始行数
+            initRowCount:0,
+            // 限制最大数 默认30
+            maxRowCount:30,
+            // keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
+            // requiredCellClass:"jb_editable_required_cell",//必填单元格默认样式
+            // unrequiredCellClass:"",//非必填的单元格默认样式
+            // uneditableCellCalss:"bg-light",//不可填样式
+            submit:{
+                // withForm:["proposalmForm_#(pageId)2"],
+                type:"multi",//cell|all,
+                name: 'attachments',
+                //params:{"orderId":3},//携带其他额外参数
+                //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
+                /*url:"admin/proposalm/saveTable",
+                success:function(res){
+                    LayerMsgBox.success("提交成功",600,function(){
+                        refreshPjaxContainer();
+                    });
+                }*/
+            },
+            // 插入数据时默认属性值
+            // insertDefaultValues: {age:10,briefInfo:"xxxxx"},
+            cols:{
+                iautoid:{
+                    submitAttr:"iautoid",
+                },
+                attachmentname: {
+                    type:'input'
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+</script>

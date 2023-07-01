@@ -23,6 +23,7 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.core.util.JBoltStringUtil;
@@ -39,6 +40,7 @@ import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.admin.proposalcategory.ProposalcategoryService;
 import cn.rjtech.admin.proposalm.ProposalmService;
+import cn.rjtech.admin.purchaseattachment.PurchaseAttachmentService;
 import cn.rjtech.admin.purchased.PurchasedService;
 import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
@@ -126,6 +128,8 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
     private DepRefService depRefService;
 	@Inject
     private FormApprovalService formApprovalService;
+	@Inject
+	private PurchaseAttachmentService purchaseAttachmentService;
     /**
      * 后台管理分页查询
      *
@@ -204,6 +208,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
                 Purchasem dbPurchasem = findById(iAutoId);
                 ValidationUtils.notNull(dbPurchasem, JBoltMsg.DATA_NOT_EXIST);
                 purchasedService.deleteBy(Okv.by("ipurchaseid", dbPurchasem.getIAutoId()));
+                purchaseAttachmentService.deleteByPurchaseId(dbPurchasem.getIAutoId());
                 ValidationUtils.isTrue(dbPurchasem.delete(), JBoltMsg.FAIL);
             }
 
@@ -303,11 +308,13 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
      * @param jBoltTable
      * @return
      */
-    public Ret saveTableSubmit(JBoltTable jBoltTable) {
-        ValidationUtils.notNull(jBoltTable, JBoltMsg.PARAM_ERROR);
-        Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class, "purchasem");
+    public Ret saveTableSubmit(JBoltTableMulti tableMulti) {
+        ValidationUtils.notNull(tableMulti, JBoltMsg.PARAM_ERROR);
+        JBoltTable purchaseTable = tableMulti.getJBoltTable("purchaseds");
+        Purchasem purchasem = purchaseTable.getFormModel(Purchasem.class, "purchasem");
         DataPermissionKit.validateAccess(purchasem.getCDepCode());
         ValidationUtils.notNull(purchasem, JBoltMsg.PARAM_ERROR);
+        JBoltTable attachmentsTable = tableMulti.getJBoltTable("attachments");
         Boolean flg = true;
         flg = tx(() -> {
             // 申购主表数据处理
@@ -327,11 +334,12 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
                 purchasem.setIUpdateBy(JBoltUserKit.getUserId());
             }
             ValidationUtils.isTrue(purchasem.update(), ErrorMsg.UPDATE_FAILED);
+            
             //校验申购单本次累计申购金额是否超出了禀议金额的10%或者500元
             if(!validatePurchaseMoneyIsExceed(purchasem)) return false;
             // 申购细表数据处理
-            if (jBoltTable.saveIsNotBlank()) {
-                List<Record> saveRecordList = jBoltTable.getSaveRecordList();
+            if (purchaseTable.saveIsNotBlank()) {
+                List<Record> saveRecordList = purchaseTable.getSaveRecordList();
                 saveRecordList.forEach(item->{
                 	item.remove("cbudgetno","cvenname","ibudgetmoney");
                 	item.set("iautoid", JBoltSnowflakeKit.me.nextId());
@@ -339,17 +347,37 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
                 });
                 purchasedService.batchSaveRecords(saveRecordList);
             }
-            if (jBoltTable.updateIsNotBlank()) {
-                List<Purchased> updatePurchaseds = jBoltTable.getUpdateModelList(Purchased.class);
+            if (purchaseTable.updateIsNotBlank()) {
+                List<Purchased> updatePurchaseds = purchaseTable.getUpdateModelList(Purchased.class);
                 purchasedService.batchUpdate(updatePurchaseds);
             }
-            if (jBoltTable.deleteIsNotBlank()) {
-                purchasedService.deleteByIds(jBoltTable.getDelete());
+            if (purchaseTable.deleteIsNotBlank()) {
+                purchasedService.deleteByIds(purchaseTable.getDelete());
             }
+            //保存申购单附件
+            saveAttachmentsTable(attachmentsTable,purchasem);
             return true;
         });
         if(flg) return successWithData(purchasem.keep("iautoid"));
         else return FAIL;
+    }
+    private void saveAttachmentsTable(JBoltTable attachmentsTable,Purchasem purchasem){
+    	Long ipurchasemid = purchasem.getIAutoId();
+    	ValidationUtils.notNull(ipurchasemid, "申购单ID为空,保存附件失败!");
+    	//新增附件
+    	List<Record> attachmentSaveList = attachmentsTable.getSaveRecordList();
+        if (CollUtil.isNotEmpty(attachmentSaveList)) {
+            for (Record row : attachmentSaveList) {
+                row.set("iautoid", JBoltSnowflakeKit.me.nextId())
+                        .set("ipurchasemid", ipurchasemid);
+            }
+            purchaseAttachmentService.batchSaveRecords(attachmentSaveList, 500);
+        }
+        //删除附件
+        Object[] deleteIds = attachmentsTable.getDelete();
+        if (ArrayUtil.isNotEmpty(deleteIds)) {
+        	purchaseAttachmentService.deleteByIds(deleteIds);
+        }
     }
 	/**
 	 * 校验申购单本次累计申购金额是否超出了禀议金额的10%或者500元

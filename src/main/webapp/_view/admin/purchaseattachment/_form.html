@@ -1,0 +1,27 @@
+<form onsubmit="return false;" id="purchaseAttachmentForm" action="#(action)" method="post">
+<input type="hidden" name="purchaseAttachment.iautoid" value="#(purchaseAttachment.iautoid??)" />
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">申购单主表ID</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入申购单主表ID" maxlength="19" name="purchaseAttachment.ipurchasemid" value="#(purchaseAttachment.ipurchasemid??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">附件名称</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入附件名称" maxlength="200" name="purchaseAttachment.attachmentname" value="#(purchaseAttachment.attachmentname??)"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-2 col-form-label">附件路径</label>
+		<div class="col">
+			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入附件路径" maxlength="200" name="purchaseAttachment.attachmenturi" value="#(purchaseAttachment.attachmenturi??)"/>
+		</div>
+	</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="purchaseAttachmentForm")
+#end
+
