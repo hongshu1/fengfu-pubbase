@@ -2,6 +2,7 @@ package cn.rjtech.api.modoc;
 
 import cn.jbolt.core.api.OpenAPI;
 import cn.jbolt.core.permission.UnCheck;
+import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.modoc.ModocApiPageVo;
 import cn.rjtech.entity.vo.modoc.ModocApiResVo;
@@ -27,6 +28,9 @@ public class ModocApiController extends BaseApiController {
 
   @Inject
   private ModocApiService moDocApiService;
+
+  @Inject
+  private SpecMaterialsRcvMService specMaterialsRcvMService;
 
 
   /**
@@ -139,4 +143,42 @@ public class ModocApiController extends BaseApiController {
     renderJBoltApiSuccessWithData(moDocApiService.getInventoryDatasByDocid(imodocid, pageNumber, pageSize, cinvcode, cinvcode1, cinvname1));
   }
 
+  /**
+   * 特殊领料保存接口
+   *
+   * @param rcvm 特殊领料主表数据JSON
+   * @param rcvd 特殊领料细表数据JSON
+   */
+  @UnCheck
+  @OpenAPI
+  public void saveSpecMaterialsRcv(@Para(value = "rcvm") String rcvm, @Para(value = "rcvd") String rcvd, @Para(value = "type") String type,
+                                   @Para(value = "id") Long id) {
+    ValidationUtils.notNull(rcvm, "特殊领料主表数据不能为空");
+    ValidationUtils.notNull(rcvd, "特殊领料细表数据不能为空");
+    renderJBoltApiRet(specMaterialsRcvMService.saveSpecMaterialsRcv(rcvm, rcvd, type, id));
+  }
+
+  /**
+   * 特殊领料删除接口
+   *
+   * @param iautoid 特殊领料主表ID
+   */
+  @UnCheck
+  @OpenAPI
+  public void deleteSpecMaterialsRcv(@Para(value = "iautoid") Long iautoid) {
+    ValidationUtils.notNull(iautoid, "ID不能为空");
+    renderJBoltApiRet(specMaterialsRcvMService.deleteSpecMaterialsRcv(iautoid));
+  }
+
+  /**
+   * 根据特殊领料ID查询主细表数据
+   *
+   * @param iautoid 主表ID
+   */
+  @UnCheck
+  @OpenAPI
+  public void getSpecMaterialsRcvDatas(@Para(value = "iautoid") Long iautoid) {
+    ValidationUtils.notNull(iautoid, "ID不能为空");
+    renderJBoltApiSuccessWithData(specMaterialsRcvMService.getSpecMaterialsRcvDatas(iautoid));
+  }
 }

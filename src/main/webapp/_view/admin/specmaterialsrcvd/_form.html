@@ -1,0 +1,39 @@
+<form onsubmit="return false;" id="SpecMaterialsRcvD_Form" action="#(action)" method="post">
+	#if(specMaterialsRcvD.iAutoId??)
+	<input type="hidden" name="specMaterialsRcvD.iAutoId" value="#(specMaterialsRcvD.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="specMaterialsRcvD.iAutoId" value="#(specMaterialsRcvD.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">特殊领料单主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入特殊领料单主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入特殊领料单主表ID" maxlength="40" name="specMaterialsRcvD.iSpecRcvMid" value="#(specMaterialsRcvD.iSpecRcvMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">存货ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入存货ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入存货ID" maxlength="40" name="specMaterialsRcvD.iInventoryId" value="#(specMaterialsRcvD.iInventoryId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">需求数量</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入需求数量"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入需求数量" maxlength="40" name="specMaterialsRcvD.iQty" value="#(specMaterialsRcvD.iQty??)"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SpecMaterialsRcvD_Form")
+#end
+
