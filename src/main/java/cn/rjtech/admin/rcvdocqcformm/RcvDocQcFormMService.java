@@ -385,48 +385,52 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
 
         //采购入库从表
         List<SysPureceivedetail> list = sysPureceivedetailService.findFirstBy(sysPureceive.getAutoID());
-        saveSysPuinstoreDetail(sysPuinstoredetails, list, sysPuinstore);
+        Inventory inventory = inventoryService.findById(docQcFormM.getIInventoryId());
+        saveSysPuinstoreDetail(sysPuinstoredetails, list, sysPuinstore, inventory.getCInvCode());
     }
 
     /*传给采购入库单从表的参数*/
     public void saveSysPuinstoreDetail(List<SysPuinstoredetail> sysPuinstoredetails,
-                                       List<SysPureceivedetail> list, SysPuinstore sysPuinstore) {
+                                       List<SysPureceivedetail> list, SysPuinstore sysPuinstore, String invcode) {
         int i = 1;
         Date date = new Date();
         String userName = JBoltUserKit.getUserName();
+
         for (SysPureceivedetail detail : list) {
             Record record = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", detail.getBarcode()))
                 .findFirst();
-            SysPuinstoredetail sysPuinstoredetail = new SysPuinstoredetail();
-            sysPuinstoredetail.setMasID(sysPuinstore.getAutoID());
-            sysPuinstoredetail.setSourceBillType(detail.getSourceBillType());
-            sysPuinstoredetail.setSourceBillNo(detail.getSourceBillNo());
-            sysPuinstoredetail.setSourceBillNoRow(detail.getSourceBillNo() + "-" + i);
-            sysPuinstoredetail.setSourceBillDid(detail.getSourceBillDid());
-            sysPuinstoredetail.setSourceBillID(detail.getSourceBillID());
-            sysPuinstoredetail.setWhcode(detail.getWhcode());
-            sysPuinstoredetail.setPosCode(detail.getPosCode());
-            sysPuinstoredetail.setQty(detail.getQty());
-            sysPuinstoredetail.setRowNo(i);
-            sysPuinstoredetail.setTrackType(detail.getTrackType());
-            sysPuinstoredetail.setCCreateName(userName);
-            sysPuinstoredetail.setDCreateTime(date);
-            sysPuinstoredetail.setBarCode(detail.getBarcode());
-            sysPuinstoredetail.setPuUnitCode(record.getStr("puunitcode"));
-            sysPuinstoredetail.setPuUnitName(record.getStr("puunitname"));
-            sysPuinstoredetail.setIsDeleted(false);
-            sysPuinstoredetail.setInvcode(record.getStr("cinvcode"));
-            sysPuinstoredetail.setCUpdateName(userName);
-            sysPuinstoredetail.setDUpdateTime(date);
+            if(ObjUtil.equal(invcode,record.getStr("cinvcode"))){
+                SysPuinstoredetail sysPuinstoredetail = new SysPuinstoredetail();
+                sysPuinstoredetail.setMasID(sysPuinstore.getAutoID());
+                sysPuinstoredetail.setSourceBillType(detail.getSourceBillType());
+                sysPuinstoredetail.setSourceBillNo(detail.getSourceBillNo());
+                sysPuinstoredetail.setSourceBillNoRow(detail.getSourceBillNo() + "-" + i);
+                sysPuinstoredetail.setSourceBillDid(detail.getSourceBillDid());
+                sysPuinstoredetail.setSourceBillID(detail.getSourceBillID());
+                sysPuinstoredetail.setWhcode(detail.getWhcode());
+                sysPuinstoredetail.setPosCode(detail.getPosCode());
+                sysPuinstoredetail.setQty(detail.getQty());
+                sysPuinstoredetail.setRowNo(i);
+                sysPuinstoredetail.setTrackType(detail.getTrackType());
+                sysPuinstoredetail.setCCreateName(userName);
+                sysPuinstoredetail.setDCreateTime(date);
+                sysPuinstoredetail.setBarCode(detail.getBarcode());
+                sysPuinstoredetail.setPuUnitCode(record.getStr("puunitcode"));
+                sysPuinstoredetail.setPuUnitName(record.getStr("puunitname"));
+                sysPuinstoredetail.setIsDeleted(false);
+                sysPuinstoredetail.setInvcode(record.getStr("cinvcode"));
+                sysPuinstoredetail.setCUpdateName(userName);
+                sysPuinstoredetail.setDUpdateTime(date);
 
-            //主表的数据
-            sysPuinstore.setBillType(record.getStr("ipurchasetypeid"));//采购类型：采购PO  委外OM
-            sysPuinstore.setDeptCode(record.getStr("cdepcode"));
-            //业务类型：0：采购入库，1：委外入库
-            sysPuinstore.setIBusType(Integer.valueOf(record.getStr("ibustype")));
-            sysPuinstore.setRdCode(record.getStr("scrdcode"));
-            sysPuinstoredetails.add(sysPuinstoredetail);
-            i++;
+                //主表的数据
+                sysPuinstore.setBillType(record.getStr("ipurchasetypeid"));//采购类型：采购PO  委外OM
+                sysPuinstore.setDeptCode(record.getStr("cdepcode"));
+                //业务类型：0：采购入库，1：委外入库
+                sysPuinstore.setIBusType(Integer.valueOf(record.getStr("ibustype")));
+                sysPuinstore.setRdCode(record.getStr("scrdcode"));
+                sysPuinstoredetails.add(sysPuinstoredetail);
+                i++;
+            }
         }
     }
 

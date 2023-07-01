@@ -2,6 +2,7 @@ package cn.rjtech.admin.vendorclass;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
@@ -25,12 +26,14 @@ import cn.rjtech.model.momdata.VendorClass;
 import cn.rjtech.model.momdata.base.BaseVendor;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.TableMapping;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -155,7 +158,7 @@ public class VendorClassService extends BaseService<VendorClass> {
     public Record findRecordByCVCCode(String cvccode) {
         return dbTemplate("vendorclass.findRecordByCVCCode", Kv.by("cvccode", cvccode)).findFirst();
     }
-    
+
     public VendorClass findByCVCCode(String cvccode) {
         return daoTemplate("vendorclass.findRecordByCVCCode", Kv.by("cvccode", cvccode)).findFirst();
     }
@@ -272,12 +275,11 @@ public class VendorClassService extends BaseService<VendorClass> {
     /**
      * 供应商分类excel导入数据库
      */
-    public Ret importExcelData(File file, String cformatName) {
+    public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
-        
+
         // 使用字段配置维护
-        List<Record> vendorClasses = cusFieldsMappingdService.getImportRecordsByTableName(file, cformatName);
-        
+        List<Record> vendorClasses = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
         if (notOk(vendorClasses)) {
             if (errorMsg.length() > 0) {
                 return fail(errorMsg.toString());
@@ -285,21 +287,21 @@ public class VendorClassService extends BaseService<VendorClass> {
                 return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
             }
         }
-        
+
         // 读取数据没有问题后判断必填字段
         if (vendorClasses.size() > 0) {
             Date now = new Date();
-            
-            for (Record row : vendorClasses) {
 
+            for (Record row : vendorClasses) {
                 if (notOk(row.getStr("cvccode"))) {
                     return fail("编码不能为空");
                 }
                 if (notOk(row.getStr("cvcname"))) {
                     return fail("名称不能为空");
                 }
-                
-                ValidationUtils.notNull(findFirst(Okv.by("cvccode", row.get("cvccode")), "iautoid", "asc"), row.get("cvccode") + "编码重复");
+                VendorClass vendorClass = findFirst(Okv.by("cvccode", row.get("cvccode")), "iautoid", "asc");
+                ValidationUtils.isTrue(vendorClass == null, row.get("cvccode") + "编码重复");
+
 
                 String ipidStr = row.getStr("ipid");
                 if (StrUtil.isNotBlank(ipidStr)) {
@@ -307,8 +309,12 @@ public class VendorClassService extends BaseService<VendorClass> {
                     ValidationUtils.notNull(parentVendorClass, String.format("父级供应商分类“%s”不存在", ipidStr));
 
                     row.set("ipid", parentVendorClass.getIAutoId());
+                }else {
+                    row.set("ipid", 0);
                 }
-                
+                row.keep(ArrayUtil.toArray(TableMapping.me().getTable(VendorClass.class).getColumnNameSet(), String.class));
+
+                row.set("iSourceId",row.get("cvccode"));
                 row.set("iautoid", JBoltSnowflakeKit.me.nextId());
                 row.set("dcreatetime", now);
                 row.set("ICreateBy", JBoltUserKit.getUserId());
@@ -321,6 +327,7 @@ public class VendorClassService extends BaseService<VendorClass> {
                 row.set("CUpdateName", JBoltUserKit.getUserName());
                 row.set("IsDeleted", ZERO_STR);
                 row.set("ISource", SourceEnum.MES.getValue());
+
             }
         }
 
@@ -369,8 +376,8 @@ public class VendorClassService extends BaseService<VendorClass> {
      */
     public List<VendorClass> getMgrList() {
         Okv kv = Okv.by(VendorClass.ISDELETED, ZERO_STR)
-                .set(VendorClass.IORGID, getOrgId());
-        
+            .set(VendorClass.IORGID, getOrgId());
+
         return getCommonList(kv, VendorClass.CVCCODE, "asc");
     }
 
@@ -473,7 +480,7 @@ public class VendorClassService extends BaseService<VendorClass> {
 
     private List<Record> getSubList(Long pid) {
         Okv para = Okv.by("pid", pid);
-        para.set("iorgid",getOrgId());
+        para.set("iorgid", getOrgId());
         return dbTemplate("vendorclass.getSubList", para).find();
     }
 }

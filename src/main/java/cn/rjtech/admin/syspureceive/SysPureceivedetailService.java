@@ -174,5 +174,8 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
     public List<SysPureceivedetail> findFirstByandvencood(String masId,String vencode) {
         return find("select * from  T_Sys_PUReceiveDetail where MasID = ? and isDeleted = '0' and VenCode =?", masId,vencode);
     }
-    
+
+    public List<SysPureceivedetail> findDetailByMasIdAndInvcode(String masId,String invcode) {
+        return find("select * from  T_Sys_PUReceiveDetail where MasID = ? and invcdoe=? and isDeleted = '0'", masId,invcode);
+    }
 }

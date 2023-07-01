@@ -291,7 +291,7 @@ public class InStockDefectService extends BaseService<InStockDefect> {
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
         inStockDefect.setIAutoId(JBoltSnowflakeKit.me.nextId());
-        //inStockDefect.setCDocNo(inStockQcFormM.getCInvQcFormNo());   //异常品单号
+        inStockDefect.setCDocNo(JBoltSnowflakeKit.me.nextIdStr());   //异常品单号
         inStockDefect.setIInStockQcFormMid(inStockQcFormM.getIAutoId()); //在库检id
         inStockDefect.setIInventoryId(inStockQcFormM.getIInventoryId());  //存货ID
         inStockDefect.setIStatus(1);                                       //状态：1. 待记录 2. 待判定 3. 已完成
