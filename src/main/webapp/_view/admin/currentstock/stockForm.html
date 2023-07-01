@@ -148,21 +148,53 @@
             "jbolt_table_StockCheckVouchBarcode_split_#(pageId)"
         ];
 
-        jboltTableSubmitMulti(tables, "admin/currentstock/saveTableSubmit", function (res) {
+        var table1SubmitData = jboltTableGetSubmitData('#jbolt_table_#(pageId)');
+        console.log(JSON.stringify(table1SubmitData));
 
+        table1SubmitData.save = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
+        
+        var table2SubmitData = jboltTableGetSubmitData('#jbolt_table_StockCheckVouchBarcode_split_#(pageId)');
+        console.log(JSON.stringify(table2SubmitData));
+
+        var para = {
+            table1: table1SubmitData,
+            table2: table2SubmitData
+        };
+        
+        var arg = {
+            jboltTables: JSON.stringify(para),
+        }
+
+        Ajax.post("admin/currentstock/saveTableSubmit", arg, function (res) {
             LayerMsgBox.close(index);
 
             if (res.state === 'ok') {
                 LayerMsgBox.success(res.msg, 1000, function () {
                     // window.parent.refreshJBoltTable();
-
-                    location.href = '/admin/user/edit/' + res.data.id + '-_jb_rqtype_dialog';
+                    // location.href = '/admin/user/edit/' + res.data.id + '-_jb_rqtype_dialog';
                 });
             } else {
                 LayerMsgBox.alert(res.msg, 2);
             }
-
+        }, function (err) {
+            LayerMsgBox.close(index);
         });
+        
+        // jboltTableSubmitMulti(tables, "admin/currentstock/saveTableSubmit", function (res) {
+        //
+        //     LayerMsgBox.close(index);
+        //
+        //     if (res.state === 'ok') {
+        //         LayerMsgBox.success(res.msg, 1000, function () {
+        //             // window.parent.refreshJBoltTable();
+        //
+        //             location.href = '/admin/user/edit/' + res.data.id + '-_jb_rqtype_dialog';
+        //         });
+        //     } else {
+        //         LayerMsgBox.alert(res.msg, 2);
+        //     }
+        //
+        // });
     }
 
     function submitAllTables_#(pageId)(){
