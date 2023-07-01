@@ -473,12 +473,6 @@ function getEditableTableOptions_year() {
     return editableTableOptions;
 }
 
-function closeHandler(){
-    parent.layer.close(parent.layer.getFrameIndex(window.name));
-    window.parent.refreshJBoltTable();
-}
-
-
 function submitBtnSelect(ele){
     let cPlanOrderNo = $("#cplanorderno").val();
     let iCustomerId = $("#icustomerid").val();

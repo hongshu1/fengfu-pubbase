@@ -460,10 +460,6 @@
     	//jboltTableInsertRow('#jbolt_Table_#(pageId)', res.list);
     	jboltTableRefresh("#jbolt_Table_#(pageId)");
     }
-    function closeHandler(){
-    	parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
 </script>
 #end
 

@@ -355,11 +355,6 @@
         return editableTableOptions;
     }
 
-    function closeHandler() {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
-
     function barcode() {
         LayerMsgBox.loading("执行中......",2000);
         var barcode = $("#barcode").val();

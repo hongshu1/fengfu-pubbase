@@ -21,10 +21,6 @@
 #end
 #define js()
 <script>
-    function closeHandler() {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
 
     function submitForm(){
         LayerMsgBox.confirm("确认提交此数据?", function () {

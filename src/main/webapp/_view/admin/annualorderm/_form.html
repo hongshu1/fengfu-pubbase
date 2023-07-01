@@ -654,11 +654,6 @@
         $("#nextYear").html(ele.val()+"年");
     }
 
-    function closeHandler(){
-    	parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
-
     // 选择客户名称
     function instCcusname(data) {
         $("#icustomerid").val(data.iautoid);

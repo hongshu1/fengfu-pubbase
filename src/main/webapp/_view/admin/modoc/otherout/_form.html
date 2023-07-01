@@ -112,8 +112,6 @@
 <script>
 	hideParentLayerDialogBtn(0);
 
-
-
 	function submitAllTables_#(pageId)(ele){
 		var action = getRealJqueryObject(ele);
 
@@ -122,7 +120,7 @@
 		var value = action.data("value");
 		var tables = ["jbolt_table_inventory_split_#(pageId)"];
 			jboltTableSubmitMulti(tables, "admin/otherout/submitMulti?param=" + id + "&revokeVal=" + value, function (res) {
-				if (res.state == "ok") {
+				if (res.state === "ok") {
 					LayerMsgBox.success(res.msg, 600, function () {
 						parent.refreshPjaxContainer();
 						parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -133,12 +131,6 @@
 			});
 	}
 
-
-
-	function closeHandler(){
-		parent.layer.close(parent.layer.getFrameIndex(window.name));
-		window.parent.refreshJBoltTable();
-	}
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="otherOutForm")
 #end

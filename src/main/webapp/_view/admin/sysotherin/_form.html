@@ -370,10 +370,6 @@
         jboltTableSubmit("#jbolt_Table_#(pageId)");
         return true;
     }
-    function closeHandler() {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
     //是否提审
     var submit = false;
 
