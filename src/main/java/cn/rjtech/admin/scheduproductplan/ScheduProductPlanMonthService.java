@@ -3269,4 +3269,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dbTemplate("scheduproductplan.getConfigValue", kv).queryBigDecimal();
     }
 
+    public Ret algorithmSum() {
+        return SUCCESS;
+    }
 }

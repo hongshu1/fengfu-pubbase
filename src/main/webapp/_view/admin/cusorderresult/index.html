@@ -8,133 +8,44 @@
 				<h1>客户计划及实绩管理</h1>
 			</div>
 			<div class="col">
-				<form class="form-inline" id="apsAnnualplanmFormsum_#(pageId)"   onsubmit="return false;" method="post">
-					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate_#(pageId)" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
-					<span style="margin-top: 5px">至</span>
-					<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate_#(pageId)" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
-
-					<input type="text" class="form-control" placeholder="客户名称" id="ccusname_#(pageId)" name="ccusname" value="#(ccusname??)" />
-					<input type="text" class="form-control" placeholder="存货编码" id="cinvcode_#(pageId)" name="cinvcode" value="#(cinvcode??)" />
-					<input type="text" class="form-control" placeholder="客户部番" id="cinvcode1_#(pageId)" name="cinvcode1" value="#(cinvcode1??)" />
-					<input type="text" class="form-control" placeholder="部品名称" id="cinvname1_#(pageId)" name="cinvname1" value="#(cinvname1??)" />
-
-					<button type="submit" onclick="selectSumBtn(this)" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-					<button type="button" onclick="clearFormBtn(this)" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+				<form class="form-inline" id="cusOrderResult_form"   onsubmit="return false;" method="post">
+					<div class="input-group d-inline-block text-nowrap">
+						<div class="input-group-prepend">
+							<input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" id="beginDate" name="startdate" value="#date(DateUtil.toDate(startdate??),'yyyy-MM-dd')" data-rule="required">
+						</div>
+						<div class="input-group-append">
+							<span class="input-group-text">至</span>
+						</div>
+						<div class="input-group-append">
+							<input type="text" data-date class="form-control rounded-left-0" placeholder="=截止日期=" maxlength="20" id="endDate" name="enddate" value="#date(DateUtil.toDate(enddate??),'yyyy-MM-dd')" data-rule="required">
+						</div>
+					</div>
+					<input type="text" class="form-control" placeholder="客户名称" name="ccusname" value="#(ccusname??)" />
+					<input type="text" class="form-control" placeholder="存货编码" name="cinvcode" value="#(cinvcode??)" />
+					<input type="text" class="form-control" placeholder="客户部番" name="cinvcode1" value="#(cinvcode1??)" />
+					<input type="text" class="form-control" placeholder="部品名称" name="cinvname1" value="#(cinvname1??)" />
+					<button type="submit" onclick="submitThisForm()" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+					<button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 				</form>
-			</div>
-			<div class="col-md-auto">
 			</div>
 		</div>
 	</div>
 	<div class="jbolt_page_content">
-		<script type="text/template" id="jboltTable_demotplsum_#(pageId)">
-			{@each datas as data,index}
-			<tr data-id="${data.iautoid}">
-				<td>${pageNumber,pageSize,index | rownum}</td>
-				<td>${data.cinvcode}</td>
-				<td>${data.cInvCode1}</td>
-				<td>${data.cInvName1}</td>
-				<td>${data.cCusName}</td>
-
-				#for(datetr:collist)
-				<td>${data.#(datetr)}</td>
-				#end
-			</tr>
-			{@/each}
-		</script>
-		<div class="jbolt_table_toolbar" id="AnnualOrderM_toolbarsum_#(pageId)">
-			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-				<div class="btn-group dropdown">
-					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-							id="exportMenuBadnessButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						数据导出
-					</button>
-					<div class="dropdown-menu" aria-labelledby="exportMenuBadnessButton">
-						<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
-								data-url="admin/basis/dataExportxxx"><i class="fa fa-download"></i> 导出选中
-						</button>
-						<button class="btn dropdown-item" data-downloadbtn data-url="admin/basis/dataExportxxx"
-								data-form="basisForm_#(pageId)"><i class="fa fa-download"></i> 全部导出
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div>
-
-		</div>
-		<table class="jbolt_table thead_font_normal table-bordered table-center"
-			   data-jbolttable
-			   data-ajax="true"
-			   data-conditions-form="apsAnnualplanmFormsum_#(pageId)"
-			   data-url="admin/cusorderresult/datas"
-			   id="jbolt_Table_#(pageId)"
-			   data-column-resize="true"
-			   data-tfoot-fixed="true"
-			   data-column-prepend="1:checkbox"
-			   data-page="apsAnnualplanm_page#(pageId)"
-			   data-rowtpl="jboltTable_demotplsum_#(pageId)"
-			   data-toolbar="AnnualOrderM_toolbarsum_#(pageId)"
-		>
-			<thead>
-			<tr>
-				<th data-width="60" data-column="index" rowspan="3">序号</th>
-				<th data-width="150" data-column="cinvcode" rowspan="3">存货编码</th>
-				<th data-width="150" data-column="cinvcode1" rowspan="3">部品名称</th>
-				<th data-width="150" data-column="cInvName1" rowspan="3">客户名称</th>
-				<th data-width="150" data-column="namenull" rowspan="3"></th>
-
-				### 年
-				#for(col:colname2list)
-				<th colspan="#(col.colsum)">#(col.colname)</th>
-				#end
-			</tr>
-			<tr>
-				### 日
-				#for(colname:colnamelist)
-				<th data-width="50" data-column="nowmonth1">#(colname)</th>
-				#end
-			</tr>
-			<tr>### 周
-				#for(week:weeklist)
-				<th data-width="50" data-column="nowmonth1">#(week)</th>
-				#end
-			</tr>
-			</thead>
-			<tbody></tbody>
-			<tfoot>
-
-			</tfoot>
-		</table>
+		<div id="cusOrderResultPortal_#(pageId)" data-ajaxportal data-url="admin/cusorderresult/getYear" data-form="cusOrderResult_form"></div>
 	</div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
+	function submitThisForm() {
+		var $form = $('#cusOrderResult_form');
 
-
-
-	function selectSumBtn(ele){
-		let startdate = $("#startdate_#(pageId)").val();
-		let enddate = $("#enddate_#(pageId)").val();
-		let cworkname = $("#cworkname_#(pageId)").val();
-		let cinvcode = $("#cinvcode_#(pageId)").val();
-		let cinvcode1 = $("#cinvcode1_#(pageId)").val();
-		let cinvname1 = $("#cinvname1_#(pageId)").val();
-		JBoltTabUtil.currentTabGo(`admin/scheduproductplanmonth/planmonthsum`,
-				{"startdate":startdate,"enddate":enddate,"cworkname":cworkname,"cinvcode":cinvcode,"cinvcode1":cinvcode1,"cinvname1":cinvname1});
+		if (FormChecker.check($form)) {
+			var formData = formToJson($form);
+			console.log(JSON.stringify(formData));
+			AjaxPortalUtil.refresh('cusOrderResultPortal_#(pageId)');
+		}
 	}
-	function clearFormBtn(ele){
-		$("#startdate_#(pageId)").val('');
-		$("#enddate_#(pageId)").val('');
-		$("#cworkname_#(pageId)").val('');
-		$("#cinvcode_#(pageId)").val('');
-		$("#cinvcode1_#(pageId)").val('');
-		$("#cinvname1_#(pageId)").val('');
-
-	}
-
-
 </script>
 #end

@@ -77,3 +77,6 @@ FROM
         LEFT JOIN Bd_Customer cus on cus.iAutoId = bi.iCustomerMId
 
     #end
+
+#sql("datas")
+#end

@@ -1,0 +1,161 @@
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<script type="text/template" id="CusOrderResult_tpl_#(pageId)">
+    {@each datas as data,index}
+    <tr data-id="${data.id}">
+        <td rowspan="${data.customers.length * 5+1}">${pageNumber,pageSize,index | rownum}</td>
+        <td rowspan="${data.customers.length * 5+1}">${data.cinvcode}</td>
+        <td rowspan="${data.customers.length * 5+1}">${data.cinvcode1}</td>
+        <td rowspan="${data.customers.length * 5+1}">${data.cinvname1}</td>
+    </tr>
+    {@each data.customers as customer, index}
+    <tr>
+        <td rowspan="5">${customer.ccusname}</td>
+    </tr>
+    <tr>
+        <th>客户订单</th>
+        #for(d : dateMap)
+        #for(dt : d.value)
+        ${mark = 1}
+        {@each customer.customerorderqtydatas as customerorderqtydata, index}
+        {@if customerorderqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
+        ${mark = 2}
+        <td>${customerorderqtydata.iqty}</td>
+        {@/if}
+        {@/each}
+        {@if mark == 1}
+        <td>0</td>
+        {@/if}
+        #end
+        <td>合计</td>
+        #end
+    </tr>
+    <tr>
+        <th>取货计划</th>
+        #for(d : dateMap)
+        #for(dt : d.value)
+        ${mark = 1}
+        {@each customer.pickupplanqtydatas as pickupplanqtydata, index}
+        {@if pickupplanqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
+        ${mark = 2}
+        <td>${pickupplanqtydata.iqty}</td>
+        {@/if}
+        {@/each}
+        {@if mark == 1}
+        <td>0</td>
+        {@/if}
+        #end
+        <td>合计</td>
+        #end
+    </tr>
+    <tr>
+        <th>出货实际</th>
+        #for(d : dateMap)
+        #for(dt : d.value)
+        ${mark = 1}
+        {@each customer.actualshipmentqtydatas as actualshipmentqtydata, index}
+        {@if actualshipmentqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
+        ${mark = 2}
+        <td>${actualshipmentqtydata.iqty}</td>
+        {@/if}
+        {@/each}
+        {@if mark == 1}
+        <td>0</td>
+        {@/if}
+        #end
+        <td>合计</td>
+        #end
+    </tr>
+    <tr>
+        <th>订单与取货差异</th>
+        #for(d : dateMap)
+        #for(dt : d.value)
+        ${mark = 1}
+        {@each customer.differenceqtydatas as differenceqtydata, index}
+        {@if differenceqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
+        ${mark = 2}
+        <td>${differenceqtydata.iqty}</td>
+        {@/if}
+        {@/each}
+        {@if mark == 1}
+        <td>0</td>
+        {@/if}
+        #end
+        <td>合计</td>
+        #end
+    </tr>
+    {@/each}
+    {@/each}
+</script>
+
+<div class="jbolt_table_toolbar" id="CusOrderSum_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <div class="btn-group dropdown ">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+            </button>
+            <div class="dropdown-menu" aria-labelledby="exportContainerButton">
+                <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                        data-url="/admin/container/dataExport"><i class="fa fa-download"></i> 导出选中
+                </button>
+                <button class="btn dropdown-item" data-downloadbtn data-url="/admin/container/dataExport"
+                        data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出
+                </button>
+            </div>
+            <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i>
+                刷新
+            </button>
+        </div>
+    </div>
+</div>
+
+<table class="jbolt_table jbolt_main_table  table-center "
+       data-jbolttable
+       data-column-resize="true"
+       data-ajax="true"
+       data-conditions-form="cusOrderResult_form"
+       data-url="admin/cusorderresult/datas"
+       data-rowtpl="CusOrderResult_tpl_#(pageId)"
+       data-copy-to-excel="false"
+       data-page="cusOrderResult_page"
+       data-toolbar="CusOrderSum_toolbar_#(pageId)"
+       data-automerge-cell-cols="1,2,3,4"
+>
+    <thead>
+    <tr>
+        <th data-width="60" data-column="index" rowspan="9">序号</th>
+        <th data-width="100" data-column="cinvcode" rowspan="3">存货编码</th>
+        <th data-width="100" data-column="cinvname1" rowspan="3">客户部番</th>
+        <th data-width="100" data-column="iinventoryid" rowspan="3">部品名称</th>
+        <th data-width="100" data-column="ccusname" rowspan="3">客户名称</th>
+        <th data-width="100" rowspan="3"></th>
+        ### 年月
+        #for(d : dateMap)
+        <th colspan="#(d.value.size()+1)">#(d.key.split("_")[0])年#(d.key.split("_")[1])月</th>
+        #end
+    </tr>
+    ### 年月日
+    <tr>
+        #for(d : dateMap)
+        #for(dt : d.value)
+        <th>#date(dt, 'yyyy-MM-dd'.split("-")[2])日</th>
+        #end
+        <th>合计</th>
+        #end
+    </tr>
+
+    ### 周几
+    <tr>
+        #for(d : dateMap)
+        #for(dt : d.value)
+        <th>#((dt+"").split(" ")[0])</th>
+        #end
+        <th></th>
+        #end
+    </tr>
+
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<script>
+</script>
