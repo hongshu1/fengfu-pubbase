@@ -27,4 +27,7 @@ public class GeneralApiController extends BaseApiController {
   public void options(@Para(value = "key") String key) {
     renderJsonData(JBoltDictionaryCache.me.getListByTypeKey(key, true));
   }
+
+
+
 }
