@@ -129,7 +129,7 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
             return fail(qcForm.getCQcFormName() + "：在【质量建模-检验适用标准】页面中没有出货检检验类型");
         }
 
-        List<Map<String, Object>> recordList = rcvDocQcFormMService.findByIQcFormId(iQcFormId);
+        List<Kv> recordList = rcvDocQcFormMService.findByIQcFormId(iQcFormId);
         ValidationUtils.notEmpty(recordList, qcForm.getCQcFormName() + "：【质量建模-质量表格设置】没有维护需要检验的项目");
 
         //2、更新PL_RcvDocQcFormM检验结果(istatus)为“待检：1”
@@ -141,11 +141,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         stockoutQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
 
         List<StockoutQcFormD> formDList = new ArrayList<>();
-        for (Map<String, Object> map : recordList) {
+        for (Kv map : recordList) {
             StockoutQcFormD qcFormD = new StockoutQcFormD();
-            stockoutQcFormDService.saveStockQcFormDModel(qcFormD, iautoid, iQcFormId, map.get("iseq"),
-                map.get("itype"), map.get("istdval"), map.get("imaxval"), map.get("iminval"),
-                map.get("coptions"), map.get("iqcformtableparamid"));
+            stockoutQcFormDService.saveStockQcFormDModel(qcFormD, iautoid, iQcFormId, map.getInt("iseq"), map.getInt("itype"), map.getBigDecimal("istdval"), map.getBigDecimal("imaxval"), map.getBigDecimal("iminval"), map.getStr("coptions"), map.getLong("iqcformtableparamid"));
             formDList.add(qcFormD);
         }
 

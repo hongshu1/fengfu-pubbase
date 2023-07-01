@@ -303,14 +303,14 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     /**
      * 删除
      */
-    public Ret deleteByAutoid(Long id) {
+    public Ret deleteByAutoId(Long id) {
         tx(() -> {
             //1、未审核状态下直接删除
             checkDelete(id);
             SysPuinstore puinstore = findById(id);
 
             //从表的数据
-            Ret ret = deleteSysPuinstoredetailByMasId(String.valueOf(id));
+            Ret ret = deleteSysPuinStoreDetailByMasId(String.valueOf(id));
             if (ret.isFail()) {
                 return false;
             }
@@ -327,7 +327,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             puinstore.getBillNo() + "：不是未审核状态，不可以删除！！");
     }
 
-    public Ret deleteSysPuinstoredetailByMasId(String id) {
+    public Ret deleteSysPuinStoreDetailByMasId(String id) {
         List<SysPuinstoredetail> puinstoredetails = syspuinstoredetailservice.findDetailByMasID(id);
         if (!puinstoredetails.isEmpty()) {
             List<String> collect = puinstoredetails.stream().map(SysPuinstoredetail::getAutoID).collect(Collectors.toList());
@@ -381,7 +381,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         List<Record> updateRecordList = jBoltTable.getUpdateRecordList();
         Object[] ids = jBoltTable.getDelete();
 
-        boolean tx = tx(() -> {
+        tx(() -> {
             SysPuinstore puinstore = new SysPuinstore();
             //1、更新主表
             if (isOk(sysPuinstore.getAutoID())) {
@@ -405,14 +405,15 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
                 puinstore = savePuinstore;
             }
 
+            String ordertype = formRecord.getStr("ordertype");
             if (saveRecordList != null && !saveRecordList.isEmpty()) {
                 List<SysPuinstoredetail> saveList = new ArrayList<>();
-                saveRecordList(saveRecordList, saveList, puinstore, formRecord.getStr("sourcebilltype"));
+                saveRecordList(saveRecordList, saveList, puinstore, ordertype);
                 syspuinstoredetailservice.batchSave(saveList);
             }
             if (updateRecordList != null && !updateRecordList.isEmpty()) {
                 List<SysPuinstoredetail> updateList = new ArrayList<>();
-                updateRecordList(updateRecordList, updateList, puinstore, formRecord.getStr("sourcebilltype"));
+                updateRecordList(updateRecordList, updateList, puinstore, ordertype);
                 syspuinstoredetailservice.batchUpdate(updateList);
             }
             if (ids != null && !ArrayUtil.isEmpty(ids)) {
@@ -506,7 +507,13 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     }
 
     public List<Record> getInsertPuinstoreDetail(Kv kv) {
-        return dbTemplate("syspuinstore.getInsertPuinstoreDetail", kv.set("limit", 20)).find();
+        List<Record> recordList = null;
+        if (ObjUtil.equal(kv.getStr("ordertype"), "PO")) {
+            recordList = dbTemplate("syspuinstore.getInsertPuinstoreDetailByPO", kv.set("limit", 20)).find();
+        } else if (ObjUtil.equal(kv.getStr("ordertype"), "OM")) {
+            recordList = dbTemplate("syspuinstore.getInsertPuinstoreDetailByOM", kv.set("limit", 20)).find();
+        }
+        return recordList;
     }
 
     /*
@@ -900,19 +907,21 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
      * 扫描现品票
      * */
     public Record scanBarcode(String barcode, String orderType) {
-        SysPuinstoredetail puinstoredetail = syspuinstoredetailservice.findFirstByBarcode(barcode);
-        if (puinstoredetail != null) {
-            SysPuinstore puinstore = findById(puinstoredetail.getMasID());
-            ValidationUtils.isTrue(puinstoredetail == null,
+        SysPuinstoredetail sysPuinstoredetail = syspuinstoredetailservice.findFirstByBarcode(barcode);
+        if (sysPuinstoredetail != null) {
+            SysPuinstore puinstore = findById(sysPuinstoredetail.getMasID());
+            ValidationUtils.isTrue(sysPuinstoredetail == null,
                 String.format("现品票 %s 已存在于 %s 入库单号，不能重复！！", barcode, puinstore.getBillNo()));
         }
         //采购订单
         Record record = null;
         if (ObjUtil.equal(orderType, "PO")) {
-            record = dbTemplate("syspuinstore.scanPurchaseOrderBarcode", Kv.by("barcode", barcode)).findFirst();
+            record = dbTemplate("syspuinstore.scanPurchaseOrderBarcode", Kv.by("barcode", barcode).set("orgCode", getOrgCode()))
+                .findFirst();
         } else if (ObjUtil.equal(orderType, "OM")) {
             //委外订单
-            record = dbTemplate("syspuinstore.scanSubcontractOrderBarcode", Kv.by("barcode", barcode)).findFirst();
+            record = dbTemplate("syspuinstore.scanSubcontractOrderBarcode",
+                Kv.by("barcode", barcode).set("orgCode", getOrgCode())).findFirst();
         }
         ValidationUtils.notNull(record, barcode + "：现品票不存在，请重新扫描！！！");
         return record;
@@ -923,12 +932,14 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
      * 通过关键字匹配
      * autocomplete组件使用
      */
-    public List<Record> getBarcodeDatas(String q,String ordertype) {
+    public List<Record> getBarcodeDatas(String q, String ordertype, String sourcebillno) {
         List<Record> recordList = null;
-        if (ObjUtil.equal(ordertype,"PO")){
-            recordList = dbTemplate("syspuinstore.scanPurchaseOrderBarcode", Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
-        }else if (ObjUtil.equal(ordertype, "OM")) {
-            recordList = dbTemplate("syspuinstore.scanSubcontractOrderBarcode", Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        if (ObjUtil.equal(ordertype, "PO")) {
+            recordList = dbTemplate("syspuinstore.scanPurchaseOrderBarcode", Kv.by("q", q).set("limit", 20).set("orgCode",
+                getOrgCode()).set("sourcebillno", sourcebillno)).find();
+        } else if (ObjUtil.equal(ordertype, "OM")) {
+            recordList = dbTemplate("syspuinstore.scanSubcontractOrderBarcode", Kv.by("q", q).set("limit", 20).set("orgCode",
+                getOrgCode()).set("sourcebillno", sourcebillno)).find();
         }
         return recordList;
     }

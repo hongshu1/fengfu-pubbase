@@ -1,9 +1,6 @@
 package cn.rjtech.admin.momaterialsreturnm;
 
-import cn.hutool.core.util.StrUtil;
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -15,6 +12,7 @@ import com.jfinal.core.paragetter.Para;
 
 /**
  * 制造工单-生产退料主表 Controller
+ *
  * @ClassName: MoMaterialsreturnmAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-25 16:32
@@ -24,147 +22,125 @@ import com.jfinal.core.paragetter.Para;
 @Path(value = "/admin/momaterialsreturnm", viewPath = "/_view/admin/momaterialsreturnm")
 public class MoMaterialsreturnmAdminController extends BaseAdminController {
 
-	@Inject
-	private MoMaterialsreturnmService service;
+    @Inject
+    private MoMaterialsreturnmService service;
 
-   /**
-	* 首页
-	*/
-	public void index() {
-		String imodocid = get("imodocid");
-		set("imodocid",imodocid);
-		render("index.html");
-	}
-  	
-  	/**
-	* 数据源
-	*/
-	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
-	}
+    /**
+     * 首页
+     */
+    public void index() {
+        keepPara();
+        render("index.html");
+    }
 
-   /**
-	* 新增
-	*/
-	public void add(@Para(value = "imodocid") Long imodocid) {
-		ValidationUtils.validateId(imodocid, "imodocid");
+    /**
+     * 数据源
+     */
+    public void datas() {
+        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
+    }
 
-		keepPara();
-		render("add.html");
-	}
+    /**
+     * 新增
+     */
+    public void add(@Para(value = "imodocid") Long imodocid) {
+        ValidationUtils.validateId(imodocid, "imodocid");
 
-   /**
-	* 编辑
-	*/
-	public void edit() {
-		MoMaterialsreturnm moMaterialsreturnm=service.findById(getLong(0)); 
-		if(moMaterialsreturnm == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("moMaterialsreturnm",moMaterialsreturnm);
-		render("edit.html");
-	}
+        keepPara();
+        render("add.html");
+    }
 
-  /**
-	* 保存
-	*/
-	public void save() {
-		renderJson(service.save(getModel(MoMaterialsreturnm.class, "moMaterialsreturnm")));
-	}
+    /**
+     * 编辑
+     */
+    public void edit() {
+        MoMaterialsreturnm moMaterialsreturnm = service.findById(getLong(0));
+        if (moMaterialsreturnm == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("moMaterialsreturnm", moMaterialsreturnm);
+        render("edit.html");
+    }
 
-   /**
-	* 更新
-	*/
-	public void update() {
-		renderJson(service.update(getModel(MoMaterialsreturnm.class, "moMaterialsreturnm")));
-	}
+    /**
+     * 保存
+     */
+    public void save() {
+        renderJson(service.save(getModel(MoMaterialsreturnm.class, "moMaterialsreturnm")));
+    }
 
-   /**
-	* 批量删除
-	*/
-	public void deleteByIds() {
-		renderJson(service.deleteByBatchIds(get("ids")));
-	}
+    /**
+     * 更新
+     */
+    public void update() {
+        renderJson(service.update(getModel(MoMaterialsreturnm.class, "moMaterialsreturnm")));
+    }
 
-   /**
-	* 删除
-	*/
-	public void delete() {
-		renderJson(service.delete(getLong(0)));
-	}
+    /**
+     * 批量删除
+     */
+    public void deleteByIds() {
+        renderJson(service.deleteByBatchIds(get("ids")));
+    }
 
-  /**
-	* 切换toggleIsDeleted
-	*/
-	public void toggleIsDeleted() {
-		renderJson(service.toggleIsDeleted(getLong(0)));
-	}
+    /**
+     * 删除
+     */
+    public void delete() {
+        renderJson(service.delete(getLong(0)));
+    }
 
-	/**
-	 * 新增退料
-	 */
-	public void addMoMaterialsreturn(){
-		Long imodocid=getLong("imodocid");
-		renderJsonData(service.addMoMaterialsreturn(imodocid,getJBoltTable()));
-	}
+    /**
+     * 切换toggleIsDeleted
+     */
+    public void toggleIsDeleted() {
+        renderJson(service.toggleIsDeleted(getLong(0)));
+    }
 
-	/***
-	 * 明细列表
-	 */
+    /**
+     * 新增退料
+     */
+    public void addMoMaterialsreturn(@Para(value = "imodocid") Long imodocid) {
+        ValidationUtils.validateId(imodocid, "生产工单ID");
 
-	public void getMoMaterialsreturnList(){
+        renderJsonData(service.addMoMaterialsreturn(imodocid, getJBoltTable()));
+    }
 
-		renderJsonData(service.getMoMaterialsreturnList(getPageNumber(),getPageSize(),getKv()));
-	}
+    /**
+     * 明细列表
+     */
+    public void getMoMaterialsreturnList() {
+        renderJsonData(service.getMoMaterialsreturnList(getPageNumber(), getPageSize(), getKv()));
+    }
 
-	/**
-	 * 审核
-	 */
-	public void approve(String iAutoId,Integer mark) {
-		if (StrUtil.isBlank(iAutoId)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		renderJson(service.approve(iAutoId,mark));
-	}
+    public void details() {
+        MoMaterialsreturnm moMaterialsreturnm = service.findById(getLong(0));
+        if (moMaterialsreturnm == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("moMaterialsreturnm", moMaterialsreturnm);
+        render("detail.html");
+    }
 
-	/**
-	 * 反审核
-	 */
-	public void NoApprove(String ids) {
-		if (StrUtil.isBlank(ids)) {
-			renderFail(JBoltMsg.PARAM_ERROR);
-			return;
-		}
-		///renderJson(service.NoApprove(ids));
-	}
-	public void details() {
-		MoMaterialsreturnm moMaterialsreturnm=service.findById(getLong(0));
-		if(moMaterialsreturnm == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("moMaterialsreturnm",moMaterialsreturnm);
-		render("detail.html");
-	}
+    /**
+     * 查询现品票
+     */
+    public void addBarcode() {
+        renderJsonData(service.getBycBarcodeInfo(get("barcode")));
+    }
 
-	/**
-	 * 查询现品票
-	 */
-	public void addBarcode() {
-		renderJsonData(service.getBycBarcodeInfo(get("barcode")));
-	}
+    public void getmomaterialscanusedlogList() {
+        renderJsonData(service.getBycBarcodeList());
+    }
 
-	public void getmomaterialscanusedlogList() {
-		renderJsonData(service.getBycBarcodeList());
-	}
-	public void saveTableSubmit() {
-		renderJson(service.saveTableSubmit(getJBoltTable()));
-	}
+    public void saveTableSubmit() {
+        renderJson(service.saveTableSubmit(getJBoltTable()));
+    }
 
-	public void getmomaterialscanuseMList(){
-		renderJsonData(service.getModandMomlist(get("imodocid")));
-	}
+    public void getmomaterialscanuseMList() {
+        renderJsonData(service.getModandMomlist(get("imodocid")));
+    }
 
 }

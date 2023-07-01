@@ -127,42 +127,17 @@ public class RcvDocQcFormDService extends BaseService<RcvDocQcFormD> {
     }
 
     /*传参*/
-    public void saveRcvDocQcFormDModel(RcvDocQcFormD qcFormD, Long iRcvDocQcFormMid, Long iqcformId, Object iseq,
-                                       Object itype, Object istdVal, Object iMaxVal, Object iMinVal, Object cOptions,
-                                       Object iqcformtableitemid) {
+    public void saveRcvDocQcFormDModel(RcvDocQcFormD qcFormD, Long iRcvDocQcFormMid, Long iqcformId, Integer iseq, Integer itype, BigDecimal istdVal, BigDecimal iMaxVal, BigDecimal iMinVal, String cOptions, Object iqcformtableitemid) {
         qcFormD.setIRcvDocQcFormMid(iRcvDocQcFormMid);
         qcFormD.setIQcFormId(iqcformId);
         qcFormD.setIFormParamId(iqcformtableitemid != null ? Long.valueOf(iqcformtableitemid.toString()) : null);
-        qcFormD.setISeq(iseq != null ? strToInt(iseq.toString()) : null);
+        qcFormD.setISeq(iseq);
         //qcFormD.setCQcFormParamIds(cQcFormParamIds);//String cQcFormParamIds,
-        qcFormD.setIType(iseq != null ? strToInt(itype.toString()) : null);
-        qcFormD.setIStdVal(objToBig(istdVal));
-        qcFormD.setIMaxVal(objToBig(iMaxVal));
-        qcFormD.setIMinVal(objToBig(iMinVal));
-        qcFormD.setCOptions(cOptions != null ? cOptions.toString() : null);
+        qcFormD.setIType(itype);
+        qcFormD.setIStdVal(istdVal);
+        qcFormD.setIMaxVal(iMaxVal);
+        qcFormD.setIMinVal(iMinVal);
+        qcFormD.setCOptions(cOptions);
     }
 
-    /*object转bigdeciaml*/
-    public static BigDecimal objToBig(Object value) {
-        BigDecimal bigDecimal = null;
-        if (value != null) {
-            if (value instanceof BigDecimal) {
-                bigDecimal = (BigDecimal) value;
-            } else if (value instanceof String) {
-                bigDecimal = new BigDecimal((String) value);
-            } else if (value instanceof BigInteger) {
-                bigDecimal = new BigDecimal((BigInteger) value);
-            } else if (value instanceof Number) {
-                bigDecimal = new BigDecimal(((Number) value).doubleValue());
-            } else {
-                throw new ClassCastException(
-                    "Not possible to coerce [" + value + "] from class " + value.getClass() + " into a BigDecimal.");
-            }
-        }
-        return bigDecimal;
-    }
-
-    public Integer strToInt(Object obj) {
-        return Integer.parseInt(obj.toString());
-    }
 }

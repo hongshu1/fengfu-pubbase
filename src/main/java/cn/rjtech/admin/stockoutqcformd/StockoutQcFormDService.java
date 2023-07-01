@@ -1,5 +1,6 @@
 package cn.rjtech.admin.stockoutqcformd;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import cn.jbolt.core.base.JBoltMsg;
@@ -129,23 +130,17 @@ public class StockoutQcFormDService extends BaseService<StockoutQcFormD> {
         return find("select * from PL_StockoutQcFormD where iStockoutQcFormMid=?", iStockoutQcFormMid);
     }
 
-    public void saveStockQcFormDModel(StockoutQcFormD qcFormD, Long iStockoutQcFormMid, Long iqcformId, Object iseq,
-                                      Object itype, Object istdVal, Object iMaxVal, Object iMinVal, Object cOptions,
-                                      Object iqcformtableitemid) {
+    public void saveStockQcFormDModel(StockoutQcFormD qcFormD, Long iStockoutQcFormMid, Long iqcformId, Integer iseq, Integer itype, BigDecimal istdVal, BigDecimal iMaxVal, BigDecimal iMinVal, String cOptions, Long iqcformtableitemid) {
         qcFormD.setIStockoutQcFormMid(iStockoutQcFormMid);
         qcFormD.setIQcFormId(iqcformId);
         qcFormD.setIFormParamId(iqcformtableitemid != null ? Long.valueOf(iqcformtableitemid.toString()) : null);
-        qcFormD.setISeq(iseq != null ? strToInt(iseq.toString()) : null);
+        qcFormD.setISeq(iseq);
         //qcFormD.setCQcFormParamIds(cQcFormParamIds);//String cQcFormParamIds,
-        qcFormD.setIType(itype != null ? strToInt(itype.toString()) : null);
-        qcFormD.setIStdVal(rcvDocQcFormDService.objToBig(istdVal));
-        qcFormD.setIMaxVal(rcvDocQcFormDService.objToBig(iMaxVal));
-        qcFormD.setIMinVal(rcvDocQcFormDService.objToBig(iMinVal));
-        qcFormD.setCOptions(cOptions != null ? cOptions.toString() : null);
-    }
-
-    public Integer strToInt(Object obj) {
-        return Integer.parseInt(obj.toString());
+        qcFormD.setIType(itype);
+        qcFormD.setIStdVal(istdVal);
+        qcFormD.setIMaxVal(iMaxVal);
+        qcFormD.setIMinVal(iMinVal);
+        qcFormD.setCOptions(cOptions);
     }
 
 }
