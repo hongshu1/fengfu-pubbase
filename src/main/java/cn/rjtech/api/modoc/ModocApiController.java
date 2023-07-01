@@ -181,4 +181,16 @@ public class ModocApiController extends BaseApiController {
     ValidationUtils.notNull(iautoid, "ID不能为空");
     renderJBoltApiSuccessWithData(specMaterialsRcvMService.getSpecMaterialsRcvDatas(iautoid));
   }
+
+  /**
+   * 根据特殊领料ID撤回
+   *
+   * @param iautoid 主表ID
+   */
+  @UnCheck
+  @OpenAPI
+  public void revocationSpecMaterialsRcvMById(@Para(value = "iautoid") Long iautoid) {
+    ValidationUtils.notNull(iautoid, "ID不能为空");
+    renderJBoltApiSuccessWithData(specMaterialsRcvMService.revocationSpecMaterialsRcvMById(iautoid));
+  }
 }
