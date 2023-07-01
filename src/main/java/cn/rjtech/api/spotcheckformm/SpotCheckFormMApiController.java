@@ -62,6 +62,7 @@ public class SpotCheckFormMApiController extends BaseApiController {
      *
      *
      */
+    @UnCheck
     public void edit(@Para(value = "coperationname") String coperationname,
                      @Para(value = "iinventoryid") String iinventoryid,
                      @Para(value = "modocid") String modocid,
@@ -100,6 +101,7 @@ public class SpotCheckFormMApiController extends BaseApiController {
      * cvalue：cvalue：填写值
      * }
      */
+    @UnCheck
     public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
                            @Para(value = "tableJsonData") String tableJsonDataStr){
         renderJsonData(service.submitForm(formJsonDataStr, tableJsonDataStr));
