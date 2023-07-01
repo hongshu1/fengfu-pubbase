@@ -11,6 +11,7 @@ import io.github.yedaxia.apidocs.ApiDoc;
  *
  * @author Kephon
  */
+@ApiDoc
 public class OrgApiController extends BaseApiController {
 
     @Inject
