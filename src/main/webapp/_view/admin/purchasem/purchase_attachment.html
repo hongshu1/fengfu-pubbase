@@ -1,0 +1,53 @@
+<!-- JBoltTable的数据模板定义-->
+<textarea class="jb_tpl_box" id="purchaseattachmentRowtpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${+index+1}</td>
+            <td>${data.attachmentname}</td>
+            <td>
+                <a tooltip title="预览" href="${data.attachmenturi|previewUrl}" target="_blank" class="btn btn-secondary jbolt_table_searchbtn"><i class="fa fa-search"></i>预览</a>
+                <a tooltip title="${data.filename}" data-confirm="确定下载吗？" class="btn btn-secondary" data-filename="${data.filename}" href="${data.attachmenturi|real_url}" download="${data.filename}"><i class="fa fa-download"></i> 下载</a>
+            </td>
+        </tr>
+    {@/each}
+</textarea>
+
+#if(!details??false)
+<div class="jbolt_table_toolbar" id="purchaseattachment_toolbar_#(pageId)">
+    <div class="btn-group" role="group" aria-label="btn-group">
+        <button data-dialogbtn data-area="700,800" data-title="新增附件" data-url="/admin/purchasem/attachment" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+        <button onclick="jboltTableRemoveCheckedRow(this,true,true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+    </div>
+
+    <div class="clearfix"></div>
+</div>
+#end
+
+<table class="jbolt_table jbolt_main_table table-center"
+       id="jbolt_table_purchaseattachments_#(pageId)"
+       data-ajax="true"
+       data-jbolttable
+       data-height="300"
+       data-column-resize="true"
+       data-column-prepend="1:checkbox:true"
+       data-width="auto"
+       data-conditions-form="purchaseattachmentForm_#(pageId)"
+       data-rowtpl="purchaseattachmentRowtpl_#(pageId)"
+       data-toolbar="purchaseattachment_toolbar_#(pageId)"
+       data-url="/admin/purchaseattachment/list?ipurchasemid=#(purchasem.iautoid??)"
+       data-editable="true"
+       data-editable-option="getEditableTableOptionsPg_#(pageId)"
+       #if(attachments)
+       data-ajax-success-handler="attachmentTableAjaxSuccessHandler_#(pageId)"
+       #end
+>
+    <thead>
+    <tr>
+        <th data-width="50" data-column="index">序号</th>
+        <th data-width="300" data-column="attachmentname">附件名称</th>
+        <th data-width="200">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
