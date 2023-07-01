@@ -8,6 +8,7 @@ import cn.rjtech.api.general.GeneralApiController;
 import cn.rjtech.api.instockdefect.InStockDefectApiController;
 import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
 import cn.rjtech.api.modoc.ModocApiController;
+import cn.rjtech.api.momaterialsreturnm.MoMaterialsreturnmApiController;
 import cn.rjtech.api.momaterialsscansum.MoMaterialsscansumApiController;
 import cn.rjtech.api.momopatchweldm.MoMopatchweldmApiController;
 import cn.rjtech.api.moroutingconfigoperation.MoMoroutingconfigOperationApiController;
@@ -82,6 +83,7 @@ public class ApiRoutes extends Routes {
 
 
         this.add("/web/common/print", PrintController.class);
+        this.add("/api/momaterialsreturnm", MoMaterialsreturnmApiController.class);
     }
 
 }
