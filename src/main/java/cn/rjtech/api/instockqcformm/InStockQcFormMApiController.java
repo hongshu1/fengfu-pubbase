@@ -74,7 +74,7 @@ public class InStockQcFormMApiController extends BaseApiController {
         kv.set("endtime", endtime);
         kv.set("page", page);
         kv.set("pageSize", pageSize);
-        
+
         renderJBoltApiRet(apiService.getDatas(kv));
     }
 
@@ -239,14 +239,13 @@ public class InStockQcFormMApiController extends BaseApiController {
                                             @Para(value = "invcode") String invcode,
                                             @Para(value = "cinvcode1") String cinvcode1,
                                             @Para(value = "cinvname1") String cinvname1,
-                                            @Para(value = "iinventoryid") String iinventoryid,
+                                            @Para(value = "iinventoryid") Long iinventoryid,
                                             @Para(value = "cdcno") String cdcno,
                                             @Para(value = "cmeasurereason") String cmeasurereason,
-                                            @Para(value = "iqcformid") String iqcformid) {
-        ValidationUtils.notNull(cbarcode, cbarcode + "：现品票不存在！！！");
-        ValidationUtils.notNull(invcode, invcode + "：存货编码不存在！！！");
+                                            @Para(value = "iqcformid") Long iqcformid) {
+        ValidationUtils.notBlank(cbarcode, cbarcode + "：现品票不存在！！！");
+        ValidationUtils.notBlank(invcode, invcode + "：存货编码不存在！！！");
         ValidationUtils.notNull(iinventoryid, iinventoryid + "：存货id不存在！！！");
-
         int qty = iqty.setScale(2, RoundingMode.DOWN).intValue();
 
         renderJBoltApiRet(apiService.saveInStockQcFormByCbarcode(cbarcode, qty, invcode, cinvcode1, cinvname1, iinventoryid, cdcno, cmeasurereason, Long.valueOf(iqcformid)));

@@ -95,7 +95,7 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         if (checkoutrecord == null) {
             return JBoltApiRet.API_FAIL("数据不存在");
         }
-        
+
         List<Map<String, Object>> tableHeadData = rcvDocQcFormMService.getTableHeadData(checkoutrecord.getLong("iqcformid"));
         List<InStockQcFormD> stockoutqcformlist = inStockQcFormDService.findByIInStockQcFormMid(iautoid);
         record.set("record", checkoutrecord);
@@ -153,8 +153,10 @@ public class InStockQcFormMApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(service.findDetailByBarcode(cbarcode));
     }
 
-    public JBoltApiRet saveInStockQcFormByCbarcode(String cbarcode, Integer iqty, String invcode, String cinvcode1, String cinvname1, String iinventoryid, String cdcno, String cmeasurereason, Long iqcformid) {
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.saveInStockQcFormByCbarcode(cbarcode, iqty, invcode, cinvcode1, cinvname1, iinventoryid, cdcno, cmeasurereason, Long.valueOf(iqcformid)));
+    public JBoltApiRet saveInStockQcFormByCbarcode(String cbarcode, Integer iqty, String invcode, String cinvcode1,
+                                                   String cinvname1, Long iinventoryid, String cdcno, String cmeasurereason,
+                                                   Long iqcformid) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(service.saveInStockQcFormByCbarcode(cbarcode, iqty, invcode, iinventoryid, cdcno, cmeasurereason, Long.valueOf(iqcformid)));
     }
-    
+
 }

@@ -234,18 +234,16 @@ public class InStockQcFormMAdminController extends BaseAdminController {
         String cbarcode = get("cbarcode");
         BigDecimal iqty = getBigDecimal("iqty");
         String invcode = get("invcode");
-        String cinvcode1 = get("cinvcode1");
-        String cinvname1 = get("cinvname1");
-        String iinventoryid = get("iinventoryid");
+        Long iinventoryid = getLong("iinventoryid");
         String cdcno  = get("cdcno");
         String cMeasureReason = get("cmeasurereason");
         String iqcformid = get("iqcformid");
         ValidationUtils.notBlank(cbarcode, "现品票不能为空");
         ValidationUtils.notBlank(invcode, "存货编码不能为空");
-        ValidationUtils.notBlank(iinventoryid, "存货id不能为空");
+        ValidationUtils.notNull(iinventoryid, "存货id不能为空");
 
         int qty = iqty.setScale(2,BigDecimal.ROUND_DOWN).intValue();
-        renderJson(service.saveInStockQcFormByCbarcode(cbarcode, qty, invcode, cinvcode1, cinvname1,iinventoryid, cdcno,
+        renderJson(service.saveInStockQcFormByCbarcode(cbarcode, qty, invcode,iinventoryid, cdcno,
             cMeasureReason,Long.valueOf(iqcformid)));
     }
 

@@ -139,7 +139,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
      * 删除
      */
     public void delete() {
-        renderJson(service.deleteByAutoid(getLong(0)));
+        renderJson(service.deleteByAutoId(getLong(0)));
     }
 
     /**
@@ -222,7 +222,7 @@ public class SysPuinstoreAdminController extends BaseAdminController {
             fail("订单号为空，请先选择订单号");
             return;
         }
-        List<Record> recordList = service.getBarcodeDatas(get("q"),kv.getStr("ordertype"));
+        List<Record> recordList = service.getBarcodeDatas(get("q"),kv.getStr("ordertype"),kv.getStr("sourcebillno"));
         renderJsonData(recordList);
     }
 
