@@ -30,10 +30,12 @@
 
             #if(stockchekvouch.autoid??)
             <input type="hidden" id="stockchekvouchAutoid" name="stockchekvouch.autoid" value="#(stockchekvouch.autoid??)"/>
-            #end
 
+            #end
+            <input type="hidden" id="autoid" name="autoid" value="#(stockchekvouch.autoid??)"/>
             <input type="hidden" id="whcode" name="whcode" value="#(stockchekvouch.whcode??)"/>
             <input type="hidden" id="poscodes" name="poscodes" value="#(stockchekvouch.poscodes??)"/>
+            <input type="hidden" id="checktype" name="checktype" value="#(stockchekvouch.checktype??)"/>
 
             <input type="text" autocomplete="off" class="form-control" placeholder="=库位名称=" name="posname" value=""/>
             <input type="text" autocomplete="off" class="form-control" placeholder="=盘点状态=" name="status" value=""/>
@@ -50,25 +52,34 @@
 
     <textarea class="jb_tpl_box" id="StockCheckVouchDetail_tpl_#(pageId)">
     {@each datas as data,index}
-    <tr data-id="${data.autoid}" data-needsave="true" data-changed="true">
+    <tr data-id="${data.autoid}">
         <td>${pageNumber,pageSize,index | rownum}</td>
         <td>${data.posname}</td>
         <td>${data.cinvccode}</td>
         <td>${data.cinvcname}</td>
-        <td>${data.cinvcode}</td>
+        <td>${data.invcode}</td>
         <td>${data.cinvcode1}</td>
         <td>${data.cinvname1}</td>
         <td>${data.cinvstd}</td>
         <td>${data.cuomname}</td>
-        <td>${data.imaxcapacity}</td>
-        <td>${data.realqty}</td>
-        <td>${data.adjustqty}</td>
-        <td>${data.tips}</td>
+        <td>${data.qty}</td>
+        {@if data.checktype == 1}
+        <td></td>
+        <td></td>
+        {@else}
+        <td>${data.checktype=='1'?'':data.stockqty}</td>
+        <td>${data.checktype=='1'?'':data.plqtyqty}</td>
+        {@/if}
+        {@if data.stockstatus == null}
+        <td>${data.stockstatus?data.stockstatus:'未盘点'}</td>
+        {@else}
+        <td>${data.stockstatus=='已盘点'?'已盘点':'未盘点'}</td>
+        {@/if}
+        <td hidden>${data.poscode}</td>
     </tr>
     {@/each}
 	</textarea>
 
-<!--${data.adjustqty}-->
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="fh_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
@@ -84,7 +95,7 @@
            data-height="250"
            data-ajax="true"
            data-width="auto"
-           data-url="admin/currentstock/invDatas?mid=#(bill.autoid)"
+           data-url="admin/currentstock/StockCheckVouchDetailDatas?mid=#(bill.autoid)"
            data-column-resize="true"
            data-column-prepend="1:checkbox:true"
            data-conditions-form="StockCheckVouchForm_#(pageId)"
@@ -106,10 +117,10 @@
             <th data-width="150" data-column="invstd">规格</th>
             <th data-width="110" data-column="unitname">主计量单位</th>
 
-            <th data-column="imaxcapacity">库存数量</th>
-            <th data-column="realqty">盘点数量</th>
-            <th data-column="adjustqty">盈亏数量</th>
-            <th data-column="tips">盘点状态</th>
+            <th data-column="qty">库存数量</th>
+            <th data-column="stockqty">盘点数量</th>
+            <th data-column="plqtyqty">盈亏数量</th>
+            <th data-column="stockstatus">盘点状态</th>
         </tr>
         </thead>
         <tbody>
@@ -140,7 +151,7 @@
             "jbolt_table_#(pageId)",
             "jbolt_table_StockCheckVouchBarcode_split_#(pageId)"
         ];
-        
+
         jboltTableSubmitMulti(tables, "admin/currentstock/saveTableSubmit", function (res) {
 
             LayerMsgBox.close(index);
@@ -149,7 +160,7 @@
                 LayerMsgBox.success(res.msg, 1000, function () {
                     // window.parent.refreshJBoltTable();
 
-                    // location.href = '/admin/user/edit/' + res.data.id + '-_jb_rqtype_dialog';
+                    location.href = '/admin/user/edit/' + res.data.id + '-_jb_rqtype_dialog';
                 });
             } else {
                 LayerMsgBox.alert(res.msg, 2);
@@ -265,25 +276,21 @@
             },
             //插入数据时默认属性值
             cols: {
-
-                imaxcapacity: {
-                    type: "number",
-                    textAttr: "imaxcapacity"
+                qty: {
+                    textAttr: "qty"
                 },
-                realqty: {
-                    type: "number",
-                    textAttr: "realqty"
+                stockqty: {
+                    textAttr: "stockqty"
                 },
-                adjustqty:{
-                    submitAttr:"adjustqty",
-                    required:true,
+                plqtyqty:{
+                    submitAttr:"plqtyqty",
                     summary:[
                         {
                             dir:"h",//纵向统计  v or h
                             tofixed:6,//保留两位
                             roundtag:"round",//四舍五入
                             removezero:true,//去0
-                            formula:"imaxcapacity-realqty",//计算表单式 sum or avg
+                            formula:"qty-stockqty",//计算表单式 sum or avg
                         }
                     ],
                 },

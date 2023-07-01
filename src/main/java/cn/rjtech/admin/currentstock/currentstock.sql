@@ -219,26 +219,37 @@ order by d.poscode, d.invcode
 
     #sql("paginateAdminDatas")
 SELECT
+    area.cAreaCode AS poscode,
     area.cAreaName AS posname,
     class.cInvCCode,
     class.cInvCName,
-    t3.cInvCode,
+    t3.cInvCode AS InvCode,
     t3.cInvCode1,
     t3.cInvName1,
     t3.cInvStd,
     uom.cUomName,
-    area.iMaxCapacity
+    area.iMaxCapacity AS Qty,
+    t1.CheckType,
+    t2.StockQty,
+    t2.PlqtyQty,
+    t2.StockStatus,
+    t1.AutoId
 FROM
-    Bd_Inventory t3
+    T_Sys_StockCheckVouch t1
+    LEFT JOIN T_Sys_StockCheckVouchDetail t2 ON t2.MasID = t1.AutoId
+    LEFT JOIN Bd_Inventory t3 ON t2.InvCode = t3.cInvCode
         LEFT JOIN Bd_InventoryClass class ON t3.iInventoryClassId = class.iAutoId
         LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = t3.iAutoId
         LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
         LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
         LEFT JOIN Bd_Uom uom ON uom.iAutoId = t3.iInventoryUomId1
 WHERE t3.isDeleted = 0
-    and wh.cWhCode = #para(whcode)
+    #if(autoid)
+    AND t1.AutoId = #para(autoid)
+    #end
+    AND wh.cWhCode = #para(whcode)
     #if(poscode)
-    and area.cAreaCode IN(#(poscode))
+    AND area.cAreaCode IN(#(poscode))
     #end
     #end
 
@@ -260,7 +271,7 @@ SELECT
     area.cAreaName AS posname,
     class.cInvCCode,
     class.cInvCName,
-    t3.cInvCode,
+    t3.cInvCode AS InvCode,
     t3.cInvCode1,
     t3.cInvName1,
     t3.cInvStd,
@@ -315,3 +326,39 @@ WHERE t3.isDeleted = 0
 	    and t4.cCompleteBarcode = #para(barcode)
 	#end
 #end
+
+
+ #sql("Detail")
+SELECT t2.*
+FROM T_Sys_StockCheckVouch t1
+         LEFT JOIN T_Sys_StockCheckVouchDetail t2 ON t2.MasID = t1.AutoId
+WHERE t1.AutoId = #para(autoid)
+#end
+
+
+    #sql("WarehouseData")
+SELECT
+    area.cAreaCode AS poscode,
+    area.cAreaName AS posname,
+    class.cInvCCode,
+    class.cInvCName,
+    t3.cInvCode AS InvCode,
+    t3.cInvCode1,
+    t3.cInvName1,
+    t3.cInvStd,
+    uom.cUomName,
+    area.iMaxCapacity AS Qty
+FROM
+        Bd_Inventory t3
+        LEFT JOIN Bd_InventoryClass class ON t3.iInventoryClassId = class.iAutoId
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = t3.iAutoId
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = t3.iInventoryUomId1
+WHERE t3.isDeleted = 0
+
+    AND wh.cWhCode = #para(whcode)
+    #if(poscode)
+    AND area.cAreaCode IN(#(poscode))
+    #end
+    #end

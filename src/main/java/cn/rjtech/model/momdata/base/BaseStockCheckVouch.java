@@ -1,11 +1,8 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
-
-import java.util.Date;
 
 /**
  * 盘点单
@@ -13,6 +10,9 @@ import java.util.Date;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    /**主键id*/
+    public static final String AUTOID = "AutoId";
     /**组织编码*/
     public static final String ORGANIZECODE = "OrganizeCode";
     /**盘点方式;0 明盘 1 暗盘*/
@@ -25,206 +25,38 @@ public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> exte
     public static final String CHECKPERSON = "CheckPerson";
     /**仓库编码*/
     public static final String WHCODE = "WhCode";
-    /**创建人*/
-    public static final String CREATEPERSON = "CreatePerson";
-    /**创建时间*/
-    public static final String CREATEDATE = "CreateDate";
-    /**更新人*/
-    public static final String MODIFYPERSON = "ModifyPerson";
-    /**更新时间*/
-    public static final String MODIFYDATE = "ModifyDate";
-    /**主键id*/
-    public static final String AUTOID = "AutoId";
     /**库位编码,多个用,分隔*/
     public static final String POSCODES = "poscodes";
-	/**单据状态;0盘点中,1待审核,2已完成*/
-	public static final String STATUS = "status";
-
-	public static final String ISDELETED = "isDeleted";
-
-	/**
-	 * 组织编码
-	 */
-	public M setOrganizeCode(String OrganizeCode) {
-		set("OrganizeCode", OrganizeCode);
-		return (M)this;
-	}
-
-	/**
-	 * 组织编码
-	 */
-	@JBoltField(name="OrganizeCode" ,columnName="OrganizeCode",type="String", remark="组织编码", required=true, maxLength=30, fixed=0, order=1)
-	public String getOrganizeCode() {
-		return getStr("OrganizeCode");
-	}
-
-	/**
-	 * 盘点方式;0 明盘 1 暗盘
-	 */
-	public M setCheckType(String CheckType) {
-		set("CheckType", CheckType);
-		return (M)this;
-	}
-
-
-	/**
-	 *单据状态;0盘点中,1待审核,2已完成
-	 */
-	public M setStatus(String Status) {
-		set("Status", Status);
-		return (M)this;
-	}
-
-	/**
-	 * 盘点方式;0 明盘 1 暗盘
-	 */
-	@JBoltField(name="CheckType" ,columnName="CheckType",type="String", remark="盘点方式;0 明盘 1 暗盘", required=true, maxLength=30, fixed=0, order=2)
-	public String getCheckType() {
-		return getStr("CheckType");
-	}
-
-	/**
-	 * 盘点方式;0 明盘 1 暗盘
-	 */
-	@JBoltField(name="Status" ,columnName="Status",type="String", remark="单据状态;0盘点中,1待审核,2已完成", required=true, maxLength=30, fixed=0, order=2)
-	public String getStatus() {
-		return getStr("Status");
-	}
-
-
-
-	/**
-	 * 单号
-	 */
-	public M setBillNo(String BillNo) {
-		set("BillNo", BillNo);
-		return (M)this;
-	}
-
-	/**
-	 * 单号
-	 */
-	@JBoltField(name="BillNo" ,columnName="BillNo",type="String", remark="单号", required=true, maxLength=30, fixed=0, order=3)
-	public String getBillNo() {
-		return getStr("BillNo");
-	}
-
-	/**
-	 * 单据日期
-	 */
-	public M setBillDate(String BillDate) {
-		set("BillDate", BillDate);
-		return (M)this;
-	}
-
-	/**
-	 * 单据日期
-	 */
-	@JBoltField(name="BillDate" ,columnName="BillDate",type="String", remark="单据日期", required=true, maxLength=30, fixed=0, order=4)
-	public String getBillDate() {
-		return getStr("BillDate");
-	}
-
-	/**
-	 * 盘点人
-	 */
-	public M setCheckPerson(String CheckPerson) {
-		set("CheckPerson", CheckPerson);
-		return (M)this;
-	}
-
-	/**
-	 * 盘点人
-	 */
-	@JBoltField(name="CheckPerson" ,columnName="CheckPerson",type="String", remark="盘点人", required=true, maxLength=30, fixed=0, order=5)
-	public String getCheckPerson() {
-		return getStr("CheckPerson");
-	}
-
-	/**
-	 * 仓库编码
-	 */
-	public M setWhCode(String WhCode) {
-		set("WhCode", WhCode);
-		return (M)this;
-	}
-
-	/**
-	 * 仓库编码
-	 */
-	@JBoltField(name="WhCode" ,columnName="WhCode",type="String", remark="仓库编码", required=true, maxLength=30, fixed=0, order=6)
-	public String getWhCode() {
-		return getStr("WhCode");
-	}
-
-//	/**
-//	 * 创建人
-//	 */
-//	public M setCreatePerson(String CreatePerson) {
-//		set("CreatePerson", CreatePerson);
-//		return (M)this;
-//	}
-//
-//	/**
-//	 * 创建人
-//	 */
-//	@JBoltField(name="CreatePerson" ,columnName="CreatePerson",type="String", remark="创建人", required=true, maxLength=30, fixed=0, order=7)
-//	public String getCreatePerson() {
-//		return getStr("CreatePerson");
-//	}
-//
-//	/**
-//	 * 创建时间
-//	 */
-//	public M setCreateDate(java.util.Date CreateDate) {
-//		set("CreateDate", CreateDate);
-//		return (M)this;
-//	}
-//
-//	/**
-//	 * 创建时间
-//	 */
-//	@JBoltField(name="CreateDate" ,columnName="CreateDate",type="Date", remark="创建时间", required=true, maxLength=23, fixed=3, order=8)
-//	public java.util.Date getCreateDate() {
-//		return getDate("CreateDate");
-//	}
-
-	/**
-	 * 更新人
-	 */
-	public M setModifyPerson(String ModifyPerson) {
-		set("ModifyPerson", ModifyPerson);
-		return (M)this;
-	}
-
-	/**
-	 * 更新人
-	 */
-	@JBoltField(name="ModifyPerson" ,columnName="ModifyPerson",type="String", remark="更新人", required=false, maxLength=30, fixed=0, order=9)
-	public String getModifyPerson() {
-		return getStr("ModifyPerson");
-	}
-
-	/**
-	 * 更新时间
-	 */
-	public M setModifyDate(java.util.Date ModifyDate) {
-		set("ModifyDate", ModifyDate);
-		return (M)this;
-	}
-
-	/**
-	 * 更新时间
-	 */
-	@JBoltField(name="ModifyDate" ,columnName="ModifyDate",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=10)
-	public java.util.Date getModifyDate() {
-		return getDate("ModifyDate");
-	}
-
+    /**审批方式：1. 审核 2. 审批流*/
+    public static final String IAUDITWAY = "iAuditWay";
+    /**提审时间*/
+    public static final String DSUBMITTIME = "dSubmitTime";
+    /**审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过*/
+    public static final String IAUDITSTATUS = "iAuditStatus";
+    /**是否删除：0. 否 1. 是*/
+    public static final String ISDELETED = "isDeleted";
+    /**创建人ID*/
+    public static final String ICREATEBY = "icreateby";
+    /**创建人名称*/
+    public static final String CCREATENAME = "ccreatename";
+    /**创建时间*/
+    public static final String DCREATETIME = "dcreatetime";
+    /**更新人ID*/
+    public static final String IUPDATEBY = "iupdateby";
+    /**更新人名称*/
+    public static final String CUPDATENAME = "cupdatename";
+    /**更新时间*/
+    public static final String DUPDATETIME = "dupdatetime";
+    /**审核人ID */
+    public static final String IAUDITBY = "iauditby";
+    /**审核人名称*/
+    public static final String CAUDITNAME = "cauditname";
+    /**审核时间*/
+    public static final String DAUDITTIME = "dAuditTime";
 	/**
 	 * 主键id
 	 */
-	public M setAutoId(Long AutoId) {
+	public M setAutoId(java.lang.Long AutoId) {
 		set("AutoId", AutoId);
 		return (M)this;
 	}
@@ -232,16 +64,118 @@ public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> exte
 	/**
 	 * 主键id
 	 */
-	@JBoltField(name="AutoId" ,columnName="AutoId",type="Long", remark="主键id", required=true, maxLength=19, fixed=0, order=11)
-	@JSONField(serializeUsing= ToStringSerializer.class)
-	public Long getAutoId() {
+	@JBoltField(name="autoid" ,columnName="AutoId",type="Long", remark="主键id", required=true, maxLength=19, fixed=0, order=1)
+	@JSONField(name = "autoid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getAutoId() {
 		return getLong("AutoId");
+	}
+
+	/**
+	 * 组织编码
+	 */
+	public M setOrganizeCode(java.lang.String OrganizeCode) {
+		set("OrganizeCode", OrganizeCode);
+		return (M)this;
+	}
+
+	/**
+	 * 组织编码
+	 */
+	@JBoltField(name="organizecode" ,columnName="OrganizeCode",type="String", remark="组织编码", required=true, maxLength=30, fixed=0, order=2)
+	@JSONField(name = "organizecode")
+	public java.lang.String getOrganizeCode() {
+		return getStr("OrganizeCode");
+	}
+
+	/**
+	 * 盘点方式;0 明盘 1 暗盘
+	 */
+	public M setCheckType(java.lang.String CheckType) {
+		set("CheckType", CheckType);
+		return (M)this;
+	}
+
+	/**
+	 * 盘点方式;0 明盘 1 暗盘
+	 */
+	@JBoltField(name="checktype" ,columnName="CheckType",type="String", remark="盘点方式;0 明盘 1 暗盘", required=true, maxLength=30, fixed=0, order=3)
+	@JSONField(name = "checktype")
+	public java.lang.String getCheckType() {
+		return getStr("CheckType");
+	}
+
+	/**
+	 * 单号
+	 */
+	public M setBillNo(java.lang.String BillNo) {
+		set("BillNo", BillNo);
+		return (M)this;
+	}
+
+	/**
+	 * 单号
+	 */
+	@JBoltField(name="billno" ,columnName="BillNo",type="String", remark="单号", required=true, maxLength=30, fixed=0, order=4)
+	@JSONField(name = "billno")
+	public java.lang.String getBillNo() {
+		return getStr("BillNo");
+	}
+
+	/**
+	 * 单据日期
+	 */
+	public M setBillDate(java.lang.String BillDate) {
+		set("BillDate", BillDate);
+		return (M)this;
+	}
+
+	/**
+	 * 单据日期
+	 */
+	@JBoltField(name="billdate" ,columnName="BillDate",type="String", remark="单据日期", required=true, maxLength=30, fixed=0, order=5)
+	@JSONField(name = "billdate")
+	public java.lang.String getBillDate() {
+		return getStr("BillDate");
+	}
+
+	/**
+	 * 盘点人
+	 */
+	public M setCheckPerson(java.lang.String CheckPerson) {
+		set("CheckPerson", CheckPerson);
+		return (M)this;
+	}
+
+	/**
+	 * 盘点人
+	 */
+	@JBoltField(name="checkperson" ,columnName="CheckPerson",type="String", remark="盘点人", required=true, maxLength=30, fixed=0, order=6)
+	@JSONField(name = "checkperson")
+	public java.lang.String getCheckPerson() {
+		return getStr("CheckPerson");
+	}
+
+	/**
+	 * 仓库编码
+	 */
+	public M setWhCode(java.lang.String WhCode) {
+		set("WhCode", WhCode);
+		return (M)this;
+	}
+
+	/**
+	 * 仓库编码
+	 */
+	@JBoltField(name="whcode" ,columnName="WhCode",type="String", remark="仓库编码", required=true, maxLength=30, fixed=0, order=7)
+	@JSONField(name = "whcode")
+	public java.lang.String getWhCode() {
+		return getStr("WhCode");
 	}
 
 	/**
 	 * 库位编码,多个用,分隔
 	 */
-	public M setPoscodes(String poscodes) {
+	public M setPoscodes(java.lang.String poscodes) {
 		set("poscodes", poscodes);
 		return (M)this;
 	}
@@ -249,116 +183,232 @@ public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> exte
 	/**
 	 * 库位编码,多个用,分隔
 	 */
-	@JBoltField(name="poscodes" ,columnName="poscodes",type="String", remark="库位编码,多个用,分隔", required=false, maxLength=255, fixed=0, order=12)
-	public String getPoscodes() {
+	@JBoltField(name="poscodes" ,columnName="poscodes",type="String", remark="库位编码,多个用,分隔", required=false, maxLength=255, fixed=0, order=8)
+	@JSONField(name = "poscodes")
+	public java.lang.String getPoscodes() {
 		return getStr("poscodes");
 	}
 
+	/**
+	 * 审批方式：1. 审核 2. 审批流
+	 */
+	public M setIAuditWay(java.lang.Integer iAuditWay) {
+		set("iAuditWay", iAuditWay);
+		return (M)this;
+	}
 
 	/**
-	 * 库位编码,多个用,分隔
+	 * 审批方式：1. 审核 2. 审批流
 	 */
-	@JBoltField(name="isDeleted" ,columnName="isDeleted",type="String", remark="是否删除：0. 否 1. 是", required=true, maxLength=255, fixed=0, order=12)
-	public String getIsDeleted() {
-		return getStr("isDeleted");
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审核 2. 审批流", required=false, maxLength=10, fixed=0, order=9)
+	@JSONField(name = "iauditway")
+	public java.lang.Integer getIAuditWay() {
+		return getInt("iAuditWay");
 	}
 
-	public M setIsDeleted(String isDeleted) {
-		set("isDeleted", isDeleted);
+	/**
+	 * 提审时间
+	 */
+	public M setDSubmitTime(java.util.Date dSubmitTime) {
+		set("dSubmitTime", dSubmitTime);
 		return (M)this;
 	}
 
-	@JBoltField(name="iCreateBy" ,columnName="icreateby",type="String", remark="创建人id", required=true, maxLength=255, fixed=0, order=12)
-	public Long getICreateBy() {
-		return getLong("iCreateBy");
+	/**
+	 * 提审时间
+	 */
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=10)
+	@JSONField(name = "dsubmittime")
+	public java.util.Date getDSubmitTime() {
+		return getDate("dSubmitTime");
 	}
 
-	public M setICreateBy(Long iCreateBy) {
-		set("iCreateBy", iCreateBy);
-		return (M)this;
-	}
-	@JBoltField(name="cCreateName" ,columnName="ccreatename",type="String", remark="创建人", required=true, maxLength=255, fixed=0, order=12)
-	public String getCCreateName() {
-		return getStr("cCreateName");
-	}
-
-	public M setCCreateName(String cCreateName) {
-		set("cCreateName", cCreateName);
-		return (M)this;
-	}
-
-	@JBoltField(name="dCreateTime" ,columnName="dcreatetime",type="Date", remark="创建时间", required=true, maxLength=255, fixed=0, order=12)
-	public Date getDCreateTime() {
-		return getDate("dCreateTime");
-	}
-
-	public M setDCreateTime(Date dCreateTime) {
-		set("dCreateTime", dCreateTime);
-		return (M)this;
-	}
-
-
-	@JBoltField(name="cUpdateName" ,columnName="cupdatename",type="String", remark="修改人", required=true, maxLength=255, fixed=0, order=12)
-	public String getCUpdateName() {
-		return getStr("cUpdateName");
-	}
-
-	public M setCUpdateName(String cUpdateName) {
-		set("cUpdateName", cUpdateName);
-		return (M)this;
-	}
-
-	@JBoltField(name="dUpdateTime" ,columnName="dupdatetime",type="Date", remark="修改时间", required=true, maxLength=255, fixed=0, order=12)
-	public Date getDUpdateTime() {
-		return getDate("dUpdateTime");
-	}
-
-	public M setDUpdateTime(Date dUpdateTime) {
-		set("dUpdateTime", dUpdateTime);
-		return (M)this;
-	}
-
-	@JBoltField(name="iAuditStatus" ,columnName="iAuditStatus",type="int", remark="审核状态", required=true, maxLength=255, fixed=0, order=12)
-	public Integer getIAuditStatus() {
-		return getInt("iAuditStatus");
-	}
-
-	public M setIAuditStatus(Integer iAuditStatus) {
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	public M setIAuditStatus(java.lang.Integer iAuditStatus) {
 		set("iAuditStatus", iAuditStatus);
 		return (M)this;
 	}
 
-
-	@JBoltField(name="iAuditBy" ,columnName="iauditby",type="String", remark="更新人id", required=true, maxLength=255, fixed=0, order=12)
-	public Long getIAuditBy() {
-		return getLong("iAuditBy");
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=11)
+	@JSONField(name = "iauditstatus")
+	public java.lang.Integer getIAuditStatus() {
+		return getInt("iAuditStatus");
 	}
 
-	public M setIAuditBy(Long iAuditBy) {
-		set("iAuditBy", iAuditBy);
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
 		return (M)this;
 	}
 
-
-	@JBoltField(name="cAuditName" ,columnName="cauditname",type="String", remark="审批人", required=true, maxLength=255, fixed=0, order=12)
-	public String getCAuditName() {
-		return getStr("cAuditName");
+	/**
+	 * 是否删除：0. 否 1. 是
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=12)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
-	public M setCAuditName(String cAuditName) {
-		set("cAuditName", cAuditName);
-		return (M)this;
-	}
-	@JBoltField(name="iAuditBy" ,columnName="iauditby",type="String", remark="审批人id", required=true, maxLength=255, fixed=0, order=12)
-	public Long getDAuditBy() {
-		return getLong("iAuditBy");
-	}
-
-	public M setDAuditBy(Long iAuditBy) {
-		set("iAuditBy", iAuditBy);
+	/**
+	 * 创建人ID
+	 */
+	public M setIcreateby(java.lang.Long icreateby) {
+		set("icreateby", icreateby);
 		return (M)this;
 	}
 
+	/**
+	 * 创建人ID
+	 */
+	@JBoltField(name="icreateby" ,columnName="icreateby",type="Long", remark="创建人ID", required=false, maxLength=19, fixed=0, order=13)
+	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIcreateby() {
+		return getLong("icreateby");
+	}
+
+	/**
+	 * 创建人名称
+	 */
+	public M setCcreatename(java.lang.String ccreatename) {
+		set("ccreatename", ccreatename);
+		return (M)this;
+	}
+
+	/**
+	 * 创建人名称
+	 */
+	@JBoltField(name="ccreatename" ,columnName="ccreatename",type="String", remark="创建人名称", required=false, maxLength=60, fixed=0, order=14)
+	@JSONField(name = "ccreatename")
+	public java.lang.String getCcreatename() {
+		return getStr("ccreatename");
+	}
+
+	/**
+	 * 创建时间
+	 */
+	public M setDcreatetime(java.util.Date dcreatetime) {
+		set("dcreatetime", dcreatetime);
+		return (M)this;
+	}
+
+	/**
+	 * 创建时间
+	 */
+	@JBoltField(name="dcreatetime" ,columnName="dcreatetime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=15)
+	@JSONField(name = "dcreatetime")
+	public java.util.Date getDcreatetime() {
+		return getDate("dcreatetime");
+	}
+
+	/**
+	 * 更新人ID
+	 */
+	public M setIupdateby(java.lang.Long iupdateby) {
+		set("iupdateby", iupdateby);
+		return (M)this;
+	}
+
+	/**
+	 * 更新人ID
+	 */
+	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="更新人ID", required=false, maxLength=19, fixed=0, order=16)
+	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIupdateby() {
+		return getLong("iupdateby");
+	}
+
+	/**
+	 * 更新人名称
+	 */
+	public M setCupdatename(java.lang.String cupdatename) {
+		set("cupdatename", cupdatename);
+		return (M)this;
+	}
+
+	/**
+	 * 更新人名称
+	 */
+	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="更新人名称", required=false, maxLength=60, fixed=0, order=17)
+	@JSONField(name = "cupdatename")
+	public java.lang.String getCupdatename() {
+		return getStr("cupdatename");
+	}
+
+	/**
+	 * 更新时间
+	 */
+	public M setDupdatetime(java.util.Date dupdatetime) {
+		set("dupdatetime", dupdatetime);
+		return (M)this;
+	}
+
+	/**
+	 * 更新时间
+	 */
+	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=18)
+	@JSONField(name = "dupdatetime")
+	public java.util.Date getDupdatetime() {
+		return getDate("dupdatetime");
+	}
+
+	/**
+	 * 审核人ID 
+	 */
+	public M setIauditby(java.lang.Long iauditby) {
+		set("iauditby", iauditby);
+		return (M)this;
+	}
+
+	/**
+	 * 审核人ID 
+	 */
+	@JBoltField(name="iauditby" ,columnName="iauditby",type="Long", remark="审核人ID ", required=false, maxLength=19, fixed=0, order=19)
+	@JSONField(name = "iauditby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIauditby() {
+		return getLong("iauditby");
+	}
+
+	/**
+	 * 审核人名称
+	 */
+	public M setCauditname(java.lang.String cauditname) {
+		set("cauditname", cauditname);
+		return (M)this;
+	}
+
+	/**
+	 * 审核人名称
+	 */
+	@JBoltField(name="cauditname" ,columnName="cauditname",type="String", remark="审核人名称", required=false, maxLength=60, fixed=0, order=20)
+	@JSONField(name = "cauditname")
+	public java.lang.String getCauditname() {
+		return getStr("cauditname");
+	}
+
+	/**
+	 * 审核时间
+	 */
+	public M setDAuditTime(java.util.Date dAuditTime) {
+		set("dAuditTime", dAuditTime);
+		return (M)this;
+	}
+
+	/**
+	 * 审核时间
+	 */
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=21)
+	@JSONField(name = "daudittime")
+	public java.util.Date getDAuditTime() {
+		return getDate("dAuditTime");
+	}
 
 }
 
