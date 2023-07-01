@@ -272,11 +272,11 @@ public class VendorClassService extends BaseService<VendorClass> {
     /**
      * 供应商分类excel导入数据库
      */
-    public Ret importExcelData(File file, String cformatName) {
+    public Ret importExcelData(File file) {
         StringBuilder errorMsg = new StringBuilder();
         
         // 使用字段配置维护
-        List<Record> vendorClasses = cusFieldsMappingdService.getImportRecordsByTableName(file, cformatName);
+        List<Record> vendorClasses = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
         
         if (notOk(vendorClasses)) {
             if (errorMsg.length() > 0) {
