@@ -152,11 +152,6 @@
 hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
-    function closeHandler(){
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
-
     //获取表格名称数据获取对应列表数据
 function getProdFormDatas() {
     let iprodformid = $("input[name='iprodformid']").val();

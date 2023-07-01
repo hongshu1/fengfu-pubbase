@@ -425,10 +425,7 @@
     function insertUnfinishInvestmentPlanItem(datas){
     	jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
     }
-    function closeHandler(){
-    	parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
+
 </script>
 #end
 

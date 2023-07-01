@@ -38,14 +38,9 @@
 #end
 #define js()
 <script>
-    // 关闭
-    function closeHandler() {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
+    
     //获得配置参数
-    function getEditableTableOptions_#(pageId)()
-    {
+    function getEditableTableOptions_#(pageId)() {
         var editableTableOptions = {
             maxRowCount: 9999,
             cols: {

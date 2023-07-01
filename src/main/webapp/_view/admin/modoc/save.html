@@ -241,8 +241,6 @@
     function closeHandler(){
         LayerMsgBox.confirm("确认关闭此数据?",function(){
             subDoc("","admin/modoc/stopSave")
-            //parent.layer.close(parent.layer.getFrameIndex(window.name));
-            //window.parent.refreshJBoltTable();
         });
     }
     function  subDoc2(rowid,url) {
@@ -408,11 +406,8 @@
         console.log("提交表单")
         jboltTableSubmit("#itemroutingconfigid_#(pageId)");
     }
-    /* function closeHandler(){
-         parent.layer.close(parent.layer.getFrameIndex(window.name));
-         window.parent.refreshJBoltTable();
-     }*/
-    function  reqTableDate(requrl){
+
+    function  reqTableDate(requrl) {
         if(!requrl){
             return;
         }

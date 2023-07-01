@@ -90,11 +90,6 @@
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
 
-    function closeHandler() {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        window.parent.refreshJBoltTable();
-    }
-
     function submitThisForm1() {
         var ele=document.getElementById("taBle")
         var dontShowError=false

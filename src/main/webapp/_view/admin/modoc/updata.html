@@ -233,15 +233,14 @@
             // submitThisForm();
             subDoc("","admin/modoc/subSave")
         });
-
     }
+    
     function closeHandler(){
         LayerMsgBox.confirm("确认关闭此数据?",function(){
-            subDoc("","admin/modoc/stopSave")
-            //parent.layer.close(parent.layer.getFrameIndex(window.name));
-            //window.parent.refreshJBoltTable();
+            subDoc("", "admin/modoc/stopSave");
         });
     }
+    
     function  subDoc2(rowid,url) {
         var tableDatas = getJboltTableAllDatas('itemroutingconfigid2_#(pageId)');
         var formData = formToJson('moDocForm_#(pageId)');
@@ -411,10 +410,7 @@
         console.log("提交表单")
         jboltTableSubmit("#itemroutingconfigid2_#(pageId)");
     }
-    /* function closeHandler(){
-         parent.layer.close(parent.layer.getFrameIndex(window.name));
-         window.parent.refreshJBoltTable();
-     }*/
+    
     function  reqTableDate(requrl){
         if(!requrl){
             return;
