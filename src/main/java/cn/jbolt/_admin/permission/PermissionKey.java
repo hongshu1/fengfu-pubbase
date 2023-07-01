@@ -1993,10 +1993,7 @@ public class PermissionKey {
 	 * 提交审核
 	 */
 	public static final String PURCHASE_INSTRUMENT_SUBMIT = "purchase_instrument_submit";
-	/**
-	 * 上传附件
-	 */
-	public static final String PURCHASE_INSTRUMENT_UPLOAD_FILE = "purchase_instrument_upload_file";
+
 	/**
 	 * 删除
 	 */
