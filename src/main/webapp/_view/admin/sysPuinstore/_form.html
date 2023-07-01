@@ -110,7 +110,7 @@
                   </div>
                 </div>
 
-                <div class="form-group row">
+                <!--<div class="form-group row">
                   <label class="col-sm-3 col-form-label">订单类型</label>
                   <div class="col-6">
                     <select class="form-control"
@@ -127,8 +127,8 @@
                             data-select="#(sysPuinstore.sourcebilltype??)"
                     ></select>
                   </div>
-                </div>
-              </div>
+                </div>-->
+            </div>
 
               <div class="col">
                 <div class="form-group row">
@@ -181,7 +181,6 @@
                   </div>
                 </div>
 
-<!--                <input type="text" id="ibustype" name="ibustype" value="#(sysPuinstore.ibustype??)"/>-->
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">业务类型</label>
                   <div class="col-6">
@@ -325,6 +324,11 @@
       LayerMsgBox.alert("现品票不能为空")
       return;
     }
+    let sourcebillno = $("#sourcebillno").val();
+    if(sourcebillno=='' || sourcebillno == undefined || sourcebillno == null){
+      LayerMsgBox.alert("请先选择订单号")
+      return;
+    }
     var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
     let array = new Array();
     if (null != data) {
@@ -341,12 +345,12 @@
 
     if (barcode) {
       var ordertype = $("#ordertype").val().trim();
-      Ajax.post("admin/materialReceiptList/scanBarcode", {"barcode": barcode.trim(),"orderType":ordertype}, function (res) {
+      Ajax.post("admin/purchaseReceiptList/scanBarcode", {"barcode": barcode.trim(),"orderType":ordertype}, function (res) {
         //扫描的现品票必须归属于同一张采购订单
         let data = res.data;
-        let sourcebillno = $("#sourcebillno").val('');
+        let sourcebillno = $("#sourcebillno").val();
         if (data.sourcebillno != sourcebillno) {
-          LayerMsgBox.alert("现品票的订单号必须是: " + sourcebillno, 2);
+          LayerMsgBox.alert("现品票的订单号是: " + data.sourcebillno+"，与选择的订单号 "+ sourcebillno +"不同", 2);
           return;
         }
         jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
@@ -419,7 +423,7 @@
       },
       cols: {
         barcode: { //现品票条码
-          linkPara: "input[name='detailHidden']",
+          linkPara: "input[name='sourcebillno'],input[name='ordertype']",
           maxLength: 100,
           required: false,
           placeholder: "=请选择现品票=",
@@ -429,7 +433,7 @@
           width: 1100,
           sync: "",
           valueAttr: "barcode",
-          columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,brandcode,brandname,purchasecuomcode,purchasecuomname",
+          columnAttr: "barcode,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,brandcode,brandname,puunitcode,puunitname",
           header: '现品票,存货编码,存货名称,客户部番,部品名称,规格型号,品牌编码,品牌,采购编码,采购单位',
           changeColumns: [{column: "barcode", use: "barcode"},
             {column: "invcode", use: "cinvcode"},
@@ -439,8 +443,8 @@
             {column: "cinvstd", use: "cinvstd"},
             {column: "brandcode", use: "brandcode"},
             {column: "brandname", use: "brandname"},
-            {column: "puunitcode", use: "purchasecuomcode"},
-            {column: "puunitname", use: "purchasecuomname"}],
+            {column: "puunitcode", use: "puunitcode"},
+            {column: "puunitname", use: "puunitname"}],
 
           handler: function (table, td, text, value, jsonData) {
             let datas = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
@@ -462,7 +466,7 @@
         invcode: {
           type: "autocomplete",
           url: "admin/purchaseReceiptList/getInsertPuinstoreDetail",
-          linkPara: "input[name='sourcebillno']",
+          linkPara: "input[name='sourcebillno'],input[name='ordertype']",
           maxLength: 100,
           required: false,
           placeholder: "=请选择存货编码=",
@@ -470,7 +474,7 @@
           width: 1100,
           valueAttr: "invcode",
           columnAttr:
-              "sourcebillno,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,brandcode,brandname,purchasecuomcode,purchasecuomname",
+              "sourcebillno,cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,brandcode,brandname,puunitcode,puunitname",
           header: '订单号,存货编码,存货名称,客户部番,部品名称,规格型号,品牌编码,品牌,采购编码,采购单位',
           changeColumns: [{column: "invcode", use: "cinvcode"},
             {column: "cinvname", use: "cinvname"},
@@ -479,8 +483,8 @@
             {column: "cinvstd", use: "cinvstd"},
             {column: "brandcode", use: "brandcode"},
             {column: "brandname", use: "brandname"},
-            {column: "puunitcode", use: "purchasecuomcode"},
-            {column: "puunitname", use: "purchasecuomname"}],
+            {column: "puunitcode", use: "puunitcode"},
+            {column: "puunitname", use: "puunitname"}],
         },
         qty: {
           type: "amount",//类型

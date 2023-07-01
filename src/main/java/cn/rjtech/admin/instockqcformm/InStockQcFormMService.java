@@ -27,6 +27,7 @@ import cn.rjtech.model.momdata.base.BaseInStockQcFormD;
 import cn.rjtech.model.momdata.base.BaseInstockqcformdLine;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.excel.SheetPage;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -35,6 +36,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import org.apache.commons.collections4.ListUtils;
 import org.jxls.util.Util;
 
@@ -528,14 +530,14 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
 
         InStockQcFormM stockQcFormM = findByCBarcodeAndInvcode(cbarcode, record.getStr("iinventoryid"));
         ValidationUtils.isTrue(stockQcFormM == null, cbarcode + "：数据记录已存在，不需要新增！！！");
-        if(StrUtil.isBlank(record.getStr("cinvcode1"))){
-            record.set("cinvcode1","");
+        if (StrUtil.isBlank(record.getStr("cinvcode1"))) {
+            record.set("cinvcode1", "");
         }
-        if (StrUtil.isBlank(record.getStr("iqty"))){
-            record.set("iqty","");
+        if (StrUtil.isBlank(record.getStr("iqty"))) {
+            record.set("iqty", "");
         }
-        if (StrUtil.isBlank(record.getStr("cinvname1"))){
-            record.set("cinvname1","");
+        if (StrUtil.isBlank(record.getStr("cinvname1"))) {
+            record.set("cinvname1", "");
         }
         return record;
     }
@@ -552,8 +554,8 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
      * cinvcode1：客户部番
      * cinvname1：部品名称
      * */
-    public Ret saveInStockQcFormByCbarcode(String cbarcode, Integer iqty, String invcode, String cinvcode1, String cinvname1,
-                                           String iinventoryid, String cdcno, String cMeasureReason, Long iqcformid) {
+    public Ret saveInStockQcFormByCbarcode(String cbarcode, Integer iqty, String invcode, Long iinventoryid, String cdcno,
+                                           String cMeasureReason, Long iqcformid) {
         User user = JBoltUserKit.getUser();
         Long userId = JBoltUserKit.getUserId();
         Date now = new Date();
@@ -565,11 +567,12 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
         inStockQcFormM.setCOrgName(getOrgName());
         inStockQcFormM.setCInvQcFormNo(String.valueOf(JBoltSnowflakeKit.me.nextId()));//检验单号
 
-        Record byQcFormId = inventoryQcFormService.findByQcFormId(iqcformid);
-        ValidationUtils.notNull(byQcFormId, "存货编码：" + invcode + " 没有在【质量建模-检验适用标准】维护标准表格，无法生成单据！！！");
-
-        inStockQcFormM.setIQcFormId(iqcformid);
-        inStockQcFormM.setIInventoryId(Long.valueOf(iinventoryid));
+        Record record = inventoryQcFormService.findByQcFormId(iqcformid);
+//        ValidationUtils.notNull(byQcFormId, "存货编码：" + invcode + " 没有在【质量建模-检验适用标准】维护标准表格，无法生成单据！！！");
+        if (record != null){
+            inStockQcFormM.setIQcFormId(iqcformid);
+        }
+        inStockQcFormM.setIInventoryId(iinventoryid);
         inStockQcFormM.setIQty(iqty);
         inStockQcFormM.setCBarcode(cbarcode);
         inStockQcFormM.setCBatchNo(sdf.format(now));//批次号
@@ -589,25 +592,6 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
 
         ValidationUtils.isTrue(inStockQcFormM.save(), "在库检验单据创建失败！！！");
         return SUCCESS;
-    }
-
-    /**
-     * 跳转到onlysee页面
-     */
-    public List<Record> getonlyseelistByiautoid(Long iautoid) {
-        Kv kv = new Kv();
-        kv.set("iinstockqcformmid", iautoid);
-        List<Record> clearRecordList = rcvDocQcFormMService
-            .clearZero(dbTemplate("instockqcformm.getonlyseelistByiautoid", kv).find());
-
-        Map<Object, List<Record>> map = clearRecordList.stream()
-            .collect(Collectors.groupingBy(p -> p.get("iautoid"), Collectors.toList()));
-        List<Record> docparamlist = new ArrayList<>();
-        for (Entry<Object, List<Record>> entry : map.entrySet()) {
-            docparamlist = entry.getValue();
-            break;
-        }
-        return docparamlist;
     }
 
     /*
@@ -721,14 +705,6 @@ public class InStockQcFormMService extends BaseService<InStockQcFormM> {
             page.setDetails(records);
             pages.add(page);
         }
-    }
-
-    public boolean checkCValueIsNotBlank(String cvalue) {
-        boolean isblank = false;
-        if (StrUtil.isNotBlank(cvalue)) {
-            return isblank = true;
-        }
-        return isblank;
     }
 
     /*

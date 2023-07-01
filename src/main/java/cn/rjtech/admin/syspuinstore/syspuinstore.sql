@@ -148,8 +148,8 @@ select
     t1.iAutoId AS SourceBillID,
     t1.dOrderDate AS BillDate,
     t1.iPurchaseTypeId,
-    t7.cVenCode,
-    t7.cVenName,
+    t7.cVenCode as vencode,
+    t7.cVenName as venname,
     t5.cInvStd,
     t5.cInvCode,
     t5.cInvName,
@@ -190,45 +190,85 @@ where 1=1
 #end
 #end
 
-#sql("getInsertPuinstoreDetail")
+#sql("getInsertPuinstoreDetailByPO")
 SELECT
-    pt.cPTName AS BillType,
-    a.cOrderNo AS SourceBillNo,
-    a.iAutoId AS SourceBillID,
-    a.dOrderDate AS BillDate,
-    a.iPurchaseTypeId,
-    ven.cVenCode AS VenCode,
-    ven.cVenName AS VenName,
-    inv.cInvStd,inv.cInvCode,inv.cInvName,inv.cinvcode1,inv.cinvname1,
-    dep.cDepCode,dep.cDepName,
-    u.cuomname as purchasecuomname,u.cuomcode as purchasecuomcode,
-    c.cbarcode
+    t1.cOrderNo AS SourceBillNo,
+    t1.iAutoId AS SourceBillID,
+    t1.dOrderDate AS BillDate,
+    t1.iPurchaseTypeId,
+    t4.cPTName AS BillType,
+    t5.cVenCode AS VenCode,
+    t5.cVenName AS VenName,
+    t3.cInvStd,
+    t3.cInvCode,
+    t3.cInvName,
+    t3.cinvcode1,
+    t3.cinvname1,
+    t6.cDepCode,
+    t6.cDepName,
+    t7.cuomname as puunitname,
+    t7.cuomcode as puunitcode
 FROM
-    PS_PurchaseOrderM a
-        LEFT JOIN PS_PurchaseOrderD b ON a.iAutoId= b.iPurchaseOrderMid
-        AND b.isDeleted<> 1
-        LEFT JOIN PS_PurchaseOrderDBatch c ON c.iPurchaseOrderDid = b.iAutoId
-        AND c.isEffective= 1
-        LEFT JOIN dbo.PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = b.iAutoId
-        AND tc.iAutoId = c.iPurchaseOrderdQtyId
-        LEFT JOIN Bd_Inventory inv ON inv.iAutoId = b.iInventoryId
-        AND b.isDeleted<>1
-        LEFT JOIN Bd_PurchaseType pt ON  a.iPurchaseTypeId = pt.iAutoId
-        LEFT JOIN Bd_Vendor ven ON  a.iVendorId = ven.iAutoId
-        LEFT JOIN Bd_Department dep on dep.iAutoId = a.iDepartmentId
-        LEFT JOIN Bd_uom u on inv.iInventoryUomId1 = u.iautoid
-        WHERE 1 = 1
+PS_PurchaseOrderM t1
+LEFT JOIN PS_PurchaseOrderD t2 on t1.iAutoId = t2.iPurchaseOrderMid
+LEFT JOIN Bd_Inventory t3 on t2.iInventoryId = t3.iAutoId
+LEFT JOIN Bd_PurchaseType t4 on t1.iPurchaseTypeId = t4.iAutoId
+LEFT JOIN Bd_Vendor t5 on t1.iVendorId = t5.iAutoId
+LEFT JOIN Bd_Department t6 on t1.iDepartmentId = t6.iAutoId
+LEFT JOIN Bd_uom t7 on t3.iPurchaseUomId = t7.iAutoId
+where t1.IsDeleted = '0'
 #if(corderno)
-and a.cOrderNo = #para(corderno)
+and t1.cOrderNo = #para(corderno)
 #end
 #if(sourcebillno)
-and a.cOrderNo = #para(sourcebillno)
+and t1.cOrderNo = #para(sourcebillno)
 #end
 #if(q)
-    and (inv.cinvcode like concat('%',#para(q),'%') or inv.cinvcode1 like concat('%',#para(q),'%')
-        or inv.cinvname1 like concat('%',#para(q),'%') or inv.cinvstd like concat('%',#para(q),'%')
+    and (t3.cinvcode like concat('%',#para(q),'%') or t3.cinvcode1 like concat('%',#para(q),'%')
+        or t3.cinvname1 like concat('%',#para(q),'%') or t3.cinvstd like concat('%',#para(q),'%')
         )
-    order by inv.dUpdateTime desc
+    order by t3.dUpdateTime desc
+#end
+#end
+
+#sql("getInsertPuinstoreDetailByOM")
+SELECT
+t1.cOrderNo AS SourceBillNo,
+    t1.iAutoId AS SourceBillID,
+    t1.dOrderDate AS BillDate,
+    t1.iPurchaseTypeId,
+	t4.cPTName AS BillType,
+	t5.cVenCode AS VenCode,
+    t5.cVenName AS VenName,
+	t3.cInvStd,
+    t3.cInvCode,
+    t3.cInvName,
+    t3.cinvcode1,
+    t3.cinvname1,
+	t6.cDepCode,
+	t6.cDepName,
+	t7.cuomname as puunitname,
+    t7.cuomcode as puunitcode
+FROM
+PS_SubcontractOrderM t1
+LEFT JOIN PS_SubcontractOrderD t2 on t1.iAutoId = t2.iSubcontractOrderMid
+LEFT JOIN Bd_Inventory t3 on t2.iInventoryId = t3.iAutoId
+LEFT JOIN Bd_PurchaseType t4 on t1.iPurchaseTypeId = t4.iAutoId
+LEFT JOIN Bd_Vendor t5 on t1.iVendorId = t5.iAutoId
+LEFT JOIN Bd_Department t6 on t1.iDepartmentId = t6.iAutoId
+LEFT JOIN Bd_uom t7 on t3.iPurchaseUomId = t7.iAutoId
+where t1.IsDeleted = '0'
+#if(corderno)
+and t1.cOrderNo = #para(corderno)
+#end
+#if(sourcebillno)
+and t1.cOrderNo = #para(sourcebillno)
+#end
+#if(q)
+    and (t3.cinvcode like concat('%',#para(q),'%') or t3.cinvcode1 like concat('%',#para(q),'%')
+        or t3.cinvname1 like concat('%',#para(q),'%') or t3.cinvstd like concat('%',#para(q),'%')
+        )
+    order by t3.dUpdateTime desc
 #end
 #end
 
@@ -294,13 +334,13 @@ select
     t3.iBusType as SourceBillType,
     t3.cDocNo+'-'+CAST(t5.iseq AS NVARCHAR(10)) as SourceBillNoRow,
     t3.cOrderNo as SourceBillID,
-	t4.cinvcode,
+	t4.cinvcode as invcode,
     t4.cinvname,
     t4.cInvCode ,
     t4.cInvCode1,
     t4.cInvName1,
     t4.cinvstd,
-	t6.cUomCode,
+	t6.cUomCode as puunitcode,
     t6.cUomName as purchasecuomname,
     t6.cUomName as  puunitname
 from PS_PurchaseOrderDBatch t1
@@ -311,10 +351,10 @@ LEFT JOIN PS_PurchaseOrderD_Qty t5 on t5.iPurchaseOrderDid = t3.iAutoId AND t5.i
 LEFT JOIN Bd_Uom t6 on t4.iPurchaseUomId = t6.iAutoId
 where t1.isEffective = '1'
 #if(corderno)
-and a.cOrderNo = #para(corderno)
+and t3.cOrderNo = #para(corderno)
 #end
 #if(sourcebillno)
-and a.cOrderNo = #para(sourcebillno)
+and t3.cOrderNo = #para(sourcebillno)
 #end
 #if(barcode)
 and t1.cCompleteBarcode = #para(barcode)
@@ -339,13 +379,13 @@ select
     t3.iBusType as SourceBillType,
     t3.cDocNo+'-'+CAST(t5.iseq AS NVARCHAR(10)) as SourceBillNoRow,
     t3.cOrderNo as SourceBillID,
-	t4.cinvcode,
+	t4.cinvcode as invcode,
     t4.cinvname,
     t4.cInvCode ,
     t4.cInvCode1,
     t4.cInvName1,
     t4.cinvstd,
-	t6.cUomCode,
+	t6.cUomCode  as puunitcode,,
     t6.cUomName as purchasecuomname,
     t6.cUomName as  puunitname
 from PS_SubcontractOrderDBatch t1
@@ -356,10 +396,10 @@ left join PS_SubcontractOrderD_Qty t5 on t5.iSubcontractOrderDid = t3.iAutoId AN
 LEFT JOIN Bd_Uom t6 on t4.iPurchaseUomId = t6.iAutoId
 where t1.isEffective = '1'
 #if(corderno)
-and a.cOrderNo = #para(corderno)
+and t3.cOrderNo = #para(corderno)
 #end
 #if(sourcebillno)
-and a.cOrderNo = #para(sourcebillno)
+and t3.cOrderNo = #para(sourcebillno)
 #end
 #if(barcode)
 and t1.cCompleteBarcode = #para(barcode)
