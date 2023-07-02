@@ -11,7 +11,7 @@
 				<form class="form-inline" id="cusOrderResult_form"   onsubmit="return false;" method="post">
 					<div class="input-group d-inline-block text-nowrap">
 						<div class="input-group-prepend">
-							<input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" id="beginDate" name="startdate" value="#date(DateUtil.toDate(startdate??),'yyyy-MM-dd')" data-rule="required">
+							<input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" id="startDate" name="startdate" value="#date(DateUtil.toDate(startdate??),'yyyy-MM-dd')" data-rule="required">
 						</div>
 						<div class="input-group-append">
 							<span class="input-group-text">至</span>
@@ -20,10 +20,33 @@
 							<input type="text" data-date class="form-control rounded-left-0" placeholder="=截止日期=" maxlength="20" id="endDate" name="enddate" value="#date(DateUtil.toDate(enddate??),'yyyy-MM-dd')" data-rule="required">
 						</div>
 					</div>
-					<input type="text" class="form-control" placeholder="客户名称" name="ccusname" value="#(ccusname??)" />
-					<input type="text" class="form-control" placeholder="存货编码" name="cinvcode" value="#(cinvcode??)" />
-					<input type="text" class="form-control" placeholder="客户部番" name="cinvcode1" value="#(cinvcode1??)" />
-					<input type="text" class="form-control" placeholder="部品名称" name="cinvname1" value="#(cinvname1??)" />
+					<input type="hidden" id="icustomerid" name="icustomerid"/>
+					<div class="input-group d-inline-block text-nowrap">
+						<div class="input-group-prepend">
+							<input type="text" class="form-control"
+								   data-autocomplete
+								   id="ccusname"
+								   data-url="admin/customer/autocomplete"
+								   data-sync-ele="#icustomermid,#icustomerid,#ccuscode"
+								   data-text-attr="ccusname"
+								   data-value-attr="iautoid"
+								   data-column-attr="ccuscode,ccusname"
+								   placeholder="=客户名称="
+								   data-tips="=客户名称="
+								   data-header="客户编码,客户名称"
+								   maxlength="40"
+								   value="">
+						</div>
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary" data-dialogbtn
+									data-area="1280,600"
+									data-title="选择数据（单选）"
+									data-url="admin/annualorderm/ccusname_dialog_index"><i
+									class="fa fa-search"></i></button>
+						</div>
+					</div>
+
+					<input type="text" class="form-control" placeholder="存货编码" name="iinventoryid" value="#(iinventoryid??)" />
 					<button type="submit" onclick="submitThisForm()" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 					<button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
 				</form>
@@ -46,6 +69,12 @@
 			console.log(JSON.stringify(formData));
 			AjaxPortalUtil.refresh('cusOrderResultPortal_#(pageId)');
 		}
+	}
+
+	function instCcusname(data)
+	{
+		$("#icustomerid").val(data.iautoid);
+		$("#ccusname").val(data.ccusname);
 	}
 </script>
 #end
