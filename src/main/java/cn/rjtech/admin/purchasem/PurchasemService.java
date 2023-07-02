@@ -830,9 +830,11 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 	 * @param jBoltTable
 	 * @return
 	 */
-	public Ret refBudgetSaveTableSubmit(JBoltTable jBoltTable) {
+	public Ret refBudgetSaveTableSubmit(JBoltTableMulti tableMulti) {
+		JBoltTable jBoltTable = tableMulti.getJBoltTable("purchaseds");
 		Purchasem purchasem = jBoltTable.getFormModel(Purchasem.class,"purchasem");
 		DataPermissionKit.validateAccess(purchasem.getCDepCode());
+		JBoltTable attachmentsTable = tableMulti.getJBoltTable("attachments");
 		Date now = new Date();
 		User loginUesr = JBoltUserKit.getUser();
 		tx(()->{
@@ -854,6 +856,8 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 			addPurchasedDatas(jBoltTable.getSaveRecordList(),purchasem);
 			updatePurchasedDatas(jBoltTable.getSaveRecordList());
 			deletePurchasedDatas(jBoltTable.getDelete());
+			//保存申购单附件
+	        saveAttachmentsTable(attachmentsTable,purchasem);
 			return true;
 		});
 		return successWithData(purchasem.keep("iautoid"));

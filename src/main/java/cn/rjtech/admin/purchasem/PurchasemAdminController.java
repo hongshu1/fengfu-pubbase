@@ -10,7 +10,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.common.enums.BusObjectTypeEnum;
 import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.kit.JBoltModelKit;
-import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
@@ -20,7 +19,6 @@ import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.jbolt.core.util.JBoltStringUtil;
-import cn.jbolt.extend.config.ExtendUploadFolder;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
@@ -50,7 +48,6 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import java.math.BigDecimal;
@@ -550,27 +547,6 @@ public class PurchasemAdminController extends BaseAdminController {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
 
-    /**
-     * 上传页面
-     */
-    @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_UPLOAD_FILE)
-    public void instrumentFile() {
-        set("iautoid", getLong(0));
-        render("file.html");
-    }
-
-    /**
-     * 上传附件
-     */
-    @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_UPLOAD_FILE)
-    @Before(Tx.class)
-    public void instrumentUploadFile() {
-        String uploadPath = JBoltUploadFolder.todayFolder(ExtendUploadFolder.PURCHASEM_FILES);
-        UploadFile file = getFile("file", uploadPath);
-        JboltFile jboltFile = jBoltFileService.saveJBoltFile(file, uploadPath, JboltFile.FILE_TYPE_ATTACHMENT);
-        ValidationUtils.notNull(jboltFile, JBoltMsg.FAIL);
-        renderJsonData(service.updateColumn(get("iautoid"), "caccessorypath", jboltFile.getLocalUrl()));
-    }
 
     /**
      * 提交审核
@@ -646,7 +622,7 @@ public class PurchasemAdminController extends BaseAdminController {
     * */
    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
    public void refBudgetSaveTableSubmit(){
-	   renderJson(service.refBudgetSaveTableSubmit(getJBoltTable()));
+	   renderJsonData(service.refBudgetSaveTableSubmit(getJBoltTables()));
    }
    
    /**

@@ -11,18 +11,18 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
-import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
 import cn.rjtech.admin.inventoryspotcheckform.InventorySpotCheckFormService;
-import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOperationService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.morouting.MoMoroutingService;
-import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformd.SpotCheckFormDService;
 import cn.rjtech.admin.spotcheckformdline.SpotcheckformdLineService;
+import cn.rjtech.admin.spotcheckformparam.SpotCheckFormParamService;
+import cn.rjtech.admin.spotcheckformtableitem.SpotCheckFormTableItemService;
+import cn.rjtech.admin.spotcheckformtableparam.SpotCheckFormTableParamService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -63,15 +64,10 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	@Inject
 	private InventorySpotCheckFormService inventorySpotCheckFormService;
 	@Inject
-	private InventoryService inventoryService;
-	@Inject
-	private InventoryspotcheckformOperationService inventoryspotcheckformOperationService;
-	@Inject
 	private SpotCheckFormDService spotCheckFormDService;
 	@Inject
 	private SpotcheckformdLineService spotcheckformdLineService;
-	@Inject
-	private MoMoroutingconfigService moMoroutingconfigService;
+
 
 	@Inject
 	private MoMoroutingService moMoroutingService; //工艺路线
@@ -87,6 +83,12 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	private FormApprovalService formApprovalService;
 	@Inject
 	private SpotCheckFormService spotCheckFormService;
+	@Inject
+	private SpotCheckFormTableParamService spotCheckFormTableParamService;
+	@Inject
+	private SpotCheckFormParamService spotCheckFormParamService;
+	@Inject
+	private SpotCheckFormTableItemService spotCheckFormTableItemService;
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -413,10 +415,20 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 					prodFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
 					prodFormD.setISpotCheckFormMid(spotCheckFormM2.getIAutoId());
 					prodFormD.setISpotCheckFormId(spotCheckFormM2.getISpotCheckFormId());
-					String prodformtableparamid = StrSplitter.split(jsonObject.getString("spotcheckformtableparamid"), COMMA, true, true).get(0);
-					prodFormD.setISpotCheckFormParamId(Long.valueOf(prodformtableparamid));
+					SpotCheckFormTableParam spotCheckFormTableParam = spotCheckFormTableParamService.findFirst("SELECT * FROM Bd_SpotCheckFormTableParam WHERE iSpotCheckFormId = ?  ORDER BY iSeq ASC", spotCheckFormM2.getISpotCheckFormId());
+					List<Record> list = spotCheckFormParamService.findRecords("SELECT * FROM Bd_SpotCheckFormParam WHERE iSpotCheckFormId = ?  ORDER BY iItemSeq ASC", spotCheckFormM2.getISpotCheckFormId());
+					StringBuilder ids = new StringBuilder();
+					for (Record record : list) {
+						ids.append(record.getStr("iautoid")).append(",");
+					}
+					String keywordStr2="";
+					if (list.size()>0) {
+						keywordStr2 = ids.deleteCharAt(ids.length() - 1).toString();
+					}
+
+					prodFormD.setISpotCheckFormParamId(spotCheckFormTableParam.getIAutoId());
 					prodFormD.setISeq(jsonObject.getInteger("iseq"));
-					prodFormD.setCSpotCheckFormParamIds(jsonObject.getString("spotcheckparamid"));
+					prodFormD.setCSpotCheckFormParamIds(keywordStr2);
 					prodFormD.setIType(jsonObject.getInteger("itype"));
 					if (StrUtil.isNotBlank(jsonObject.getString("istdval"))){
 						prodFormD.setIStdVal(jsonObject.getBigDecimal("istdval"));
@@ -472,10 +484,19 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 					prodFormD.setIAutoId(JBoltSnowflakeKit.me.nextId());
 					prodFormD.setISpotCheckFormMid(spotCheckFormM.getIAutoId());
 					prodFormD.setISpotCheckFormId(spotCheckFormM.getISpotCheckFormId());
-					String prodformtableparamid = StrSplitter.split(jsonObject.getString("spotcheckformtableparamid"), COMMA, true, true).get(0);
-					prodFormD.setISpotCheckFormParamId(Long.valueOf(prodformtableparamid));
+					SpotCheckFormTableParam spotCheckFormTableParam = spotCheckFormTableParamService.findFirst("SELECT * FROM Bd_SpotCheckFormTableParam WHERE iSpotCheckFormId = ?  ORDER BY iSeq ASC", spotCheckFormM2.getISpotCheckFormId());
+					List<Record> list = spotCheckFormParamService.findRecords("SELECT * FROM Bd_SpotCheckFormParam WHERE iSpotCheckFormId = ?  ORDER BY iItemSeq ASC", spotCheckFormM2.getISpotCheckFormId());
+					StringBuilder ids = new StringBuilder();
+					for (Record record : list) {
+						ids.append(record.getStr("iautoid")).append(",");
+					}
+					String keywordStr2="";
+					if (list.size()>0) {
+						keywordStr2 = ids.deleteCharAt(ids.length() - 1).toString();
+					}
+					prodFormD.setISpotCheckFormParamId(spotCheckFormTableParam.getIAutoId());
+					prodFormD.setCSpotCheckFormParamIds(keywordStr2);
 					prodFormD.setISeq(jsonObject.getInteger("iseq"));
-					prodFormD.setCSpotCheckFormParamIds(jsonObject.getString("spotcheckparamid"));
 					prodFormD.setIType(jsonObject.getInteger("itype"));
 					if (StrUtil.isNotBlank(jsonObject.getString("istdval"))){
 						prodFormD.setIStdVal(jsonObject.getBigDecimal("istdval"));
@@ -667,4 +688,67 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	public String postBatchBackout(List<Long> formAutoIds) {
 		return null;
 	}
+
+	public List<Map<String, Object>> getTableHeadData(Long formId) {
+		List<Map<String, Object>> mapList = new ArrayList<>();
+		 if (ObjUtil.isNotNull(formId)){
+			List<Record> qcFormItemList = spotCheckFormService.getItemCombinedListByPId(Kv.by("iqcformid", formId));
+			List<Record> qcFormParamList = spotCheckFormParamService.getQcFormParamListByPId(formId);
+			Map<Long, List<Record>> itemParamByItemMap = qcFormParamList.stream().collect(Collectors.groupingBy(obj -> obj.getLong("iqcitemid")));
+			for (Record qcFormItemRecord : qcFormItemList){
+				Long qcItemId = qcFormItemRecord.getLong("iqcitemid");
+				if (itemParamByItemMap.containsKey(qcItemId)){
+					List<Record> list = itemParamByItemMap.get(qcItemId);
+					List<Map<String, Object>> maps = new ArrayList<>();
+
+					for (Record itemRecord : list){
+						maps.add(itemRecord.getColumns());
+					}
+					qcFormItemRecord.set("compares", maps);
+				}
+				mapList.add(qcFormItemRecord.getColumns());
+			}
+		}
+
+		if (CollUtil.isNotEmpty(mapList)){
+
+			mapList.sort((o1, o2) -> {
+				Integer map1 = Integer.valueOf(o1.get("iseq").toString());
+				Integer map2 = Integer.valueOf(o2.get("iseq").toString());
+				return map1.compareTo(map2);
+			});
+			return mapList;
+		}
+		return null;
+	}
+
+	public List<Map<String, Object>> findByFormId(Long formId,String  pid){
+		List<Record> records = findRecords("SELECT * FROM Bd_SpotCheckFormTableParam WHERE iSpotCheckFormId = ?  ORDER BY iSeq ASC", formId);
+		List<SpotCheckFormTableItem> qcFormTableItemList = spotCheckFormTableItemService.findByFormId(formId);
+
+		List<Map<String, Object>> mapList = new ArrayList<>();
+
+		for (Record record : records){
+			if (StrUtil.isNotBlank(pid)) {
+				SpotCheckFormD checkFormD = spotCheckFormDService.findFirst("select * from PL_SpotCheckFormD where iSpotCheckFormMid=?", pid);
+				if (ObjUtil.isNotNull(checkFormD)) {
+					List<SpotcheckformdLine> list = spotcheckformdLineService.findBySpotCheckFormDId(checkFormD.getIAutoId());
+					record.set("cValue",list.get(0).getCValue());
+					record.set("iStdVal",checkFormD.getIStdVal());
+					record.set("iMaxVal",checkFormD.getIMaxVal());
+					record.set("iMinVal",checkFormD.getIMinVal());
+				}
+			}
+			Long id = record.getLong(SpotCheckFormTableParam.IAUTOID);
+			for (SpotCheckFormTableItem qcFormTableItem : qcFormTableItemList){
+				// 校验当前id是否存在
+				if (id.equals(qcFormTableItem.getISpotCheckFormTableParamId())){
+					record.set(String.valueOf(qcFormTableItem.getISpotCheckFormItemId()), qcFormTableItem.getISpotCheckFormParamId());
+				}
+			}
+			mapList.add(record.getColumns());
+		}
+		return mapList;
+	}
+
 }

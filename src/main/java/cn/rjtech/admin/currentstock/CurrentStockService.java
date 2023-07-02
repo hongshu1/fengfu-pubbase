@@ -602,7 +602,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 
             return true;
         });
-        return SUCCESS;
+        return SUCCESS.set("AutoID", AutoIDs[0]);
     }
 
 
@@ -634,68 +634,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         return SUCCESS.set("AutoID", AutoIDs[0]);
     }
 
-    /**
-     * 盘点单新增
-     */
-    public Ret jboltTableSubmit(JBoltTable jBoltTable) {
-        tx(() -> {
-            JSONObject form = jBoltTable.getForm();
-            StockCheckVouch stockcheckvouch = new StockCheckVouch();
-            stockcheckvouch.setCheckType(form.getString("checktype"));
-            stockcheckvouch.setWhCode(form.getString("whcode"));
-            //构造数据
-            Date date = new Date();
-            //创建时间
-            stockcheckvouch.setDcreatetime(date);
-            String dateStr = JBoltDateUtil.format(date, "yyyy-MM-dd");
-            stockcheckvouch.setBillDate(dateStr);
-            String userName = JBoltUserKit.getUserName();
-            //创建人
-            stockcheckvouch.setCcreatename(userName);
-            stockcheckvouch.setIcreateby(JBoltUserKit.getUserId());
-            String orgId = getOrgId() + "";
-            //组织编码
-            stockcheckvouch.setOrganizeCode(orgId);
-            String code = BillNoUtils.genCurrentNo();
-            //单号
-            stockcheckvouch.setBillNo(code);
-            //盘点人
-            stockcheckvouch.setCheckPerson(userName);
-            ValidationUtils.isTrue(stockcheckvouch.save(), "主表保存失败!");
 
-            Long autoId = stockcheckvouch.getAutoId();
-
-            List<Record> saveRecordList = jBoltTable.getSaveRecordList();
-            for (Record record : saveRecordList) {
-                StockCheckVouchDetail stockcheckvouchdetail = new StockCheckVouchDetail();
-                stockcheckvouchdetail.setMasID(autoId);
-                //库位
-                String poscode = record.getStr("poscode");
-                stockcheckvouchdetail.setPosCode(poscode);
-                //存货编码
-                String invcode = record.getStr("invcode");
-                stockcheckvouchdetail.setInvCode(invcode);
-                //数量
-                BigDecimal qty = record.getBigDecimal("qty");
-                stockcheckvouchdetail.setQty(qty);
-                //件数
-                BigDecimal num = record.getBigDecimal("num");
-                stockcheckvouchdetail.setNum(num);
-                //创建人
-                stockcheckvouchdetail.setCreatePerson(userName);
-                //创建时间
-                stockcheckvouchdetail.setCreateDate(date);
-
-                ValidationUtils.isTrue(stockcheckvouchdetail.save(), "细表保存失败!");
-
-            }
-
-            return true;
-        });
-
-        return SUCCESS;
-
-    }
 
     /**
      * 批量查找盘点物料

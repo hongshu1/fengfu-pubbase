@@ -233,7 +233,8 @@ SELECT
     t2.StockQty,
     t2.PlqtyQty,
     t2.StockStatus,
-    t1.AutoId
+    t2.MasID,
+    t2.AutoId
 FROM
     T_Sys_StockCheckVouch t1
     LEFT JOIN T_Sys_StockCheckVouchDetail t2 ON t2.MasID = t1.AutoId
@@ -276,9 +277,8 @@ SELECT
     t3.cInvName1,
     t3.cInvStd,
     uom.cUomName,
-    area.iMaxCapacity,
-    t4.iQty,
-    t4.iQty AS Qty,
+    area.iMaxCapacity AS iQty,
+    area.iMaxCapacity AS Qty,
     t4.cCompleteBarcode AS barcode,
     t4.cVersion,
     t4.dPlanDate

@@ -2,7 +2,7 @@ package cn.rjtech.admin.currentstock;
 
 
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -17,7 +17,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
-import java.util.Date;
 
 
 /**
@@ -116,9 +115,11 @@ public class CurrentStockController extends BaseAdminController {
    /**
     * 继续盘点页面*/
    public void stockEdit(){
-	   Kv kv = getKv();
-	   String autoid = kv.getStr("autoid");
-	   StockCheckVouch stockChekVouch = stockChekVouchService.findById(autoid);
+	   StockCheckVouch stockChekVouch=service.findById(getLong(0));
+	   if(stockChekVouch == null){
+		   renderFail(JBoltMsg.DATA_NOT_EXIST);
+		   return;
+	   }
 	   set("stockchekvouch", stockChekVouch);
 	   set("bill", stockChekVouch);
 	   set("isapp",0);
@@ -188,12 +189,6 @@ public class CurrentStockController extends BaseAdminController {
 	   render("stockForm.html");
    }
 
-   /**
-	* 盘点单
-	* */
-	public void jboltTableSubmit(){
-		renderJson(service.jboltTableSubmit(getJBoltTable()));
-	}
 
    public void saveSubmit(){
    	renderJson(service.saveSubmit(getKv()));

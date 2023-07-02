@@ -10,6 +10,7 @@ import cn.rjtech.admin.inventoryspotcheckform.InventorySpotCheckFormService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformd.SpotCheckFormDService;
 import cn.rjtech.admin.spotcheckformitem.SpotCheckFormItemService;
+import cn.rjtech.admin.spotcheckformtableparam.SpotCheckFormTableParamService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.model.momdata.SpotCheckForm;
@@ -46,7 +47,8 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 	private InventorySpotCheckFormService inventorySpotCheckFormService;
 	@Inject
 	private SpotCheckFormItemService spotCheckFormItemService;
-
+	@Inject
+	private SpotCheckFormTableParamService SpotCheckFormTableParamService;
 
 
    /**
@@ -200,15 +202,18 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 			@Para( value = "spotcheckformmid") String spotcheckformmid){
 		//根据生产表格id获取项目名称
 		if (StrUtil.isNotBlank(spotcheckformid)) {
+			if (StrUtil.isNotBlank(spotcheckformmid)) {
+				SpotCheckFormM spotCheckFormM = service.findById(spotcheckformmid);
+				spotcheckformid=String.valueOf(spotCheckFormM.getISpotCheckFormId());
+			}
 			//生产表单项目标题
-			List<Record> formItemLists = spotCheckFormItemService.formItemLists(Kv.by("iqcformid", spotcheckformid));
 			//行转列
-			List<Map<String, Object>> columns = service.lineRoll(formItemLists,spotcheckformid);
-			set("columns",columns);
-			List<Record> byIdGetDetail = spotCheckFormService.findByIdGetDetail(spotcheckformid);
-			List<Map<String, Object>> maps = service.lineRoll2(byIdGetDetail,spotcheckformmid);
+			List tableHeadData = service.getTableHeadData(Long.valueOf(spotcheckformid));
+
+			set("columns",tableHeadData);
+			List<Map<String, Object>> recordList = service.findByFormId(Long.valueOf(spotcheckformid),spotcheckformmid);
 			// 查询表头数据及参数数据
-			set("dataList", maps);
+			set("dataList", recordList);
 		}
 		render("_table3.html");
 	}
