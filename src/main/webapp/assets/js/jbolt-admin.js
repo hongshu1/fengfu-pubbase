@@ -1,4 +1,4 @@
-var jbolt_admin_js_version="6.6.4";
+var jbolt_admin_js_version="6.6.5";
 //拿到window doc和body
 var jboltJsDevMode=false;//当前模式 true是开发调试模式 影响加载插件和jboltlog
 var jboltWindow=$(window);
@@ -19395,6 +19395,10 @@ function initJuicer(){
 	juicer.register("enable_to_check",enableToCheck);
 	juicer.register("enableToCheck",enableToCheck);
 	juicer.register("fileSizeFormat",fileSizeFormat);
+	juicer.register("toJsonStr",objectToJsonStr);
+}
+function objectToJsonStr(obj){
+	return obj?JSON.stringify(obj):"";
 }
 
 function fileSizeFormat(fileSize){
@@ -19969,7 +19973,7 @@ var JBoltArrayUtil={
 			var removeIndex=-1;
 			if(isOk(array)&&typeof(value)!=undefined&&typeof(value)!="undefined"){
 				$.each(array,function(index,item){
-					if(item===value){
+					if((item+"")===(value+"")){
 						array.splice(index,1);
 						removeIndex = index;
 						return false;
