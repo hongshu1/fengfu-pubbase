@@ -6,7 +6,7 @@
         <div class="col-10 text-left">
 
                 #if(readonly != 'readonly')
-                <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+                <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
                 #end
                 <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
 
@@ -21,7 +21,7 @@
                 ### className:              实现审批业务的类名
                 #include("/_view/_common/_approval_btns.html", uri="/admin/stockcheckvouch", formSn="T_Sys_StockCheckVouch", o=stockchekvouch, primaryKeyName="AutoID", className="cn.rjtech.admin.currentstock.CurrentStockService",permissionKeyPrefix="current_stock")
                 #end
-            
+
         </div>
     </div>
 
@@ -52,7 +52,7 @@
 
     <textarea class="jb_tpl_box" id="StockCheckVouchDetail_tpl_#(pageId)">
     {@each datas as data,index}
-    <tr data-id="${data.autoid}">
+    <tr data-id="${data.autoid}" {@if data.masid == null} data-changed="true" data-needsave="true" {@/if}>
         <td>${pageNumber,pageSize,index | rownum}</td>
         <td>${data.posname}</td>
         <td>${data.cinvccode}</td>
@@ -82,10 +82,6 @@
 
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="fh_toolbar_#(pageId)">
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="/admin/stockcheckvouchdetail/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
-        </div>
-
         <div class="clearfix"></div>
     </div>
 
@@ -129,18 +125,18 @@
     </div>
 #include("tockchekvouchForm.html")
 
+
 #define js()
 <script>
 
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
     var submit = false;
-    
-    // function submitThisForm_#(pageId)(ele) {
-    //     submit = ele;
-    //     submitAllTables_#(pageId)();
-    // }
+    function submitThisForm_#(pageId)(ele) {
+        submit = ele;
+        submitAllTables_#(pageId)();
+    }
 
-    function submitThisForm() {
+    function submitAllTables_#(pageId)(){
         var index = LayerMsgBox.loading('执行中...');
 
         var tables = [
@@ -148,82 +144,42 @@
             "jbolt_table_StockCheckVouchBarcode_split_#(pageId)"
         ];
 
-        var table1SubmitData = jboltTableGetSubmitData('#jbolt_table_#(pageId)');
-        console.log(JSON.stringify(table1SubmitData));
-
-        table1SubmitData.save = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
-        
-        var table2SubmitData = jboltTableGetSubmitData('#jbolt_table_StockCheckVouchBarcode_split_#(pageId)');
-        console.log(JSON.stringify(table2SubmitData));
-
-        var para = {
-            table1: table1SubmitData,
-            table2: table2SubmitData
-        };
-        
-        var arg = {
-            jboltTables: JSON.stringify(para),
-        }
-
-        Ajax.post("admin/currentstock/saveTableSubmit", arg, function (res) {
-            LayerMsgBox.close(index);
-
-            if (res.state === 'ok') {
-                LayerMsgBox.success(res.msg, 1000, function () {
-                    // window.parent.refreshJBoltTable();
-                    // location.href = '/admin/user/edit/' + res.data.id + '-_jb_rqtype_dialog';
-                });
-            } else {
-                LayerMsgBox.alert(res.msg, 2);
-            }
-        }, function (err) {
-            LayerMsgBox.close(index);
-        });
-        
-        // jboltTableSubmitMulti(tables, "admin/currentstock/saveTableSubmit", function (res) {
+        // var table1SubmitData = jboltTableGetSubmitData('#jbolt_table_#(pageId)');
+        // console.log(JSON.stringify(table1SubmitData));
         //
-        //     LayerMsgBox.close(index);
+        // table1SubmitData.save = jboltTableGetAllDatas('#jbolt_table_#(pageId)');
         //
-        //     if (res.state === 'ok') {
-        //         LayerMsgBox.success(res.msg, 1000, function () {
-        //             // window.parent.refreshJBoltTable();
+        // var table2SubmitData = jboltTableGetSubmitData('#jbolt_table_StockCheckVouchBarcode_split_#(pageId)');
+        // console.log(JSON.stringify(table2SubmitData));
         //
-        //             location.href = '/admin/user/edit/' + res.data.id + '-_jb_rqtype_dialog';
-        //         });
-        //     } else {
-        //         LayerMsgBox.alert(res.msg, 2);
-        //     }
+        // var para = {
+        //     table1: table1SubmitData,
+        //     table2: table2SubmitData
+        // };
         //
-        // });
-    }
-
-    function submitAllTables_#(pageId)(){
-        var autoid=$("#stockchekvouchAutoid").val();
-        var sourceid=$("#stockcheckvouchdid").val();
-        //获取选中表格数据
-        // var tables = jboltTableGetCheckedDatas('#stock__table_#(pageId)');
-        var para = jboltTableGetCheckedDatas('#jbolt_table_StockCheckVouchBarcode_split_#(pageId)');
-        if(para){
-            Ajax.post('admin/currentstock/submitMulti',{para,"sourceid":sourceid} , function (ret) {
-                debugger;
-                if (ret.state == "ok") {
-                        // let autoid = ret.AutoID;
-                        // 提交审核（审批）调用
-                        if (submit){
-                            submit_#(pageId)(autoid,function () {
-                                LayerMsgBox.success("提交成功", 600, function () {
-                                    parent.refreshPjaxContainer();
-                                    parent.layer.closeAll();
-                                });
+        // var arg = {
+        //     jboltTables: JSON.stringify(para),
+        // }
+        jboltTableSubmitMulti(tables, "admin/currentstock/saveTableSubmit", function (res) {
+            if (res.state == "ok") {
+                LayerMsgBox.success(res.msg, 2000, function () {
+                    let autoid = res.AutoID;
+                    if (submit){
+                        submit_#(pageId)(autoid,function () {
+                            LayerMsgBox.success("提交成功", 600, function () {
+                                parent.refreshPjaxContainer();
+                                self.location.href = '/admin/currentstock/stockEdit/' + res.AutoID + '-_jb_rqtype_dialog';
                             });
-                        } else {
-                            parent.refreshPjaxContainer();
-                        }
-                } else {
-                    LayerMsgBox.error(ret.msg);
-                }
-            });
-        }
+                        });
+                    } else {
+                        parent.refreshPjaxContainer();
+                        self.location.href = '/admin/currentstock/stockEdit/' + res.AutoID + '-_jb_rqtype_dialog';                    // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                    }
+                })
+            } else {
+                LayerMsgBox.error(res.msg);
+            }
+        });
     }
 
     // 子表查询表单

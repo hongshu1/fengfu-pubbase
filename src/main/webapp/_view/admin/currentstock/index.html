@@ -56,11 +56,7 @@
                     {@/if}
                 </td>
                 <td>
-                    {@if data.iauditstatus == '0'}
-                    <a class="jbolt_table_editbtn" href="admin/currentstock/stockEdit?autoid=${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑特殊领料单列表">编辑</i></a>
-                    {@else if data.iauditstatus == '1'}
-                    <a class="jbolt_table_delbtn" href="admin/otherout/recall?iAutoId=${data.autoid}" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" >撤回</i></a>
-                    {@/if}
+                    <a class="jbolt_table_editbtn" href="admin/currentstock/stockEdit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑特殊领料单列表">编辑</i></a>
                 </td>
 
                 <td>${data.whcode}</td>
@@ -89,12 +85,6 @@
                     data-url="admin/currentstock/add" class="jbolt_table_addbtn btn btn-outline-primary btn-sm"><i
                     class="fa fa-plus"></i> 新增
             </button>
-            <button data-dialogbtn data-area="100%,100%" data-btn="close" data-handler="refreshJBoltTable"
-                    data-title="继续盘点" data-check-handler="jboltTableGetCheckedId"
-                    data-url="admin/currentstock/stockEdit?autoid="
-                    class="jbolt_table_addbtn btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i>继续盘点
-            </button>
-
         </div>
 
         <table class="jbolt_table jbolt_main_table table-center hover_info"
