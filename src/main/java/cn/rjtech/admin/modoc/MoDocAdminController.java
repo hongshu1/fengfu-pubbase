@@ -39,7 +39,7 @@ import java.util.List;
  * @author: RJ
  * @date: 2023-04-26 16:15
  */
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.MODOC)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/modoc", viewPath = "/_view/admin/modoc")
@@ -200,11 +200,18 @@ public class MoDocAdminController extends BaseAdminController {
 	 * 提交
 	 * @param rowid
 	 */
-	public void subSave(String   rowid) {
-
+	public void subSave(String rowid) {
 		renderJson(service.subSave(getJBoltTable(),rowid));
 	}
 
+
+	/**
+	 * 提交
+	 * @param rowid
+	 */
+	public void subUpdata(String  rowid) {
+		renderJson(service.subSave(getJBoltTable(),rowid));
+	}
 	/**
 	 * 关闭
 	 * @param rowid

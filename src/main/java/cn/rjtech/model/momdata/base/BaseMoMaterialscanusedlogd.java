@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMoMaterialscanusedlogd<M extends BaseMoMaterialscanusedlogd<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**材料耗用主表ID*/
@@ -22,6 +23,10 @@ public abstract class BaseMoMaterialscanusedlogd<M extends BaseMoMaterialscanuse
     public static final String IQTY = "iQty";
     /**耗用数量*/
     public static final String ISCANNEDQTY = "iScannedQty";
+    /**是否已完成扫码：0. 未完成 1. 已完成*/
+    public static final String ISFINISHED = "isFinished";
+    /**剩余数量*/
+    public static final String IREMAINQTY = "iRemainQty";
 	/**
 	 * 主键ID
 	 */
@@ -122,6 +127,40 @@ public abstract class BaseMoMaterialscanusedlogd<M extends BaseMoMaterialscanuse
 	@JSONField(name = "iscannedqty")
 	public java.math.BigDecimal getIScannedQty() {
 		return getBigDecimal("iScannedQty");
+	}
+
+	/**
+	 * 是否已完成扫码：0. 未完成 1. 已完成
+	 */
+	public M setIsFinished(java.lang.Boolean isFinished) {
+		set("isFinished", isFinished);
+		return (M)this;
+	}
+
+	/**
+	 * 是否已完成扫码：0. 未完成 1. 已完成
+	 */
+	@JBoltField(name="isfinished" ,columnName="isFinished",type="Boolean", remark="是否已完成扫码：0. 未完成 1. 已完成", required=true, maxLength=1, fixed=0, order=7)
+	@JSONField(name = "isfinished")
+	public java.lang.Boolean getIsFinished() {
+		return getBoolean("isFinished");
+	}
+
+	/**
+	 * 剩余数量
+	 */
+	public M setIRemainQty(java.math.BigDecimal iRemainQty) {
+		set("iRemainQty", iRemainQty);
+		return (M)this;
+	}
+
+	/**
+	 * 剩余数量
+	 */
+	@JBoltField(name="iremainqty" ,columnName="iRemainQty",type="BigDecimal", remark="剩余数量", required=true, maxLength=24, fixed=6, order=8)
+	@JSONField(name = "iremainqty")
+	public java.math.BigDecimal getIRemainQty() {
+		return getBigDecimal("iRemainQty");
 	}
 
 }

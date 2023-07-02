@@ -206,7 +206,7 @@ public class MoDocService extends BaseService<MoDoc> {
         MoMoroutingconfig moMoroutingconfig = new MoMoroutingconfig();
         moMoroutingconfig.setIMoRoutingId(moMorouting.getIAutoId());
         moMoroutingconfig.setIInventoryRoutingId(inventoryRoutingConfigServiceById.getIInventoryRoutingId());
-        moMoroutingconfig.setISecs(record.getIseq());
+        moMoroutingconfig.setISeq(record.getIseq());
         moMoroutingconfig.setCMergedSeq(record.getCmergedseq());
         moMoroutingconfig.setCCreateName(record.getCcreatename());
         moMoroutingconfig.setCOperationName(record.getCoperationname());
@@ -218,7 +218,7 @@ public class MoDocService extends BaseService<MoDoc> {
         //moMoroutingconfig.setIRsInventoryId(Long.parseLong(record.getIrsinventoryid()));
         moMoroutingconfig.setIType(record.getItype());
         moMoroutingconfig.setICreateBy(userId);
-        moMoroutingconfig.setDCreateTime(dCreateTime);
+          moMoroutingconfig.setDCreateTime(dCreateTime);
         moMoroutingconfigService.save(moMoroutingconfig);
         //人员
         String configperson = record.getConfigpersonids();
