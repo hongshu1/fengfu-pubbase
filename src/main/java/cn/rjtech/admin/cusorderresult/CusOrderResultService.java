@@ -248,8 +248,11 @@ public class CusOrderResultService extends CusOrderSumService {
         return page;
     }
 
-    public List<Record> testDatas(List<Record> list) {
-        for (Record data : list) {
+    public List<Record> testDatas(Integer pageNumber, Integer pageSize, Kv kv) {
+        Page<Record> page = dbTemplate("cusorderresult.datas", kv).paginate(pageNumber, pageSize);
+        ValidationUtils.notNull(page, JBoltMsg.DATA_NOT_EXIST);
+        List<Record> datas = page.getList();
+        for (Record data : datas) {
             List<Record> customers = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
                 Record customer = new Record();
@@ -293,7 +296,7 @@ public class CusOrderResultService extends CusOrderSumService {
             }
             data.put("customers", customers);
         }
-        return list;
+        return datas;
     }
 
     /**
