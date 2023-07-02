@@ -244,7 +244,7 @@ GROUP BY iCustomerId, iYear,iMonth, iInventoryId
 #end
 
 ### 取货计划数据
-#sql("")
+#sql("pickupplanqtyDatas")
 SELECT  rpm.iCustomerId, rpd.iInventoryId, rpd.cRcvDate AS time, SUM(rpd.iQty) AS qtysum
 FROM SM_RcvPlanM rpm
          LEFT JOIN SM_RcvPlanD rpd ON rpm.iAutoId = rpd.iRcvPlanMid

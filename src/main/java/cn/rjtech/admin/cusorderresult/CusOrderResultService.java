@@ -31,8 +31,8 @@ public class CusOrderResultService extends CusOrderSumService {
         // 获取客户订单数据
         String str = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31";
         kv.set("roleArray", str);
-        List<Record> weekorderDatas = Optional.ofNullable(dbTemplate("cusorderresult.weekOrderDatas", kv)).map(DbTemplate::find).orElse(new ArrayList<>());
-        List<Record> subcontractSaleOrderOrManualOrderDatas = Optional.ofNullable(dbTemplate("cusorderresult.SubcontractSaleOrderOrManualOrderDatas", kv)).map(DbTemplate::find).orElse(new ArrayList<>());
+        List<Record> weekorderDatas = Optional.ofNullable(dbTemplate("cusorderresult.weekOrderDatas", kv).find()).orElse(new ArrayList<>());
+        List<Record> subcontractSaleOrderOrManualOrderDatas = Optional.ofNullable(dbTemplate("cusorderresult.SubcontractSaleOrderOrManualOrderDatas", kv).find()).orElse(new ArrayList<>());
         List<Record> customerorderqtyDatas = new ArrayList<>();
 
         for (String iinventoryid : kv.getStr("iinventoryids").split(",")) {
@@ -44,6 +44,7 @@ public class CusOrderResultService extends CusOrderSumService {
             icustomerids.addAll(subcontractSaleOrderOrManualOrderDatas.stream().filter(Objects::nonNull).filter(item -> item.getStr("iinventoryid").equals(iinventoryid)).map(item -> {
                 return item.getStr("icustomerid");
             }).collect(Collectors.toList()));
+            icustomerids = icustomerids.stream().distinct().collect(Collectors.toList());
 
             for (String icustomerid : icustomerids) {
 
@@ -54,23 +55,25 @@ public class CusOrderResultService extends CusOrderSumService {
                     customerorderqtyData.put("iinventoryid", iinventoryid);
                     customerorderqtyData.put("icustomerid", icustomerid);
                     String time = startdate;
-                    customerorderqtyData.put("item", time);
+                    String year = Integer.valueOf(time.split("-")[0]).toString();
+                    String month = Integer.valueOf(time.split("-")[1]).toString();
+                    String day = Integer.valueOf(time.split("-")[2]).toString();
+                    customerorderqtyData.put("time", time);
                     BigDecimal weekorderqty = weekorderDatas.stream().filter(Objects::nonNull).filter(item ->
                             StrUtil.equals(item.getStr("iinventoryid"), iinventoryid)
                                     && StrUtil.equals(item.getStr("icustomerid"), icustomerid)
                                     && StrUtil.equals(item.getStr("time"), time)).map(item -> {
                         return item.getBigDecimal("qtysum");
-                    }).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    }).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
 
                     BigDecimal subcontractSaleOrderAndManualQty = subcontractSaleOrderOrManualOrderDatas.stream().filter(Objects::nonNull)
                             .filter(item ->
                                     StrUtil.equals(item.getStr("iinventoryid"), iinventoryid)
                                             && StrUtil.equals(item.getStr("icustomerid"), icustomerid)
-                                            && StrUtil.equals(item.getStr("iyear"), time.split(",")[0])
-                                            && StrUtil.equals(item.getStr("imonth"), time.split(",")[1])).
-                                    map(item -> {
-                                        return item.getBigDecimal("qty" + time.split(",") + "sum");
-                                    }).reduce(BigDecimal.ZERO, BigDecimal::add);
+                                            && StrUtil.equals(item.getStr("iyear"), year)
+                                            && StrUtil.equals(item.getStr("imonth"), month)).map(item -> {
+                                return item.getBigDecimal("qty" + day + "sum");
+                            }).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
 
                     customerorderqtyData.put("qtysum", weekorderqty.add(subcontractSaleOrderAndManualQty));
                     customerorderqtyDatas.add(customerorderqtyData);
@@ -94,6 +97,8 @@ public class CusOrderResultService extends CusOrderSumService {
                 return item.getStr("icustomerid");
             }).collect(Collectors.toList()));
 
+            icustomerids = icustomerids.stream().distinct().collect(Collectors.toList());
+
             for (String icustomerid : icustomerids) {
                 String startdate = kv.getStr("startdate");
                 String enddate = kv.getStr("enddate");
@@ -102,14 +107,13 @@ public class CusOrderResultService extends CusOrderSumService {
                     differenceqtyData.put("iinventoryid", iinventoryid);
                     differenceqtyData.put("icustomerid", icustomerid);
                     String time = startdate;
-                    differenceqtyData.put("item", time);
+                    differenceqtyData.put("time", time);
                     BigDecimal customerorderqty = customerorderqtyDatas.stream().filter(item ->
                             StrUtil.equals(item.getStr("iinventoryid"), iinventoryid)
                                     && StrUtil.equals(item.getStr("icustomerid"), icustomerid)
                                     && StrUtil.equals(item.getStr("time"), time)).map(item -> {
                         return item.getBigDecimal("qtysum");
                     }).reduce(BigDecimal.ZERO, BigDecimal::add);
-
 
                     BigDecimal pickupplanqty = pickupplanqtyDatas.stream().filter(item ->
                             StrUtil.equals(item.getStr("iinventoryid"), iinventoryid)
@@ -146,9 +150,9 @@ public class CusOrderResultService extends CusOrderSumService {
         // 获取客户订单数据
         List<Record> customerorderqtyDatas = getCustomerorderqtyrecords(kv);
         // 获取取货计划数据
-        List<Record> pickupplanqtyDatas = Optional.ofNullable(dbTemplate("cusorderresult.pickupplanqtyDatas", kv)).map(DbTemplate::find).orElse(new ArrayList<>());
+        List<Record> pickupplanqtyDatas = Optional.ofNullable(dbTemplate("cusorderresult.pickupplanqtyDatas", kv).find()).orElse(new ArrayList<>());
         // 获取出货实绩数据
-        List<Record> actualshipmentqtyDatas = Optional.ofNullable(dbTemplate("cusorderresult.actualshipmentqtyDatas", kv)).map(DbTemplate::find).orElse(new ArrayList<>());
+        List<Record> actualshipmentqtyDatas = Optional.ofNullable(dbTemplate("cusorderresult.actualshipmentqtyDatas", kv).find()).orElse(new ArrayList<>());
 
         // 订单与取货差异
         List<Record> differenceqtyDatas = getDifferenceqtyDatas(kv, customerorderqtyDatas, pickupplanqtyDatas);
@@ -174,27 +178,19 @@ public class CusOrderResultService extends CusOrderSumService {
                     .map(item -> {
                         return item.getStr("icustomerid");
                     }).collect(Collectors.toList()));
+            // 去重
+            customerids = customerids.stream().distinct().collect(Collectors.toList());
 
             // 循环客户封装行数据
             for (String icustomerid : customerids) {
                 Record customer = customerService.findRecordById(icustomerid);
-                String startdate = kv.getStr("startdate");
-                String enddate = kv.getStr("enddate");
-                while (!DateUtils.parseDate(startdate).after(DateUtils.parseDate(enddate))) {
-                    Record differenceqtyData = new Record();
-                    differenceqtyData.put("item", startdate);
-                    // 订单与出货差异= 客户订单-取货计划
-                    differenceqtyDatas.add(differenceqtyData);
-                    startdate = DateUtils.getDate(DateUtils.parseDate(startdate), "yyyy-MM-dd", 1, Calendar.DATE);
-                }
-
-                // 疯转客户订单数据
+                // 封装客户订单数据
                 List<Record> customerorderqtyRecords = customerorderqtyDatas.stream().filter(Objects::nonNull)
                         .filter(item -> StrUtil.equals(item.getStr("iinventoryid"), data.getStr("iautoid"))
                                 && StrUtil.equals(item.getStr("icustomerid"), icustomerid)
                         )
                         .collect(Collectors.toList());
-                if (customerorderqtyRecords.isEmpty()) {
+                if (!customerorderqtyRecords.isEmpty()) {
                     customer.put("customerorderqtydatas", customerorderqtyRecords);
                     customer.put("customerorderqtysum", customerorderqtyRecords.stream().map(item -> {
                         return item.getBigDecimal("qtysum");
@@ -207,7 +203,7 @@ public class CusOrderResultService extends CusOrderSumService {
                                 && StrUtil.equals(item.getStr("icustomerid"), icustomerid)
                         )
                         .collect(Collectors.toList());
-                if (pickupplanqtyRecords.isEmpty()) {
+                if (!pickupplanqtyRecords.isEmpty()) {
                     customer.put("pickupplanqtydatas", pickupplanqtyRecords);
                     customer.put(" pickupplanqtyqtysum", pickupplanqtyRecords.stream().map(item -> {
                         return item.getBigDecimal("qtysum");
@@ -221,7 +217,7 @@ public class CusOrderResultService extends CusOrderSumService {
                                 && StrUtil.equals(item.getStr("icustomerid"), icustomerid)
                         )
                         .collect(Collectors.toList());
-                if (actualshipmentRecords.isEmpty()) {
+                if (!actualshipmentRecords.isEmpty()) {
                     customer.put("actualshipmentqtydatas", actualshipmentRecords);
                     customer.put("actualshipmentqtysum", actualshipmentRecords.stream().map(item -> {
                         return item.getBigDecimal("qtysum");
@@ -234,13 +230,14 @@ public class CusOrderResultService extends CusOrderSumService {
                                 && StrUtil.equals(item.getStr("icustomerid"), icustomerid)
                         )
                         .collect(Collectors.toList());
-                if (differenceqtyRecords.isEmpty()) {
-                    customer.put("differenceqtydatas", differenceqtyDatas);
-                    customer.put("differenceqtysum", differenceqtyDatas.stream().map(item -> {
+                if (!differenceqtyRecords.isEmpty()) {
+                    customer.put("differenceqtydatas", differenceqtyRecords);
+                    customer.put("differenceqtysum", differenceqtyRecords.stream().map(item -> {
                         return item.getBigDecimal("qtysum");
                     }).reduce(BigDecimal.ZERO, BigDecimal::add));
-                    customers.add(customer);
                 }
+
+                customers.add(customer);
             }
 
             // 存货封装客户
