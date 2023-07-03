@@ -16,7 +16,7 @@
 
                     #end
 
-                    #if(manualOrderM.iAutoId??)
+                    #if(manualOrderM.iAutoId?? && manualOrderM.iorderstatus != 7)
                     #include("/_view/_common/_approval_btns.html", uri="/admin/manualorderm", formSn="Co_ManualOrderM", o=manualOrderM, primaryKeyName="iAutoId", permissionKeyPrefix="manualorderm", className="cn.rjtech.admin.manualorderm.ManualOrderMService")
                     #end
 
