@@ -44,7 +44,7 @@
 					<td>${pageNumber,pageSize,index | rownum}</td>
                     {@if data.type=='PUReceive'}
 					<td>
-                      {@if data.iauditstatus == '0'}
+                      {@if data.iauditstatus == '0' || data.iauditstatus == '3'}
                         <a href="admin/materialReceiptList/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
                            data-title="编辑"
                            data-handler="refreshJBoltTable" data-dialog-title="编辑收料单列表"
@@ -54,7 +54,7 @@
                            data-title="删除"
                            data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
                       {@/if}
-                      {@if data.iauditstatus != '0'}
+                      {@if data.iauditstatus != '0' && data.iauditstatus != '3'}
                         <a href="admin/materialReceiptList/edit?autoid=${data.autoid}&readonly=readonly"
                            data-area="100%,100%" tooltip
                            data-title="查看"
@@ -104,8 +104,8 @@
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增收料单
                 </button>
                 <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
-                        id="toolbar_addBtn_#(pageId)_1" data-title="新增双单位收货" data-url="admin/scancodereceive/add"
-                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增双单位收货
+                        id="toolbar_addBtn_#(pageId)_1" data-title="新增双单位收料单" data-url="admin/scancodereceive/add"
+                        class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增双单位收料单
                 </button>
 
 

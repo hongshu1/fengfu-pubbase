@@ -1026,4 +1026,69 @@ public class MoMotaskService extends BaseService<MoMotask> {
 //    ValidationUtils.notBlank(kv.getStr("depcode"), "部门编码未传入！！！");AND per.cdept_num=#para(depcode)
     return dbTemplate("modocbatch.getUserDatas", kv).paginate(kv.getInt("pageNumber"), kv.getInt("pageSize"));
   }
+
+  /**
+   * 重写制造工单人员编辑数据源
+   *
+   * @param kv
+   * @return
+   */
+  public List<Record> getModocStaffEditorRewriteDatas(Kv kv) {
+    List<Record> records1 = new ArrayList<>();
+
+    //<editor-fold desc="1.查询产线名称，存货信息  records2">
+    List<Record> records2 = dbTemplate("modocbatch.getModocDatas", kv).find();
+    List<String> strings = new ArrayList<>();
+    records2.forEach(record -> {
+      strings.add(record.getStr("iInventoryId"));
+    });
+    String inventoryids = CollUtil.join(strings, ",");
+    //</editor-fold>
+
+    //<editor-fold desc="2.获取设备，产线信息">
+    Map<String, List<Record>> equipmentMap = new HashMap<>();
+    Map<String, List<Record>> productionlineMap = new HashMap<>();
+    List<Record> equipments = dbTemplate("modocbatch.getEquipmentsByInventoryId", Kv.by("inventoryids", inventoryids)).find();
+    equipments.forEach(record -> {
+      if (equipmentMap.containsKey(record.getStr("iinventoryid"))) {
+        List<Record> records11 = equipmentMap.get(record.getStr("iinventoryid"));
+        records11.add(record);
+        equipmentMap.put(record.getStr("iinventoryid"), records11);
+      } else {
+        List<Record> records11 = new ArrayList<>();
+        records11.add(record);
+        equipmentMap.put(record.getStr("iinventoryid"), records11);
+      }
+    });
+
+    List<Record> productionlines = dbTemplate("modocbatch.getProductionLinesByInventoryId", Kv.by("inventoryids", inventoryids)).find();
+    productionlines.forEach(record -> {
+      if (productionlineMap.containsKey(record.getStr("iinventoryid"))) {
+        List<Record> records11 = productionlineMap.get(record.getStr("iinventoryid"));
+        records11.add(record);
+        productionlineMap.put(record.getStr(""), records11);
+      } else {
+        List<Record> records11 = new ArrayList<>();
+        records11.add(record);
+        productionlineMap.put(record.getStr(""), records11);
+      }
+    });
+    //</editor-fold>
+
+
+    int circulation = records2.size() + 3;
+    for (int i = 0; i < circulation; i++) {
+      Record record = new Record();
+      if (i < (circulation - 3)) {
+        record = records2.get(i);
+
+
+      } else {
+
+      }
+      records1.add(record);
+    }
+
+    return records1;
+  }
 }

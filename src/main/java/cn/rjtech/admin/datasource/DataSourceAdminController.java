@@ -33,6 +33,7 @@ public class DataSourceAdminController extends BaseAdminController {
      *
      * @param dataSources 数据源，多个","分隔
      */
+    @UnCheck
     public void list(@Para(value = "dataSources") String dataSources) {
         ValidationUtils.notBlank(dataSources, JBoltMsg.PARAM_ERROR);
 

@@ -89,7 +89,6 @@ public class ModocApiService extends JBoltApiBaseService {
 
 
   public Record getModoc(MoDoc moDoc) {
-
     Record moRecod = moDoc.toRecord();
     moRecod.keep("cmodocno", "dplandate", "iqty", "icompqty");
     if (notOk(moRecod.getBigDecimal("icompqty"))) {

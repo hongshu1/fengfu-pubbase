@@ -10,7 +10,7 @@ SELECT
 FROM Bd_fitemss97
          JOIN Bd_fitemss00class ON Bd_fitemss97.citemcode=Bd_fitemss00class.cItemCcode
          JOIN Bd_fitemss00 ON  Bd_fitemss00class.cItemCcode=Bd_fitemss00.citemccode
-WHERE Bd_fitemss97.citemccode='1' and Bd_fitemss97.isDeleted = '0' and Bd_fitemss00class.isDeleted = '0'
+WHERE Bd_fitemss97.citemccode='00' and Bd_fitemss97.isDeleted = '0' and Bd_fitemss00class.isDeleted = '0'
   and Bd_fitemss00.isDeleted = '0'
     #if(fitemss97subid)
 			and Bd_fitemss97.iAutoId IN (
@@ -39,7 +39,7 @@ SELECT
 FROM Bd_fitemss97
          JOIN Bd_fitemss98class ON Bd_fitemss97.citemcode=Bd_fitemss98class.cItemCcode
          JOIN Bd_fitemss98 ON  Bd_fitemss98class.cItemCcode=Bd_fitemss98.citemccode
-WHERE Bd_fitemss97.citemccode='2' and Bd_fitemss97.isDeleted = '0' and Bd_fitemss98class.isDeleted = '0'
+WHERE Bd_fitemss97.citemccode='98' and Bd_fitemss97.isDeleted = '0' and Bd_fitemss98class.isDeleted = '0'
   and Bd_fitemss98.isDeleted = '0'
     #if(fitemss97subid)
 			and Bd_fitemss97.iAutoId IN (
@@ -66,7 +66,7 @@ SELECT
 FROM Bd_fitemss97
          JOIN Bd_fitemss03class ON Bd_fitemss97.citemcode=Bd_fitemss03class.cItemCcode
          JOIN Bd_fitemss03 ON  Bd_fitemss03class.cItemCcode=Bd_fitemss03.citemccode
-WHERE Bd_fitemss97.citemccode='3' and Bd_fitemss97.isDeleted = '0' and Bd_fitemss03class.isDeleted = '0'
+WHERE Bd_fitemss97.citemccode='03' and Bd_fitemss97.isDeleted = '0' and Bd_fitemss03class.isDeleted = '0'
   and Bd_fitemss03.isDeleted = '0'
     #if(fitemss97subid)
 			and Bd_fitemss97.iAutoId IN (
@@ -93,7 +93,7 @@ SELECT
 FROM Bd_fitemss97
          JOIN Bd_fitemssZFclass ON Bd_fitemss97.citemcode=Bd_fitemssZFclass.cItemCcode
          JOIN Bd_fitemssZF ON  Bd_fitemssZFclass.cItemCcode=Bd_fitemssZF.citemccode
-WHERE Bd_fitemss97.citemccode='4' and Bd_fitemss97.isDeleted = '0' and Bd_fitemssZFclass.isDeleted = '0'
+WHERE Bd_fitemss97.citemccode='ZF' and Bd_fitemss97.isDeleted = '0' and Bd_fitemssZFclass.isDeleted = '0'
   and Bd_fitemssZF.isDeleted = '0'
     #if(fitemss97subid)
 			and Bd_fitemss97.iAutoId IN (

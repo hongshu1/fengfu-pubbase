@@ -43,7 +43,7 @@
 			<td>${pageNumber,pageSize,index | rownum}</td>
 			<td>
 
-               {@if data.iauditstatus == '0'}
+               {@if data.iauditstatus == '0' || data.iauditstatus == '2'}
                         <a href="admin/productInList/edit?autoid=${data.autoid}&edit=true" data-area="100%,100%" tooltip
                            data-title="编辑"
                            data-handler="refreshJBoltTable" data-dialog-title="编辑产成品入库单"
@@ -53,7 +53,7 @@
                            data-title="删除"
                            data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
                 {@/if}
-                {@if data.iauditstatus != '0'}
+                {@if data.iauditstatus != '0' && data.iauditstatus != '2'}
                         <a href="admin/productInList/edit?autoid=${data.autoid}" data-area="100%,100%" tooltip
                            data-title="查看"
                            data-handler="refreshJBoltTable" data-dialog-title="查看产成品入库单"

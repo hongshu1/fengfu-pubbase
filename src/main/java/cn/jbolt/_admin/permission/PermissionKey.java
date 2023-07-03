@@ -436,26 +436,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String CUSTOMER_ADD = "customer_add";
-	/**
-	 * 编辑
-	 */
-	public static final String CUSTOMER_EDIT = "customer_edit";
-	/**
-	 * 删除
-	 */
-	public static final String CUSTOMER_DELETE = "customer_delete";
-	/**
-	 * 导出
-	 */
-	public static final String CUSTOMER_EXPORT = "customer_export";
-	/**
-	 * 导入
-	 */
-	public static final String CUSTOMER_IMPORT = "customer_import";
-	/**
-	 * 新增
-	 */
 	public static final String VENDOR_ADD = "vendor_add";
 	/**
 	 * 编辑
@@ -878,6 +858,12 @@ public class PermissionKey {
 	 */
 	public static final String FITEMSS97SUB = "fitemss97sub";
 	/**
+	 * 项目大类
+	 */
+
+	public static final String FITEM = "fitem";
+
+	/**
 	 * 单据类型与收发类别对照表
 	 */
 	public static final String VOUCHRDCONTRAPOSE = "vouchrdcontrapose";
@@ -1004,7 +990,7 @@ public class PermissionKey {
 	/**
 	 * 取货计划管理
 	 */
-	public static final String RCVPLANM = "rcvplanm";
+	public static final String PICKUP_PLAN_MANAGE = "pickup_plan_manage";
 	/**
 	 * 货款核对管理
 	 */
@@ -2834,39 +2820,27 @@ public class PermissionKey {
 	 */
 	public static final String SUBCONTRACTSALEORDERM_DELETEBYIDS = "subcontractsaleorderm_deletebyids";
 	/**
+	 * 新增
+	 */
+	public static final String CUSTOMER_ADD = "customer_add";
+	/**
+	 * 编辑
+	 */
+	public static final String CUSTOMER_EDIT = "customer_edit";
+	/**
+	 * 删除
+	 */
+	public static final String CUSTOMER_DELETE = "customer_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CUSTOMER_EXPORT = "customer_export";
+	/**
+	 * 导入
+	 */
+	public static final String CUSTOMER_IMPORT = "customer_import";
+	/**
 	 * 位置档案
 	 */
 	public static final String 	LOCLISTCN = "	loclistcn";
-	/**
-	 * 撤回
-	 */
-	public static final String RCVPLANM_WITHDRAW = "rcvplanm_withdraw";
-	/**
-	 * 提审
-	 */
-	public static final String RCVPLANM_SUBMIT = "rcvplanm_submit";
-	/**
-	 * 审核通过
-	 */
-	public static final String RCVPLANM_APPROVE = "rcvplanm_approve";
-	/**
-	 * 审核不通过
-	 */
-	public static final String RCVPLANM_REJECT = "rcvplanm_reject";
-	/**
-	 * 批量审核通过
-	 */
-	public static final String RCVPLANM_BATCH_APPROVE = "rcvplanm_batch_approve";
-	/**
-	 * 批量审核不通过
-	 */
-	public static final String RCVPLANM_BATCH_REJECT = "rcvplanm_batch_reject";
-	/**
-	 * 批量反审核
-	 */
-	public static final String RCVPLANM_BATCH_REVERSE_APPROVE = "rcvplanm_batch_reverse_approve";
-	/**
-	 * 反审核
-	 */
-	public static final String RCVPLANM_REVERSE_APPROVE = "rcvplanm_reverse_approve";
 }

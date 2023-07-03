@@ -280,6 +280,7 @@ public class DepartmentAdminController extends BaseAdminController {
     /**
      * 部门数据源
      */
+    @UnCheck
     public void list() {
         Okv kv = Okv.create();
         kv.set("IsEnabled", 1);

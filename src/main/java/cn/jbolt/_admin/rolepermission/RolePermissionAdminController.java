@@ -2,6 +2,7 @@ package cn.jbolt._admin.rolepermission;
 
 import java.util.List;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Inject;
 
 import cn.jbolt._admin.permission.PermissionKey;
@@ -71,9 +72,11 @@ public class RolePermissionAdminController extends JBoltBaseController {
 	/**
 	 *  获取角色已经设置的资源
 	 */
+    @UnCheck
 	public void getCheckeds(){
 		renderJsonData(service.getListByRole(getLong(0)));
 	}
+    
 	/**
 	 * 根据角色ID去清空此角色绑定的所有权限
 	 */
@@ -89,6 +92,7 @@ public class RolePermissionAdminController extends JBoltBaseController {
     /**
      * 权限资源授权
      */
+    @UnCheck
     public void permissionTree(@Para(value = "openLevel") Integer openLevel,
                                @Para(value = "applicationId") Long applicationId,
                                @Para(value = "enableIcon") String icon,
