@@ -9,9 +9,13 @@
       <div class="card">
         <div class="card-body">
           <div class="col">
+
+            #if(readonly != 'readonly')
+            <button class="btn btn-outline-secondary btn-sx dropdown-toggle" type="button"
+                    id="importMenuButton" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false"> 数据导入</button>
             <div class="dropdown-menu" aria-labelledby="importMenuButton">
-              <a data-downloadbtn href="/admin/rcvplanm/downloadTpl" class="btn dropdown-item"><i
-                  class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+              <a data-downloadbtn href="/admin/rcvplanm/downloadTpl" class="btn dropdown-item">模板下载</a>
               <div class="j_upload_file_box"
                    data-name="file"
                    data-btn-class="btn dropdown-item"
@@ -25,11 +29,12 @@
                    data-url="/admin/rcvplanm/importExcelData">
               </div>
             </div>
-            #if(readonly != 'readonly')
+
             <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-sx" onclick="submitThisForm()">
               保存
             </button>
             #end
+
             #if(rcvplanm.iAutoId??)
             #include("/_view/_common/_approval_btns.html", uri="/admin/pickupPlanManage", formSn="SM_RcvPlanM",
             o=rcvplanm, primaryKeyName="iAutoId", className="cn.rjtech.admin.rcvplanm.RcvPlanMService",
@@ -75,7 +80,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
             <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
           </form>
@@ -115,6 +119,7 @@
     </tr>
     {@/each}
   </script>
+  #if(readonly != 'readonly')
   <div class="jbolt_table_toolbar" id="rcvplanm_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
       <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
@@ -126,6 +131,7 @@
       </button>
     </div>
   </div>
+  #end
 
   <table id="jbolt_Table_#(pageId)"
          class="jbolt_table thead_font_normal table-bordered table-center"
@@ -188,7 +194,7 @@
 
   var submit = false;
 
-  function submitThisForm_#(pageId)(s){
+  function submitThisForm_#(pageId)(ele){
     // 保存并提交
     submit = ele;
     $("#operationType").val("submit");
@@ -218,10 +224,9 @@
           var state = res.state;
           if (state === 'ok') {
             if (submit) {
-              let iautoid = res.iautoid;
-              submit_
-              #(pageId)(iautoid, function () {
-                successHandler('提交审核成功', iautoid);
+              let data = res.data;
+              submit_#(pageId)(data.iautoid, function () {
+                successHandler('提交审核成功', data.iautoid);
               });
             } else {
               successHandler(ret.msg, iautoid);

@@ -1,6 +1,9 @@
 package cn.rjtech.admin.rcvplanm;
 
+import java.util.List;
+
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -14,8 +17,10 @@ import cn.rjtech.model.momdata.RcvPlanM;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.upload.UploadFile;
 
 /**
  * 发货管理-取货计划主表
@@ -124,15 +129,29 @@ public class RcvPlanMAdminController extends BaseAdminController {
     /**
      * 下载模板
      */
-    public void downloadTpl() {
-
+    @UnCheck
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() throws Exception {
+        renderJxls("rcvplanm.xlsx", Kv.create(), "取货计划导入.xlsx");
     }
 
     /**
      * 导入数据
      */
     public void importExcelData(){
-
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+        List<UploadFile> files = getFiles(uploadPath);
+        if (!isOk(files)) {
+            renderBootFileUploadFail("文件上传失败!");
+            return;
+        }
+        for (UploadFile file : files) {
+            if (notExcel(file)) {
+                renderJsonFail("请上传excel文件");
+                return;
+            }
+        }
+        renderJson(service.importExcelDatas(files));
     }
 
 }

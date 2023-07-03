@@ -425,7 +425,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             return true;
         });
 
-        return Ret.ok().set("autoid", sysPuinstore.getAutoID());
+        return successWithData(sysPuinstore.keep("autoid"));
     }
 
     /*
