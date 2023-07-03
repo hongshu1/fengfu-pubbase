@@ -1,0 +1,105 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+	<div class="jbolt_page_title">
+		<div class="row">
+			<div class="col-sm-auto">
+				<h1><i class="jbicon2 jbi-tags"></i> 项目大类</h1>
+			</div>
+			<div class="col">
+				<form class="form-inline text-left" id="fitem_#(pageId)">
+					<select class="form-control"
+							data-autoload
+							data-select-type="select2"
+							data-url="admin/dictionary/options?key=fitem"
+							data-text="=项目大类="
+							data-value-attr="sn"
+							data-value=""
+							name="sn"
+							data-width="260"
+							onchange="onblurselect1()"
+							id="searchBackGoodsTypeInput4_#(pageId)"
+					>
+					</select>
+				</form>
+			</div>
+			<div class="col-sm-auto">
+			</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+		<div class="row">
+			<div class="col-auto " style="width:25%;">
+				<div class="card">
+					<div class="card-header py-2">
+						<span class="d-inline-block py-1"><strong>项目大类</strong></span>
+						<div class="pull-right">
+
+							<input type="text" class="form-control" id="searchBackGoodsTypeInput_#(pageId)"  placeholder="搜索关键字过滤" />
+						</div>
+					</div>
+
+
+					<div class="card-body overflow-auto" style="height:750px;">
+						<div id="fitemTree">
+						</div>
+					</div>
+
+				</div>
+			</div>
+		<div class="col-auto card " style="width:75%">
+				#ajaxPortal("/admin/fitem/fitemTable","fitemPortal_#(pageId)",true)
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function onblurselect1() {
+			var inpVal = $("#searchBackGoodsTypeInput4_#(pageId)").val();
+			if(isOk(inpVal)){
+				jstreeHtml1(inpVal)
+			}
+		}
+
+		jstreeHtml1("");
+		function jstreeHtml1(sn) {
+			setTimeout(function (){
+				mgrTreehandlerFn2(sn);
+			},300)
+		}
+
+		function mgrTreehandlerFn2(sn) {
+			var treeHtmlStr = "<div id='fitemTree' " +
+					"data-jstree " +
+					"data-portalid='fitemPortal_#(pageId)' " +
+					"data-curd='false' " +
+					"data-async='true' " +
+					"data-open-level='-1' " +
+					"data-handler='mgrTreehandlerFn2'"+
+					"data-search-input='searchBackGoodsTypeInput_#(pageId)' "+
+					"data-read-url='admin/fitem/mgrTree?sn="+sn+"'" +
+					"data-change-handler='fitemClick'>" +
+					"</div>"
+			$("#fitemTree").html(treeHtmlStr)
+			JSTreeUtil.init($("#fitemTree"))
+		}
+
+		var autoid = "";
+		/*详情*/
+		function fitemClick(tree,data){
+			console.log(data);
+			autoid = data.id;
+			$("#fitembForm_autoid").val(autoid);
+			$("#fitemForm_submit").click();
+		}
+
+
+
+
+
+
+	</script>
+</div>
+#end
+
