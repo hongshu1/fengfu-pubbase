@@ -693,9 +693,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     //审核通过后的业务逻辑
     public String passagetwo(Long formAutoId) {
         SysAssem byId = findById(formAutoId);
-        byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-        byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-        byId.update();
         //获取转换前的所有数据
         List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(formAutoId.toString());
         List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
@@ -729,9 +726,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         String s1 = null;
         for (Long s : formAutoId) {
             SysAssem byId = findById(s);
-            byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-            byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            byId.update();
+
             //获取转换前的所有数据
             List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(s.toString());
             List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();

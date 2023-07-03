@@ -1002,9 +1002,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             String[] split = ids.split(",");
             for (String s : split) {
                 SysPureceive byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                byId.update();
+
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s);
                 HashMap<String, Integer> hashMap = new HashMap<>();
@@ -1238,9 +1236,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
 
             for (Long s : formAutoId) {
                 SysPureceive byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                byId.update();
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.toString());
                 HashMap<String, Integer> hashMap = new HashMap<>();
@@ -1341,9 +1336,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             Date now = new Date();
             User user = JBoltUserKit.getUser();
             SysPureceive byId = findById(formAutoId);
-            byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-            byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            byId.update();
             //查从表数据
             List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(formAutoId.toString());
             HashMap<String, Integer> hashMap = new HashMap<>();
