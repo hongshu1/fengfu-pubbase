@@ -11,7 +11,7 @@ FROM Bd_Warehouse_Position wp
 	LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = wp.iWarehouseId
 	LEFT JOIN Bd_Warehouse_Area wa ON wa.iAutoId = wp.iWarehouseAreaId
 	LEFT JOIN Bd_Warehouse_Shelves ws ON ws.iAutoId = wp.iWarehouseShelvesId
-WHERE 1 = 1
+WHERE wp.isDeleted = 0
     #if(iautoid)
         AND wp.iAutoid = #para(iautoid)
     #end
@@ -26,9 +26,6 @@ WHERE 1 = 1
     #end
     #if(isenabled)
         AND wp.isEnabled = #para(isenabled)
-    #end
-    #if(isdeleted)
-        AND wp.isDeleted = #para(isdeleted)
     #end
     #if(ids)
         AND CHARINDEX(','+cast((select wp.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0

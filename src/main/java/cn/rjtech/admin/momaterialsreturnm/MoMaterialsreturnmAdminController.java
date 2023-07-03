@@ -1,6 +1,8 @@
 package cn.rjtech.admin.momaterialsreturnm;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -17,7 +19,7 @@ import com.jfinal.core.paragetter.Para;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-25 16:32
  */
-@UnCheck
+@CheckPermission(PermissionKey.API_MOMATERIALSRETURNM)
 @UnCheckIfSystemAdmin
 @Path(value = "/admin/momaterialsreturnm", viewPath = "/_view/admin/momaterialsreturnm")
 public class MoMaterialsreturnmAdminController extends BaseAdminController {
@@ -140,7 +142,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     }
 
     public void getmomaterialscanuseMList() {
-        renderJsonData(service.getModandMomlist(get("imodocid")));
+        renderJsonData(service.getModandMomlist(get("iautoid")));
     }
 
 }

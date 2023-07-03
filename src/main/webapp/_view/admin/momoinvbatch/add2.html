@@ -196,7 +196,6 @@
      * 打印刷新已打印现品票数据
      */
    function refreshTable2() {
-
        // 调用打印
         var table =getJBoltTable('#table1_#(pageId)');
         var datas=getJboltTableCheckedDatas(table);
@@ -209,10 +208,8 @@
         var cworkname='#(moDoc.cworkname??)';
         //班次
         var cworkshiftname='#(moDoc.cworkshiftname??)';
-
         //作业员 作业人员
         var psnname='#(moDoc.psnname??)';
-
         //生产组长
         var cdutypersonname='#(moDoc.cdutypersonname??)';
 
@@ -234,51 +231,27 @@
             data["total"]=total;
         }
 
-
-
         jboltHiprintWebPrint('momoinvbatch','json',datas);
-
         // 更新页面
         //refreshPjaxContainer();
 
    }
 
-
-
-
-
-
     function  refreshTable3(imodocid,id) {
         let url = "admin/momoinvbatch/batchPrint?imodocid="+imodocid+"&ids="+id;
-        console.log('url')
-        console.log(url)
-        console.log('url')
         Ajax.get(url,function(res){
+            refreshPjaxContainer();
         });
 
         var datas = jboltTableGetAllDatas('#table1_#(pageId)')
 
-
-
-
-
-
-
-        console.log(datas)
-        console.log(id)
-        console.log('data33')
-
         var data=null;
         for (const data2 of datas) {
-            console.log(data2)
             var iautoid=data2.iautoid;
-            console.log(iautoid+","+id)
             if(iautoid==id){
                 data=data2;
             }
         }
-
-
 
         //客户部番
         var cinvcode1='#(moDoc.cinvcode1??)';
@@ -288,16 +261,12 @@
         var cworkname='#(moDoc.cworkname??)';
         //班次
         var cworkshiftname='#(moDoc.cworkshiftname??)';
-
         //作业员 作业人员
         var psnname='#(moDoc.psnname??)';
-
         //生产组长
         var cdutypersonname='#(moDoc.cdutypersonname??)';
 
         var i=0;
-
-
         data["cinvcode1"]=cinvcode1;
         data["cinvname1"]=cinvname1;
         data["cworkname"]=cworkname;
@@ -306,36 +275,18 @@
         data["cdutypersonname"]=cdutypersonname;
         data["i"]=++i;
         data["total"]=i;
-
-
-
         jboltHiprintWebPrint('momoinvbatch','json',data);
-
-        // 更新页面
-        //refreshPjaxContainer();
-
     }
-
 
     function  refreshTable4(id) {
-        var datas = jboltTableGetAllDatas('#table2_#(pageId)')
-
-
-        console.log(datas)
-        console.log(id)
-        console.log('data33')
-
+        var datas = jboltTableGetAllDatas('#table2_#(pageId)');
         var data=null;
         for (const data2 of datas) {
-            console.log(data2)
             var iautoid=data2.iautoid;
-            console.log(iautoid+","+id)
             if(iautoid==id){
                 data=data2;
             }
         }
-
-
 
         //客户部番
         var cinvcode1='#(moDoc.cinvcode1??)';
@@ -345,16 +296,12 @@
         var cworkname='#(moDoc.cworkname??)';
         //班次
         var cworkshiftname='#(moDoc.cworkshiftname??)';
-
         //作业员 作业人员
         var psnname='#(moDoc.psnname??)';
 
         //生产组长
         var cdutypersonname='#(moDoc.cdutypersonname??)';
-
         var i=0;
-
-
         data["cinvcode1"]=cinvcode1;
         data["cinvname1"]=cinvname1;
         data["cworkname"]=cworkname;
@@ -363,18 +310,8 @@
         data["cdutypersonname"]=cdutypersonname;
         data["i"]=++i;
         data["total"]=i;
-
-
-
         jboltHiprintWebPrint('momoinvbatch','json',data);
-
-        // 更新页面
-        //refreshPjaxContainer();
-
     }
-
-
-
 
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="processDefectForm")

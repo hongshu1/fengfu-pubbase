@@ -21,7 +21,7 @@
 <td>${data.istatusname}</td>
 <td>
     <button hidden onclick="refreshTable4('${data.iautoid}')"  class="btn btn-outline-secondary" ><i class="fa fa-print"></i> 打印</button>
-	<a  href="#" onclick="refreshTable4('${data.iautoid}')" data-confirm="确定打印？" ><i class="fa fa-print"></i>打印</a>
+	<a  href="#" onclick="refreshTable4('${data.iautoid}')" data-confirm="确定补打？" ><i class="fa fa-print"></i>补打</a>
 
     <a hidden href="javascript:void(0);" onclick="jboltTableRemoveRow()" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-print"></i>补打</a>
     {@if index == 0}

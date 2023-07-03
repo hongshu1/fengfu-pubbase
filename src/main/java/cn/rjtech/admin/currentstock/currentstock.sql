@@ -35,8 +35,38 @@ and c.poscode in (#(poscodeSql))
 
 
 #sql("getdatas")
-select * from T_Sys_StockCheckVouch where 1=1 and isDeleted='0' order by dcreatetime desc
-#end
+select t1.*,
+                AuditState =
+		        CASE
+				WHEN t1.iAuditStatus = 0 THEN '盘点中'
+				WHEN t1.iAuditStatus = 1 THEN '待审核'
+				WHEN t1.iAuditStatus = 2 THEN '已完成'
+				WHEN t1.iAuditStatus = 3 THEN '审核不通过' END,
+        wh.cWhName AS whname
+from T_Sys_StockCheckVouch t1
+LEFT JOIN Bd_Warehouse wh ON wh.cWhCode = t1.WhCode
+where 1 = 1
+  and t1.isDeleted = '0'
+  AND t1.OrganizeCode = #para(organizecode)
+    #if(billno)
+        AND t1.BillNo like '%#(billno)%'
+    #end
+    #if(checktype)
+        AND t1.CheckType = #para(checktype)
+    #end
+    #if(whname)
+        AND wh.cWhName = #para(whname)
+    #end
+    #if(iorderstatus)
+        AND t1.iAuditStatus = #para(iorderstatus)
+    #end
+    #if(startdate)
+        AND CONVERT(VARCHAR(10),t1.dcreatetime,23) >='#(startdate)'
+    #end
+    #if(enddate)
+        AND CONVERT(VARCHAR(10),t1.dcreatetime,23) <='#(enddate)'
+    #end
+order by t1.dcreatetime desc #end
 
 
 
@@ -255,12 +285,64 @@ WHERE t3.isDeleted = 0
     #end
 
 #sql("getStockCheckVouchBarcodeLines")
-SELECT *
-FROM T_Sys_StockCheckVouch t1
-         LEFT JOIN T_Sys_StockCheckVouchBarcode t2 ON t2.MasID = t1.AutoId
-where 1 = 1
-AND t1.OrganizeCode = #para(OrgCode)
-AND t2.MasID = #para(autoid)
+SELECT
+    t2.*,
+    wh.cWhCode AS whcode,
+    wh.cWhName AS whname,
+    area.cAreaCode AS poscode,
+    area.cAreaName AS posname,
+    class.cInvCCode,
+    class.cInvCName,
+    i.cInvCode,
+    i.cInvCode1,
+    i.cInvName1,
+    i.cInvStd,
+    uom.cUomName,
+    t4.iQty,
+    t2.Qty,
+    t4.cVersion,
+    t4.dPlanDate,
+    t4.cCompleteBarcode
+FROM
+    T_Sys_StockCheckVouch t1
+        LEFT JOIN T_Sys_StockCheckVouchBarcode t2 ON t2.MasID = t1.AutoId
+        LEFT JOIN (
+        SELECT
+            iAutoId as PoId,
+            iPurchaseOrderDid,
+            iinventoryId,
+            cCompleteBarcode,
+            iQty,
+            cVersion,
+            dPlanDate,
+            cSourceld,
+            cSourceBarcode
+        FROM
+            PS_PurchaseOrderDBatch UNION ALL
+        SELECT
+            iAutoId as PoId,
+            iSubcontractOrderDid,
+            iinventoryId,
+            cCompleteBarcode,
+            iQty,
+            cVersion,
+            dPlanDate,
+            cSourceld,
+            cSourceBarcode
+        FROM
+            PS_SubcontractOrderDBatch
+    ) t4 ON t2.BarCode = t4.cCompleteBarcode
+        LEFT JOIN bd_inventory i ON i.iautoid = t4.iinventoryId
+        LEFT JOIN Bd_InventoryClass class ON i.iInventoryClassId = class.iAutoId
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = i.iAutoId
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = i.iInventoryUomId1
+WHERE
+ 1 = 1
+    AND t1.isDeleted = 0
+    AND t1.OrganizeCode = #para(OrgCode)
+    AND t2.MasID = #para(autoid)
 
 #end
 
@@ -277,8 +359,8 @@ SELECT
     t3.cInvName1,
     t3.cInvStd,
     uom.cUomName,
-    area.iMaxCapacity AS iQty,
-    area.iMaxCapacity AS Qty,
+    t4.iQty,
+    t4.iQty AS Qty,
     t4.cCompleteBarcode AS barcode,
     t4.cVersion,
     t4.dPlanDate
@@ -362,3 +444,15 @@ WHERE t3.isDeleted = 0
     AND area.cAreaCode IN(#(poscode))
     #end
     #end
+
+#sql("findCheckVouchBarcodeByMasIdAndInvcode")
+select t1.* from T_Sys_StockCheckVouchBarcode t1
+where 1=1
+    #if(masid)
+    and t1.masid = #para(masid)
+#end
+#if(invcode)
+    and t1.invcode = #para(invcode)
+#end
+#end
+

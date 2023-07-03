@@ -140,7 +140,7 @@ public class CustomerClassAdminController extends BaseAdminController {
      */
     @SuppressWarnings("unchecked")
     public void downloadTpl() throws Exception {
-        renderJxls("customerclass_import.xlsx", Kv.by("rows", null), "客户分类导入模板.xlsx");
+        renderJxls("customerclass_import.xlsx", Kv.by("rows", null), "客户档案分类.xlsx");
     }
 
     /**

@@ -112,6 +112,7 @@ WHERE
 	#if(cInvName1)
 	    AND minv.minv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
 	#end
+
 	ORDER BY master.dCreateTime ASC
 #end
 
