@@ -338,14 +338,6 @@ public class PermissionKey {
 	 */
 	public static final String INVENTORYSPOTCHECKFORM = "inventoryspotcheckform";
 	/**
-	 * 编辑
-	 */
-	public static final String WAREHOUSE_EDIT = "warehouse_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_DELETE = "warehouse_delete";
-	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_AREA_ADD = "warehouse_area_add";
@@ -357,14 +349,6 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String WAREHOUSE_AREA_DELETE = "warehouse_area_delete";
-	/**
-	 * 导出
-	 */
-	public static final String WAREHOUSE_EXPORT = "warehouse_export";
-	/**
-	 * 导入
-	 */
-	public static final String WAREHOUSE_IMPORT = "warehouse_import";
 	/**
 	 * 功能权限
 	 */
@@ -726,10 +710,6 @@ public class PermissionKey {
 	 */
 	public static final String WORKREGIONM_IMPORT = "workregionm_import";
 	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_ADD1 = "warehouse_add1";
-	/**
 	 * 导出
 	 */
 	public static final String WAREHOUSE_AREA_EXPORT = "warehouse_area_export";
@@ -857,12 +837,6 @@ public class PermissionKey {
 	 * 项目档案
 	 */
 	public static final String FITEMSS97SUB = "fitemss97sub";
-	/**
-	 * 项目大类
-	 */
-
-	public static final String FITEM = "fitem";
-
 	/**
 	 * 单据类型与收发类别对照表
 	 */
@@ -1503,6 +1477,10 @@ public class PermissionKey {
 	 * 【API】制造工单-生产退料
 	 */
 	public static final String API_MOMATERIALSRETURNM = "api_momaterialsreturnm";
+	/**
+	 * 现品票
+	 */
+	public static final String API_MOMOINVBATCH = "api_momoinvbatch";
 	/**
 	 * 新增
 	 */
@@ -2827,7 +2805,6 @@ public class PermissionKey {
 	 * 批量删除
 	 */
 	public static final String SUBCONTRACTSALEORDERM_DELETEBYIDS = "subcontractsaleorderm_deletebyids";
-
 	/**
 	 * 新增
 	 */
@@ -2884,3 +2861,40 @@ public class PermissionKey {
 	 * 反审核
 	 */
 	public static final String RCVPLANM_REVERSE_APPROVE = "rcvplanm_reverse_approve";
+	/**
+	 * 生成现品票
+	 */
+	public static final String API_CREATEMOMOINVBATCH = "api_createmomoinvbatch";
+	/**
+	 * 撤回
+	 */
+	public static final String API_WITHDRAW = "api_withdraw";
+	/**
+	 * 修改数量
+	 */
+	public static final String API_UPDATENUMBER = "api_updatenumber";
+	/**
+	 * 批量打印
+	 */
+	public static final String API_BATCHPRINT = "api_batchprint";
+	/**
+	 * 修改
+	 */
+	public static final String WAREHOUSE_EDIT = "warehouse_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_DELETE = "warehouse_delete";
+	/**
+	 * 数据导出
+	 */
+	public static final String WAREHOUSE_EXPORT = "warehouse_export";
+	/**
+	 * 导入
+	 */
+	public static final String WAREHOUSE_IMPORT = "warehouse_import";
+	/**
+	 * 批量报工
+	 */
+	public static final String API_WORKBYIDS = "api_workbyids";
+}

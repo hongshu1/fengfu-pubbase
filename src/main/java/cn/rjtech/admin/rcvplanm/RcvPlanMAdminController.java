@@ -24,7 +24,6 @@ import com.jfinal.plugin.activerecord.tx.Tx;
  * @date: 2023-04-27 14:09
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.PICKUP_PLAN_MANAGE)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/pickupPlanManage", viewPath = "/_view/admin/rcvplanm")
 public class RcvPlanMAdminController extends BaseAdminController {
