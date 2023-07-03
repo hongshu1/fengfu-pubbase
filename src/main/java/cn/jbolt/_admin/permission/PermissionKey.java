@@ -338,14 +338,6 @@ public class PermissionKey {
 	 */
 	public static final String INVENTORYSPOTCHECKFORM = "inventoryspotcheckform";
 	/**
-	 * 编辑
-	 */
-	public static final String WAREHOUSE_EDIT = "warehouse_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_DELETE = "warehouse_delete";
-	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_AREA_ADD = "warehouse_area_add";
@@ -357,14 +349,6 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String WAREHOUSE_AREA_DELETE = "warehouse_area_delete";
-	/**
-	 * 导出
-	 */
-	public static final String WAREHOUSE_EXPORT = "warehouse_export";
-	/**
-	 * 导入
-	 */
-	public static final String WAREHOUSE_IMPORT = "warehouse_import";
 	/**
 	 * 功能权限
 	 */
@@ -725,10 +709,6 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String WORKREGIONM_IMPORT = "workregionm_import";
-	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_ADD1 = "warehouse_add1";
 	/**
 	 * 导出
 	 */
@@ -2884,7 +2864,7 @@ public class PermissionKey {
 	/**
 	 * 生成现品票
 	 */
-	public static final String API_CREATEMOMOINVBATCH = "api_createMomoinvbatch";
+	public static final String API_CREATEMOMOINVBATCH = "api_createmomoinvbatch";
 	/**
 	 * 撤回
 	 */
@@ -2892,9 +2872,29 @@ public class PermissionKey {
 	/**
 	 * 修改数量
 	 */
-	public static final String API_UPDATENUMBER = "api_updateNumber";
+	public static final String API_UPDATENUMBER = "api_updatenumber";
 	/**
 	 * 批量打印
 	 */
-	public static final String BATCHPRINT = "batchPrint";
+	public static final String API_BATCHPRINT = "api_batchprint";
+	/**
+	 * 修改
+	 */
+	public static final String WAREHOUSE_EDIT = "warehouse_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_DELETE = "warehouse_delete";
+	/**
+	 * 数据导出
+	 */
+	public static final String WAREHOUSE_EXPORT = "warehouse_export";
+	/**
+	 * 导入
+	 */
+	public static final String WAREHOUSE_IMPORT = "warehouse_import";
+	/**
+	 * 批量报工
+	 */
+	public static final String API_WORKBYIDS = "api_workbyids";
 }
