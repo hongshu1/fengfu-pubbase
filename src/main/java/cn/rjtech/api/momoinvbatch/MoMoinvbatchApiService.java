@@ -1,30 +1,26 @@
 package cn.rjtech.api.momoinvbatch;
 
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.api.JBoltApiBaseService;
-import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.modoc.MoDocService;
-import cn.rjtech.admin.morouting.MoMoroutingService;
+import cn.rjtech.admin.momoinvbatch.MoMoinvbatchService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
-import cn.rjtech.entity.vo.modoc.ModocApiPage;
-import cn.rjtech.entity.vo.modoc.ModocApiResVo;
+import cn.rjtech.entity.vo.moinvbatch.MoinvbatchApiResVo;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 public class MoMoinvbatchApiService extends JBoltApiBaseService {
     @Inject
@@ -41,9 +37,11 @@ public class MoMoinvbatchApiService extends JBoltApiBaseService {
     private WorkshiftmService workshiftmService;
     @Inject
     private DepartmentService departmentService;
+    @Inject
+    MoMoinvbatchService moMoinvbatchService;
 
 
-    public Record getModocData(Long imodocid) {
+    public Ret getModocData(Long imodocid) {
         MoDoc moDoc = moDocService.findById(imodocid);
         ValidationUtils.notNull(moDoc, JBoltMsg.DATA_NOT_EXIST);
         Record moRecod = moDoc.toRecord();
@@ -114,7 +112,25 @@ public class MoMoinvbatchApiService extends JBoltApiBaseService {
             }
         }
 
+        MoinvbatchApiResVo moinvbatchApiResVo = new MoinvbatchApiResVo();
+        moinvbatchApiResVo.setMoDoc(moRecod);
+        return successWithData(moinvbatchApiResVo);
+    }
 
-        return moRecod;
+    /**
+     * 返回现品票数据
+     *
+     * @param imodocid
+     * @param iprintstatus
+     * @return
+     */
+    public Ret getMoMoinvbatchDatas(Long imodocid, Integer iprintstatus) {
+        Page<Record> page = moMoinvbatchService.paginateAdminDatas(1, 10000, Kv.by("imodocid", imodocid).set("iprintstatus", iprintstatus));
+        if (notOk(page)) {
+            return SUCCESS;
+        }
+        MoinvbatchApiResVo moinvbatchApiResVo = new MoinvbatchApiResVo();
+        moinvbatchApiResVo.setMoMoinvbatchs(page.getList());
+        return successWithData(moinvbatchApiResVo);
     }
 }
