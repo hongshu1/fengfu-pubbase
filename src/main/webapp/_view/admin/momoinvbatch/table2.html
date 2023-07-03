@@ -20,7 +20,8 @@
 <td>${data.iqty}</td>
 <td>${data.istatusname}</td>
 <td>
-    <button  onclick="refreshTable4('${data.iautoid}')"  class="btn btn-outline-secondary" ><i class="fa fa-print"></i> 打印</button>
+    <button hidden onclick="refreshTable4('${data.iautoid}')"  class="btn btn-outline-secondary" ><i class="fa fa-print"></i> 打印</button>
+	<a  href="#" onclick="refreshTable4('${data.iautoid}')" data-confirm="确定打印？" ><i class="fa fa-print"></i>打印</a>
 
     <a hidden href="javascript:void(0);" onclick="jboltTableRemoveRow()" data-handler="refreshJBoltTable" class="jbolt_table_delbtn"><i class="fa fa-print"></i>补打</a>
     {@if index == 0}
