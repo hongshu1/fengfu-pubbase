@@ -1,6 +1,7 @@
 package cn.rjtech.api.momoinvbatch;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
+import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -114,7 +115,7 @@ public class MoMoinvbatchApiService extends JBoltApiBaseService {
 
         MoinvbatchApiResVo moinvbatchApiResVo = new MoinvbatchApiResVo();
         moinvbatchApiResVo.setMoDoc(moRecod);
-        return successWithData(moinvbatchApiResVo);
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(moinvbatchApiResVo);
     }
 
     /**
@@ -131,6 +132,6 @@ public class MoMoinvbatchApiService extends JBoltApiBaseService {
         }
         MoinvbatchApiResVo moinvbatchApiResVo = new MoinvbatchApiResVo();
         moinvbatchApiResVo.setMoMoinvbatchs(page.getList());
-        return successWithData(moinvbatchApiResVo);
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(moinvbatchApiResVo);
     }
 }

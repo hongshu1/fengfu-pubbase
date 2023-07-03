@@ -48,7 +48,6 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 生成现品票
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
     @UnCheck
     public void createMomoinvbatch(@Para(value = "imodocid") Long imodocid) {
         ValidationUtils.notNull(imodocid, "缺少工单主键");
@@ -59,7 +58,6 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 撤回
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
     @UnCheck
     public void withdraw(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, "缺少现品票主键");
@@ -70,7 +68,6 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 修改数量
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
     @UnCheck
     public void updateNumber(@Para(value = "iautoid") Long iautoid,
                              @Para(value = "newqty") Integer newQty) {
@@ -83,7 +80,6 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 批量打印
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
     @UnCheck
     public void batchPrint(@Para(value = "imodocid") String imodocid, @Para(value = "ids") String ids) {
         ValidationUtils.notNull(imodocid, "缺少工单主键");
