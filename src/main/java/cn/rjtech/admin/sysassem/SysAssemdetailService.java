@@ -208,7 +208,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         for (String s : split) {
             SysAssemdetail byId1 = findById(s);
             SysAssem byId = sysassemservice.findById(byId1.getMasID());
-            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
             if (!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())) {
@@ -225,7 +225,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
     public Ret delete(Long id) {
         SysAssemdetail byId1 = findById(id);
         SysAssem byId = sysassemservice.findById(byId1.getMasID());
-        if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+        if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
             ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
         }
         if (!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())) {
