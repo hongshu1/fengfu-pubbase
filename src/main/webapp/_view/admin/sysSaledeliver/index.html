@@ -4,19 +4,31 @@
 <div class="jbolt_page" data-key="#(pmkey??)">
     <div class="jbolt_page_title">
         <div class="row">
+            <div class="col-md-auto">
+                <h1>发货管理-销售出库单列表</h1>
+            </div>
             <div class="col-sm-auto">
                 <form class="form-inline" id="SysSaledeliver_form_#(pageId)">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="出库单号" name="BillNo"
-                           value=""/>
+                    <input type="text" autocomplete="off" class="form-control" placeholder="出库单号" name="BillNo" value=""/>
+                    <select class="form-control"
+                            name="whname"
+                            data-autoload
+                            data-url="admin/SysEnumeration/wareHouse"
+                            data-select-type="select2"
+                            data-text="=仓库名称="
+                            data-value=""
+                            data-value-attr="whname"
+                            data-text-attr="whname"
+                            data-select="#(whname??)"></select>
                     <input type="text" autocomplete="off" class="form-control" placeholder="客户简称" name="cCusCode"
                            value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="whName"
                            value=""/>
                     <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
-                           name="startTime" value="#datetime(startTime??,'yyyy-MM-dd')"/>
+                           name="startdate" value="#datetime(startTime??,'yyyy-MM-dd')"/>
                     <span class="ml-1 mr-1">至</span>
                     <input type="text" data-date class="form-control" placeholder="截止日期" maxlength="20"
-                           name="endTime"
+                           name="enddate"
                            value="#datetime(endTime??,'yyyy-MM-dd')"/>
                     <div class="btn-group text-center mx-1">
                         <button type="submit" class="btn btn-outline-primary"><i class="fa fa-search"></i> 查询</button>
