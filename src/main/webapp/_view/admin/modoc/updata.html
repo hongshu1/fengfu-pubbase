@@ -35,6 +35,7 @@
         <label class="col-sm-1 col-form-label">班次名称</label>
         <div class="col-3">
             <select class="form-control"
+                    readonly="readonly"
                     data-autoload
                     id="iworkshiftmid"
                     data-url="admin/workshiftm/getSelect"
@@ -56,18 +57,19 @@
             <!--                   value="#(moDoc.iworkshiftmid??)"/>-->
         </div>
         <label class="col-sm-1 col-form-label">计划日期</label>
-        <div class="col-3">
-            <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
-                   autocomplete="off" id="dplandate"
+        <div class="col-3" >
+            <input  type="text"  data-type="date" data-fmt="yyyy-MM-dd"
+                   autocomplete="off" id="dplandate" readonly="readonly"
                    class="form-control" data-rule="required" placeholder="请设置计划日期" data-tips="请设置计划日期"
                    maxlength="10"
                    name="moDoc.dplandate" value="#(moDoc.dplandate??)"/>
         </div>
         <label class="col-sm-1 col-form-label">存货编码</label>
         <div class="col-3">
-            <input type="text" name="iInventoryId" value="#(iInventoryId??)" hidden data-sync-attr="itemid" id="itemId_#(pageId)"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
+            <input type="text"  name="iInventoryId" value="#(iInventoryId??)" hidden data-sync-attr="itemid" id="itemId_#(pageId)"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
             <div class="input-group">
                 <input type="text"
+                       readonly="readonly"
                        data-autocomplete
                        data-rule="required"
                        data-tips="请选择存货编码"
@@ -84,7 +86,7 @@
 
                 />
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#inventoryName_#(pageId)" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/modoc/inventoryDialogIndex"><i class="fa fa-search"></i></button>
+                    <button readonly="readonly" class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#inventoryName_#(pageId)" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/modoc/inventoryDialogIndex"><i class="fa fa-search"></i></button>
                 </div>
                 <input  type="hidden" placeholder="存货id" id="iinventoryid" data-value-attr="itemid" name="moDoc.iinventoryid" value="#(moDoc.iinventoryid??)"/>
             </div>
@@ -152,7 +154,7 @@
     <!--<td><span><i class="fa fa-cog"></i>请选${data.imergednum}个人</span></td>-->
      <td><span><i class="fa fa-cog"></i>${data.configperson}</span></td>
     <td>${data.imergerate}</td>
-    <td >${data.configpersonids}</td>
+    <td hidden>${data.configpersonids}</td>
 
     <!--    {@else}-->
     <!--        <td data-editable= flase>不可选</td>-->
@@ -186,7 +188,7 @@
         <th data-width="120" data-column="drawings">作业指导书</th>
         <th data-width="120" data-column="configperson">生产人员</th>
         <th data-width="120" data-column="imergerate">要员</th>
-        <th data-width="120"  data-column="configpersonids">生产人员ID</th>
+        <th data-width="120" hidden  data-column="configpersonids">生产人员ID</th>
     </tr>
     </thead>
     <tbody>
@@ -462,7 +464,7 @@
             "form": formData
         }
         data.jboltTable = JSON.stringify(s);
-        Ajax.post("admin/modoc/save?rowid="+rowid, data, function (res) {
+        Ajax.post("admin/modoc/updata?rowid="+rowid, data, function (res) {
             LayerMsgBox.success("提交成功", 600, function () {
                 //alert("提交行")
                 // refreshPjaxContainer();
@@ -471,6 +473,7 @@
                 var iMoDocId=$("#iMoDocId").val(res.data.iautoid);
                 //var  requrl="admin/modoc/getDocdetail?iMoDocId="+"?iMoDocId="+iMoDocId;
                 getTbleData("admin/modoc/getDocdetail?imodocid="+res.data.iautoid);
+
                 //refreshPjaxContainer();
                 LayerMsgBox.closeAll();
             });
