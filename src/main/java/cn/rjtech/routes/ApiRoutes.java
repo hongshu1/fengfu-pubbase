@@ -49,6 +49,7 @@ public class ApiRoutes extends Routes {
         this.add("/api/general", GeneralApiController.class);
         // 制造工单
         this.add("/api/modoc", ModocApiController.class);
+        this.add("/aoi/momaterialsreturnm",MoMaterialsreturnmApiController.class);
         // NFC刷卡
         this.add("/api/nfcswipecard", NfcSwipeCardApiController.class);
         this.add("/api/rcvdocdefect", RcvDocDefectApiController.class);
