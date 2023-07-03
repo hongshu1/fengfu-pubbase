@@ -39,7 +39,7 @@
     {@else if data.istatus=='2'}
       <a href="admin/pickupPlanManage/edit?iautoid=${data.iautoid}&readonly=readonly" data-area="100%,100%" tooltip data-title="查看"
          data-handler="refreshJBoltTable" data-dialog-title="查看取货计划管理" class="jbolt_table_editbtn">查看</a>
-      <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=Co_MonthOrderM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=monthorderm_withdraw&className=cn.rjtech.admin.monthorderm.MonthordermService"
+      <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=SM_RcvPlanM&primaryKeyName=iautoid&formAutoId=${data.iautoid}&permissionKey=rcvplanm_withdraw&className=cn.rjtech.admin.rcvplanm.RcvPlanMService"
          data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回取货计划" class="jbolt_table_delbtn">撤回
       </a>
     {@else if data.istatus=='3'}

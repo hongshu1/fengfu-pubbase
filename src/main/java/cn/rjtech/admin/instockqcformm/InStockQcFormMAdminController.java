@@ -1,6 +1,7 @@
 package cn.rjtech.admin.instockqcformm;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
@@ -145,6 +146,9 @@ public class InStockQcFormMAdminController extends BaseAdminController {
             return;
         }
         List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        if (StrUtil.isBlank(record.getStr("cmeasurereason"))) {
+            record.set("cmeasurereason", record.getStr("cmeasure"));
+        }
         set("columns", tableHeadData);
         set("record", record);
         render("checkout.html");

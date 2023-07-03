@@ -158,7 +158,7 @@ public class WorkclassAdminController extends JBoltBaseController {
      * 导出所有数据
      */
     public void exportExcelAll() {
-        List<Workclass> datas = service.findAll();
+        List<Workclass> datas = service.findAllIsDeletedFalse();
         if (notOk(datas)) {
             renderJsonFail("无有效数据导出");
             return;

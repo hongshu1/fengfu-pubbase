@@ -9,7 +9,7 @@ SELECT t1.*,
     t3.cInvAddCode,
     t4.cEquipmentName,
     t5.cUomCode,t5.cUomName,
-    t6.cpics,t6.ctypeids,t6.ctypenames,
+    t6.cpics,t6.ctypeids,t6.ctypenames,t6.cmeasure,
     t7.cversion,
     statusname =
        CASE WHEN t1.istatus=0 THEN '未有检查表'
@@ -50,6 +50,9 @@ where t1.IsDeleted = '0'
     #end
     #if(iscompleted)
     AND t1.iscompleted =#para(iscompleted)
+    #end
+    #if(iscompleted2)
+    AND t1.iscompleted =#para(iscompleted2)
     #end
     #if(istatus)
     AND t1.istatus =#para(istatus)
