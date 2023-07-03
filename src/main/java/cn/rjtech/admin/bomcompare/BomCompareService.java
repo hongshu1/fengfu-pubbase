@@ -1,6 +1,7 @@
 package cn.rjtech.admin.bomcompare;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -33,7 +34,7 @@ import java.util.*;
 
 /**
  * 物料建模-Bom清单
- * @ClassName: BomCompareService
+ *                              @ClassName: BomCompareService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-01 10:50
  */
@@ -362,10 +363,14 @@ public class BomCompareService extends BaseService<BomCompare> {
 			}
 			// 保存/修改物料清单主表
 			if (ObjUtil.isNull(bomM.getIAutoId())){
+				// 保存时校验当前产品/半产品物料清单是否存在，存在则不允许新增，只能通过复制升级版本才行
+				List<BomM> bomMList = bomMService.findByInventoryId(getOrgId(), bomM.getIInventoryId());
+				ValidationUtils.isTrue(CollectionUtil.isEmpty(bomMList), "当前产品/半产品已存在物料清单记录，不允许手工新增，只能通过复制升级版本");
 				bomMService.save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 			}else{
 				bomMService.update(bomM, userId, userName, now);
 			}
+			
 			// 更改物料清单细表
 			if (ObjUtil.isNotNull(pId)){
 				BomD bomD = bomDService.findById(pId);
@@ -405,6 +410,5 @@ public class BomCompareService extends BaseService<BomCompare> {
 		});
 		return SUCCESS;
 	}
-	
 	
 }
