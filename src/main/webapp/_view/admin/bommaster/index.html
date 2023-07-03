@@ -36,6 +36,7 @@
 		<div class="nav nav-tabs" id="nav-tab2_#(jboltTabId)" role="tablist">
 			<a class="nav-item nav-link active" id="nav-base-tab_one_21" data-toggle="tab" href="#tab-one_21" role="tab" onclick="refreshPjaxContainer()" aria-controls="tab-one" aria-selected="true">物料清单</a>
 			<a class="nav-item nav-link" id="nav-base-tab_two_21" data-toggle="tab" href="#tab-two_21" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-two" aria-selected="false">版本记录</a>
+			<a class="nav-item nav-link" id="nav-base-tab_two_31" data-toggle="tab" href="#tab-two_31" role="tab" onclick="refreshJBoltTable()" aria-controls="tab-three" aria-selected="false">导入查看</a>
 		</div>
 	</nav>
 	<div class="tab-content" style="padding: 0px 1rem">
@@ -45,7 +46,12 @@
 		</div>
 		<!--2 版本记录 -->
 		<div class="tab-pane fade" id="tab-two_21" role="tabpanel" aria-labelledby="nav-base-tab_two_21">
-			#ajaxPortal("/admin/bommaster/versionIndex","bomVersionPortal_#(pageId)",true)
+			#ajaxPortal("/admin/bommaster/versionIndex?iType=2","bomVersionPortal_#(pageId)",true)
+		</div>
+
+		<!--3 导入查看 -->
+		<div class="tab-pane fade" id="tab-two_31" role="tabpanel" aria-labelledby="nav-base-tab_two_31">
+			#ajaxPortal("/admin/bommaster/versionIndex?iType=1","addBomVersionPortal_#(pageId)",true)
 		</div>
 	</div>
 </div>

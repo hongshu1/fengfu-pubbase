@@ -507,21 +507,16 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 	 */
 	public Record getBarcodeDatas(Kv kv) {
 
-		String itemCode = kv.getStr("itemCode");
-		System.out.println("itemCode==="+itemCode);
-		Record firstRecord = findFirstRecord("select t2.cInvCode as beforeCode, t3.cInvCode as afterCode\n" +
-				"from Bd_InventoryChange t1\n" +
-				"         left join Bd_Inventory t2 on t1.iBeforeInventoryId = t2.iAutoId\n" +
-				"         left join Bd_Inventory t3 on t1.iAfterInventoryId = t3.iAutoId\n" +
-				"where t2.cInvCode = '" + itemCode + "'");
+		Record firstRecord = dbTemplate("scancodereceive.findAfterInvData",kv).findFirst();
 
 		if (firstRecord!=null){
-			String aftercode = firstRecord.getStr("aftercode");
+			/*String aftercode = firstRecord.getStr("aftercode");
 			String orgCode = getOrgCode();
 			kv.set("keywords",aftercode);
 			kv.set("orgCode",orgCode);
 			kv.set("limit",1);
-			return dbTemplate("scancodereceive.getResource",kv).findFirst();
+			return dbTemplate("scancodereceive.getResource",kv).findFirst();*/
+			return firstRecord;
 		} else {
 		    ValidationUtils.isTrue(false, "未查找到该物料的双单位，请先维护物料的形态对照表");
         }
@@ -630,7 +625,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
         for (Record l : list) {
             String isIQc1 = l.getStr("isiqc1");
             String isInitial = l.getStr("isinitial");
-            String cinvcode = l.getStr("cinvcode");
+            String cinvcode = l.getStr("invcode");
             //判断存货开关是否打开 或者 收料单行是否开启初物,开则推来料检验单
             if ((isOk(isIQc1) && "1".equals(isIQc1)) || isOk(isInitial) && "1".equals(isInitial)) {
                 if (itemSet.contains(cinvcode)) {
@@ -661,7 +656,15 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 
             if (puiList.size() > 0) {
 
-                SysPuinstore sysPuinstore = new SysPuinstore();
+				SysPureceivedetail first = scanCodeReceiveDetailService.findFirst("select * from " +
+						"T_Sys_PUReceiveDetail where MasID = '" + sysPureceive.getAutoID() + "' and isDeleted = '0' " +
+						"and Barcode is not null");
+
+				Kv para = new Kv();
+				para.set("keywords",first.getBarcode());
+				List<Record> resource = getResource(para);
+
+				SysPuinstore sysPuinstore = new SysPuinstore();
                 sysPuinstore.setBillNo(sysPureceive.getBillNo());
                 sysPuinstore.setBillType(sysPureceive.getBillType());
                 sysPuinstore.setBillDate(DateUtil.formatDate(now));
@@ -680,6 +683,10 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                 sysPuinstore.setDeptCode(sysPureceive.getDeptCode());
                 sysPuinstore.setIBusType(1);
                 sysPuinstore.setRdCode(sysPureceive.getRdCode());
+				sysPuinstore.setBillType(resource.get(0).getStr("ipurchasetypeid"));
+				sysPuinstore.setDeptCode(resource.get(0).getStr("cdepcode"));
+				sysPuinstore.setIBusType(Integer.valueOf(resource.get(0).getStr("orderibustype")));
+				sysPuinstore.setRdCode(resource.get(0).getStr("scrdcode"));
                 sysPuinstore.save();
 
                 String autoID = sysPuinstore.getAutoID();
@@ -706,7 +713,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                     sysPuinstoredetail.setPuUnitCode(record.getStr("uomcode"));
                     sysPuinstoredetail.setPuUnitName(record.getStr("uomname"));
                     sysPuinstoredetail.setIsDeleted(false);
-                    sysPuinstoredetail.setInvcode(record.getStr("cinvcode"));
+                    sysPuinstoredetail.setInvcode(record.getStr("invcode"));
                     pureceivedetailList.add(sysPuinstoredetail);
 
                 });
