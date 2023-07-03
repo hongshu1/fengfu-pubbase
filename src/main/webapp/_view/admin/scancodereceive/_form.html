@@ -141,15 +141,16 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
             <td>${data.barcodetype}</td>
             <td>${data.sourcebillno}</td>
             <td>${data.venname}</td>
-            <td {@if data.autoid} data-editable="false" {@/if}>${data.barcode}</td>
-            <td {@if data.autoid} data-editable="false" {@/if}>${data.cinvcode}</td>
+            <td {@if data.autoid} data-editable="false" {@else} data-editable="${data.isedit??true}" {@/if}>${data
+            .barcode}</td>
+            <td {@if data.autoid} data-editable="false" {@else} data-editable="${data.isedit??true}" {@/if}>${data.invcode}</td>
             <td>${data.cinvcode1}</td>
             <td>${data.cinvname1}</td>
             <td>${data.dplandate|date_ymd}</td>
             <td>${data.cuomname}</td>
             <td>${data.quantity}</td>
-            <td>${data.qty}</td>
-            <td>${data.weight}</td>
+            <td data-editable="${data.iseditqty??false}">${data.qty}</td>
+            <td data-editable="${data.iseditweight??true}">${data.weight??0}</td>
             <td>${data.poscode}</td>
             <td><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd"/></td>
             <td hidden>${data.sourcebilldid}</td>
@@ -191,7 +192,8 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                        data-tips="请选择库区" data-header="请选择库区,库名称" maxlength="40"
                        value="#(careaname??)">
                     </span>
-                <button type="button" class="btn btn-outline-secondary" onclick="coverall()"><i class="fa fa-refresh"></i>
+                <button type="button" class="btn btn-outline-secondary" onclick="coverall(this)"><i
+                        class="fa fa-refresh"></i>
                     覆盖库区</button>
             </form>
         </div>
@@ -220,8 +222,8 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
             <th data-width="100" data-column="barcodetype">类型</th>
             <th data-width="150" data-column="sourcebillno">订单编号</th>
             <th data-width="150" data-column="venname">供应商</th>
-            <th data-min-width="150" data-column="barcode">现品票</th>
-            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-min-width="160" data-column="barcode">现品票</th>
+            <th data-width="150" data-column="invcode">存货编码</th>
             <th data-width="150" data-column="cinvcode1">客户部番</th>
             <th data-width="110" data-column="cinvname1">部品名称</th>
             <th data-width="120" data-column="dplandate">计划到货日期</th>
@@ -270,7 +272,7 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                     jboltTableInsertRow("jbolt_Table_#(pageId)", trJsonData, false, false, false);
                     $("#barcode").val('');
                     console.log('trJsonData====>',trJsonData)
-                    var cinvcode = trJsonData[0].cinvcode;
+                    var cinvcode = trJsonData[0].invcode;
                     var vencode = trJsonData[0].vencode;
                     var sourcebilltype = trJsonData[0].sourcebilltype;
                     Ajax.post("admin/scancodereceive/getBarCodeData",
@@ -282,6 +284,7 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                                 if (rres.data!==undefined){
                                     rres.data.barcodetype = '转换后';
                                     rres.data.combination = trJsonData[0].combination;
+                                    rres.data.venname = trJsonData[0].venname;
                                     jboltTableInsertRow("jbolt_Table_#(pageId)", rres.data, false, false, false);
                                     tableDataSuccess();
                                     LayerMsgBox.close(index);
@@ -303,15 +306,65 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
     }
 
     /**
+     * old
      * 覆盖库区
      * */
-    function coverall() {
+    function coverall_bak() {
         var careacode = $("#careacode").val();
         var careaname = $("#careaname").val();
         if (careacode !== '' && careacode !== null){
         let data = [{"column":"poscode","text":careacode,"value":careacode}];
         jboltTableBatchSetColumns("jbolt_Table_#(pageId)",data,true);
         }
+    }
+
+    /**
+     * 覆盖库区
+     * */
+    function coverall(ele) {
+        var action = getRealJqueryObject(ele);
+        if (isOk(action)) {
+            var success = checkMasterTableId(action);
+            if (!success) {
+                return false;
+            }
+        }
+
+        var isCheckedNone = jboltTableIsCheckedNone(ele);
+        console.log("isCheckedNone", isCheckedNone);
+
+        var careacode = $("#careacode").val();
+        var careaname = $("#careaname").val();
+        console.log(careacode + careaname);
+
+        if (isCheckedNone) {
+
+            LayerMsgBox.confirm("确定覆盖所有数据的库区吗？", function () {
+                let data = [{"column": "poscode", "text": careacode, "value": careacode}];
+                jboltTableBatchSetColumns(jbolt_Table_#(pageId), data, true);
+            });
+        } else {
+            var datas = jboltTableGetCheckedDatas(ele);
+            console.log("datas", datas)
+
+            if (datas) {
+
+                var $table = $('#jbolt_Table_#(pageId)');
+
+                LayerMsgBox.confirm("所选数据中确定覆盖吗？", function () {
+                    $.each(datas, function (index, row) {
+
+                        row.careacode = careacode;
+
+                        var $tr = $('tr[data-barcode="' + row.barcode + '"]');
+
+                        jboltTableSetCell($table, $tr, 'poscode', row.careacode, row.careacode);
+                    })
+                });
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -474,20 +527,20 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                 sourcebillno:{
                     submitAttr:"SourceBillNo"
                 },
-                cinvcode:{
+                invcode:{
                     linkPara: "input[name='detailHidden'],input[name='groupCode']",
                     maxLength: 100,
                     required: true,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/scancodereceive/getResource",
-                    textAttr: "cinvcode",
+                    textAttr: "invcode",
                     width: 800,
                     sync: "",
-                    valueAttr: "cinvcode",
+                    valueAttr: "invcode",
                     columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
                     header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
-                    changeColumns: [{column: "barcode", use: "barcode"}, {column: "cinvcode",use: "cinvcode"
+                    changeColumns: [{column: "barcode", use: "barcode"}, {column: "invcode",use: "invcode"
                     }, {column: "cinvcode1", use: "cinvcode1"},{column: "barcodetype", use: "barcodetype"},
                         {column: "cinvname1", use: "cinvname1"},{column: "combination", use: "combination"},
                         {column: "cinvstd",use: "cinvstd"}, {column: "dplandate", use: "dplandate"},
@@ -496,9 +549,10 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                         {column: "cuomname", use: "cuomname"}, {column: "sourcebilltype", use: "sourcebilltype"},
                         {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {column: "sourcebillid",use: "sourcebillid"},
-                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}],
+                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}, {column: "iseditqty", use:
+                                "iseditqty"}],
                     handler:function(table,td,text,value,trJsonData){
-                        var cinvcode = trJsonData.cinvcode;
+                        var cinvcode = trJsonData.invcode;
                         var vencode = trJsonData.vencode;
                         var sourcebilltype = trJsonData.sourcebilltype;
                         console.log('cinvcode',cinvcode)
@@ -511,9 +565,10 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                                 console.log('res', res)
                                 if (res.state==='ok'){
                                     console.log('data',res.data);
-                                    if (res.data!=undefined){
+                                    if (res.data!==undefined){
                                         res.data.barcodetype = '转换后';
                                         res.data.combination = trJsonData.combination;
+                                        res.data.venname = trJsonData.venname;
                                         jboltTableInsertAfterRow(table, td.parent(), res.data);
                                     } else {
                                         console.log('找不到双单位数据')
@@ -530,7 +585,6 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                 barcode: { //条码
                     linkPara: "input[name='detailHidden'],input[name='groupCode']",
                     maxLength: 100,
-                    required: true,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/scancodereceive/getResource",
@@ -538,11 +592,11 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "sourcebillno,barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
+                    columnAttr: "sourcebillno,barcode,invcode,cinvcode1,cinvname1,cinvstd,qty",
                     header: '订单编号,现品票,存货编码,客户部番,部品名称,规格型号,数量',
                     changeColumns: [{column: "barcode", use: "barcode"}, {
-                        column: "cinvcode",
-                        use: "cinvcode"
+                        column: "invcode",
+                        use: "invcode"
                     }, {column: "cinvcode1", use: "cinvcode1"},{column: "barcodetype", use: "barcodetype"},
                         {column: "cinvname1", use: "cinvname1"},{column: "combination", use: "combination"},
                         {column: "cinvstd",use: "cinvstd"}, {column: "dplandate", use: "dplandate"},
@@ -551,9 +605,10 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                         {column: "cuomname", use: "cuomname"}, {column: "sourcebilltype", use: "sourcebilltype"},
                         {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},
                         {column: "sourcebillnorow", use: "sourcebillnorow"}, {column: "sourcebillid",use: "sourcebillid"},
-                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}],
+                        {column: "qty", use: "qty"}, {column: "quantity", use: "quantity"}, {column: "iseditqty", use:
+                                "iseditqty"}],
                     handler:function(table,td,text,value,trJsonData){
-                        var cinvcode = trJsonData.cinvcode;
+                        var cinvcode = trJsonData.invcode;
                         var vencode = trJsonData.vencode;
                         var sourcebilltype = trJsonData.sourcebilltype;
                         console.log('cinvcode',cinvcode)
@@ -565,9 +620,10 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                             console.log('res', res)
                             if (res.state==='ok'){
                                 console.log('data',res.data);
-                                if (res.data!=undefined){
+                                if (res.data!==undefined){
                                     res.data.barcodetype = '转换后';
                                     res.data.combination = trJsonData.combination;
+                                    res.data.venname = trJsonData.venname;
                                     jboltTableInsertAfterRow(table, td.parent(), res.data);
                                 } else {
                                     LayerMsgBox.alert("找不到双单位数据");

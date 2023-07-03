@@ -19,7 +19,7 @@
                         #if(readonly != 'readonly')
                             <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        #if(monthorderm.iAutoId??)
+                        #if(monthorderm.iAutoId??  && monthorderm.iorderstatus != 7)
                         ### 参数列表
                         ### uri:                    接口URI
                         ### formSn:                 表单名

@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**来源类型;PO 采购 OM委外*/
@@ -63,6 +63,8 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
     public static final String CUPDATENAME = "cupdatename";
     /**更新时间*/
     public static final String DUPDATETIME = "dupdatetime";
+    /**存货编码*/
+    public static final String INVCODE = "invcode";
 	/**
 	 * AutoID
 	 */
@@ -497,6 +499,23 @@ public abstract class BaseSysPureceivedetail<M extends BaseSysPureceivedetail<M>
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDupdatetime() {
 		return getDate("dupdatetime");
+	}
+
+	/**
+	 * 存货编码
+	 */
+	public M setInvcode(java.lang.String invcode) {
+		set("invcode", invcode);
+		return (M)this;
+	}
+
+	/**
+	 * 存货编码
+	 */
+	@JBoltField(name="invcode" ,columnName="invcode",type="String", remark="存货编码", required=false, maxLength=255, fixed=0, order=27)
+	@JSONField(name = "invcode")
+	public java.lang.String getInvcode() {
+		return getStr("invcode");
 	}
 
 }

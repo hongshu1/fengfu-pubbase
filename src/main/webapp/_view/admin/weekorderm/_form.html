@@ -12,7 +12,7 @@
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
                         
-                        #if(weekOrderM.iAutoId??)
+                        #if(weekOrderM.iAutoId?? && weekOrderM.iorderstatus != 7)
                             #include("/_view/_common/_approval_btns.html", uri="/admin/weekorderm", formSn="Co_WeekOrderM", o=weekOrderM, primaryKeyName="iAutoId", className="cn.rjtech.admin.weekorderm.WeekOrderMService", permissionKeyPrefix="weekorderm")
                         #end
                         
