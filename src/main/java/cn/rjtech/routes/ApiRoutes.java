@@ -10,6 +10,7 @@ import cn.rjtech.api.instockqcformm.InStockQcFormMApiController;
 import cn.rjtech.api.modoc.ModocApiController;
 import cn.rjtech.api.momaterialsreturnm.MoMaterialsreturnmApiController;
 import cn.rjtech.api.momaterialsscansum.MoMaterialsscansumApiController;
+import cn.rjtech.api.momoinvbatch.MoMoinvbatchApiController;
 import cn.rjtech.api.momopatchweldm.MoMopatchweldmApiController;
 import cn.rjtech.api.moroutingconfigoperation.MoMoroutingconfigOperationApiController;
 import cn.rjtech.api.nfcswipecard.NfcSwipeCardApiController;
@@ -49,6 +50,8 @@ public class ApiRoutes extends Routes {
         this.add("/api/general", GeneralApiController.class);
         // 制造工单
         this.add("/api/modoc", ModocApiController.class);
+        // 现品票
+        this.add("/api/momoinvbatch", MoMoinvbatchApiController.class);
         // NFC刷卡
         this.add("/api/nfcswipecard", NfcSwipeCardApiController.class);
         this.add("/api/rcvdocdefect", RcvDocDefectApiController.class);

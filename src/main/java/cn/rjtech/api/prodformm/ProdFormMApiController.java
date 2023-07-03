@@ -8,6 +8,9 @@ import cn.rjtech.admin.prodformitem.ProdFormItemService;
 import cn.rjtech.admin.prodformm.ProdFormMService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
+import cn.rjtech.entity.vo.prodformm.ProdFormMResVo;
+import cn.rjtech.entity.vo.prodformm.ProdFormMVo;
+import cn.rjtech.entity.vo.workregionm.WorkRegionmVo;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
@@ -22,7 +25,6 @@ import java.util.List;
  * @author yjllzy
  */
 @ApiDoc
-@UnCheck
 public class ProdFormMApiController extends BaseApiController {
     @Inject
     private ProdFormMApiService service;
@@ -35,7 +37,7 @@ public class ProdFormMApiController extends BaseApiController {
     /**
      * 页面数据
      */
-    @UnCheck
+    @ApiDoc(result = ProdFormMVo.class)
     public void datas(@Para(value = "pageNumber", defaultValue = "1") Integer pageNumber,
                       @Para(value = "pageSize", defaultValue = "15") Integer pageSize,
                       @Para(value = "cworkid") String cworkid,
@@ -57,7 +59,7 @@ public class ProdFormMApiController extends BaseApiController {
     /**
      * 获取 生产表格数据
      */
-    @UnCheck
+    @ApiDoc(result = ProdFormMVo.class)
     public void   prodFormOptions(){
         renderJBoltApiRet(service.prodFormOptions());
     }
@@ -65,7 +67,7 @@ public class ProdFormMApiController extends BaseApiController {
     /**
      * 获取产线数据
      */
-    @UnCheck
+    @ApiDoc(result = WorkRegionmVo.class)
     public void   workregionmOptions(){
         renderJBoltApiRet(service.workregionmOptions());
     }
@@ -82,7 +84,7 @@ public class ProdFormMApiController extends BaseApiController {
      * 新增页面数据
      * byIdGetDetail 中的iseq 相同的要合成一条数据并排序，proditemiseq 为页面数据排序
      */
-    @UnCheck
+    @ApiDoc(result = ProdFormMResVo.class)
     public void addDatas(@Para( value = "iprodformid") String iprodformid){
         //生产表单项目标题
         List<Record> formItemLists = prodFormItemService.formItemLists(Kv.by("iqcformid", iprodformid));
@@ -92,6 +94,7 @@ public class ProdFormMApiController extends BaseApiController {
     /**
      * 编辑页面
      */
+    @ApiDoc(result = ProdFormMResVo.class)
     public void redact(@Para( value = "iautoid") String iautoid){
         //生产表单项目标题
         renderJBoltApiRet(JBoltApiRet.successWithData(prodFormMService.findById(iautoid)));

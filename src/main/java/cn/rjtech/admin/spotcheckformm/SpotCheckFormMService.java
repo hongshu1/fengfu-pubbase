@@ -545,6 +545,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			prodFormM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
 			prodFormM.setIUpdateBy(JBoltUserKit.getUserId());
 			prodFormM.setCUpdateName(JBoltUserKit.getUserName());
+			prodFormM.setCAuditName(JBoltUserKit.getUserName());
 			prodFormM.setDUpdateTime(new Date());
 			ValidationUtils.isTrue(prodFormM.update(), JBoltMsg.FAIL);
 			return true;
@@ -593,6 +594,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 		formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 		formUploadM.setDUpdateTime(new Date());
 		formUploadM.setIAuditBy(JBoltUserKit.getUserId());
+		formUploadM.setCAuditName(JBoltUserKit.getUserName());
 		formUploadM.setDSubmitTime(new Date());
 		formUploadM.update();
 		return null;
@@ -609,6 +611,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 		formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 		formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 		formUploadM.setDUpdateTime(new Date());
+		formUploadM.setCAuditName(JBoltUserKit.getUserName());
 		formUploadM.setIAuditBy(JBoltUserKit.getUserId());
 		formUploadM.setDSubmitTime(new Date());
 		formUploadM.update();
@@ -660,6 +663,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 			formUploadM.setDUpdateTime(new Date());
 			formUploadM.setIAuditBy(JBoltUserKit.getUserId());
+			formUploadM.setCAuditName(JBoltUserKit.getUserName());
 			formUploadM.setDSubmitTime(new Date());
 			formUploadM.update();
 		}
@@ -678,6 +682,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			spotCheckFormM.setCUpdateName(JBoltUserKit.getUserName());
 			spotCheckFormM.setDUpdateTime(new Date());
 			spotCheckFormM.setIAuditBy(JBoltUserKit.getUserId());
+			spotCheckFormM.setCAuditName(JBoltUserKit.getUserName());
 			spotCheckFormM.setDSubmitTime(new Date());
 			spotCheckFormM.update();
 		}

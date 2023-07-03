@@ -139,4 +139,11 @@ public class MoDocBatchController extends BaseAdminController {
   }
 
 
+  /**
+   * 重写测试
+   */
+  @UnCheck
+  public void getModocStaffEditorRewriteDatas() {
+    renderJsonData(service.getModocStaffEditorRewriteDatas(getKv()));
+  }
 }

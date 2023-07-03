@@ -74,11 +74,9 @@ public class CusFieldsMappingMService extends BaseService<CusFieldsMappingM> {
         }
         
         // sql条件处理
-        sql.eq("m.cFormatName", cFormatName);
+        sql.like("m.cFormatName", cFormatName);
         sql.eqBooleanToChar("m.isEnabled", isEnabled);
         
-        // 关键词模糊查询
-        sql.like("m.cFormatName", keywords);
         // 排序
         sql.desc("m.iAutoId")
                 .page(pageNumber, pageSize);

@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysOtherindetail<M extends BaseSysOtherindetail<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**MasID*/
@@ -55,6 +55,8 @@ public abstract class BaseSysOtherindetail<M extends BaseSysOtherindetail<M>> ex
     public static final String CUPDATENAME = "cupdatename";
     /**修改时间*/
     public static final String DUPDATETIME = "dupdatetime";
+    /**供应商*/
+    public static final String VENCODE = "VenCode";
 	/**
 	 * AutoID
 	 */
@@ -427,6 +429,23 @@ public abstract class BaseSysOtherindetail<M extends BaseSysOtherindetail<M>> ex
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDupdatetime() {
 		return getDate("dupdatetime");
+	}
+
+	/**
+	 * 供应商
+	 */
+	public M setVenCode(java.lang.String VenCode) {
+		set("VenCode", VenCode);
+		return (M)this;
+	}
+
+	/**
+	 * 供应商
+	 */
+	@JBoltField(name="vencode" ,columnName="VenCode",type="String", remark="供应商", required=false, maxLength=30, fixed=0, order=23)
+	@JSONField(name = "vencode")
+	public java.lang.String getVenCode() {
+		return getStr("VenCode");
 	}
 
 }

@@ -25,7 +25,7 @@ import java.util.*;
  * 客户计划汇总及实绩管理
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.NONE)
+@CheckPermission(PermissionKey.CUSORDER_RESULT)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/cusorderresult", viewPath = "/_view/admin/cusorderresult")
 public class CusOrderResultController extends BaseAdminController {
