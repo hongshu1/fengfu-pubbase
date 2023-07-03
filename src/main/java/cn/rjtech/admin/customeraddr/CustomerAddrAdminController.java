@@ -46,6 +46,7 @@ public class CustomerAddrAdminController extends BaseAdminController {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKeywords()));
     }
 
+    @UnCheck
     public void list(@Para(value = "icustomermid") Long icustomermid) {
         ValidationUtils.validateId(icustomermid, "客户ID");
         

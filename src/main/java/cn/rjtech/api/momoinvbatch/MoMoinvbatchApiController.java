@@ -1,6 +1,9 @@
 package cn.rjtech.api.momoinvbatch;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.momoinvbatch.MoMoinvbatchService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.moinvbatch.MoinvbatchApiResVo;
@@ -14,6 +17,8 @@ import java.math.BigDecimal;
 /**
  * 现品票
  */
+@CheckPermission(PermissionKey.API_MOMOINVBATCH)
+@UnCheckIfSystemAdmin
 @ApiDoc
 public class MoMoinvbatchApiController extends BaseApiController {
     @Inject
@@ -49,7 +54,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
      * 生成现品票
      */
     @ApiDoc(result = MoinvbatchApiResVo.class)
-    @UnCheck
+    @CheckPermission(PermissionKey.API_CREATEMOMOINVBATCH)
     public void createMomoinvbatch(@Para(value = "imodocid") Long imodocid) {
         ValidationUtils.notNull(imodocid, "缺少工单主键");
         ValidationUtils.isTrue(moMoinvbatchService.createMomoinvbatch(imodocid).isOk(), "生成失败");
@@ -60,7 +65,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
      * 撤回
      */
     @ApiDoc(result = MoinvbatchApiResVo.class)
-    @UnCheck
+    @CheckPermission(PermissionKey.API_WITHDRAW)
     public void withdraw(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, "缺少现品票主键");
         ValidationUtils.isTrue(moMoinvbatchService.withdraw(iautoid).isOk(), "生成失败");
@@ -71,7 +76,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
      * 修改数量
      */
     @ApiDoc(result = MoinvbatchApiResVo.class)
-    @UnCheck
+    @CheckPermission(PermissionKey.API_UPDATENUMBER)
     public void updateNumber(@Para(value = "iautoid") Long iautoid,
                              @Para(value = "newqty") Integer newQty) {
         ValidationUtils.notNull(iautoid, "缺少现品票主键");
@@ -84,11 +89,23 @@ public class MoMoinvbatchApiController extends BaseApiController {
      * 批量打印
      */
     @ApiDoc(result = MoinvbatchApiResVo.class)
-    @UnCheck
+    @CheckPermission(PermissionKey.API_BATCHPRINT)
     public void batchPrint(@Para(value = "imodocid") String imodocid, @Para(value = "ids") String ids) {
         ValidationUtils.notNull(imodocid, "缺少工单主键");
         ValidationUtils.notNull(ids, "缺少现品票主键集合");
         ValidationUtils.isTrue(moMoinvbatchService.batchPrint(imodocid, ids).isOk(), "批量打印更新数据失败");
+        renderJBoltApiSuccess();
+    }
+
+    /**
+     * 批量报工
+     */
+    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @CheckPermission(PermissionKey.API_WORKBYIDS)
+    public void workByIds(@Para(value = "imodocid") String imodocid, @Para(value = "ids") String ids) {
+        ValidationUtils.notNull(imodocid, "缺少工单主键");
+        ValidationUtils.notNull(ids, "缺少现品票主键集合");
+        ValidationUtils.isTrue(moMoinvbatchService.workByIds(imodocid, ids).isOk(), "批量报工更新数据失败");
         renderJBoltApiSuccess();
     }
 }

@@ -105,6 +105,7 @@ public class VendorAddrAdminController extends BaseAdminController {
         renderJson(service.toggleBoolean(getLong(0), "isDeleted"));
     }
 
+    @UnCheck
     public void list() {
         renderJsonData(service.list(getKv()));
     }

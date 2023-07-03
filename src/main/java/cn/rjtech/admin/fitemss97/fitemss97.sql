@@ -31,7 +31,7 @@ Order By citemccode
     #sql("findfitemss97parent")
 select * from Bd_fitemss97  where  1=1 and isDeleted = '0' and isourceid='0'
     #if(sn)
-			and cItemCcode = #para(sn)
+			and  cItemCcode= #para(sn)
 		#end
 Order By citemccode
     #end

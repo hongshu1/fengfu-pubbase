@@ -10,14 +10,11 @@ FROM
     #if(careacode)
         AND wa.cAreaCode LIKE CONCAT('%', #para(careacode), '%')
     #end
-     #if(iwarehouseid)
-        AND wa.iWarehouseId LIKE CONCAT('%', #para(iwarehouseid), '%')
-    #end
     #if(careaname)
         AND wa.cAreaName LIKE CONCAT('%', #para(careaname), '%')
     #end
     #if(iwarehouseid)
-        AND wa.iWarehouseId = #para(iwarehouseid)
+        AND wa.iWarehouseId = #(iwarehouseid)
     #end
     #if(isenabled)
         AND wa.isEnabled = #para(isenabled)

@@ -297,24 +297,6 @@
   hideParentLayerDialogBtn(0);
   hideParentLayerDialogBtn(1);
 
-  /*
-* 提交审批，推送至u8入库
-*
-* */
-  function submitApprove(autoid) {
-    if (!autoid) {
-      LayerMsgBox.alert("请先保存，再提交审批！", 2);
-    }
-    LayerMsgBox.loading('审核中...');
-    Ajax.post('/admin/purchaseReceiptList/editAutit?autoid=' + autoid, {}, function (ret) {
-      if (ret.state === 'ok') {
-        parent.layer.close(parent.layer.getFrameIndex(window.name));
-        parent.refreshPjaxContainer();
-      } else {
-        LayerMsgBox.alert(ret.msg, 2);
-      }
-    });
-  }
 
   function checkBarcode() {
     LayerMsgBox.loading("执行中......", 2000);
@@ -370,14 +352,6 @@
 
   //是否提审
   var submit = false;
-
-  /*function submitThisForm() {
-    // LayerMsgBox.alert("模块待开发")
-    $("#operationType").val("submit");
-    jboltTableSubmit("#jbolt_Table_#(pageId)");
-    $("#operationType").val();
-    return true;
-  }*/
 
   function submitThisForm_#(pageId)(ele) {
     submit = ele;
