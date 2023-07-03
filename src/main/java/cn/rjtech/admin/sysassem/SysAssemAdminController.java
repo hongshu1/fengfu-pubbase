@@ -1,5 +1,6 @@
 package cn.rjtech.admin.sysassem;
 
+
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -21,6 +22,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import java.util.List;
+
 
 /**
  * 组装拆卸及形态转换单
@@ -58,6 +60,8 @@ public class SysAssemAdminController extends BaseAdminController {
 	* 新增
 	*/
 	public void add() {
+		set("BillType","1659458823869370368");
+		set("zhname","一对一");
 		render("add.html");
 	}
 

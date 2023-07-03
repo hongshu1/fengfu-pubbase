@@ -1,0 +1,85 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" >
+
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>项目大类</h1></div>
+      <div class="col">
+        <form class="form-inline text-left" id="fitemForm_#(pageId)"   onsubmit="return false;" method="post">
+          <input value="" hidden  id="fitembForm_autoid" name="fitemid">
+          <input type="text" autocomplete="off"  class="form-control"  placeholder="项目大类名称" name="citemname" value="" />
+          <input type="text" autocomplete="off"  class="form-control"  placeholder="项目大类编码" name="citemclass" value="" />
+          <button  type="submit" id="fitemForm_submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
+          <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+      <div class="col-md-auto">
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="fitemRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}" >
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.citemclass}</td>
+<td>${data.citemname}</td>
+<td>${data.ctable}</td>
+<td>${data.cclasstable}</td>
+</tr>
+{@/each}
+</textarea>
+
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="fitemss97sub_toolbar_#(pageId)">
+      <div class="" role="group" aria-label="btn-group">
+        <!-- <button data-openpage="dialog" data-area="900,600"  data-handler="jboltTablePageToFirst" data-title="新增项目管理大类项目子目录"  data-url="admin/fitemss97sub/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>-->
+      </div>
+
+      <div class="clearfix"></div>
+    </div>
+
+
+
+    <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/fitem/datas"
+           data-column-resize="true"
+           data-row-click-active="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="fitemForm_#(pageId)"
+           data-rowtpl="fitemRowtpl_#(pageId)"
+           data-page="fitemsubPage_#(pageId)"
+           data-toolbar="fitem_toolbar_#(pageId)"
+           data-row-dblclick-active="true"
+           data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+    >
+      <thead>
+      <tr>
+        <th data-width="60">序号</th>
+        <th data-width="150" data-column="citemclass">项目大类编码</th>
+        <th data-width="150" data-column="citemname">项目大类名称</th>
+        <th data-width="150" data-column="ctable">目录表名称</th>
+        <th data-width="150" data-column="cclasstable">对应分类表名</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+
+
+  </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+</script>
+#end

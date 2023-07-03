@@ -40,6 +40,7 @@ public class ProposalAttachmentAdminController extends BaseAdminController {
         render("index.html");
     }
 
+    @UnCheck
     public void list(@Para(value = "iproposalmid") Long iproposalmid) {
         if (null == iproposalmid) {
             renderJsonData(CollUtil.empty(ArrayList.class));

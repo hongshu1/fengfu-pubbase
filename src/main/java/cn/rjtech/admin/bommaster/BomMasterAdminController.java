@@ -100,6 +100,7 @@ public class BomMasterAdminController extends BaseAdminController {
         render("edit.html");
     }
 
+    @UnCheck
     private void getBomMaster(Long id) {
         BomMaster bomMaster = service.findById(id);
         if (bomMaster == null) {

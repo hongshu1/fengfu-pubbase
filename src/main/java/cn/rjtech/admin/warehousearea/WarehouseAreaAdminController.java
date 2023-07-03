@@ -49,9 +49,10 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(), getKv()));
 	}
 
-	public void list(){
-		renderJsonData(service.list(getKv()));
-	}
+    @UnCheck
+    public void list() {
+        renderJsonData(service.list(getKv()));
+    }
 
    /**
 	* 新增

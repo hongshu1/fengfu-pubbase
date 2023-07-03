@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <div class="col">
                         #if(readonly != 'readonly')
-                        <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
+                        <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
                                 class=" fa fa-refresh"></i> 保存</button>
                         #end
 
@@ -79,7 +79,7 @@
                                                data-column-attr="whcode,whname" placeholder="请选择仓库名称"
                                                data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
                                                value="#(sysPureceive.WhName??)"
-                                               #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >
+                                               #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) disabled #end >
                                     </div>
                                 </div>
                             </div>
@@ -137,24 +137,24 @@
                 #if(!sysPureceive.AutoID??)
                 <a href="javascript:void(0);" onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行"
                    data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"
-                   #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >移除行</a>
+                   #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) disabled #end >移除行</a>
                 #end
                 #if(sysPureceive.AutoID??)
                 <a href="admin/sysPureceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
                    tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
-                   #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end   class="jbolt_table_delbtn"><i class="fa fa-remove c-danger" >删除</i></a>
+                   #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) disabled #end   class="jbolt_table_delbtn"><i class="fa fa-remove c-danger" >删除</i></a>
                 #end
             </td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.venname}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.sourcebillno}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.barcode}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvcode}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvcode1}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvname1}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.plandate}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end  style="text-align:right;">${data.qtys}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end  style="text-align:right;">${data.qty}</td>
-            <td #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.poscode}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.venname}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.sourcebillno}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.barcode}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvcode}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvcode1}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.cinvname1}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.plandate}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end  style="text-align:right;">${data.qtys}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end  style="text-align:right;">${data.qty}</td>
+            <td #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) data-editable="false" #end >${data.poscode}</td>
             <td  disabled ><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd" disabled /></td>
 
         </tr>
@@ -166,20 +166,20 @@
                 <label class="col-sm-3 col-form-label">现品票扫码</label>
                 <div class="col-5">
                     <input type="text" data-notnull="true" data-tips="请输入现品票扫码" data-with-clearbtn="true"
-                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end
+                           autocomplete="off" class="form-control" placeholder="请输入现品票扫码" maxlength="40" #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end
                            id="barcode" name="barcode" value="#(barcode??)"/>
                 </div>
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                    <button onclick="barcode()" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end >搜索</button>
+                    <button onclick="barcode()" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end >搜索</button>
                 </div>
               
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                    <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end >添加行</button>
+                    <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1 || sysPureceive.AutoID??) disabled #end >添加行</button>
                 </div>
 
 
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                    <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
+                    <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定删除选中数据？" class="btn btn-danger btn-xs" #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) disabled #end   ><i class="fa fa-trash"></i> 删除行</button>
                 </div>
             
 
@@ -195,11 +195,11 @@
                            data-column-attr="careacode,careaname" placeholder="请选择库区"
                            data-tips="请选择库区" data-header="请选择库区,库名称" maxlength="40"
                            value="#(careaname??)"
-                           #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >
+                           #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) disabled #end >
                 </div>
 
                 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                    <button onclick="coverall(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2 || sysPureceive.iAuditStatus?? ==3 || sysPureceive.iAuditStatus?? ==1) disabled #end >覆盖</button>
+                    <button onclick="coverall(this)" class="btn btn-primary btn-sm" #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) disabled #end >覆盖</button>
                 </div>
 
 

@@ -322,7 +322,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     }
 
     /**
-     * 根据上传的文件及导入格式名
+     * 根据上传的文件及表名获取导入的数据，适用在后端处理excel数据导入保存处理
      *
      * @param file      上传的文件
      * @param tableName 表名
@@ -453,7 +453,7 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     }
 
     /**
-     * 导入映射
+     * 获取excel的导入数据，适用在前端需要读取excel文件的内容，不适用后台导入处理
      */
     public Ret getImportDatas(File file, String cformatname) {
         // 根据指定的模板名，获取导入的字段
@@ -466,6 +466,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         return successWithData(rowDatas);
     }
 
+    /**
+     * 导入字段映射处理
+     */
     public List<FieldSetting> genFieldSettings(List<CusFieldsMappingD> cusFieldsMappingDs) {
         // -------------------------------------
         // 标准字段映射导入

@@ -15,8 +15,10 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import java.util.List;
 
 
 /**
@@ -86,10 +88,10 @@ public class CurrentStockController extends BaseAdminController {
 	}
 
 
-
-	/**
-	 * 盘点表主表 数据明细
-	 * */
+    /**
+     * 盘点表主表 数据明细
+     */
+    @UnCheck
 	public void getStockCheckVouchDatas() {
 		renderJsonData(service.getStockCheckVouchDatas(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -120,6 +122,7 @@ public class CurrentStockController extends BaseAdminController {
 		   renderFail(JBoltMsg.DATA_NOT_EXIST);
 		   return;
 	   }
+	   set("poscodes",  stockChekVouch.getPoscodes());
 	   set("stockchekvouch", stockChekVouch);
 	   set("bill", stockChekVouch);
 	   set("isapp",0);
@@ -138,6 +141,7 @@ public class CurrentStockController extends BaseAdminController {
 		kv.setIfNotNull("OrgCode",getOrgCode());
 		renderJsonData(service.autocompletePosition(kv));
 	}
+
 
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格

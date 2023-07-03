@@ -53,6 +53,8 @@ public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> exte
     public static final String CAUDITNAME = "cauditname";
     /**审核时间*/
     public static final String DAUDITTIME = "dAuditTime";
+    /**备注*/
+    public static final String MEMO = "memo";
 	/**
 	 * 主键id
 	 */
@@ -408,6 +410,23 @@ public abstract class BaseStockCheckVouch<M extends BaseStockCheckVouch<M>> exte
 	@JSONField(name = "daudittime")
 	public java.util.Date getDAuditTime() {
 		return getDate("dAuditTime");
+	}
+
+	/**
+	 * 备注
+	 */
+	public M setMemo(java.lang.Boolean memo) {
+		set("memo", memo);
+		return (M)this;
+	}
+
+	/**
+	 * 备注
+	 */
+	@JBoltField(name="memo" ,columnName="memo",type="Boolean", remark="备注", required=false, maxLength=1, fixed=0, order=22)
+	@JSONField(name = "memo")
+	public java.lang.Boolean getMemo() {
+		return getBoolean("memo");
 	}
 
 }

@@ -1,15 +1,18 @@
-
-#sql("recpor")
-SELECT  rm.iAutoId as iautoid, CASE rm.iStatus
-        WHEN 1 THEN
-        '已保存'
-				WHEN 2 THEN
-        '待审批'
-				WHEN 3 THEN
-        '已审批'
-				WHEN 4 THEN
-        '审批不通过'
-        END AS iStatus,rm.iStatus as iStatusId,rm.cRcvPlanNo,u.cCusCode,u.cCusName,rm.cCreateName,rm.dUpdateTime,rm.dCreateTime
+#sql("getAdminDatas")
+SELECT  rm.iAutoId as iautoid,
+       statename=
+       CASE WHEN rm.iStatus=1 THEN '已保存'
+		    WHEN rm.iStatus=2 THEN '待审批'
+			WHEN rm.iStatus=3 THEN '已审批'
+	        WHEN rm.iStatus=4 THEN '审批不通过'
+        END,
+       rm.iStatus,
+       rm.cRcvPlanNo,
+       u.cCusCode,
+       u.cCusName,
+       rm.cCreateName,
+       rm.dUpdateTime,
+       rm.dCreateTime
 FROM SM_RcvPlanM rm
 LEFT JOIN Bd_Customer u on rm.iCustomerId = u.iautoid
 where rm.IsDeleted = '0'
@@ -25,6 +28,7 @@ where rm.IsDeleted = '0'
 	#if(endTime)
 		and rm.dCreateTime <= #para(endTime)
 	#end
+	    and rm.IsDeleted = '0'
 ORDER BY rm.dUpdateTime DESC
 #end
 

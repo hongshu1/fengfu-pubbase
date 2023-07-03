@@ -75,7 +75,7 @@
 
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="warehouse_toolbar_#(pageId)">
-      <div class="col-sm-auto" role="group" aria-label="btn-group">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         #permission(PermissionKey.WAREHOUSE_ADD)
         <button data-openpage="dialog" data-area="50%,100%" data-handler="jboltTablePageToFirst" data-title="新增仓库档案"
                 data-url="admin/warehouse/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
@@ -123,7 +123,7 @@
         #permission(PermissionKey.WAREHOUSE_IMPORT)
         <div class="btn-group dropdown">
           <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">数据导入
           </button>
           <div class="dropdown-menu" aria-labelledby="importMenuButton">
             <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouse/templateDownload">
