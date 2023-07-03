@@ -175,10 +175,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         tx(() -> {
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
             for (SysPureceive s : sysPureceives) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
-                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                     ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
@@ -198,10 +198,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     public Ret delete(Long id) {
         tx(() -> {
             SysPureceive byId = findById(id);
-            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus())) && !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
-            if(byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                 ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
@@ -1002,9 +1002,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             String[] split = ids.split(",");
             for (String s : split) {
                 SysPureceive byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                byId.update();
+
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s);
                 HashMap<String, Integer> hashMap = new HashMap<>();
@@ -1238,9 +1236,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
 
             for (Long s : formAutoId) {
                 SysPureceive byId = findById(s);
-                byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-                byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-                byId.update();
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.toString());
                 HashMap<String, Integer> hashMap = new HashMap<>();
@@ -1341,9 +1336,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             Date now = new Date();
             User user = JBoltUserKit.getUser();
             SysPureceive byId = findById(formAutoId);
-            byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-            byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            byId.update();
             //查从表数据
             List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(formAutoId.toString());
             HashMap<String, Integer> hashMap = new HashMap<>();

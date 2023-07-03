@@ -49,6 +49,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
         renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
     }
 
+    @UnCheck
     public void list(){
         renderJsonData(service.list(getKv()));
     }

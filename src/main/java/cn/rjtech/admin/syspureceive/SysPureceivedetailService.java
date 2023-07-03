@@ -131,7 +131,7 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
         for (String s : split) {
             SysPureceivedetail byId1 = findById(s);
             SysPureceive byId = syspureceiveservice.findById(byId1.getMasID()) ;
-            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
@@ -148,7 +148,7 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
     public Ret delete(Long id) {
         SysPureceivedetail byId1 = findById(id);
         SysPureceive byId = syspureceiveservice.findById(byId1.getMasID()) ;
-        if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+        if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
             ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
         }
         if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){

@@ -858,6 +858,12 @@ public class PermissionKey {
 	 */
 	public static final String FITEMSS97SUB = "fitemss97sub";
 	/**
+	 * 项目大类
+	 */
+
+	public static final String FITEM = "fitem";
+
+	/**
 	 * 单据类型与收发类别对照表
 	 */
 	public static final String VOUCHRDCONTRAPOSE = "vouchrdcontrapose";
@@ -2821,6 +2827,7 @@ public class PermissionKey {
 	 * 批量删除
 	 */
 	public static final String SUBCONTRACTSALEORDERM_DELETEBYIDS = "subcontractsaleorderm_deletebyids";
+
 	/**
 	 * 新增
 	 */
@@ -2877,4 +2884,3 @@ public class PermissionKey {
 	 * 反审核
 	 */
 	public static final String RCVPLANM_REVERSE_APPROVE = "rcvplanm_reverse_approve";
-}

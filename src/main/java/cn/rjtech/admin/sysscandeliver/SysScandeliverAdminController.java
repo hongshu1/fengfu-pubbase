@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysScandeliver;
@@ -170,6 +171,7 @@ public class SysScandeliverAdminController extends BaseAdminController {
 	 * 获取车次号相关数据
 	 * @return
 	 */
+    @UnCheck
 	public void getCarData(){
 		Kv kv = new Kv();
 		kv.setIfNotNull("carNo", isOk(get("q"))? StringUtils.trim(get("q")) : " ");
@@ -180,6 +182,7 @@ public class SysScandeliverAdminController extends BaseAdminController {
 	 * 获取客户地址
 	 * @return
 	 */
+    @UnCheck
 	public void getCustAddr(){
 		renderJsonData(service.getCustAddr(getKv()));
 	}
@@ -187,6 +190,7 @@ public class SysScandeliverAdminController extends BaseAdminController {
     /**
      * 扫码获取资源
      */
+    @UnCheck
 	public void getResource(){
         String barcode = get("barcode");
         String cusBarcode = get("cusBarcode");
