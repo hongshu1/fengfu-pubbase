@@ -319,17 +319,9 @@ public class SpecMaterialsRcvMService extends BaseService<SpecMaterialsRcvM> imp
   }
 
   public Ret revocationSpecMaterialsRcvMById(Long id) {
-    update("UPDATE Mo_SpecMaterialsRcvM SET iAuditStatus = 0 WHERE iAutoId = ?",id);
+    update("UPDATE Mo_SpecMaterialsRcvM SET iAuditStatus = 0 WHERE iAutoId = ?", id);
     return SUCCESS;
   }
-
-
-
-
-
-
-
-
 
 
   @Override
