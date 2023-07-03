@@ -113,7 +113,8 @@ public class BomCompareAdminController extends BaseAdminController {
 		setAttrs(kv);
 		render("/_view/admin/bommaster/edit.html");
 	}
-	
+
+    @UnCheck
 	private void getBomMaster(BomM bomMaster) {
 		set("equipmentModel", equipmentModelService.findById(bomMaster.getIEquipmentModelId()));
 		set("inventory", inventoryService.findById(bomMaster.getIInventoryId()));

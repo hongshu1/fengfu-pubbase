@@ -373,3 +373,57 @@ WHERE
 #sql("deleteModocPersonByConfigId")
 SELECT iAutoId FROM Mo_MoRoutingConfig_Person WHERE iMoRoutingConfigId=#(routingconfigid)
 #end
+
+
+
+
+
+
+
+
+#sql("getEquipmentsByInventoryId")
+SELECT DISTINCT
+	moment.iEquipmentId,
+	ment.cEquipmentName,
+	ting.iInventoryId
+FROM
+	Mo_MoRoutingEquipment moment
+	LEFT JOIN Bd_Equipment ment ON moment.iEquipmentId= ment.iAutoId
+	LEFT JOIN Mo_MoRoutingConfig config ON moment.iMoRoutingConfigId= config.iAutoId
+	LEFT JOIN Mo_MoRouting ting ON config.iMoRoutingId= ting.iAutoId
+WHERE
+	ting.iInventoryId IN (inventoryids)
+#end
+
+#sql("getProductionLinesByInventoryId")
+SELECT DISTINCT
+	ting.iInventoryId,
+	motion.iOperationId,
+	tion.cOperationName
+FROM
+	Mo_MoRoutingConfig_Operation motion
+	LEFT JOIN Bd_Operation tion ON motion.iOperationId= tion.iAutoId
+	LEFT JOIN Mo_MoRoutingConfig config ON motion.iMoRoutingConfigId= config.iAutoId
+	LEFT JOIN Mo_MoRouting ting ON config.iMoRoutingId= ting.iAutoId
+WHERE
+	ting.iInventoryId IN IN (inventoryids)
+#end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

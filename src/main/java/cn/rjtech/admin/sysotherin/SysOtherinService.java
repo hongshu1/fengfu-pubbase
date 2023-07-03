@@ -13,6 +13,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.admin.vouchtypedic.VouchTypeDicService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
@@ -44,6 +45,9 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     protected SysOtherin dao() {
         return dao;
     }
+
+    @Inject
+    private VouchTypeDicService vouchtypedicservice;
 
     @Inject
     private SysOtherindetailService sysotherindetailservice;
@@ -136,10 +140,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     public Ret delete(Long id) {
         tx(() -> {
             SysOtherin s = findFirst("select *  from T_Sys_OtherIn where AutoID in (" + id + ")");
-            if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
             }
-            if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                 ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
@@ -156,10 +160,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         tx(() -> {
             List<SysOtherin> sysOtherins = find("select *  from T_Sys_OtherIn where AutoID in (" + ids + ")");
             for (SysOtherin s : sysOtherins) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
-                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                     ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
@@ -187,22 +191,12 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         // 获取当前用户信息？
         User user = JBoltUserKit.getUser();
         Date now = new Date();
+        HashMap<String, String> vencodemap = new HashMap<>();
+        HashMap<String, String> invcodemap = new HashMap<>();
+
         tx(() -> {
             // 通过 id 判断是新增还是修改
-            if (sysotherin.getAutoID() == null) {
-                sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
-                sysotherin.setIcreateby(user.getId());
-                sysotherin.setCcreatename(user.getName());
-                sysotherin.setDcreatetime(now);
-                sysotherin.setIupdateby(user.getId());
-                sysotherin.setCupdatename(user.getName());
-                sysotherin.setDupdatetime(now);
-                sysotherin.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
-                sysotherin.setIsDeleted(false);
-                // 主表新增
-                ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
-            } else {
+            if (sysotherin.getAutoID() != null) {
                 sysotherin.setIupdateby(user.getId());
                 sysotherin.setCupdatename(user.getName());
                 sysotherin.setDupdatetime(now);
@@ -211,18 +205,18 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             }
             // 从表的操作
             // 获取保存数据（执行保存，通过 getSaveRecordList）
-            saveTableSubmitDatas(jBoltTable, sysotherin);
+            saveTableSubmitDatas(jBoltTable, sysotherin,invcodemap,vencodemap);
             // 获取修改数据（执行修改，通过 getUpdateRecordList）
             updateTableSubmitDatas(jBoltTable, sysotherin);
             // 获取删除数据（执行删除，通过 getDelete）
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return SUCCESS;
+        return Ret.ok().set("autoid", sysotherin.getAutoID());
     }
 
     // 可编辑表格提交-新增数据
-    private void saveTableSubmitDatas(JBoltTable jBoltTable, SysOtherin sysotherin) {
+    private void saveTableSubmitDatas(JBoltTable jBoltTable, SysOtherin sysotherin,HashMap<String, String> invcodemap,HashMap<String, String> vencodemap) {
         List<Record> list = jBoltTable.getSaveRecordList();
         if (CollUtil.isEmpty(list)) return;
         User user = JBoltUserKit.getUser();
@@ -232,7 +226,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             Record row = list.get(i);
             SysOtherindetail sysOtherindetail = new SysOtherindetail();
 
-            sysOtherindetail.setMasID(Long.valueOf(sysotherin.getAutoID()));
+
             sysOtherindetail.setIcreateby(user.getId());
             sysOtherindetail.setCcreatename(user.getName());
             sysOtherindetail.setDcreatetime(now);
@@ -242,11 +236,15 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             sysOtherindetail.setIsDeleted(false);
             sysOtherindetail.setBarcode(row.get("barcode"));
             sysOtherindetail.setInvCode(row.get("cinvcode"));
+            sysOtherindetail.setVenCode(row.get("vencode"));
             sysOtherindetail.setQty(new BigDecimal(row.get("qty").toString()));
             sysOtherindetail.setSourceBillType(row.getStr("sourcebilltype"));
             sysOtherindetail.setSourceBillNo(row.getStr("sourcebillno"));
             sysOtherindetail.setSourceBillDid(row.getStr("sourcebilldid"));
             sysOtherindetail.setSourceBillID(row.getStr("sourcebilldid"));
+
+            String s = this.insertSysOtherIn(sysOtherindetail, row, invcodemap, vencodemap, sysotherin);
+            sysOtherindetail.setMasID(Long.valueOf(s));
 
             systailsList.add(sysOtherindetail);
 
@@ -296,6 +294,69 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     }
 
+    //根据从表数据生成主表id
+    public String insertSysOtherIn(SysOtherindetail sysOtherindetail,Record record,HashMap<String, String> invcodemap,HashMap<String, String> vencodemap,SysOtherin sysOtherin){
+        //空的是走 存货编码
+        if(Objects.isNull(sysOtherindetail.getBarcode())){
+            if(CollectionUtils.isNotEmpty(invcodemap)){
+                for (Map.Entry<String, String> entry : vencodemap.entrySet()) {
+                    return entry.getValue();
+                }
+            }
+            //走新增
+            User user = JBoltUserKit.getUser();
+            Date now = new Date();
+
+            sysOtherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+            sysOtherin.setSourceBillDid(sysOtherindetail.getSourceBillDid());
+            sysOtherin.setVenCode(sysOtherindetail.getVenCode());
+            sysOtherin.setOrganizeCode(getOrgCode());
+            sysOtherin.setIcreateby(user.getId());
+            sysOtherin.setCcreatename(user.getName());
+            sysOtherin.setDcreatetime(now);
+            sysOtherin.setIupdateby(user.getId());
+            sysOtherin.setCupdatename(user.getName());
+            sysOtherin.setDupdatetime(now);
+            sysOtherin.setBillDate(DateUtil.formatDate(now));
+
+            ValidationUtils.isTrue(sysOtherin.save(), ErrorMsg.SAVE_FAILED);
+            vencodemap.put(sysOtherin.getVenCode(), sysOtherin.getAutoID());
+            return sysOtherin.getAutoID();
+        }else {
+            //走条码，按照供应商分类
+            if(CollectionUtils.isNotEmpty(vencodemap)){
+                for (Map.Entry<String, String> entry : vencodemap.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    // 判断是否包含指定的key
+                    if (key.equals(sysOtherindetail.getVenCode())) {
+                        return value;
+                    }
+                }
+            }
+            //走新增
+            User user = JBoltUserKit.getUser();
+            Date now = new Date();
+            sysOtherin.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
+            sysOtherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+            sysOtherin.setSourceBillDid(sysOtherindetail.getSourceBillDid());
+            sysOtherin.setVenCode(sysOtherindetail.getVenCode());
+            sysOtherin.setOrganizeCode(getOrgCode());
+            sysOtherin.setIcreateby(user.getId());
+            sysOtherin.setCcreatename(user.getName());
+            sysOtherin.setDcreatetime(now);
+            sysOtherin.setIupdateby(user.getId());
+            sysOtherin.setCupdatename(user.getName());
+            sysOtherin.setDupdatetime(now);
+            sysOtherin.setBillDate(DateUtil.formatDate(now));
+            sysOtherin.setIsDeleted(false);
+
+            ValidationUtils.isTrue(sysOtherin.save(), ErrorMsg.SAVE_FAILED);
+            vencodemap.put(sysOtherin.getVenCode(), sysOtherin.getAutoID());
+            return sysOtherin.getAutoID();
+        }
+
+    }
 
     //推送u8数据接口
     public Ret pushU8(SysOtherin sysotherin,List<SysOtherindetail> sysotherindetail) {
@@ -535,6 +596,8 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      */
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        //添加现品票 ,todo 推送u8
+        this.passagetwo(formAutoId);
         return null;
     }
 
@@ -646,5 +709,35 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      */
     public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode) {
         return dbTemplate("sysotherin.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode)).find();
+    }
+
+    public  String getBilltypeNmea(String cbtid){
+        VouchTypeDic first = vouchtypedicservice.findFirst("select * from Bd_VouchTypeDic where cbtid = ?", cbtid);
+        return first.getCBTChName();
+    }
+
+    /**
+     * 获取条码列表
+     * 通过关键字匹配
+     * autocomplete组件使用
+     */
+    public Record barcode(Kv kv) {
+        //先查询条码是否已添加
+        Record first = dbTemplate("sysotherin.barcodeDatas", kv).findFirst();
+        if (null != first) {
+            ValidationUtils.isTrue(false, "条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
+        }
+        first = dbTemplate("sysotherin.barcode", kv).findFirst();
+        ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
+        return first;
+    }
+
+
+    //审核通过后的业务逻辑
+    public String passagetwo(Long formAutoId) {
+        SysOtherin byId = findById(formAutoId);
+        List<SysOtherindetail> sysOtherindetails = sysotherindetailservice.find("select * from T_Sys_OtherInDetail  where MasID = ? ", byId.getAutoID());
+        this.pushU8(byId,sysOtherindetails);
+        return "";
     }
 }

@@ -16,7 +16,7 @@
 <!--                        </button>-->
 
                         #if(readonly != 'readonly')
-                        <button class="btn btn-success btn-sm" onclick="submitThisForm_#(pageId)(false)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end ><i class="fa fa-refresh"></i> 保存</button>
+                        <button class="btn btn-success btn-sm" onclick="submitThisForm_#(pageId)(false)" #if(sysotherin.iAuditStatus?? ==2  || sysotherin.iAuditStatus?? ==1) disabled #end ><i class="fa fa-refresh"></i> 保存</button>
                         #end
 
                         #include("/_view/_common/_approval_btns.html", formSn="T_Sys_OtherIn", o=sysotherin,primaryKeyName="AutoID",className="cn.rjtech.admin.sysotherin.SysOtherinService",permissionKeyPrefix="sysotherin")
@@ -72,7 +72,7 @@
                                                data-hidden-input="cwhcode" data-text-attr="cwhname"
                                                data-column-attr="cwhcode,cwhname" placeholder="请选择仓库名称"
                                                data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
-                                               value="#(cwhname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
+                                               value="#(cwhname??)" #if(sysotherin.iAuditStatus?? ==2  || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
                                                data-hidden-input="crdcode" data-text-attr="crdname"
                                                data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
                                                data-tips="请选择入库类别" data-header="入库编码,入库类别" maxlength="40"
-                                               value="#(crdname??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
+                                               value="#(crdname??)" #if(sysotherin.iAuditStatus?? ==2  || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
                                         <input type="text" data-notnull="true"
                                                data-tips="请输入业务号" data-with-clearbtn="true" autocomplete="off"
                                                class="form-control" placeholder="请输入业务号" maxlength="40"
-                                               name="yw" value="#(sysotherin.BillNo??)"#if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
+                                               name="yw" value="#(sysotherin.BillNo??)"#if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -121,7 +121,7 @@
                                                data-column-attr="cbtid,cbtchname" placeholder="请选择业务类型"
                                                data-tips="请选择业务类型" data-header="业务类型编码,业务类型" maxlength="40"
                                                value="#(cbtchname??)" 
-                                               #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) 
+                                               #if(sysotherin.iAuditStatus?? ==2  || sysotherin.iAuditStatus?? ==1)
                                                disabled 
                                                #end>
                                     </div>
@@ -148,7 +148,7 @@
                                         <input type="text" data-notnull="true"
                                                data-tips="请输入备注" data-with-clearbtn="true" autocomplete="off"
                                                class="form-control" placeholder="请输入备注" maxlength="40"
-                                               name="sysotherin.memo" value="#(sysotherin.memo??)" #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) disabled #end>
+                                               name="sysotherin.memo" value="#(sysotherin.memo??)" #if(sysotherin.iAuditStatus?? ==2  || sysotherin.iAuditStatus?? ==1) disabled #end>
                                     </div>
                                 </div>
                             </div>
@@ -201,7 +201,7 @@
 
             </td>
             <td>${data.venname}</td>
-            <td #if(sysotherin.iAuditStatus?? ==2 || sysotherin.iAuditStatus?? ==3 || sysotherin.iAuditStatus?? ==1) data-editable="false" #end >${data.barcode}</td>
+            <td #if(sysotherin.iAuditStatus?? ==2  || sysotherin.iAuditStatus?? ==1) data-editable="false" #end >${data.barcode}</td>
             <td>${data.cinvcode}</td>
             <td>${data.cinvaddcode}</td>
             <td>${data.cinvname}</td>
@@ -294,9 +294,9 @@
                             });
                         } else {
                             LayerMsgBox.success("提交成功", 600, function () {
-                                // parent.refreshPjaxContainer();
-                                // parent.layer.closeAll();
-                                self.location.href = "/admin/otherInList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                                parent.refreshPjaxContainer();
+                                parent.layer.closeAll();
+                                // self.location.href = "/admin/otherInList/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
                             });
 
                         }
@@ -404,7 +404,7 @@
         }
 
         if (barcode) {
-            Ajax.post("admin/materialReceiptList/barcode", {"barcode": barcode}, function (ret) {
+            Ajax.post("admin/otherInList/barcode", {"barcode": barcode}, function (ret) {
                 if (ret.state === 'ok') {
                     jboltTableInsertRow("jbolt_Table_#(pageId)", ret.data);
 
