@@ -17,6 +17,7 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.SysOtherin;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
 import cn.rjtech.service.approval.IApprovalService;
@@ -412,6 +413,9 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("201".equals(jsonObject.getString("code"))) {
+                    SysProductin byId = findById(sysproductin.getAutoID());
+                    byId.setU8BillNo("");
+                    byId.update();
                     return null;
                 }
             }

@@ -479,6 +479,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 //u8 返回什么才是正确的 然后返回null 作用，提示事物成功，不是null则事物失败
                 if ("200".equals(jsonObject.getString("code"))) {
 //                    return Ret.ok().setOk().data(jsonObject);
+                    SysAssem byId = findById(sysassem.getAutoID());
+                    byId.setU8BillNo("");
+                    byId.update();
                     return null;
                 }
             }

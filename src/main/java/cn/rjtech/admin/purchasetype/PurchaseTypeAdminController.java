@@ -44,7 +44,7 @@ public class PurchaseTypeAdminController extends BaseAdminController {
 
     @UnCheck
     public void selectAll() {
-        renderJsonData(service.selectAll(getKv()));
+        renderJsonData(service.selectAll(getPageNumber(), getPageSize(),getKv()));
     }
 
     /**

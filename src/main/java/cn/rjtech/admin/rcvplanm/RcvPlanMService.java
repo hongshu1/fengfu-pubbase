@@ -9,262 +9,366 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.rcvpland.RcvPlanDService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.RcvPlanD;
 import cn.rjtech.model.momdata.RcvPlanM;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * 发货管理-取货计划主表
+ *
  * @ClassName: RcvPlanMService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-27 14:09
  */
-public class RcvPlanMService extends BaseService<RcvPlanM> {
-	private final RcvPlanM dao=new RcvPlanM().dao();
-	private final RcvPlanD planDdao=new RcvPlanD().dao();
-	@Override
-	protected RcvPlanM dao() {
-		return dao;
-	}
+public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalService {
 
-	@Override
+    private final RcvPlanM dao      = new RcvPlanM().dao();
+    private final RcvPlanD planDdao = new RcvPlanD().dao();
+
+    @Override
+    protected RcvPlanM dao() {
+        return dao;
+    }
+
+    @Override
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
 
-	@Inject
-	private RcvPlanMService service;
+    @Inject
+    private RcvPlanMService service;
 
-	@Inject
-	private RcvPlanDService planDService;
+    @Inject
+    private RcvPlanDService planDService;
 
 
-	/**
-	 * 后台管理数据查询
-	 * @param pageNumber 第几页
-	 * @param pageSize   每页几条数据
+    /**
+     * 后台管理数据查询
+     *
+     * @param pageNumber 第几页
+     * @param pageSize   每页几条数据
+     */
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> paginate = dbTemplate("rcvplanm.getAdminDatas", kv).paginate(pageNumber, pageSize);
 
-	 * @return
-	 */
-	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-		Page<Record> paginate = dbTemplate("rcvplanm.recpor", kv).paginate(pageNumber, pageSize);
+        return paginate;
+    }
 
-		return paginate;
-	}
-
-	/**
-	 * 保存
-	 * @param rcvPlanM
-	 * @return
-	 */
-	public Ret save(RcvPlanM rcvPlanM, List<RcvPlanD> rcvPlanD) {
-		if(rcvPlanM==null || isOk(rcvPlanM.getIAutoId())) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		tx(() -> {
-			boolean success=rcvPlanM.save();
-			if(rcvPlanD !=null ) {
-				for (int i = 0; i < rcvPlanD.size(); i++) {
-					RcvPlanD rcvPlanD1 = rcvPlanD.get(i);
-					if( !isOk(rcvPlanD1.getIAutoId())){
-						// 添加从表
+    /**
+     * 保存
+     */
+    public Ret save(RcvPlanM rcvPlanM, List<RcvPlanD> rcvPlanD) {
+        if (rcvPlanM == null || isOk(rcvPlanM.getIAutoId())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        tx(() -> {
+            boolean success = rcvPlanM.save();
+            if (rcvPlanD != null) {
+                for (int i = 0; i < rcvPlanD.size(); i++) {
+                    RcvPlanD rcvPlanD1 = rcvPlanD.get(i);
+                    if (!isOk(rcvPlanD1.getIAutoId())) {
+                        // 添加从表
 //						rcvPlanD.save(rcvPlanD1);
-					}
-				}
-			}
-			return success;
-		});
-		
-		return SUCCESS;
-	}
+                    }
+                }
+            }
+            return success;
+        });
 
-	/**
-	 * 更新
-	 * @param rcvPlanM
-	 * @return
-	 */
-	public Ret update(RcvPlanM rcvPlanM) {
-		if(rcvPlanM==null || notOk(rcvPlanM.getIAutoId())) {
-			return fail(JBoltMsg.PARAM_ERROR);
-		}
-		//更新时需要判断数据存在
-		RcvPlanM dbRcvPlanM=findById(rcvPlanM.getIAutoId());
-		if(dbRcvPlanM==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(rcvPlanM.getName(), rcvPlanM.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-		boolean success=rcvPlanM.update();
-		if(success) {
-			//添加日志
-			//addUpdateSystemLog(rcvPlanM.getIAutoId(), JBoltUserKit.getUserId(), rcvPlanM.getName());
-		}
-		return ret(success);
-	}
+        return SUCCESS;
+    }
 
-	/**
-	 * 批量删除主从表
-	 */
-	public Ret deleteRmRdByIds(String ids) {
-		tx(() -> {
-			String[] split = ids.split(",");
-			for(String s : split){
-				updateColumn(s, "isdeleted", true);
-				update("update SM_RcvPlanD  set  IsDeleted = 1 where  iRcvPlanMid = ?",s);
-			}
-			return true;
-		});
-		return SUCCESS;
-	}
+    /**
+     * 更新
+     */
+    public Ret update(RcvPlanM rcvPlanM) {
+        if (rcvPlanM == null || notOk(rcvPlanM.getIAutoId())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        //更新时需要判断数据存在
+        RcvPlanM dbRcvPlanM = findById(rcvPlanM.getIAutoId());
+        if (dbRcvPlanM == null) {
+            return fail(JBoltMsg.DATA_NOT_EXIST);
+        }
+        //if(existsName(rcvPlanM.getName(), rcvPlanM.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+        boolean success = rcvPlanM.update();
+        if (success) {
+            //添加日志
+            //addUpdateSystemLog(rcvPlanM.getIAutoId(), JBoltUserKit.getUserId(), rcvPlanM.getName());
+        }
+        return ret(success);
+    }
 
-	/**
-	 * 删除
-	 * @param id
-	 * @return
-	 */
-	public Ret delete(Long id) {
-		tx(() -> {
-			updateColumn(id, "isdeleted", true);
-			update("update SM_RcvPlanD  set  IsDeleted = 1 where  iRcvPlanMid = ?",id);
-			return true;
-		});
-		return SUCCESS;
-	}
-	/**
-	 * 删除数据后执行的回调
-	 * @param rcvPlanM 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	protected String afterDelete(RcvPlanM rcvPlanM, Kv kv) {
-		//addDeleteSystemLog(rcvPlanM.getIAutoId(), JBoltUserKit.getUserId(),rcvPlanM.getName());
-		return null;
-	}
+    /**
+     * 批量删除
+     */
+    public Ret deleteBatchByIds(String ids) {
+        List<RcvPlanM> rcvPlanMList = getListByIds(ids);
+        ArrayList<RcvPlanM> deleteRcvPlanMS = new ArrayList<>();
+        Date date = new Date();
+        for (RcvPlanM planM : rcvPlanMList) {
+            commonDeleteMethod(planM, date);
+            deleteRcvPlanMS.add(planM);
+        }
+        tx(() -> {
+            ValidationUtils.isTrue(batchUpdate(deleteRcvPlanMS).length > 0, JBoltMsg.FAIL);
 
-	/**
-	 * 检测是否可以删除
-	 * @param rcvPlanM model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
-	@Override
-	public String checkInUse(RcvPlanM rcvPlanM, Kv kv) {
-		//这里用来覆盖 检测是否被其它表引用
-		return null;
-	}
+            return true;
+        });
 
-	/**
-	 * toggle操作执行后的回调处理
-	 */
-	@Override
-	protected String afterToggleBoolean(RcvPlanM rcvPlanM, String column, Kv kv) {
-		//addUpdateSystemLog(rcvPlanM.getIAutoId(), JBoltUserKit.getUserId(), rcvPlanM.getName(),"的字段["+column+"]值:"+rcvPlanM.get(column));
-		/**
-		switch(column){
-		    case "IsDeleted":
-		        break;
-		}
-		*/
-		return null;
-	}
+        return SUCCESS;
+    }
 
-	/**
-	 * 执行JBoltTable表格整体提交
-	 *
-	 * @param jBoltTable
-	 * @return
-	 */
-	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-		RcvPlanM rcvplanm = jBoltTable.getFormModel(RcvPlanM.class,"rcvplanm");
-		//获取当前用户信息？
-		User user = JBoltUserKit.getUser();
-		Date now = new Date();
-		tx(()->{
-			//通过 id 判断是新增还是修改
-			if(rcvplanm.getIAutoId() == null){
-				rcvplanm.setIOrgId(getOrgId());
-				rcvplanm.setCOrgCode(getOrgCode());
-				rcvplanm.setCOrgName(getOrgName());
-				rcvplanm.setIStatus(1);
-				rcvplanm.setIAuditWay(1);
-				rcvplanm.setIAuditStatus(0);
-				rcvplanm.setICreateBy(user.getId());
-				rcvplanm.setCCreateName(user.getName());
-				rcvplanm.setDCreateTime(now);
-				rcvplanm.setIUpdateBy(user.getId());
-				rcvplanm.setCUpdateName(user.getName());
-				rcvplanm.setDUpdateTime(now);
-				//主表新增
-				ValidationUtils.isTrue(rcvplanm.save(), ErrorMsg.SAVE_FAILED);
-			}else{
-				rcvplanm.setIUpdateBy(user.getId());
-				rcvplanm.setCUpdateName(user.getName());
-				rcvplanm.setDUpdateTime(now);
-				//主表修改
-				ValidationUtils.isTrue(rcvplanm.update(), ErrorMsg.UPDATE_FAILED);
-			}
-			//从表的操作
-			// 获取保存数据（执行保存，通过 getSaveRecordList）
-			saveTableSubmitDatas(jBoltTable,rcvplanm);
-			//获取修改数据（执行修改，通过 getUpdateRecordList）
-			updateTableSubmitDatas(jBoltTable,rcvplanm);
-			//获取删除数据（执行删除，通过 getDelete）
-			deleteTableSubmitDatas(jBoltTable);
-			return true;
-		});
-		return SUCCESS;
-	}
+    /**
+     * 删除
+     */
+    public Ret delete(Long id) {
+        tx(() -> {
+            RcvPlanM planM = findById(id);
+            commonDeleteMethod(planM, new Date());
 
-	//可编辑表格提交-新增数据
-	private void saveTableSubmitDatas(JBoltTable jBoltTable,RcvPlanM rcvplanm){
-		List<Record> list = jBoltTable.getSaveRecordList();
-		if(CollUtil.isEmpty(list)) return;
-		Date now = new Date();
-		for (int i=0;i<list.size();i++) {
-			Record row = list.get(i);
-			row.set("isdeleted", "0");
-			row.set("ircvplanmid", rcvplanm.getIAutoId());
-			row.set("iautoid", JBoltSnowflakeKit.me.nextId());
-			row.set("dcreatetime", now);
-			row.set("dupdatetime", now);
-			row.remove("cinvcode1");
-			row.remove("cinvname1");
-			row.remove("cinvcode");
-			row.remove("cinvstd");
-			row.remove("cuomname");
-		}
-		planDService.batchSaveRecords(list);
-	}
-	//可编辑表格提交-修改数据
-	private void updateTableSubmitDatas(JBoltTable jBoltTable,RcvPlanM rcvplanm){
-		List<Record> list = jBoltTable.getUpdateRecordList();
-		if(CollUtil.isEmpty(list)) return;
-		Date now = new Date();
-		for(int i = 0;i < list.size(); i++){
-			Record row = list.get(i);
-			row.set("dupdatetime", now);
-			row.remove("cinvcode");
-			row.remove("cinvcode1");
-			row.remove("cinvname1");
-			row.remove("cinvstd");
-			row.remove("cuomname");
-		}
-		planDService.batchUpdateRecords(list);
-	}
-	//可编辑表格提交-删除数据
-	private void deleteTableSubmitDatas(JBoltTable jBoltTable){
-		Object[] ids = jBoltTable.getDelete();
-		if(ArrayUtil.isEmpty(ids)) return;
-		for (Object id : ids) {
-			planDService.deleteById(id);
-		}
-	}
+            ValidationUtils.isTrue(planM.update(), JBoltMsg.FAIL);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    public void commonDeleteMethod(RcvPlanM planM, Date date) {
+
+        ValidationUtils.equals(planM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
+        ValidationUtils.equals(planM.getIStatus(), OrderStatusEnum.NOT_AUDIT.getValue(), planM.getCRcvPlanNo() + "：非已保存状态!");
+
+        planM.setIsDeleted(true);
+        planM.setCUpdateName(JBoltUserKit.getUserName());
+        planM.setDUpdateTime(date);
+        planM.setIUpdateBy(JBoltUserKit.getUserId());
+    }
+
+    /**
+     * 删除数据后执行的回调
+     *
+     * @param rcvPlanM 要删除的model
+     * @param kv       携带额外参数一般用不上
+     */
+    @Override
+    protected String afterDelete(RcvPlanM rcvPlanM, Kv kv) {
+        //addDeleteSystemLog(rcvPlanM.getIAutoId(), JBoltUserKit.getUserId(),rcvPlanM.getName());
+        return null;
+    }
+
+    /**
+     * 检测是否可以删除
+     *
+     * @param rcvPlanM model
+     * @param kv       携带额外参数一般用不上
+     */
+    @Override
+    public String checkInUse(RcvPlanM rcvPlanM, Kv kv) {
+        //这里用来覆盖 检测是否被其它表引用
+        return null;
+    }
+
+    /**
+     * toggle操作执行后的回调处理
+     */
+    @Override
+    protected String afterToggleBoolean(RcvPlanM rcvPlanM, String column, Kv kv) {
+        //addUpdateSystemLog(rcvPlanM.getIAutoId(), JBoltUserKit.getUserId(), rcvPlanM.getName(),"的字段["+column+"]值:"+rcvPlanM.get(column));
+        /**
+         switch(column){
+         case "IsDeleted":
+         break;
+         }
+         */
+        return null;
+    }
+
+    /**
+     * 执行JBoltTable表格整体提交
+     */
+    public Ret submitByJBoltTable(JBoltTable jBoltTable) {
+        RcvPlanM rcvplanm = jBoltTable.getFormModel(RcvPlanM.class, "rcvplanm");
+        //获取当前用户信息？
+        User user = JBoltUserKit.getUser();
+        Date now = new Date();
+        tx(() -> {
+            //通过 id 判断是新增还是修改
+            if (rcvplanm.getIAutoId() == null) {
+                rcvplanm.setIOrgId(getOrgId());
+                rcvplanm.setCOrgCode(getOrgCode());
+                rcvplanm.setCOrgName(getOrgName());
+                rcvplanm.setIStatus(1);
+                rcvplanm.setIAuditWay(2);//走审批流
+                rcvplanm.setIAuditStatus(0);
+                rcvplanm.setICreateBy(user.getId());
+                rcvplanm.setCCreateName(user.getName());
+                rcvplanm.setDCreateTime(now);
+                rcvplanm.setIUpdateBy(user.getId());
+                rcvplanm.setCUpdateName(user.getName());
+                rcvplanm.setDUpdateTime(now);
+                rcvplanm.setIsDeleted(false);
+                //主表新增
+                ValidationUtils.isTrue(rcvplanm.save(), ErrorMsg.SAVE_FAILED);
+            } else {
+                rcvplanm.setIUpdateBy(user.getId());
+                rcvplanm.setCUpdateName(user.getName());
+                rcvplanm.setDUpdateTime(now);
+                //主表修改
+                ValidationUtils.isTrue(rcvplanm.update(), ErrorMsg.UPDATE_FAILED);
+            }
+            //从表的操作
+            // 获取保存数据（执行保存，通过 getSaveRecordList）
+            saveTableSubmitDatas(jBoltTable, rcvplanm);
+            //获取修改数据（执行修改，通过 getUpdateRecordList）
+            updateTableSubmitDatas(jBoltTable, rcvplanm);
+            //获取删除数据（执行删除，通过 getDelete）
+            deleteTableSubmitDatas(jBoltTable);
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    //可编辑表格提交-新增数据
+    private void saveTableSubmitDatas(JBoltTable jBoltTable, RcvPlanM rcvplanm) {
+        List<Record> list = jBoltTable.getSaveRecordList();
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        Date now = new Date();
+        for (int i = 0; i < list.size(); i++) {
+            Record row = list.get(i);
+            row.keep("iAutoId","iRcvPlanMid","cCarNo","cPlanCode","cRcvDate", "cRcvTime","cBarcode","cVersion",
+                "cAddress","iInventoryId","iQty","IsDeleted","dCreateTime","dUpdateTime");
+            row.set("iautoid", JBoltSnowflakeKit.me.nextId());
+            row.set("isdeleted", "0");
+            row.set("ircvplanmid", rcvplanm.getIAutoId());
+            row.set("dcreatetime", now);
+            row.set("dupdatetime", now);
+        }
+        planDService.batchSaveRecords(list);
+    }
+
+    //可编辑表格提交-修改数据
+    private void updateTableSubmitDatas(JBoltTable jBoltTable, RcvPlanM rcvplanm) {
+        List<Record> list = jBoltTable.getUpdateRecordList();
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        Date now = new Date();
+        for (int i = 0; i < list.size(); i++) {
+            Record row = list.get(i);
+            row.set("dupdatetime", now);
+            row.remove("cinvcode");
+            row.remove("cinvcode1");
+            row.remove("cinvname1");
+            row.remove("cinvstd");
+            row.remove("cuomname");
+        }
+        planDService.batchUpdateRecords(list);
+    }
+
+    //可编辑表格提交-删除数据
+    private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
+        Object[] ids = jBoltTable.getDelete();
+        if (ArrayUtil.isEmpty(ids)) {
+            return;
+        }
+        for (Object id : ids) {
+            planDService.deleteById(id);
+        }
+    }
+
+    /*处理审批通过的其他业务操作，如有异常返回错误信息*/
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    /*处理审批不通过的其他业务操作，如有异常处理返回错误信息*/
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    /*实现反审之前的其他业务操作，如有异常返回错误信息*/
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /*实现反审之后的其他业务操作, 如有异常返回错误信息*/
+    @Override
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /*提审前业务，如有异常返回错误信息*/
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /*提审后业务处理，如有异常返回错误信息*/
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /*撤回审核业务处理，如有异常返回错误信息*/
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        return null;
+    }
+
+    /*从审批中，撤回到已保存，业务实现，如有异常返回错误信息*/
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        return null;
+    }
+
+    /*从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息*/
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /*从已审核，撤回到已保存，业务实现，如有异常返回错误信息*/
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /*批量审核（审批）通过，后置业务实现*/
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    /*批量审批（审核）不通过，后置业务实现*/
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    /*批量撤销审批，后置业务实现*/
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
+    }
 }

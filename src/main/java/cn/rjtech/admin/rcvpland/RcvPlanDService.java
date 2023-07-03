@@ -1,4 +1,4 @@
-package cn.rjtech.admin.rcvplanm;
+package cn.rjtech.admin.rcvpland;
 
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -11,6 +11,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -110,6 +111,11 @@ public class RcvPlanDService extends BaseService<RcvPlanD> {
 	public List<Record> findEditTableDatas(Kv para) {
 		ValidationUtils.notNull(para.getLong("rcvplanmid"), JBoltMsg.PARAM_ERROR);
 		List<Record> records = dbTemplate("rcvplanm.dList", para).find();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		for (Record record : records) {
+			record.set("crcvdate",format.format(record.getDate("crcvdate")));
+			record.set("crcvtime",format.format(record.getDate("crcvtime")));
+		}
 		return records;
 	}
 
