@@ -7,6 +7,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.customer.CustomerService;
+import cn.rjtech.admin.rcvpland.RcvPlanDService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Customer;
 import cn.rjtech.model.momdata.RcvPlanM;
@@ -24,6 +25,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
  * @date: 2023-04-27 14:09
  */
 @UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.RCVPLANM)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/pickupPlanManage", viewPath = "/_view/admin/rcvplanm")
 public class RcvPlanMAdminController extends BaseAdminController {
@@ -69,7 +71,7 @@ public class RcvPlanMAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        RcvPlanM rcvPlanM = service.findById(getLong(0));
+        RcvPlanM rcvPlanM = service.findById(getLong("iautoid"));
         if (rcvPlanM == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
@@ -78,9 +80,8 @@ public class RcvPlanMAdminController extends BaseAdminController {
         Customer customer = customerService.findById(rcvPlanM.getICustomerId());
         rcvplanm.set("ccusname", customer == null ? null : customer.getCCusName());
         set("rcvplanm", rcvplanm);
+        keepPara();
         render("edit.html");
-
-
     }
 
     /**
@@ -94,15 +95,13 @@ public class RcvPlanMAdminController extends BaseAdminController {
      * 批量删除主从表
      */
     public void deleteByIds() {
-
-        renderJson(service.deleteRmRdByIds(get("ids")));
+        renderJson(service.deleteBatchByIds(get("ids")));
     }
 
     /**
      * 删除主从表
      */
     public void delete() {
-
         renderJson(service.delete(getLong(0)));
     }
 
@@ -117,10 +116,23 @@ public class RcvPlanMAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
-    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
 
+
+    /**
+     * 下载模板
+     */
+    public void downloadTpl() {
+
+    }
+
+    /**
+     * 导入数据
+     */
+    public void importExcelData(){
+
+    }
 
 }

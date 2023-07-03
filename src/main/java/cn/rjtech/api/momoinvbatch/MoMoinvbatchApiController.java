@@ -91,4 +91,17 @@ public class MoMoinvbatchApiController extends BaseApiController {
         ValidationUtils.isTrue(moMoinvbatchService.batchPrint(imodocid, ids).isOk(), "批量打印更新数据失败");
         renderJBoltApiSuccess();
     }
+
+    /**
+     * 批量报工
+     */
+    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @UnCheck
+    public void workByIds(@Para(value = "imodocid") String imodocid, @Para(value = "ids") String ids)
+    {
+        ValidationUtils.notNull(imodocid, "缺少工单主键");
+        ValidationUtils.notNull(ids, "缺少现品票主键集合");
+        ValidationUtils.isTrue(moMoinvbatchService.workByIds(imodocid, ids).isOk(), "批量报工更新数据失败");
+        renderJBoltApiSuccess();
+    }
 }
