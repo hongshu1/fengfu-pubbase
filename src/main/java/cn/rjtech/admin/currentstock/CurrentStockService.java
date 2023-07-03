@@ -21,7 +21,6 @@ import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -115,6 +114,18 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 
         //多个库区处理
         String Str = kv.getStr("poscodes");
+        kv.setIfNotNull("poscode",pos(Str));
+		Record first = dbTemplate("currentstock.barcodeDatas", kv).findFirst();
+		if(null == first){
+			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "该现品票没有库存！！！");
+		}
+		return first;
+	}
+
+    /**
+     * 多个库区处理 通用方法
+     * */
+	public String pos(String Str){
         if (Str != null) {
             String[] split = Str.split(",");
             String poscode = "";
@@ -122,14 +133,10 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
                 poscode += "'" + id + "',";
             }
             poscode = poscode.substring(0, poscode.length() - 1);
-            kv.setIfNotNull("poscode",poscode);
+            return poscode;
         }
-		Record first = dbTemplate("currentstock.barcodeDatas", kv).findFirst();
-		if(null == first){
-			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "该现品票没有库存！！！");
-		}
-		return first;
-	}
+        return Str;
+    }
 
     /**
      * 盘点单物料详情列表 数据明细
@@ -139,15 +146,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         Record Detail = dbTemplate("currentstock.Detail", kv).findFirst();
         //多个库区处理
 		String posCodes = kv.getStr("poscodes");
-        if (posCodes != null) {
-            String[] split = posCodes.split(",");
-            String poscode = "";
-            for (String id : split) {
-                poscode += "'" + id + "',";
-            }
-            poscode = poscode.substring(0, poscode.length() - 1);
-            kv.setIfNotNull("poscode",poscode);
-        }
+        kv.setIfNotNull("poscode",pos(posCodes));
         if (isNull( Detail.get("masid"))){
             return warehouseData(kv);
         }else {
@@ -656,8 +655,14 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         StockCheckVouch stockCheckVouch = stockChekVouchService.findById(formAutoId);
-        List<StockCheckVouchBarcode> stockCheckVouchBarcodeList = stockCheckVouchBarcodeService
-            .findListByMasId(stockCheckVouch.getAutoId());
+        Long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        Date nowDate = new Date();
+        stockCheckVouch.setIauditby(userId);
+        stockCheckVouch.setCauditname(userName);
+        stockCheckVouch.setDAuditTime(nowDate);
+        stockCheckVouch.update();
+        List<StockCheckVouchDetail> checkVouchDetailList = stockCheckVouchDetailService.findListByMasId(stockCheckVouch.getAutoId());
 
         Date now = new Date();
         boolean otherInFlag = true;
@@ -670,26 +675,28 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         OtherOut otherOut = new OtherOut();
         ArrayList<OtherOutDetail> otherOutDetailList = new ArrayList<>();
 
-        for (StockCheckVouchBarcode checkVouchBarcode : stockCheckVouchBarcodeList) {
-            BigDecimal qty = checkVouchBarcode.getQty();//账面数量
-            BigDecimal realQty = checkVouchBarcode.getRealQty();//实际数量
-            BigDecimal bigDecimal = qty.subtract(realQty);//剩余数量
+        for (StockCheckVouchDetail vouchDetail : checkVouchDetailList) {
+           /* BigDecimal qty = vouchDetail.getQty();//账面数量
+            BigDecimal realQty = vouchDetail.getRealQty();//实际数量
+            BigDecimal bigDecimal = qty.subtract(realQty);//剩余数量*/
+
+            BigDecimal plqtyQty = vouchDetail.getPlqtyQty();//盈亏数量
 
             //判断剩余数量是否为正负数
-            int resultQty = bigDecimal.compareTo(BigDecimal.ZERO);
-            Record record = findCheckVouchDetailByMasIdAndInvcode(stockCheckVouch.getAutoId(),
-                checkVouchBarcode.getInvCode());
+            int resultQty = plqtyQty.compareTo(BigDecimal.ZERO);
+            List<Record> recordList = findCheckVouchBarcodeByMasIdAndInvcode(stockCheckVouch.getAutoId(),
+                    vouchDetail.getInvCode());
             if (resultQty == -1) {
-                //1、盘盈要推其它入库单
-                BigDecimal moreQty = bigDecimal.negate();//negate：负数转正数--盘盈数量
-                saveSysOtherinMode(stockCheckVouch, checkVouchBarcode, record, otherin,
-                    otherInDetailList, now, otherInFlag, moreQty);
+                //1、盘亏要推其它出库单
+                BigDecimal lossQty = plqtyQty.negate();//negate：负数转正数--盘盈数量
+                //int lossQty = bigDecimal.intValue();//盘亏数量
+                saveSysOtherOutModel(stockCheckVouch, vouchDetail, otherOut, recordList,
+                        otherOutDetailList, now, otherOutFlag, lossQty);
 
             } else if (resultQty == 1) {
-                //2、盘亏要推其它出库单
-                //int lossQty = bigDecimal.intValue();//盘亏数量
-                saveSysOtherOutModel(stockCheckVouch, checkVouchBarcode, otherOut, record,
-                    otherOutDetailList, now, otherOutFlag, bigDecimal);
+                //2、盘盈要推其它入库单
+                saveSysOtherinMode(stockCheckVouch, vouchDetail, recordList, otherin,
+                        otherInDetailList, now, otherInFlag, plqtyQty);
             }
         }
         if (otherin != null) {
@@ -707,29 +714,29 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         return null;
     }
 
-    public Record findCheckVouchDetailByMasIdAndInvcode(Long masid, String invcdoe) {
+    public List<Record> findCheckVouchBarcodeByMasIdAndInvcode(Long masid, String invcdoe) {
         Kv kv = new Kv();
         kv.set("masid", masid);
         kv.set("invcdoe", invcdoe);
-        return dbTemplate("currentstock.findCheckVouchDetailByMasIdAndInvcode", kv).findFirst();
+        return dbTemplate("currentstock.findCheckVouchBarcodeByMasIdAndInvcode", kv).find();
     }
 
     /*
      * 传参给其它入库单
      * */
-    public void saveSysOtherinMode(StockCheckVouch stockCheckVouch, StockCheckVouchBarcode checkVouchBarcode, Record record,
+    public void saveSysOtherinMode(StockCheckVouch stockCheckVouch, StockCheckVouchDetail vouchDetail, List<Record> recordList,
                                    SysOtherin otherin, List<SysOtherindetail> otherInDetailList, Date now, boolean otherInFlag,
-                                   BigDecimal moreQty) {
+                                   BigDecimal plqtyQty) {
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
         if (otherInFlag) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             otherin.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
             otherin.setSourceBillDid(StrUtil.toString(stockCheckVouch.getAutoId()));
-            otherin.setRdCode("118");
+            otherin.setRdCode("118");//入库类别
             otherin.setOrganizeCode(getOrgCode());
             otherin.setBillNo(stockCheckVouch.getBillNo());
-            otherin.setBillType("其它入库");
+//            otherin.setBillType("其它入库");
             otherin.setBillDate(formatter.format(now));
             otherin.setWhcode(stockCheckVouch.getWhCode());
             otherin.setIAuditWay(1);
@@ -752,39 +759,40 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 
             otherInFlag = false;
         }
-        SysOtherindetail otherindetail = new SysOtherindetail();
-        otherindetail.setAutoID(JBoltSnowflakeKit.me.nextId());
-        otherindetail.setMasID(Long.parseLong(otherin.getAutoID()));
-        otherindetail.setPosCode(record.get("poscode"));
-        otherindetail.setBarcode(checkVouchBarcode.getBarcode());
-        otherindetail.setInvCode(checkVouchBarcode.getInvCode());
-        otherindetail.setNum(checkVouchBarcode.getNum());
-        otherindetail.setQty(moreQty);
-        otherindetail.setSourceBillNo(stockCheckVouch.getBillNo());
-        otherindetail.setSourceBIllNoRow(stockCheckVouch.getBillNo() + "-" + (otherInDetailList.size() + 1));
-        otherindetail.setSourceBillID(StrUtil.toString(stockCheckVouch.getAutoId()));
-        otherindetail.setSourceBillDid(StrUtil.toString(checkVouchBarcode.getAutoID()));
-        otherindetail.setIsDeleted(false);
-        otherindetail.setIcreateby(userId);
-        otherindetail.setCcreatename(userName);
-        otherindetail.setDcreatetime(now);
-        otherindetail.setIupdateby(userId);
-        otherindetail.setCupdatename(userName);
-        otherindetail.setDupdatetime(now);
-
+        for (Record record : recordList) {
+            SysOtherindetail otherindetail = new SysOtherindetail();
+            otherindetail.setAutoID(JBoltSnowflakeKit.me.nextId());
+            otherindetail.setMasID(Long.parseLong(otherin.getAutoID()));
+            otherindetail.setPosCode(vouchDetail.getPosCode());
+            otherindetail.setBarcode(record.getStr("barcode"));
+            otherindetail.setInvCode(vouchDetail.getInvCode());
+            otherindetail.setNum(vouchDetail.getNum());
+            otherindetail.setQty(record.getBigDecimal("qty"));
+            otherindetail.setSourceBillNo(stockCheckVouch.getBillNo());
+            otherindetail.setSourceBIllNoRow(stockCheckVouch.getBillNo() + "-" + (otherInDetailList.size() + 1));
+            otherindetail.setSourceBillID(StrUtil.toString(stockCheckVouch.getAutoId()));
+            otherindetail.setSourceBillDid(StrUtil.toString(vouchDetail.getAutoID()));
+            otherindetail.setIsDeleted(false);
+            otherindetail.setIcreateby(userId);
+            otherindetail.setCcreatename(userName);
+            otherindetail.setDcreatetime(now);
+            otherindetail.setIupdateby(userId);
+            otherindetail.setCupdatename(userName);
+            otherindetail.setDupdatetime(now);
 //        otherindetail.setPackRate();
 //        otherindetail.setTrackType();
 //        otherindetail.setSourceBillType();
 //        otherindetail.setMemo();
-        //
-        otherInDetailList.add(otherindetail);
+            //
+            otherInDetailList.add(otherindetail);
+        }
     }
 
     /*
      * 传参给其它出库单
      * */
-    public void saveSysOtherOutModel(StockCheckVouch stockCheckVouch, StockCheckVouchBarcode checkVouchBarcode, OtherOut otherOut,
-                                     Record record, List<OtherOutDetail> otherOutDetailList, Date now, boolean otherOutFlag,
+    public void saveSysOtherOutModel(StockCheckVouch stockCheckVouch, StockCheckVouchDetail vouchDetail, OtherOut otherOut,
+                                     List<Record> recordList, List<OtherOutDetail> otherOutDetailList, Date now, boolean otherOutFlag,
                                      BigDecimal lossQty) {
         Long userId = JBoltUserKit.getUserId();
         String userName = JBoltUserKit.getUserName();
@@ -821,34 +829,35 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 //            otherOut.setDAuditTime();
             otherOutFlag = false;
         }
-
-        OtherOutDetail otherOutDetail = new OtherOutDetail();
-        otherOutDetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
-        otherOutDetail.setMasID(otherOut.getAutoID());
-        otherOutDetail.setPosCode(record.get("poscode"));
-        otherOutDetail.setBarcode(checkVouchBarcode.getBarcode());
-        otherOutDetail.setInvCode(checkVouchBarcode.getInvCode());
+        for (Record record : recordList) {
+            OtherOutDetail otherOutDetail = new OtherOutDetail();
+            otherOutDetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
+            otherOutDetail.setMasID(otherOut.getAutoID());
+            otherOutDetail.setPosCode(vouchDetail.getPosCode());
+            otherOutDetail.setBarcode(record.getStr("barcode"));
+            otherOutDetail.setInvCode(vouchDetail.getInvCode());
 //        otherOutDetail.setNum(checkVouchBarcode.getNum());
-        otherOutDetail.setQty(lossQty);//盘亏数量
+            otherOutDetail.setQty(record.getBigDecimal("qty"));
+//            otherOutDetail.setQty(lossQty);//盘亏数量
 //        otherOutDetail.setPackRate();//收容数量
 //        otherOutDetail.setTrackType();//跟单类型
 //        otherOutDetail.setSourceBillType();
-        otherOutDetail.setSourceBillNo(stockCheckVouch.getBillNo());//盘点单号
-        otherOutDetail.setSourceBIllNoRow(stockCheckVouch.getBillNo() + "-" + (otherOutDetailList.size() + 1));
-        otherOutDetail.setSourceBillID(StrUtil.toString(stockCheckVouch.getAutoId()));
-        otherOutDetail.setSourceBillDid(StrUtil.toString(checkVouchBarcode.getAutoID()));
+            otherOutDetail.setSourceBillNo(stockCheckVouch.getBillNo());//盘点单号
+            otherOutDetail.setSourceBIllNoRow(stockCheckVouch.getBillNo() + "-" + (otherOutDetailList.size() + 1));
+            otherOutDetail.setSourceBillID(StrUtil.toString(stockCheckVouch.getAutoId()));
+            otherOutDetail.setSourceBillDid(StrUtil.toString(vouchDetail.getAutoID()));
 //        otherOutDetail.setMemo();
-        otherOutDetail.setIsDeleted(false);
-        otherOutDetail.setIcreateby(userId);
-        otherOutDetail.setCcreatename(userName);
-        otherOutDetail.setDcreatetime(now);
-        otherOutDetail.setIupdateby(userId);
-        otherOutDetail.setCupdatename(userName);
-        otherOutDetail.setDupdatetime(now);
-        //
-        otherOutDetailList.add(otherOutDetail);
+            otherOutDetail.setIsDeleted(false);
+            otherOutDetail.setIcreateby(userId);
+            otherOutDetail.setCcreatename(userName);
+            otherOutDetail.setDcreatetime(now);
+            otherOutDetail.setIupdateby(userId);
+            otherOutDetail.setCupdatename(userName);
+            otherOutDetail.setDupdatetime(now);
+            //
+            otherOutDetailList.add(otherOutDetail);
+        }
     }
-
     @Override
     public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
         return null;

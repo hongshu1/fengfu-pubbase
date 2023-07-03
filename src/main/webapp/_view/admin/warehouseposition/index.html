@@ -1,39 +1,41 @@
 #@jboltLayout()
 #define main()
 #set(pageId=RandomUtil.random(6))
-<div class="jbolt_page" data-key="#(pmkey)" >
+<div class="jbolt_page" data-key="#(pmkey)">
 
-<div class="jbolt_page_title">
-	<div class="row">
-<!--	<div class="col-md-auto">-->
-<!--	<h1>库位档案</h1>-->
-<!--	</div>-->
-	<div class="col">
-		<form class="form-inline text-left" id="warehousePositionForm_#(pageId)"   onsubmit="return false;" method="post">
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=库位编码=" name="cpositioncode" value="" />
-			<input type="text" autocomplete="off"  class="form-control"  placeholder="=库位名称=" name="cpositionname" value="" />
-			<select class="form-control"
-					data-autoload
-					data-url="admin/enums/boolchar"
-					name="isenabled"
-					data-text="=是否启用="
-					data-value=""
-					data-select=""
-			>
-			</select>
-		<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
-			<button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-		</form>
-	</div>
-	<div class="col-md-auto">
-	</div>
-	</div>
-</div>
-<div class="jbolt_page_content">
-<!-- JBoltTable的数据模板定义-->
-<textarea class="jb_tpl_box" id="warehousePositionRowtpl_#(pageId)">
+  <div class="jbolt_page_title">
+    <div class="row">
+      <!--	<div class="col-md-auto">-->
+      <!--	<h1>库位档案</h1>-->
+      <!--	</div>-->
+      <div class="col">
+        <form class="form-inline text-left" id="warehousePositionForm_#(pageId)" onsubmit="return false;" method="post">
+          <input type="text" autocomplete="off" class="form-control" placeholder="=库位编码=" name="cpositioncode"
+                 value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="=库位名称=" name="cpositionname"
+                 value=""/>
+          <select class="form-control"
+                  data-autoload
+                  data-url="admin/enums/boolchar"
+                  name="isenabled"
+                  data-text="=是否启用="
+                  data-value=""
+                  data-select=""
+          >
+          </select>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+      <div class="col-md-auto">
+      </div>
+    </div>
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="warehousePositionRowtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}" >
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.cpositioncode}</td>
 <td>${data.cpositionname}</td>
@@ -44,190 +46,209 @@
 	<td>${data.cwhcode}|${data.careacode}|${data.cshelvescode}|${data.cpositioncode}</td>
 <td>${data.dcreatetime}</td>
 <td>${data.ccreatename}</td>
-<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}"  data-handler="refreshJBoltTable"  data-url="admin/warehouseposition/toggleIsenabled/${data.id}"/></td>
+<td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}" data-handler="refreshJBoltTable"
+         data-url="admin/warehouseposition/toggleIsenabled/${data.id}"/></td>
 </tr>
 {@/each}
 </textarea>
 
-<!-- 工具条 toolbar -->
-<div class="jbolt_table_toolbar" id="warehousePosition_toolbar_#(pageId)">
-	<div class="col-sm-auto" role="group" aria-label="btn-group">
-		#permission(PermissionKey.WAREHOUSE_POSITION_ADD)
-		<button data-openpage="dialog" data-area="60%,600"  data-handler="jboltTablePageToFirst" data-title="新增库位档案"  data-url="admin/warehouseposition/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-		#end
-		#permission(PermissionKey.WAREHOUSE_POSITION_EDIT)
-		<button data-openpage="dialog" data-area="60%,600"  data-handler="refreshJBoltTable" data-title="修改库位档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouseposition/edit/" class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改</button>
-		#end
-		#permission(PermissionKey.WAREHOUSE_POSITION_DELETE)
-		<button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds" data-url="admin/warehouseposition/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
-		#end
-		<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="warehousePosition_toolbar_#(pageId)">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        #permission(PermissionKey.WAREHOUSE_POSITION_ADD)
+        <button data-openpage="dialog" data-area="60%,600" data-handler="jboltTablePageToFirst" data-title="新增库位档案"
+                data-url="admin/warehouseposition/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i>
+          新增
+        </button>
+        #end
+        #permission(PermissionKey.WAREHOUSE_POSITION_EDIT)
+        <button data-openpage="dialog" data-area="60%,600" data-handler="refreshJBoltTable" data-title="修改库位档案"
+                data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouseposition/edit/"
+                class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改
+        </button>
+        #end
+        #permission(PermissionKey.WAREHOUSE_POSITION_DELETE)
+        <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+                data-url="admin/warehouseposition/deleteByIds?ids=" data-confirm="确定删除选中数据？"
+                class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除
+        </button>
+        #end
+        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新
+        </button>
 
 
-	#permission(PermissionKey.WAREHOUSE_POSITION_EXPORT)
-		<div class="btn-group dropdown" role="group" aria-label="btn-group">
-		<div class="btn-group dropdown">
-			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuwarehousepositionButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
-			<div class="dropdown-menu" aria-labelledby="exportMenuwarehousepositionButton">
-				<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/warehouseposition/dataExport"><i class="fa fa-download"></i> 导出选中</button>
-				<button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouseposition/dataExport"  data-form="warehousePositionForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
-				<button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouseposition/dataExport?dataExport"  ><i class="fa fa-download"></i> 全部导出</button>
-			</div>
-		</div>
-	</div>
-	#end
+        #permission(PermissionKey.WAREHOUSE_POSITION_EXPORT)
+        <div class="btn-group dropdown" role="group" aria-label="btn-group">
+          <div class="btn-group dropdown">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                    id="exportMenuwarehousepositionButton" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false"> 数据导出
+            </button>
+            <div class="dropdown-menu" aria-labelledby="exportMenuwarehousepositionButton">
+              <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                      data-url="admin/warehouseposition/dataExport"><i class="fa fa-download"></i> 导出选中
+              </button>
+              <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouseposition/dataExport"
+                      data-form="warehousePositionForm_#(pageId)"><i class="fa fa-download"></i> 条件导出
+              </button>
+              <button class="btn dropdown-item" data-downloadbtn
+                      data-url="admin/warehouseposition/dataExport?dataExport"><i class="fa fa-download"></i> 全部导出
+              </button>
+            </div>
+          </div>
+        </div>
+        #end
 
-	#permission(PermissionKey.WAREHOUSE_POSITION_IMPORT)
-	<div class="btn-group dropdown">
-		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
-		<div class="dropdown-menu" aria-labelledby="importMenuButton">
-			<a data-downloadbtn href="/admin/warehouseposition/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-			<div class="j_upload_file_box"
-				 data-name="file"
-				 data-btn-class="btn dropdown-item"
-				 data-placeholder="上传导入"
-				 data-confirm="确认导入数据？"
-				 data-accept="excel"
-				 data-maxsize="20480"
-				 data-handler="uploadFile"
-				 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-				 data-url="/admin/warehouseposition/importExcel">
-			</div>
-		</div>
-	</div>
-	#end
-	</div>
+        #permission(PermissionKey.WAREHOUSE_POSITION_IMPORT)
+        <div class="btn-group dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+          </button>
+          <div class="dropdown-menu" aria-labelledby="importMenuButton">
+            <a data-downloadbtn href="/admin/warehouseposition/downloadTpl" class="btn dropdown-item"><i
+                class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                 data-url="/admin/warehouseposition/importExcel">
+            </div>
+          </div>
+        </div>
+        #end
+      </div>
 
-	<!--#permission(PermissionKey.WAREHOUSE_POSITION_PRINT)
-	<div class="" role="group" aria-label="btn-group">
-		<div class="btn-group dropdown">
-			<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
-					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
-			</button>
-			<div class="dropdown-menu" aria-labelledby="exportMenuButton">
-				<button class="btn dropdown-item" data-downloadbtn data-check-handler="jboltTableGetCheckedIds"
-						onclick="getDbSource()"><i class="fa fa-download"></i> 打印勾选行
-				</button>
-			</div>
-		</div>
-	</div>
-	#end-->
+      <!--#permission(PermissionKey.WAREHOUSE_POSITION_PRINT)
+      <div class="" role="group" aria-label="btn-group">
+        <div class="btn-group dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
+          </button>
+          <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+            <button class="btn dropdown-item" data-downloadbtn data-check-handler="jboltTableGetCheckedIds"
+                onclick="getDbSource()"><i class="fa fa-download"></i> 打印勾选行
+            </button>
+          </div>
+        </div>
+      </div>
+      #end-->
 
-	<div class="clearfix"></div>
-</div>
-
-
-
-<table class="jbolt_table jbolt_main_table table-center"
-data-jbolttable
-data-height="fill"
-data-ajax="true"
-data-url="admin/warehouseposition/datas?isdeleted=0"
-data-column-resize="true"
-data-column-prepend="1:checkbox:true"
-data-conditions-form="warehousePositionForm_#(pageId)"
-data-rowtpl="warehousePositionRowtpl_#(pageId)"
-data-page="warehousePositionPage_#(pageId)"
-data-toolbar="warehousePosition_toolbar_#(pageId)"
+      <div class="clearfix"></div>
+    </div>
 
 
+    <table class="jbolt_table jbolt_main_table table-center"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/warehouseposition/datas?isdeleted=0"
+           data-column-resize="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="warehousePositionForm_#(pageId)"
+           data-rowtpl="warehousePositionRowtpl_#(pageId)"
+           data-page="warehousePositionPage_#(pageId)"
+           data-toolbar="warehousePosition_toolbar_#(pageId)"
 
 
-data-fixed-columns-left="1,2,3"
->
-<thead class="fw-normal">
-<tr>
-	<th data-width="60">序号</th>
-	<th data-min-width="150" data-column="cPositionCode">库位编码</th>
-	<th data-width="150" data-column="cPositionName">库位名称</th>
-	<th data-width="150" data-column="iWarehouseId">所属仓库</th>
-	<th data-width="150" data-column="iWarehouseAreaId">所属库区</th>
-	<th data-width="150" data-column="iWarehouseShelvesId">所属货架</th>
-	<th data-width="150" data-column="cMemo">备注</th>
-	<th data-width="200" data-column="cMemo">库位码</th>
-	<th data-width="150" data-column="dCreateTime">创建时间</th>
-	<th data-width="150" data-column="cCreateName">创建人名称</th>
-	<th data-width="150" data-column="isEnabled">是否启用</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+           data-fixed-columns-left="1,2,3"
+    >
+      <thead class="fw-normal">
+      <tr>
+        <th data-width="60">序号</th>
+        <th data-min-width="150" data-column="cPositionCode">库位编码</th>
+        <th data-width="150" data-column="cPositionName">库位名称</th>
+        <th data-width="150" data-column="iWarehouseId">所属仓库</th>
+        <th data-width="150" data-column="iWarehouseAreaId">所属库区</th>
+        <th data-width="150" data-column="iWarehouseShelvesId">所属货架</th>
+        <th data-width="150" data-column="cMemo">备注</th>
+        <th data-width="200" data-column="cMemo">库位码</th>
+        <th data-width="150" data-column="dCreateTime">创建时间</th>
+        <th data-width="150" data-column="cCreateName">创建人名称</th>
+        <th data-width="150" data-column="isEnabled">是否启用</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
 
 
-
-</div>
+  </div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
 
-	function getDbSource() {
-		var jdbc_url = "";
-		var print_url = "";
-		var OrganizeCode = "";
-		var reportName = "bdwarehouseposition";
+  function getDbSource() {
+    var jdbc_url = "";
+    var print_url = "";
+    var OrganizeCode = "";
+    var reportName = "bdwarehouseposition";
 
-		/*Ajax.post("admin/organize/getDbSource", {}, function (ret) {
-			if (ret.state === 'ok') {
-				var data = ret.data;
+    /*Ajax.post("admin/organize/getDbSource", {}, function (ret) {
+      if (ret.state === 'ok') {
+        var data = ret.data;
 
-				jdbc_url = data.jdbc_url;
-				print_url = data.print_url;
-				OrganizeCode = data.OrganizeCode;
-				reportName = "bdwarehouseposition";
+        jdbc_url = data.jdbc_url;
+        print_url = data.print_url;
+        OrganizeCode = data.OrganizeCode;
+        reportName = "bdwarehouseposition";
 
-				console.log("jdbc_url:" + jdbc_url);
-				console.log("print_url:" + print_url);
-				console.log("OrganizeCode:" + OrganizeCode);
-				console.log("reportName:" + reportName);
+        console.log("jdbc_url:" + jdbc_url);
+        console.log("print_url:" + print_url);
+        console.log("OrganizeCode:" + OrganizeCode);
+        console.log("reportName:" + reportName);
 
-				if (jdbc_url  && OrganizeCode) {
-					printAll(jdbc_url, OrganizeCode, print_url,reportName);
-				}
-			} else {
-				LayerMsgBox.alert(ret.msg, 2);
-			}
-		});*/
-	}
+        if (jdbc_url  && OrganizeCode) {
+          printAll(jdbc_url, OrganizeCode, print_url,reportName);
+        }
+      } else {
+        LayerMsgBox.alert(ret.msg, 2);
+      }
+    });*/
+  }
 
-	function printAll(jdbc_url,OrganizeCode,print_url,reportName) {
-		let rows = jboltTableGetCheckedDatas();
-		console.log(rows);
+  function printAll(jdbc_url, OrganizeCode, print_url, reportName) {
+    let rows = jboltTableGetCheckedDatas();
+    console.log(rows);
 
-		let code = [];
-		for(let i in rows){
-			let rowdata = rows[i];
-			var ccode=rowdata.iautoid;
-			code.push(ccode);
-			console.log(code);
-		}
-		let url = print_url + "reportName=" +reportName + "&OrganizeCode=" + OrganizeCode + "&code=" + code.join(",");
-		console.log(url);
+    let code = [];
+    for (let i in rows) {
+      let rowdata = rows[i];
+      var ccode = rowdata.iautoid;
+      code.push(ccode);
+      console.log(code);
+    }
+    let url = print_url + "reportName=" + reportName + "&OrganizeCode=" + OrganizeCode + "&code=" + code.join(",");
+    console.log(url);
 
 
-		LayerMsgBox.loading("正在执行请稍后...", 20000);
+    LayerMsgBox.loading("正在执行请稍后...", 20000);
 
-		$.ajax({
-			url: url,
-			success: function (ret) {
-				LayerMsgBox.closeLoadingNow();
+    $.ajax({
+      url: url,
+      success: function (ret) {
+        LayerMsgBox.closeLoadingNow();
 
-				if (ret.code === '200') {
-					LayerMsgBox.alert(ret.message, 1);
-				} else {
-					LayerMsgBox.alert(ret.message, 2);
-				}
-			},
-			error: function (e) {
-				console.log("error:" + e.status + e.readyState + e.response);
-				LayerMsgBox.closeLoadingNow();
-				LayerMsgBox.alert('打印失败,请检查打印服务是否正常！<a href="#globalConfig(MomConfigKey.GRID_REPORT_DOWNLOAD_URL)">下载插件</a>', 2);
-			},
-		})
+        if (ret.code === '200') {
+          LayerMsgBox.alert(ret.message, 1);
+        } else {
+          LayerMsgBox.alert(ret.message, 2);
+        }
+      },
+      error: function (e) {
+        console.log("error:" + e.status + e.readyState + e.response);
+        LayerMsgBox.closeLoadingNow();
+        LayerMsgBox.alert('打印失败,请检查打印服务是否正常！<a href="#globalConfig(MomConfigKey.GRID_REPORT_DOWNLOAD_URL)">下载插件</a>', 2);
+      },
+    })
 
-	}
+  }
 
 </script>
 #end

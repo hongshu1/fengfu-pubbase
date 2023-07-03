@@ -93,7 +93,8 @@ public class PurchaseAttachmentAdminController extends BaseAdminController {
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
-	
+
+    @UnCheck
     public void list(@Para(value = "ipurchasemid") Long ipurchasemid) {
         if (null == ipurchasemid) {
             renderJsonData(CollUtil.empty(ArrayList.class));

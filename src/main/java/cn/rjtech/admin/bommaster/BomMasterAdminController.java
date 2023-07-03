@@ -15,6 +15,7 @@ import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.BomM;
 import cn.rjtech.model.momdata.BomMaster;
 import cn.rjtech.model.momdata.Inventory;
@@ -99,6 +100,7 @@ public class BomMasterAdminController extends BaseAdminController {
         render("edit.html");
     }
 
+    @UnCheck
     private void getBomMaster(Long id) {
         BomMaster bomMaster = service.findById(id);
         if (bomMaster == null) {
@@ -200,6 +202,7 @@ public class BomMasterAdminController extends BaseAdminController {
         set("oldId", get(0));
         BomM bomM = bomMService.findById(get(0));
         ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(bomM.getIAuditStatus() == AuditStatusEnum.APPROVED.getValue(), "已审核的物料清单才能复制");
         set(BomM.DENABLEDATE, bomM.getDDisableDate());
         set(BomM.CVERSION, bomMService.getNextVersion(getOrgId(), bomM.getIInventoryId()));
         render("_copy_form.html");
@@ -228,6 +231,7 @@ public class BomMasterAdminController extends BaseAdminController {
     }
 
     public void versionIndex() {
+        keepPara();
         render("version_index.html");
     }
 
