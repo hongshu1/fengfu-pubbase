@@ -14,6 +14,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,11 +44,28 @@ public class SaleTypeService extends BaseService<SaleType> {
      * @return
      */
     public Page<SaleType> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
+
+        List<SaleType> list = paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "iAutoId").getList();
         return paginateByKeywords("iAutoId", "DESC", pageNumber, pageSize, keywords, "iAutoId");
     }
 
-    public List<Record> selectData(Kv kv) {
-        return dbTemplate("saletype.selectData", kv).find();
+    public Page<Record> selectData(int pageNumber, int pageSize,Kv kv) {
+        List<Record> list = dbTemplate("saletype.selectData", kv).find();
+
+        long totalRow;
+        totalRow=list.size();
+        int totalPage = (int) (totalRow / pageSize);
+        if (totalRow % pageSize != 0) {
+            totalPage++;
+        }
+        List<Record> recordArrayList = new ArrayList<>();
+        int pageStart=pageNumber==1?0:(pageNumber-1)*pageSize;//截取的开始位置
+        int pageEnd= Math.min((int) totalRow, pageNumber * pageSize);
+        if(totalRow>pageStart){
+            recordArrayList =list.subList(pageStart, pageEnd);
+        }
+
+        return  new Page<>(recordArrayList, pageNumber, pageSize, totalPage, (int) totalRow);
     }
 
     /**
