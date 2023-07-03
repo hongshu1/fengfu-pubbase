@@ -42,7 +42,11 @@ select t1.*,
 				WHEN t1.iAuditStatus = 1 THEN '待审核'
 				WHEN t1.iAuditStatus = 2 THEN '已完成'
 				WHEN t1.iAuditStatus = 3 THEN '审核不通过' END,
-        wh.cWhName AS whname
+       wh.cWhName AS whname,
+       (SELECT SUM(area.iMaxCapacity) FROM Bd_Warehouse_Area area WHERE area.iWarehouseId = wh.iAutoId) AS iMaxCapacity,
+       (SELECT SUM(StockQty)FROM T_Sys_StockCheckVouchDetail WHERE MasID = t1.AutoID) AS StockQty,
+       COALESCE((SELECT SUM(area.iMaxCapacity) FROM Bd_Warehouse_Area area WHERE area.iWarehouseId = wh.iAutoId),0)-COALESCE((SELECT SUM(StockQty)FROM T_Sys_StockCheckVouchDetail WHERE MasID = t1.AutoID),0) AS MaxQty,
+       (SELECT SUM(PlqtyQty)FROM T_Sys_StockCheckVouchDetail WHERE MasID = t1.AutoID) AS PlqtyQty
 from T_Sys_StockCheckVouch t1
 LEFT JOIN Bd_Warehouse wh ON wh.cWhCode = t1.WhCode
 where 1 = 1
