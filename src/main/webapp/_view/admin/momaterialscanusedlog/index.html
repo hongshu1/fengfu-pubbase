@@ -11,10 +11,11 @@
   <div class="row">
     <div class="col">
       <form class="form-inline" onsubmit="return false;" id="stockForm" action="#(action)" method="post">
-        <button type="submit"  style="margin-left: 10px;margin-right: 10px;height: 35px;width: 60px" onclick="submitThisForm()" class="btn btn-primary btn-sm"><i class="fa fa-save"></i>保存</button>
+        <button onclick="submitThisForm()" style="margin-left: 10px;margin-right: 10px;" class="btn btn-outline-secondary btn-xs">保存</button>
+        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
         <input type="hidden" id="imodocid" name="imodocid" value="#(moMaterialscanusedlogm.imodocid??)">
         <input type="hidden" id="iautoid" name="iautoid" value="">
-        <input type="text"  style="width: 400px" id="barcode" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
+        <input type="text"  style="width: 400px; margin-left: 480px;margin-top: 10px;margin-bottom: 10px" id="barcode" autocomplete="off" class="form-control" placeholder="=现品票=" name="" value=""/>
         <button type="reset" onclick="serarchLog()"  class="btn btn-light"><i class="fa fa-search"></i>搜索</button>
       </form>
     </div>
@@ -66,7 +67,6 @@
       <th data-width="150" data-column="cuomname">主计量单位</th>
       <th data-width="150" data-column="cbarcode">现品票</th>
       <th data-width="150" data-column="iqty">现品票数量</th>
-
     </tr>
     </thead>
     <tbody>
@@ -107,9 +107,15 @@
 
   }
   function submitThisForm() {
-    jboltTableSubmit('#jbolt_table_#(pageId)');
+    jboltTableSubmit('#stock__table_#(pageId)');
   }
-
+  /**
+   * 关闭窗口
+   */
+  function closeHandler() {
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+    window.parent.refreshJBoltTable();
+  }
   // 子表查询表单
   var stockcheckvouchdid = $('#stockcheckvouchdid');
   // 避免触发重复点击行事件的处理
@@ -178,14 +184,17 @@
       //初始行数
       initRowCount: 0,
       submit: {
-        withForm: ["tockchekvouchForm"],
+        withForm: ["stockForm"],
         type: "all",//cell|all
-        url: "admin/pudeliverydetail/saveTableSubmit",
+        url: "admin/momaterialscanusedlog/saveMoLogM",
         success: function (res) {
           if (res.state === 'ok') {
             LayerMsgBox.success("提交成功", 600, function () {
-              parent.layer.close(parent.layer.getFrameIndex(window.name));
-              window.parent.refreshJBoltTable();
+              // parent.layer.close(parent.layer.getFrameIndex(window.name));
+              // window.parent.refreshJBoltTable();
+              // submit_#(pageId)(res.data.iautoid, function (data) {
+              //   successHandler('提审成功', res.data.iautoid);
+              // });
             });
           } else {
             LayerMsgBox.alert(res.msg, 2);
@@ -194,29 +203,19 @@
       },
       //插入数据时默认属性值
       cols: {
-        "adjustqty2": {
+        "iscannedqty": {
           type: "input",
-          textAttr: "adjustqty2"
+          textAttr: "iscannedqty"
         },
-
-        "realqty2": {
-          textAttr: "realqty2",
+        iremainqty: {
+          textAttr: "iremainqty",
           summary: {
             dir: "h",
             tofixed: 2,
             removezero: true,
-            formula: "qty + adjustqty2"
+            formula: "iqty - iscannedqty"
           }
         },
-        "qty": {
-          textAttr: "qty",
-          summary: {
-            dir: "v",
-            removezero: true,
-            formula: "sum"
-          }
-        },
-
       }
     };
     return editableTableOptions;

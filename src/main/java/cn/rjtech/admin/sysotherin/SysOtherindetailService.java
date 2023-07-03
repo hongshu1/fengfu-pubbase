@@ -129,7 +129,7 @@ public class SysOtherindetailService extends BaseService<SysOtherindetail> {
     public Ret delete(Long id) {
         SysOtherindetail byId1 = findById(id);
         SysOtherin byId = sysotherinservice.findById(byId1.getMasID());
-        if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+        if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
             ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
         }
         if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
@@ -147,7 +147,7 @@ public class SysOtherindetailService extends BaseService<SysOtherindetail> {
         for (String s : split) {
             SysOtherindetail byId1 = findById(s);
             SysOtherin byId = sysotherinservice.findById(byId1.getMasID());
-            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){

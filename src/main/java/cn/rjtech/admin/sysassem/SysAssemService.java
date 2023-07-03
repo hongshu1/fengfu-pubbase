@@ -211,10 +211,10 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         tx(() -> {
             List<SysAssem> sysAssems = find("select *  from T_Sys_Assem where AutoID in (" + ids + ")");
             for (SysAssem s : sysAssems) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
-                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                     ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
@@ -234,10 +234,10 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     public Ret delete(Long id) {
         tx(() -> {
             SysAssem byId = findById(id);
-            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
-            if(byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                 ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
@@ -479,6 +479,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 //u8 返回什么才是正确的 然后返回null 作用，提示事物成功，不是null则事物失败
                 if ("200".equals(jsonObject.getString("code"))) {
 //                    return Ret.ok().setOk().data(jsonObject);
+                    SysAssem byId = findById(sysassem.getAutoID());
+                    byId.setU8BillNo("");
+                    byId.update();
                     return null;
                 }
             }
@@ -693,9 +696,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     //审核通过后的业务逻辑
     public String passagetwo(Long formAutoId) {
         SysAssem byId = findById(formAutoId);
-        byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-        byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-        byId.update();
         //获取转换前的所有数据
         List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(formAutoId.toString());
         List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
@@ -729,9 +729,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         String s1 = null;
         for (Long s : formAutoId) {
             SysAssem byId = findById(s);
-            byId.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-            byId.setIAuditWay(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            byId.update();
+
             //获取转换前的所有数据
             List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(s.toString());
             List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();

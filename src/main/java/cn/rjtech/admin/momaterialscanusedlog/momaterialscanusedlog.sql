@@ -141,3 +141,12 @@ AND mpd.Barcode=#para(barcode)
     WHERE  LOG.iMoDocId = #para(imodocid)  and isScanned=1
     and LOG.cBarcode=#para(barcode)
 #end
+
+
+#sql("getModocDateLogs")
+    SELECT MO.iAutoId, WH.cWhCode,DT.cDepCode FROM Mo_MoDoc  MO
+    LEFT JOIN Bd_WorkRegionM WM ON MO.iWorkRegionMid=WM.iAutoId
+    LEFT JOIN Bd_Department DT ON DT.iAutoId=MO.iDepartmentId
+    LEFT JOIN Bd_Warehouse WH ON WM.iWarehouseId=WH.iAutoId
+    WHERE MO.iAutoId = #para(imodocid)
+#end

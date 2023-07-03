@@ -9,7 +9,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Fitemss97sub;
-import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -43,7 +42,7 @@ public class Fitemss97subService extends BaseService<Fitemss97sub> {
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
 
-        List<Record> list =new ArrayList<>();
+           List<Record> list =new ArrayList<>();
 		if(ObjUtil.isNull(para.getStr("fitemss97subid"))){
 			List<Record> fitemss98list = dbTemplate("fitemss97sub.fitemss98list", para).find();
 			List<Record> fitemssZFlist = dbTemplate("fitemss97sub.fitemssZFlist", para).find();
@@ -53,37 +52,28 @@ public class Fitemss97subService extends BaseService<Fitemss97sub> {
 		}else{
 			Record first = dbTemplate("fitemss97.findfitemss97List", Kv.by("fitemss97subid", para.getStr("fitemss97subid"))).findFirst();
 			/**
-			 * 判断是否有子项
+			 * 查找子项
 			 */
 			String fitemss97subid = selectSub(para.getStr("fitemss97subid"));
 			para.set("fitemss97subid",fitemss97subid);
 				switch (first.getStr("citemccode")){
-					case "1":
+					case "00":
 						List<Record> fitemss00list = dbTemplate("fitemss97sub.fitemss00list", para).find();
 						list=Stream.of(fitemss00list).flatMap(Collection::stream).collect(Collectors.toList());
 						break;
-					case "2":
+					case "98":
 						List<Record> fitemss98list = dbTemplate("fitemss97sub.fitemss98list", para).find();
 						list=Stream.of(fitemss98list).flatMap(Collection::stream).collect(Collectors.toList());
 						break;
-					case "3":
+					case "03":
 						List<Record> fitemss03list = dbTemplate("fitemss97sub.fitemss03list", para).find();
 						list=Stream.of(fitemss03list).flatMap(Collection::stream).collect(Collectors.toList());
 						break;
-					case "4":
+					case "ZF":
 						List<Record> fitemssZFlist = dbTemplate("fitemss97sub.fitemssZFlist", para).find();
 						list=Stream.of(fitemssZFlist).flatMap(Collection::stream).collect(Collectors.toList());
 						break;
-					default:
-						List<Record> fitemss98list1 = dbTemplate("fitemss97sub.fitemss98list", para).find();
-						List<Record> fitemssZFlist1 = dbTemplate("fitemss97sub.fitemssZFlist", para).find();
-						List<Record> fitemss03list1 = dbTemplate("fitemss97sub.fitemss03list", para).find();
-						List<Record> fitemss00list1 = dbTemplate("fitemss97sub.fitemss00list", para).find();
-						list=Stream.of(fitemss00list1,fitemss98list1, fitemss03list1,fitemssZFlist1 ).flatMap(Collection::stream).collect(Collectors.toList());
-				}
-
-
-
+					}
 
 		}
 		long totalRow;
@@ -117,7 +107,7 @@ public class Fitemss97subService extends BaseService<Fitemss97sub> {
 						stringJoiner.add(iautoid);
 					}
 				}else{
-					stringJoiner.add(record.getStr("iautoid"));
+					    stringJoiner.add(record.getStr("iautoid"));
 				}
 
 			}
@@ -134,11 +124,6 @@ public class Fitemss97subService extends BaseService<Fitemss97sub> {
 	 * @param openLevel 打开级别
 	 */
 	public List<JsTreeBean> getMgrTree(int openLevel, String sn) {
-
-		/**
-		 * 项目大类目录
-		 */
-
 
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
 

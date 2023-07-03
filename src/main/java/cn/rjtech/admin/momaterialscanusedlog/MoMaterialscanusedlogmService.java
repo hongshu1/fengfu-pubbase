@@ -1,8 +1,10 @@
 package cn.rjtech.admin.momaterialscanusedlog;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.materialsout.MaterialsOutService;
@@ -15,6 +17,8 @@ import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -420,7 +424,7 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 	public Map<Long,List<MaterialsOutDetail>> datas(List<MaterialsOutDetail> materialsOutDetails){
 		List<List<MaterialsOutDetail>> result = new ArrayList<>();
 		Map<Long,List<MaterialsOutDetail>> map = new HashMap<>();
-//userList是要操作的list集合
+		//userList是要操作的list集合
 		for (MaterialsOutDetail materialsOutDetail:materialsOutDetails) {
 			String posCode =materialsOutDetail.getPosCode();
 			//仓库
@@ -461,7 +465,6 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 			if(workregionm!=null){
 				//仓库
 				Warehouse warehouse=warehouseService.findById(workregionm.getIWarehouseId());
-
 			}
 		}
 	}
@@ -476,4 +479,166 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 		Record record=dbTemplate("momaterialscanusedlog.getMaterialScanUsedLog",keywords).findFirst();
 		return record;
 	}
+
+	public Ret saveMoLogM(JBoltTable jBoltTable){
+		List<Record> saveRecordList = jBoltTable.getSaveRecordList();
+		Record record=jBoltTable.getFormRecord();
+		tx(() -> {
+			//新增材料耗用主表
+			ValidationUtils.notNull(record.getLong("imodocid"),"主键为空!");
+			MoMaterialscanusedlogm moMaterialscanusedlogm = new MoMaterialscanusedlogm();
+			moMaterialscanusedlogm.setIOrgId(getOrgId());
+			moMaterialscanusedlogm.setCOrgCode(getOrgCode());
+			moMaterialscanusedlogm.setCOrgName(getOrgName());
+			moMaterialscanusedlogm.setIMoDocId(record.getLong("imodocid"));
+			moMaterialscanusedlogm.setCDocNo(BillNoUtils.getcDocNo(getOrgId(), "CLCK", 5));
+			moMaterialscanusedlogm.setICreateBy(JBoltUserKit.getUserId());
+			moMaterialscanusedlogm.setCCreateName(JBoltUserKit.getUserName());
+			moMaterialscanusedlogm.setDCreateTime(new Date());
+			moMaterialscanusedlogm.setIsDeleted(true);
+			moMaterialscanusedlogm.setIUpdateBy(JBoltUserKit.getUserId());
+			moMaterialscanusedlogm.setCUpdateName(JBoltUserKit.getUserName());
+			moMaterialscanusedlogm.setDUpdateTime(new Date());
+
+			ValidationUtils.isTrue(moMaterialscanusedlogm.save(), "主表保存失败!");
+			Long iAutoId = moMaterialscanusedlogm.getIAutoId();
+
+			List<MoMaterialscanusedlogd> moMaterialscanusedlogds = new ArrayList<>();
+			//新增材料出库单主表
+			Record modoc =dbTemplate("momaterialscanusedlog.getModocDateLogs",Kv.by("imodocid",record.getLong("imodocid"))).findFirst();
+			String billNo = BillNoUtils.getcDocNo(getOrgId(), "CLCK", 5);
+			MaterialsOut materialsOut=new MaterialsOut();
+			materialsOut.setSourceBillType("材料耗用");
+			materialsOut.setSourceBillDid(iAutoId.toString());
+			materialsOut.setOrganizeCode(getOrgCode());
+			materialsOut.setBillNo(billNo);
+			materialsOut.setBillDate(new Date());
+			materialsOut.setDeptCode(modoc.get("cdepcode"));
+			materialsOut.setWhcode(modoc.get("cwhcode"));
+			materialsOut.setState(2);
+			materialsOut.setIAuditWay(2);
+			materialsOut.setDSubmitTime(new Date());
+			materialsOut.setIAuditStatus(1);
+			materialsOut.setIsDeleted(false);
+			materialsOut.setIcreateBy(JBoltUserKit.getUserId());
+			materialsOut.setCcreateName(JBoltUserKit.getUserName());
+			materialsOut.setDcreateTime(new Date());
+			ValidationUtils.isTrue(materialsOut.save(), "保存材料出库单失败!");
+
+			Long outAutoID = materialsOut.getAutoID();
+			List<MaterialsOutDetail> materialsOutDetails =new ArrayList<>();
+
+			for (Record record1 : saveRecordList) {
+				//新增材料耗用明细
+				MoMaterialscanusedlogd moMaterialscanusedlogd = new MoMaterialscanusedlogd();
+				moMaterialscanusedlogd.setIMaterialScanUsedLogMid(iAutoId);
+				moMaterialscanusedlogd.setIInventoryId(record1.getLong("iinventoryid"));
+				moMaterialscanusedlogd.setCBarcode(record1.get("cbarcode"));
+				moMaterialscanusedlogd.setIQty(record1.getBigDecimal("iqty"));
+				moMaterialscanusedlogd.setIScannedQty(record1.getBigDecimal("iscannedqty"));
+				moMaterialscanusedlogd.setIsFinished(false);
+				moMaterialscanusedlogd.setIRemainQty(record1.getBigDecimal("iremainqty"));
+				moMaterialscanusedlogds.add(moMaterialscanusedlogd);
+				//新增材料出库单明细
+				MaterialsOutDetail materialsOutDetail=new MaterialsOutDetail();
+				materialsOutDetail.setMasID(outAutoID);
+				materialsOutDetail.setBarcode(record1.get("cbarcode"));
+				materialsOutDetail.setInvCode(record1.get("cinvcode"));
+				materialsOutDetail.setQty(record1.getBigDecimal("iscannedqty"));
+				materialsOutDetail.setIsDeleted(false);
+				materialsOutDetail.setIcreateby(JBoltUserKit.getUserId());
+				materialsOutDetail.setCcreatename(JBoltUserKit.getUserName());
+				materialsOutDetail.setDcreatetime(new Date());
+				materialsOutDetails.add(materialsOutDetail);
+			}
+			moMaterialscanusedlogdService.batchSave(moMaterialscanusedlogds);
+			materialsOutDetailService.batchSave(materialsOutDetails);
+			return true;
+		});
+		return null;
+	}
+
+	/**
+	 * 新增Api接口
+	 * @param
+	 * @return
+	 */
+	public Ret saveMoLogMApi(Long  imodocid, JSONArray jBoltTableList){
+
+		tx(() -> {
+			//新增材料耗用主表
+			ValidationUtils.notNull(imodocid,"主键为空!");
+			MoMaterialscanusedlogm moMaterialscanusedlogm = new MoMaterialscanusedlogm();
+			moMaterialscanusedlogm.setIOrgId(getOrgId());
+			moMaterialscanusedlogm.setCOrgCode(getOrgCode());
+			moMaterialscanusedlogm.setCOrgName(getOrgName());
+			moMaterialscanusedlogm.setIMoDocId(imodocid);
+			moMaterialscanusedlogm.setCDocNo(BillNoUtils.getcDocNo(getOrgId(), "CLCK", 5));
+			moMaterialscanusedlogm.setICreateBy(JBoltUserKit.getUserId());
+			moMaterialscanusedlogm.setCCreateName(JBoltUserKit.getUserName());
+			moMaterialscanusedlogm.setDCreateTime(new Date());
+			moMaterialscanusedlogm.setIsDeleted(true);
+			moMaterialscanusedlogm.setIUpdateBy(JBoltUserKit.getUserId());
+			moMaterialscanusedlogm.setCUpdateName(JBoltUserKit.getUserName());
+			moMaterialscanusedlogm.setDUpdateTime(new Date());
+
+			ValidationUtils.isTrue(moMaterialscanusedlogm.save(), "主表保存失败!");
+			Long iAutoId = moMaterialscanusedlogm.getIAutoId();
+
+			List<MoMaterialscanusedlogd> moMaterialscanusedlogds = new ArrayList<>();
+			//新增材料出库单主表
+			Record modoc =dbTemplate("momaterialscanusedlog.getModocDateLogs",Kv.by("imodocid",imodocid)).findFirst();
+			String billNo = BillNoUtils.getcDocNo(getOrgId(), "CLCK", 5);
+			MaterialsOut materialsOut=new MaterialsOut();
+			materialsOut.setSourceBillType("材料耗用");
+			materialsOut.setSourceBillDid(iAutoId.toString());
+			materialsOut.setOrganizeCode(getOrgCode());
+			materialsOut.setBillNo(billNo);
+			materialsOut.setBillDate(new Date());
+			materialsOut.setDeptCode(modoc.get("cdepcode"));
+			materialsOut.setWhcode(modoc.get("cwhcode"));
+			materialsOut.setState(2);
+			materialsOut.setIAuditWay(2);
+			materialsOut.setDSubmitTime(new Date());
+			materialsOut.setIAuditStatus(1);
+			materialsOut.setIsDeleted(false);
+			materialsOut.setIcreateBy(JBoltUserKit.getUserId());
+			materialsOut.setCcreateName(JBoltUserKit.getUserName());
+			materialsOut.setDcreateTime(new Date());
+			ValidationUtils.isTrue(materialsOut.save(), "保存材料出库单失败!");
+
+			Long outAutoID = materialsOut.getAutoID();
+			List<MaterialsOutDetail> materialsOutDetails =new ArrayList<>();
+
+			for (int i = 0; i < jBoltTableList.size(); i++) {
+				JSONObject record1 = jBoltTableList.getJSONObject(i);
+				//新增材料耗用明细
+				MoMaterialscanusedlogd moMaterialscanusedlogd = new MoMaterialscanusedlogd();
+				moMaterialscanusedlogd.setIMaterialScanUsedLogMid(iAutoId);
+				moMaterialscanusedlogd.setIInventoryId(record1.getLong("iinventoryid"));
+				moMaterialscanusedlogd.setCBarcode(record1.getString("cbarcode"));
+				moMaterialscanusedlogd.setIQty(record1.getBigDecimal("iqty"));
+				moMaterialscanusedlogd.setIScannedQty(record1.getBigDecimal("iscannedqty"));
+				moMaterialscanusedlogd.setIsFinished(false);
+				moMaterialscanusedlogd.setIRemainQty(record1.getBigDecimal("iremainqty"));
+				moMaterialscanusedlogds.add(moMaterialscanusedlogd);
+				//新增材料出库单明细
+				MaterialsOutDetail materialsOutDetail=new MaterialsOutDetail();
+				materialsOutDetail.setMasID(outAutoID);
+				materialsOutDetail.setBarcode(record1.getString("cbarcode"));
+				materialsOutDetail.setInvCode(record1.getString("cinvcode"));
+				materialsOutDetail.setQty(record1.getBigDecimal("iscannedqty"));
+				materialsOutDetail.setIsDeleted(false);
+				materialsOutDetail.setIcreateby(JBoltUserKit.getUserId());
+				materialsOutDetail.setCcreatename(JBoltUserKit.getUserName());
+				materialsOutDetail.setDcreatetime(new Date());
+				materialsOutDetails.add(materialsOutDetail);
+			}
+			moMaterialscanusedlogdService.batchSave(moMaterialscanusedlogds);
+			materialsOutDetailService.batchSave(materialsOutDetails);
+			return true;
+		});
+		return null;
+	}
+
 }

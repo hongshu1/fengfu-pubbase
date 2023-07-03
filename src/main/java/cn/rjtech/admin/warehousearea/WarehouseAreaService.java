@@ -61,6 +61,7 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
   }
 
   public List<Record> list(Kv kv) {
+    kv.set("iwarehouseid", kv.getStr("iwarehouseid") == null ? "0" : kv.getStr("iwarehouseid"));
     return dbTemplate("warehousearea.paginateAdminDatas", kv).find();
   }
 

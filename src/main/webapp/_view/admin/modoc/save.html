@@ -68,7 +68,6 @@
             <input type="text" name="iInventoryId" value="#(iInventoryId??)" hidden data-sync-attr="itemid" id="itemId_#(pageId)"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
             <div class="input-group">
                 <input type="text"
-                       data-autocomplete
                        data-rule="required"
                        data-tips="请选择存货编码"
                        autocomplete="off"
@@ -77,8 +76,6 @@
                        value="#(moDoc.cinvcode??)"
                        name="cInvCode"
                        id="inventoryName"
-                       data-url="admin/bommaster/inventoryAutocomplete"
-                       data-sync-ele="#cinvname_#(pageId),#itemId_#(pageId)"
                        data-text-attr="cinvcode"
                        data-column-attr="cinvcode"
 

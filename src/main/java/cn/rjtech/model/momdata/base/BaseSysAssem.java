@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String AUTOID = "AutoID";
     /**单据类型;采购PO  委外OM*/
@@ -61,6 +61,8 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
     public static final String WHCODE = "WhCode";
     /**仓库名称*/
     public static final String WHNAME = "WhName";
+    /**U8单号*/
+    public static final String U8BILLNO = "U8BillNo";
 	/**
 	 * 主键ID
 	 */
@@ -484,6 +486,23 @@ public abstract class BaseSysAssem<M extends BaseSysAssem<M>> extends JBoltBaseM
 	@JSONField(name = "whname")
 	public java.lang.String getWhName() {
 		return getStr("WhName");
+	}
+
+	/**
+	 * U8单号
+	 */
+	public M setU8BillNo(java.lang.String U8BillNo) {
+		set("U8BillNo", U8BillNo);
+		return (M)this;
+	}
+
+	/**
+	 * U8单号
+	 */
+	@JBoltField(name="u8billno" ,columnName="U8BillNo",type="String", remark="U8单号", required=false, maxLength=50, fixed=0, order=26)
+	@JSONField(name = "u8billno")
+	public java.lang.String getU8BillNo() {
+		return getStr("U8BillNo");
 	}
 
 }

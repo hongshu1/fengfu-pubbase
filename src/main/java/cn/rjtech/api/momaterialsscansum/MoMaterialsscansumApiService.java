@@ -33,4 +33,5 @@ public class MoMaterialsscansumApiService extends JBoltApiBaseService {
         return JBoltApiRet.API_SUCCESS_WITH_DATA(moMaterialscanlogService.getApiBarcodeAll(pageNumber, pageSize, Kv.by("imodocid", imodocid)));
     }
 
+
 }

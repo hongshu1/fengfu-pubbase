@@ -46,6 +46,7 @@ public class UserOrgAdminController extends JBoltBaseController {
         renderJsonData(service.getAdminDatas(get("position"), getBoolean("isPrincipal"), getBoolean("isDeleted", false)));
     }
 
+    @UnCheck
     public void list(@Para(value = "userId") Long userId) {
         ValidationUtils.validateId(userId, "用户ID");
 

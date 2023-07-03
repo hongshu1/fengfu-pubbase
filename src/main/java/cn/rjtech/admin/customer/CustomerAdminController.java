@@ -185,6 +185,7 @@ public class CustomerAdminController extends BaseAdminController {
     /**
      * 客户数据源
      */
+    @UnCheck
     public void list() {
         Okv kv = Okv.create();
         kv.set("IsEnabled", 1);

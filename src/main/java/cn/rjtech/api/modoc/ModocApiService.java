@@ -89,7 +89,6 @@ public class ModocApiService extends JBoltApiBaseService {
 
 
   public Record getModoc(MoDoc moDoc) {
-
     Record moRecod = moDoc.toRecord();
     moRecod.keep("cmodocno", "dplandate", "iqty", "icompqty");
     if (notOk(moRecod.getBigDecimal("icompqty"))) {
@@ -286,6 +285,10 @@ public class ModocApiService extends JBoltApiBaseService {
    * @return
    */
   public Page<Record> getInventoryDatasByDocid(Long imodocid, Integer pageNumber, Integer pageSize, String cinvcode, String cinvcode1, String cinvname1) {
+    return specMaterialsRcvMService.getInventoryDatasByDocid(imodocid, pageNumber, pageSize, cinvcode, cinvcode1, cinvname1);
+  }
+
+  public Page<Record> getBarcodeAllBycBarcodeApi(Long imodocid, Integer pageNumber, Integer pageSize, String cinvcode, String cinvcode1, String cinvname1) {
     return specMaterialsRcvMService.getInventoryDatasByDocid(imodocid, pageNumber, pageSize, cinvcode, cinvcode1, cinvname1);
   }
 }

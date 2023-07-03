@@ -217,7 +217,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
 
     @UnCheck
     public void findPurchaseType() {
-        renderJsonData(purchaseTypeService.selectAll(getKv()));
+        renderJsonData(purchaseTypeService.selectAll(getPageNumber(),getPageSize(),getKv()));
     }
 
     @UnCheck

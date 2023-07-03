@@ -88,10 +88,10 @@ public class CurrentStockController extends BaseAdminController {
 	}
 
 
-
-	/**
-	 * 盘点表主表 数据明细
-	 * */
+    /**
+     * 盘点表主表 数据明细
+     */
+    @UnCheck
 	public void getStockCheckVouchDatas() {
 		renderJsonData(service.getStockCheckVouchDatas(getPageNumber(),getPageSize(),getKv()));
 	}

@@ -156,4 +156,12 @@ public class MoMaterialscanusedlogmAdminController extends BaseAdminController {
 		Record record=service.getMaterialScanUsedLog(getKv());
 		renderJsonData(record);
 	}
+
+	/**
+	 * 保存材料耗用单
+	 * 推送材料出库单
+	 */
+	public void saveMoLogM(){
+		renderJson(service.saveMoLogM(getJBoltTable()));
+	}
 }

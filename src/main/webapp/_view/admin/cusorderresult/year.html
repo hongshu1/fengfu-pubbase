@@ -16,17 +16,19 @@
         #for(d : dateMap)
         #for(dt : d.value)
         ${mark = 1}
+        {@if customer.customerorderqtydatas}
         {@each customer.customerorderqtydatas as customerorderqtydata, index}
         {@if customerorderqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
         ${mark = 2}
-        <td>${customerorderqtydata.iqty}</td>
+        <td>${customerorderqtydata.qtysum}</td>
         {@/if}
         {@/each}
+        {@/if}
         {@if mark == 1}
         <td>0</td>
         {@/if}
         #end
-        <td>合计</td>
+        <td>${customer.customerorderqtysum??0}</td>
         #end
     </tr>
     <tr>
@@ -34,17 +36,19 @@
         #for(d : dateMap)
         #for(dt : d.value)
         ${mark = 1}
+        {@if customer.pickupplanqtydatas}
         {@each customer.pickupplanqtydatas as pickupplanqtydata, index}
         {@if pickupplanqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
         ${mark = 2}
-        <td>${pickupplanqtydata.iqty}</td>
+        <td>${pickupplanqtydata.qtysum}</td>
         {@/if}
         {@/each}
+        {@/if}
         {@if mark == 1}
         <td>0</td>
         {@/if}
         #end
-        <td>合计</td>
+        <td>${customer.pickupplanqtyqtysum??0}</td>
         #end
     </tr>
     <tr>
@@ -52,17 +56,19 @@
         #for(d : dateMap)
         #for(dt : d.value)
         ${mark = 1}
-        {@each customer.actualshipmentqtydatas as actualshipmentqtydata, index}
-        {@if actualshipmentqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
-        ${mark = 2}
-        <td>${actualshipmentqtydata.iqty}</td>
+        {@if customer.actualshipmentqtydatas}
+            {@each customer.actualshipmentqtydatas as actualshipmentqtydata, index}
+            {@if actualshipmentqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
+            ${mark = 2}
+            <td>${actualshipmentqtydata.qtysum}</td>
+            {@/if}
+            {@/each}
         {@/if}
-        {@/each}
         {@if mark == 1}
         <td>0</td>
         {@/if}
         #end
-        <td>合计</td>
+        <td>${customer.actualshipmentqtysum??0}</td>
         #end
     </tr>
     <tr>
@@ -73,14 +79,14 @@
         {@each customer.differenceqtydatas as differenceqtydata, index}
         {@if differenceqtydata.time == '#date(dt, 'yyyy-MM-dd')'}
         ${mark = 2}
-        <td>${differenceqtydata.iqty}</td>
+        <td>${differenceqtydata.qtysum}</td>
         {@/if}
         {@/each}
         {@if mark == 1}
         <td>0</td>
         {@/if}
         #end
-        <td>合计</td>
+        <td>${customer.differenceqtysum??0}</td>
         #end
     </tr>
     {@/each}
