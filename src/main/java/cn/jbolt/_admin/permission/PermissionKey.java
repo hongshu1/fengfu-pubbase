@@ -338,34 +338,6 @@ public class PermissionKey {
 	 */
 	public static final String INVENTORYSPOTCHECKFORM = "inventoryspotcheckform";
 	/**
-	 * 编辑
-	 */
-	public static final String WAREHOUSE_EDIT = "warehouse_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_DELETE = "warehouse_delete";
-	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_AREA_ADD = "warehouse_area_add";
-	/**
-	 * 编辑
-	 */
-	public static final String WAREHOUSE_AREA_EDIT = "warehouse_area_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_AREA_DELETE = "warehouse_area_delete";
-	/**
-	 * 导出
-	 */
-	public static final String WAREHOUSE_EXPORT = "warehouse_export";
-	/**
-	 * 导入
-	 */
-	public static final String WAREHOUSE_IMPORT = "warehouse_import";
-	/**
 	 * 功能权限
 	 */
 	public static final String MENU_PERMISSION = "menu_permission";
@@ -381,54 +353,6 @@ public class PermissionKey {
 	 * 客户档案明细
 	 */
 	public static final String CUSTOMERD = "customerd";
-	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_SHELVES_ADD = "warehouse_shelves_add";
-	/**
-	 * 编辑
-	 */
-	public static final String WAREHOUSE_SHELVES_EDIT = "warehouse_shelves_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_SHELVES_DELETE = "warehouse_shelves_delete";
-	/**
-	 * 导出
-	 */
-	public static final String WAREHOUSE_SHELVES_EXPORT = "warehouse_shelves_export";
-	/**
-	 * 导入
-	 */
-	public static final String WAREHOUSE_SHELVES_IMPORT = "warehouse_shelves_import";
-	/**
-	 * 打印
-	 */
-	public static final String WAREHOUSE_SHELVES_PRINT = "warehouse_shelves_print";
-	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_POSITION_ADD = "warehouse_position_add";
-	/**
-	 * 编辑
-	 */
-	public static final String WAREHOUSE_POSITION_EDIT = "warehouse_position_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_POSITION_DELETE = "warehouse_position_delete";
-	/**
-	 * 导出
-	 */
-	public static final String WAREHOUSE_POSITION_EXPORT = "warehouse_position_export";
-	/**
-	 * 导入
-	 */
-	public static final String WAREHOUSE_POSITION_IMPORT = "warehouse_position_import";
-	/**
-	 * 打印
-	 */
-	public static final String WAREHOUSE_POSITION_PRINT = "warehouse_position_print";
 	/**
 	 * 新增
 	 */
@@ -726,18 +650,6 @@ public class PermissionKey {
 	 */
 	public static final String WORKREGIONM_IMPORT = "workregionm_import";
 	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_ADD1 = "warehouse_add1";
-	/**
-	 * 导出
-	 */
-	public static final String WAREHOUSE_AREA_EXPORT = "warehouse_area_export";
-	/**
-	 * 导入
-	 */
-	public static final String WAREHOUSE_AREA_IMPORT = "warehouse_area_import";
-	/**
 	 * 卷料采购送货单
 	 */
 	public static final String DELIVERY_HEADER = "delivery_header";
@@ -848,7 +760,7 @@ public class PermissionKey {
 	/**
 	 * 项目大类
 	 */
-	public static final String FITEMSS97CLASS = "fitemss97class";
+	public static final String FITEM = "fitem";
 	/**
 	 * 项目分类
 	 */
@@ -857,12 +769,6 @@ public class PermissionKey {
 	 * 项目档案
 	 */
 	public static final String FITEMSS97SUB = "fitemss97sub";
-	/**
-	 * 项目大类
-	 */
-
-	public static final String FITEM = "fitem";
-
 	/**
 	 * 单据类型与收发类别对照表
 	 */
@@ -990,7 +896,7 @@ public class PermissionKey {
 	/**
 	 * 取货计划管理
 	 */
-	public static final String PICKUP_PLAN_MANAGE = "pickup_plan_manage";
+	public static final String RCVPLANM = "rcvplanm";
 	/**
 	 * 货款核对管理
 	 */
@@ -1495,6 +1401,18 @@ public class PermissionKey {
 	 * 生产表单管理
 	 */
 	public static final String PRODFORMM_APP = "prodformm_app";
+	/**
+	 * 【API】制造工单
+	 */
+	public static final String API_MODOC = "api_modoc";
+	/**
+	 * 【API】制造工单-生产退料
+	 */
+	public static final String API_MOMATERIALSRETURNM = "api_momaterialsreturnm";
+	/**
+	 * 现品票
+	 */
+	public static final String API_MOMOINVBATCH = "api_momoinvbatch";
 	/**
 	 * 新增
 	 */
@@ -2843,4 +2761,140 @@ public class PermissionKey {
 	 * 位置档案
 	 */
 	public static final String 	LOCLISTCN = "	loclistcn";
+	/**
+	 * 撤回
+	 */
+	public static final String RCVPLANM_WITHDRAW = "rcvplanm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String RCVPLANM_SUBMIT = "rcvplanm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String RCVPLANM_APPROVE = "rcvplanm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String RCVPLANM_REJECT = "rcvplanm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String RCVPLANM_BATCH_APPROVE = "rcvplanm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String RCVPLANM_BATCH_REJECT = "rcvplanm_batch_reject";
+	/**
+	 * 批量反审核
+	 */
+	public static final String RCVPLANM_BATCH_REVERSE_APPROVE = "rcvplanm_batch_reverse_approve";
+	/**
+	 * 反审核
+	 */
+	public static final String RCVPLANM_REVERSE_APPROVE = "rcvplanm_reverse_approve";
+	/**
+	 * 生成现品票
+	 */
+	public static final String API_CREATEMOMOINVBATCH = "api_createmomoinvbatch";
+	/**
+	 * 撤回
+	 */
+	public static final String API_WITHDRAW = "api_withdraw";
+	/**
+	 * 修改数量
+	 */
+	public static final String API_UPDATENUMBER = "api_updatenumber";
+	/**
+	 * 批量打印
+	 */
+	public static final String API_BATCHPRINT = "api_batchprint";
+	/**
+	 * 修改
+	 */
+	public static final String WAREHOUSE_EDIT = "warehouse_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_DELETE = "warehouse_delete";
+	/**
+	 * 数据导出
+	 */
+	public static final String WAREHOUSE_EXPORT = "warehouse_export";
+	/**
+	 * 数据导入
+	 */
+	public static final String WAREHOUSE_IMPORT = "warehouse_import";
+	/**
+	 * 批量报工
+	 */
+	public static final String API_WORKBYIDS = "api_workbyids";
+	/**
+	 * 新增
+	 */
+	public static final String WAREHOUSE_AREA_ADD = "warehouse_area_add";
+	/**
+	 * 修改
+	 */
+	public static final String WAREHOUSE_AREA_EDIT = "warehouse_area_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_AREA_DELETE = "warehouse_area_delete";
+	/**
+	 * 数据导出
+	 */
+	public static final String WAREHOUSE_AREA_EXPORT = "warehouse_area_export";
+	/**
+	 * 新增
+	 */
+	public static final String WAREHOUSE_SHELVES_ADD = "warehouse_shelves_add";
+	/**
+	 * 修改
+	 */
+	public static final String WAREHOUSE_SHELVES_EDIT = "warehouse_shelves_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_SHELVES_DELETE = "warehouse_shelves_delete";
+	/**
+	 * 数据导出
+	 */
+	public static final String WAREHOUSE_SHELVES_EXPORT = "warehouse_shelves_export";
+	/**
+	 * 数据导入
+	 */
+	public static final String WAREHOUSE_SHELVES_IMPORT = "warehouse_shelves_import";
+	/**
+	 * 新增
+	 */
+	public static final String WAREHOUSE_POSITION_ADD = "warehouse_position_add";
+	/**
+	 * 修改
+	 */
+	public static final String WAREHOUSE_POSITION_EDIT = "warehouse_position_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_POSITION_DELETE = "warehouse_position_delete";
+	/**
+	 * 数据导出
+	 */
+	public static final String WAREHOUSE_POSITION_EXPORT = "warehouse_position_export";
+	/**
+	 * 数据导入
+	 */
+	public static final String WAREHOUSE_POSITION_IMPORT = "warehouse_position_import";
+	/**
+	 * 数据导入
+	 */
+	public static final String WAREHOUSE_AREA_IMPORT = "warehouse_area_import";
+	/**
+	 * 新增
+	 */
+	public static final String FITEMSS97_ADD = "fitemss97_add";
+	/**
+	 * 删除
+	 */
+	public static final String FITEMSS97_DELETED = "fitemss97_deleted";
 }

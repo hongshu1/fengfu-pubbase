@@ -17,7 +17,7 @@ import com.jfinal.core.Path;
  * @date: 2023-03-25 16:44
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.FITEMSS97CLASS)
+@CheckPermission(PermissionKey.NONE)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/fitemss97class", viewPath = "/_view/admin/fitemss97class")
 public class Fitemss97classAdminController extends BaseAdminController {
