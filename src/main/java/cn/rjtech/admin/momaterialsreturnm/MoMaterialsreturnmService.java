@@ -328,20 +328,6 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
         return transVouch;
     }
 
-    public Object getBycBarcode(String barcode) {
-        Kv para = Kv.by("barcode", barcode);
-        List<Record> records = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).find();
-        for (Record record : records) {
-            if (ObjUtil.isNull(record.getBigDecimal("iQty")) && ObjUtil.isNull(record.getBigDecimal("iScannedQty"))) {
-                ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
-            }
-            BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));
-            record.set("iqtys", subtract);
-
-        }
-
-        return records;
-    }
 
     public List<Record> getBycBarcodeInfo(String barcode) {
         Kv para = Kv.by("barcode", barcode);
