@@ -383,9 +383,9 @@
           var state = res.state;
           if(state === 'ok'){
             if (submit){
-              let autoid = res.autoid;
-              submit_#(pageId)(autoid,function () {
-                successHandler('提交审核成功', autoid);
+              let data = res.data;
+              submit_#(pageId)(data.autoid,function () {
+                successHandler('提交审核成功', data.autoid);
               });
             } else {
               successHandler(ret.msg, autoid);

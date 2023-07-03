@@ -50,7 +50,8 @@ public class ApiRoutes extends Routes {
         this.add("/api/general", GeneralApiController.class);
         // 制造工单
         this.add("/api/modoc", ModocApiController.class);
-        this.add("/aoi/momaterialsreturnm",MoMaterialsreturnmApiController.class);
+        //生产退料
+        this.add("/api/momaterialsreturnm",MoMaterialsreturnmApiController.class);
 		 // 现品票
         this.add("/api/momoinvbatch", MoMoinvbatchApiController.class);
 

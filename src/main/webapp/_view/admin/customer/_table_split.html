@@ -8,7 +8,7 @@
             <td>${data.csearchcode}</td>
             <td>${data.ideliveryadvance}</td>
             <td>${data.cplancode}</td>
-            <td>${data.shippedway}</td>
+<!--            <td>${data.shippedway}</td>-->
             <td>${data.cwhname}</td>
             <td>${data.ccontactcode}</td>
             <td>${data.ccontactname}</td>
@@ -16,9 +16,8 @@
             <td>${data.ccountry}</td>
             <td>${data.cprovince}</td>
             <td>${data.ccity}</td>
-            <td>${data.carea}</td>
-            <td>${data.caddress}</td>
-
+            <td>${data.cdistrict}</td>
+<!--            <td>${data.caddress}</td>-->
             <td>${data.cpostcode}</td>
             <td>${data.cmobile}</td>
             <td>${data.ctele}</td>
@@ -71,15 +70,15 @@
                         <th data-width="100" data-column="csearchcode">搜索码</th>
                         <th data-width="100" data-column="ideliveryadvance">发货提前期</th>
                         <th data-width="100" data-column="cplancode">计划代码</th>
-                        <th data-width="100" data-column="shippedway">发运方式</th>
+<!--                        <th data-width="100" data-column="shippedway">发运方式</th>-->
                         <th data-width="100" data-column="cwhname">发货仓库</th>
                         <th data-width="120" data-column="ccontactcode">联系人编码</th>
                         <th data-width="120" data-column="ccontactname">联系人姓名</th>
                         <th data-width="120" data-column="ccountry">国家/地区</th>
                         <th data-width="120" data-column="cprovince">省/自治区</th>
                         <th data-width="120" data-column="ccity">城市</th>
-                        <th data-width="120" data-column="carea">区县</th>
-                        <th data-width="120" data-column="caddress">地址</th>
+                        <th data-width="120" data-column="cdistrict">区县</th>
+<!--                        <th data-width="120" data-column="caddress">地址</th>-->
                         <th data-width="120" data-column="cpostcode">邮政编码</th>
                         <th data-width="120" data-column="cmobile">移动电话</th>
                         <th data-width="120" data-column="ctele">固定电话</th>
@@ -185,7 +184,7 @@
                     textAttr:"name",
                     linkColumn:'cprovince'
                 },
-                carea: {
+                cdistrict: {
                     placeholder: "=区县=",
                     type:"select2",
                     url:"admin/loclistcn/findByNameChild",

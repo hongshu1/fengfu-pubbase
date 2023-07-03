@@ -171,7 +171,7 @@ public class OperationAdminController extends JBoltBaseController {
             renderJsonFail("无有效数据导出");
             return;
         }
-        List<Operation> operations = service.findAll();
+        List<Operation> operations = service.findAllIsDeletedFalse();
         for (Operation operation : operations) {
             Workclass workclass = workClassService.findById(operation.getIworkclassid());
             operation.put("iworkclassname",

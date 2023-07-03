@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
@@ -1422,5 +1423,14 @@ public class BomMService extends BaseService<BomM> {
 				" AND m.isDeleted = '0' " +
 				" AND a.iInvPartBomMid = ? ";
 		return find(sqlStr, bomId);
+	}
+	
+	public List<BomM> findByInventoryId(Long orgId, Long inventoryId){
+		Sql sql = selectSql();
+		sql.eq(BomM.ISDELETED, "0").eq(BomM.IINVENTORYID, inventoryId);
+		if (ObjectUtil.isNotNull(orgId)){
+			sql.eq(BomM.IORGID, orgId);
+		}
+		return find(sql);
 	}
 }

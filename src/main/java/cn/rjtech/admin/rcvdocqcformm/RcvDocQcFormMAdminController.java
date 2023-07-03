@@ -1,6 +1,7 @@
 package cn.rjtech.admin.rcvdocqcformm;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
@@ -12,6 +13,7 @@ import cn.rjtech.admin.rcvdocqcformd.RcvDocQcFormDService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RcvDocQcFormD;
 import cn.rjtech.model.momdata.RcvDocQcFormM;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -35,9 +37,9 @@ import java.util.List;
 public class RcvDocQcFormMAdminController extends BaseAdminController {
 
     @Inject
-    private RcvDocQcFormMService     service;              //质量管理-来料检验表
+    private RcvDocQcFormMService service;              //质量管理-来料检验表
     @Inject
-    private RcvDocQcFormDService     rcvDocQcFormDService; //质量管理-来料检单行配置表
+    private RcvDocQcFormDService rcvDocQcFormDService; //质量管理-来料检单行配置表
 
     /**
      * 首页
@@ -122,6 +124,9 @@ public class RcvDocQcFormMAdminController extends BaseAdminController {
         // 表头项目
         List tableHeadData = service.getTableHeadData(record.getLong("iqcformid"));
         set("columns", tableHeadData);
+        if (StrUtil.isBlank(record.getStr("cmeasurereason"))) {
+            record.set("cmeasurereason", record.getStr("cmeasure"));
+        }
         set("record", record);
         render("checkout.html");
     }

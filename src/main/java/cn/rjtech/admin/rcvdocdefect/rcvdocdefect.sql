@@ -15,6 +15,8 @@ SELECT
     t2.cApproach,
     t2.cUpdateName,
     t2.dUpdateTime,
+    ( SELECT usr.name FROM UGCFF_MOM_System.dbo.jb_user usr WHERE usr.id = t2.iQcUserId ) AS dQcName,
+    t2.dQcTime,
     t3.cInvCode,
     t3.cInvName,
     t3.cInvCode1
@@ -52,7 +54,7 @@ WHERE
 #if(enddate)
     and CONVERT(VARCHAR(10),t2.dUpdateTime,23) <='#(enddate)'
 #end
-order by t2.dCreateTime desc
+order by t2.dQcTime desc
 #end
 
 

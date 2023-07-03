@@ -34,14 +34,14 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.coperationcode}</td> <!--工序编码-->
-<td>${data.coperationname}</td><!--工序名称-->
-<td>${data.cworkclassname}</td><!--所属工种-->
+<td title="${data.coperationcode}">${data.coperationcode}</td> <!--工序编码-->
+<td title="${data.coperationname}">${data.coperationname}</td><!--工序名称-->
+<td title="${data.cworkclassname}">${data.cworkclassname}</td><!--所属工种-->
 <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}" data-handler="refreshJBoltTable"
          data-url="admin/operation/toggleIsenabled/${data.iautoid}"/></td>
-<td>${data.cmemo}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
+<td title="${data.cmemo}">${data.cmemo}</td>
+<td title="${data.ccreatename}">${data.ccreatename}</td>
+<td title="${data.dcreatetime}">${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
@@ -118,19 +118,19 @@
            data-rowtpl="operationRowtpl_#(pageId)"
            data-page="operationPage_#(pageId)"
            data-toolbar="operation_toolbar_#(pageId)"
-           data-fixed-columns-left="1,2,3"
-           data-fixed-columns-right="-1"
     >
+      <!-- data-fixed-columns-left="1,2,3"
+           data-fixed-columns-right="-1"-->
       <thead>
       <tr>
-        <th data-width="30">序号</th>
+        <th data-width="10">序号</th>
         <th data-width="60" data-column="cOperationCode">工序编码</th>
-        <th data-width="100" data-column="cOperationName">工序名称</th>
-        <th data-width="100" data-column="cWorkClassName">所属工种</th>
+        <th data-width="200" data-column="cOperationName">工序名称</th>
+        <th data-width="180" data-column="cWorkClassName">所属工种</th>
         <th data-width="60" data-column="isEnabled">是否启用</th>
         <th data-width="150" data-column="cMemo">备注</th>
-        <th data-width="100" data-column="cCreateName">创建人</th>
-        <th data-width="100" data-column="dCreateTime">创建时间</th>
+        <th data-width="120" data-column="cCreateName">创建人</th>
+        <th data-width="120" data-column="dCreateTime">创建时间</th>
       </tr>
       </thead>
       <tbody>
