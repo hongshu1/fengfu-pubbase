@@ -248,8 +248,11 @@
 
 
 
-    function  refreshTable3(id) {
-        let url = "admin/momoinvbatch/batchPrint?imodocid="+id+"&ids="+id;
+    function  refreshTable3(imodocid,id) {
+        let url = "admin/momoinvbatch/batchPrint?imodocid="+imodocid+"&ids="+id;
+        console.log('url')
+        console.log(url)
+        console.log('url')
         Ajax.get(url,function(res){
         });
 
