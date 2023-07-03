@@ -848,7 +848,7 @@ public class PermissionKey {
 	/**
 	 * 项目大类
 	 */
-	public static final String FITEMSS97CLASS = "fitemss97class";
+	public static final String FITEM = "fitem";
 	/**
 	 * 项目分类
 	 */
@@ -857,12 +857,6 @@ public class PermissionKey {
 	 * 项目档案
 	 */
 	public static final String FITEMSS97SUB = "fitemss97sub";
-	/**
-	 * 项目大类
-	 */
-
-	public static final String FITEM = "fitem";
-
 	/**
 	 * 单据类型与收发类别对照表
 	 */
@@ -990,7 +984,7 @@ public class PermissionKey {
 	/**
 	 * 取货计划管理
 	 */
-	public static final String PICKUP_PLAN_MANAGE = "pickup_plan_manage";
+	public static final String RCVPLANM = "rcvplanm";
 	/**
 	 * 货款核对管理
 	 */
@@ -1495,6 +1489,18 @@ public class PermissionKey {
 	 * 生产表单管理
 	 */
 	public static final String PRODFORMM_APP = "prodformm_app";
+	/**
+	 * 【API】制造工单
+	 */
+	public static final String API_MODOC = "api_modoc";
+	/**
+	 * 【API】制造工单-生产退料
+	 */
+	public static final String API_MOMATERIALSRETURNM = "api_momaterialsreturnm";
+	/**
+	 * 现品票
+	 */
+	public static final String API_MOMOINVBATCH = "api_momoinvbatch";
 	/**
 	 * 新增
 	 */
@@ -2843,4 +2849,52 @@ public class PermissionKey {
 	 * 位置档案
 	 */
 	public static final String 	LOCLISTCN = "	loclistcn";
+	/**
+	 * 撤回
+	 */
+	public static final String RCVPLANM_WITHDRAW = "rcvplanm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String RCVPLANM_SUBMIT = "rcvplanm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String RCVPLANM_APPROVE = "rcvplanm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String RCVPLANM_REJECT = "rcvplanm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String RCVPLANM_BATCH_APPROVE = "rcvplanm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String RCVPLANM_BATCH_REJECT = "rcvplanm_batch_reject";
+	/**
+	 * 批量反审核
+	 */
+	public static final String RCVPLANM_BATCH_REVERSE_APPROVE = "rcvplanm_batch_reverse_approve";
+	/**
+	 * 反审核
+	 */
+	public static final String RCVPLANM_REVERSE_APPROVE = "rcvplanm_reverse_approve";
+	/**
+	 * 生成现品票
+	 */
+	public static final String API_CREATEMOMOINVBATCH = "api_createMomoinvbatch";
+	/**
+	 * 撤回
+	 */
+	public static final String API_WITHDRAW = "api_withdraw";
+	/**
+	 * 修改数量
+	 */
+	public static final String API_UPDATENUMBER = "api_updateNumber";
+	/**
+	 * 批量打印
+	 */
+	public static final String BATCHPRINT = "batchPrint";
 }
