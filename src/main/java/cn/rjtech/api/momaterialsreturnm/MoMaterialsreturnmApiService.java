@@ -26,7 +26,8 @@ public class MoMaterialsreturnmApiService extends JBoltApiBaseService {
         return JBoltApiRet.success();
     }
 
-    public JBoltApiRet saveTableSubmit(JBoltTable jBoltTable) {
-       return JBoltApiRet.API_SUCCESS_WITH_DATA(moMaterialsreturnmService.saveTableSubmit(jBoltTable));
+
+    public JBoltApiRet getModandMomlist(String iautoid) {
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(moMaterialsreturnmService.getModandMomlist(iautoid));
     }
 }

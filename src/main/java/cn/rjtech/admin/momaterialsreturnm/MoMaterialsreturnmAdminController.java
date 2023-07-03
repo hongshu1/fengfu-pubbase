@@ -142,7 +142,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     }
 
     public void getmomaterialscanuseMList() {
-        renderJsonData(service.getModandMomlist(get("imodocid")));
+        renderJsonData(service.getModandMomlist(get("iautoid")));
     }
 
 }
