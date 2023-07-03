@@ -19,7 +19,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
     @Inject
     private MoMoinvbatchApiService service;
     @Inject
-    MoMoinvbatchService moMoinvbatchService;
+    private MoMoinvbatchService moMoinvbatchService;
 
     /**
      * 获取工单信息（表头）

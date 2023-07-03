@@ -38,7 +38,7 @@ public class MoMoinvbatchApiService extends JBoltApiBaseService {
     @Inject
     private DepartmentService departmentService;
     @Inject
-    MoMoinvbatchService moMoinvbatchService;
+    private MoMoinvbatchService moMoinvbatchService;
 
 
     public Ret getModocData(Long imodocid) {
