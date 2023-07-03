@@ -592,21 +592,26 @@ public class BomMService extends BaseService<BomM> {
 		// 设置主键id
 		long bomMasterId = JBoltSnowflakeKit.me.nextId();
 		bomMaster.setIAutoId(bomMasterId);
-		List<BomD> bomCompareList =getBomCompareList(bomMasterId, bomMaster.getIInventoryId(), tableData, bomMaster.getDEnableDate(), bomMaster.getDDisableDate());
-		Inventory inventory = inventoryService.findById(bomMaster.getIInventoryId());
-		ValidationUtils.notNull(inventory, "产成品存货记录不存在");
-		
+		Map<BomM, List<BomD>> bomMListMap =getBomMasterMap(bomMaster, tableData);
 		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
 		
 		tx(() -> {
 			bomMaster.setIType(BomSourceTypeEnum.IMPORT_TYPE_ADD.getValue());
-			bomMaster.setCInvName(inventory.getCInvName());
-			bomMaster.setCInvCode(inventory.getCInvCode());
+			
 			if(StrUtil.isBlank(bomMaster.getCVersion())){
 				bomMaster.setCVersion(getNextVersion(getOrgId(), bomMaster.getIInventoryId()));
 			}
-			save(bomMaster, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
-			bomDService.batchSave(bomCompareList);
+			
+			for (BomM bomM : bomMListMap.keySet()){
+				List<BomD> bomDList = bomMListMap.get(bomM);
+				Inventory inventory = inventoryService.findById(bomM.getIInventoryId());
+				ValidationUtils.notNull(inventory, "产成品存货记录不存在");
+				bomM.setCInvName(inventory.getCInvName());
+				bomM.setCInvCode(inventory.getCInvCode());
+				save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
+				bomDService.batchSave(bomDList);
+			}
+			
 			BomData bomData = bomDataService.create(bomMaster.getIAutoId(), tableData.toJSONString());
 			bomDataService.save(bomData);
 			return true;
@@ -834,9 +839,13 @@ public class BomMService extends BaseService<BomM> {
 		oldBomMaster.setCCommonPartMemo(bomMaster.getCCommonPartMemo());
 	}
 	
-	private List<BomD> getBomCompareList(long bomMasterId, Long bomMasterInvId, JSONArray tableData, Date dEnableDate, Date dDisableDate){
-		// 用于保存校验
-		List<BomD> bomCompareList = new ArrayList<>();
+	private Map<BomM, List<BomD>> getBomMasterMap(BomM bomM , JSONArray tableData){
+		
+		long bomMasterId = bomM.getIAutoId();
+		Long bomMasterInvId = bomM.getIInventoryId();
+		Date dEnableDate = bomM.getDEnableDate();
+		Date dDisableDate = bomM.getDDisableDate();
+		
 		Long orgId = getOrgId();
 		// 编码
 		Map<String, BomD> codeBomCompareMap = createCodeBomCompareMap(bomMasterId, tableData);
@@ -851,6 +860,10 @@ public class BomMService extends BaseService<BomM> {
 		// 获取有效bom子件
 		Map<Long, List<Record>> effectiveBomCompareMap = bomDService.getEffectiveBomCompareMap(orgId, null);
 		
+		Map<BomM, List<BomD>> bomMListMap = new HashMap<>();
+		
+		bomMListMap.put(bomM, parentInvMap.get(bomMasterInvId));
+		
 		// 编译所有母件
 		for (BomD productBomD :compareList){
 			// 部品存货编码
@@ -859,8 +872,30 @@ public class BomMService extends BaseService<BomM> {
 			if (effectiveBomMap.containsKey(inventoryId)){
 				Record effectiveBom = effectiveBomMap.get(inventoryId);
 				checkBomCompareList(productBomD, effectiveBom, effectiveBomMap, effectiveBomCompareMap, parentInvMap);
+				continue;
 			}
-			bomCompareList.add(productBomD);
+			// 判断是不是母件，是母件创建bom
+			if (parentInvMap.containsKey(inventoryId) && !bomMasterInvId.equals(inventoryId)){
+				BomM newBomM = new BomM();
+				long newBomMasterId = JBoltSnowflakeKit.me.nextId();
+				copyBomMaster(bomM, newBomM);
+				newBomM.setIInventoryId(inventoryId);
+				newBomM.setIType(2);
+				newBomM.setIAutoId(newBomMasterId);
+				List<BomD> bomDList = parentInvMap.get(inventoryId);
+				for (BomD bomD : bomDList){
+					bomD.setIPid(newBomMasterId);
+					bomD.setIBomMid(newBomMasterId);
+				}
+				bomMListMap.put(newBomM, bomDList);
+			}
+		}
+		
+		List<BomD> bomCompareList = new ArrayList<>();
+		
+		for (BomM bom : bomMListMap.keySet()){
+			List<BomD> bomDList = bomMListMap.get(bom);
+			bomCompareList.addAll(bomDList);
 		}
 		
 		// 存货id
@@ -878,27 +913,33 @@ public class BomMService extends BaseService<BomM> {
 			vendorMap = vendorList.stream().collect(Collectors.toMap(Vendor::getIAutoId, Function.identity()));
 		}
 		
-		// 赋值
-		for (BomD bomD : bomCompareList){
-			Inventory inventory = inventoryMap.get(bomD.getIInventoryId());
-			ValidationUtils.notNull(inventory, "未找到"+bomD.getCInvLev()+"编码栏的存货");
-			String cVendCode = null;
-			String cVenName = null;
-			if (ObjUtil.isNotNull(bomD.getIVendorId())){
-				Vendor vendor = vendorMap.get(bomD.getIVendorId());
-				cVendCode = vendor.getCVenCode();
-				cVenName = vendor.getCVenName();
+		for (BomM bom : bomMListMap.keySet()){
+			// 赋值
+			if (ObjectUtil.isNotNull(bom.getIInventoryId())){
+				for (BomD bomD : bomMListMap.get(bom)){
+					Inventory inventory = inventoryMap.get(bomD.getIInventoryId());
+					if (ObjectUtil.isNull(inventory)){
+						continue;
+					}
+					String cVendCode = null;
+					String cVenName = null;
+					if (ObjUtil.isNotNull(bomD.getIVendorId())){
+						Vendor vendor = vendorMap.get(bomD.getIVendorId());
+						cVendCode = vendor.getCVenCode();
+						cVenName = vendor.getCVenName();
+					}
+					String cCode = bomD.getCCode();
+					
+					bomD.setDEnableDate(dEnableDate);
+					bomD.setDDisableDate(dDisableDate);
+					
+					bomD.setIOrgId(orgId);
+					bomDService.setBomCompare(bomD, inventory.getIPartType(), inventory.getIInventoryUomId1(), inventory.getCInvCode(), inventory.getCInvName(), inventory.getCInvStd(),
+							cVendCode, cVenName, false);
+				}
 			}
-			String cCode = bomD.getCCode();
-			
-			bomD.setDEnableDate(dEnableDate);
-			bomD.setDDisableDate(dDisableDate);
-			
-			bomD.setIOrgId(orgId);
-			bomDService.setBomCompare(bomD, inventory.getIPartType(), inventory.getIInventoryUomId1(), inventory.getCInvCode(), inventory.getCInvName(), inventory.getCInvStd(),
-					cVendCode, cVenName, false);
 		}
-		return bomCompareList;
+		return bomMListMap;
 	}
 	
 	private Map<String, BomD> createCodeBomCompareMap(Long bomMasterId, JSONArray tableData){
@@ -1193,13 +1234,16 @@ public class BomMService extends BaseService<BomM> {
 		bomD.setCVersion(bomMasterRecord.getStr(BomM.CVERSION));
 		// 当前存货编码
 		Long inventoryId = bomD.getIInventoryId();
-		// 子件集合
-		List<BomD> bomDList = parentInvMap.get(inventoryId);
-		ValidationUtils.notEmpty(bomDList, "未找到子件");
-		// 按存货编码-- 子件
-		Map<Long, BomD> bomDMap = bomDList.stream().collect(Collectors.toMap(BomD::getIInventoryId, bomD1 -> bomD1));
+		
 		// 编码栏
 		String cInvLev = bomD.getCInvLev();
+		
+		// 子件集合
+		List<BomD> bomDList = parentInvMap.get(inventoryId);
+		ValidationUtils.notEmpty(bomDList, cInvLev+"行，已存在版本记录，但文件中未找到子件");
+		// 按存货编码-- 子件
+		Map<Long, BomD> bomDMap = bomDList.stream().collect(Collectors.toMap(BomD::getIInventoryId, bomD1 -> bomD1));
+		
 		// 用于校验 子件数量是否相同，以及子件存货id是否相同
 		List<Long> invIds = recordList.stream().map(record -> record.getLong(BomD.IINVENTORYID)).collect(Collectors.toList());
 		List<Long> compareInvIds = bomDList.stream().map(BomD::getIInventoryId).collect(Collectors.toList());
@@ -1268,14 +1312,14 @@ public class BomMService extends BaseService<BomM> {
 		BigDecimal bomCompareIWeight = bomCompare.getIWeight();
 		Long bomCompareInvId = bomCompare.getIInventoryId();
 		String cInvLev = bomCompare.getCInvLev();
-		ValidationUtils.notNull(qty, qtyErrorMsg(1, bomCompare.getCInvLev(), cInvCode));
-		ValidationUtils.notNull(weight, qtyErrorMsg(2, bomCompare.getCInvLev(), cInvCode));
-		ValidationUtils.isTrue(qty.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(3, bomCompare.getCInvLev(), cInvCode));
-		ValidationUtils.isTrue(weight.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(4, bomCompare.getCInvLev(), cInvCode));
+		ValidationUtils.notNull(bomCompareQty, qtyErrorMsg(1, bomCompare.getCInvLev(), cInvCode));
+		ValidationUtils.notNull(bomCompareIWeight, qtyErrorMsg(2, bomCompare.getCInvLev(), cInvCode));
+		ValidationUtils.isTrue(bomCompareQty.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(3, bomCompare.getCInvLev(), cInvCode));
+		ValidationUtils.isTrue(bomCompareIWeight.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(4, bomCompare.getCInvLev(), cInvCode));
 		// 校验存货编码是否一致
 		if (invId.equals(bomCompareInvId)){
-			ValidationUtils.isTrue(qty.compareTo(bomCompareQty)==0, qtyErrorMsg(5, bomCompare.getCInvLev(), cInvCode));
-			ValidationUtils.isTrue(weight.compareTo(bomCompareIWeight)==0, qtyErrorMsg(6, bomCompare.getCInvLev(), cInvCode));
+			ValidationUtils.isTrue(bomCompareQty.compareTo(qty)==0, qtyErrorMsg(5, bomCompare.getCInvLev(), cInvCode));
+			ValidationUtils.isTrue(bomCompareIWeight.compareTo(weight)==0, qtyErrorMsg(6, bomCompare.getCInvLev(), cInvCode));
 		}
 	}
 	
