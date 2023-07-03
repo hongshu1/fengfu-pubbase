@@ -5,10 +5,10 @@
 	<div class="jbolt_page_title">
 		<div class="row">
 			<div class="col-sm-auto">
-				<h1><i class="jbicon2 jbi-tags"></i> 项目档案</h1>
+				<h1><i class="jbicon2 jbi-tags"></i> 项目大类</h1>
 			</div>
 			<div class="col">
-				<form class="form-inline text-left" id="fitemss97subform_#(pageId)">
+				<form class="form-inline text-left" id="fitem_#(pageId)">
 					<select class="form-control"
 							data-autoload
 							data-select-type="select2"
@@ -18,8 +18,8 @@
 							data-value=""
 							name="sn"
 							data-width="260"
-							onchange="onblurselect()"
-							id="searchBackGoodsTypeInput3_#(pageId)"
+							onchange="onblurselect1()"
+							id="searchBackGoodsTypeInput4_#(pageId)"
 					>
 					</select>
 				</form>
@@ -33,7 +33,7 @@
 			<div class="col-auto " style="width:25%;">
 				<div class="card">
 					<div class="card-header py-2">
-						<span class="d-inline-block py-1"><strong>项目档案</strong></span>
+						<span class="d-inline-block py-1"><strong>项目大类</strong></span>
 						<div class="pull-right">
 
 							<input type="text" class="form-control" id="searchBackGoodsTypeInput_#(pageId)"  placeholder="搜索关键字过滤" />
@@ -42,56 +42,56 @@
 
 
 					<div class="card-body overflow-auto" style="height:750px;">
-						<div id="fitemss97subTree">
+						<div id="fitemTree">
 						</div>
 					</div>
 
 				</div>
 			</div>
-			<div class="col-auto card " style="width:75%">
-				#ajaxPortal("/admin/fitemss97sub/fitemss97subTable","fitemss97Portal_#(pageId)",true)
+		<div class="col-auto card " style="width:75%">
+				#ajaxPortal("/admin/fitem/fitemTable","fitemPortal_#(pageId)",true)
 			</div>
 		</div>
 	</div>
 
 	<script>
-		function onblurselect() {
-			var inpVal = $("#searchBackGoodsTypeInput3_#(pageId)").val();
+		function onblurselect1() {
+			var inpVal = $("#searchBackGoodsTypeInput4_#(pageId)").val();
 			if(isOk(inpVal)){
-				jstreeHtml(inpVal)
+				jstreeHtml1(inpVal)
 			}
 		}
 
-		jstreeHtml("");
-		function jstreeHtml(sn) {
+		jstreeHtml1("");
+		function jstreeHtml1(sn) {
 			setTimeout(function (){
-				mgrTreehandlerFn1(sn);
+				mgrTreehandlerFn2(sn);
 			},300)
 		}
 
-		function mgrTreehandlerFn1(sn) {
-			var treeHtmlStr = "<div id='fitemss97subTree' " +
+		function mgrTreehandlerFn2(sn) {
+			var treeHtmlStr = "<div id='fitemTree' " +
 					"data-jstree " +
-					"data-portalid='fitemss97Portal_#(pageId)' " +
+					"data-portalid='fitemPortal_#(pageId)' " +
 					"data-curd='false' " +
 					"data-async='true' " +
 					"data-open-level='-1' " +
-					"data-handler='mgrTreehandlerFn1'"+
+					"data-handler='mgrTreehandlerFn2'"+
 					"data-search-input='searchBackGoodsTypeInput_#(pageId)' "+
-					"data-read-url='admin/fitemss97sub/mgrTree?sn="+sn+"'" +
-					"data-change-handler='fitemss97subClick'>" +
+					"data-read-url='admin/fitem/mgrTree?sn="+sn+"'" +
+					"data-change-handler='fitemClick'>" +
 					"</div>"
-			$("#fitemss97subTree").html(treeHtmlStr)
-			JSTreeUtil.init($("#fitemss97subTree"))
+			$("#fitemTree").html(treeHtmlStr)
+			JSTreeUtil.init($("#fitemTree"))
 		}
 
 		var autoid = "";
 		/*详情*/
-		function fitemss97subClick(tree,data){
+		function fitemClick(tree,data){
 			console.log(data);
 			autoid = data.id;
-			$("#fitemss97subForm_autoid").val(autoid);
-			$("#fitemss97subForm_submit").click();
+			$("#fitembForm_autoid").val(autoid);
+			$("#fitemForm_submit").click();
 		}
 
 

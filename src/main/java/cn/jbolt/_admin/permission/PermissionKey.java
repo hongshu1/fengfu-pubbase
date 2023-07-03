@@ -436,26 +436,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String CUSTOMER_ADD = "customer_add";
-	/**
-	 * 编辑
-	 */
-	public static final String CUSTOMER_EDIT = "customer_edit";
-	/**
-	 * 删除
-	 */
-	public static final String CUSTOMER_DELETE = "customer_delete";
-	/**
-	 * 导出
-	 */
-	public static final String CUSTOMER_EXPORT = "customer_export";
-	/**
-	 * 导入
-	 */
-	public static final String CUSTOMER_IMPORT = "customer_import";
-	/**
-	 * 新增
-	 */
 	public static final String VENDOR_ADD = "vendor_add";
 	/**
 	 * 编辑
@@ -706,10 +686,6 @@ public class PermissionKey {
 	 */
 	public static final String BARCODEENCODINGDETAIL = "barcodeencodingdetail";
 	/**
-	 * 位置档案
-	 */
-	public static final String LOCLISTCN = "loclistcn";
-	/**
 	 * 敏感词词库
 	 */
 	public static final String SENSITIVE_WORD = "sensitive_word";
@@ -872,7 +848,7 @@ public class PermissionKey {
 	/**
 	 * 项目大类
 	 */
-	public static final String FITEMSS97CLASS = "fitemss97class";
+	public static final String FITEM = "fitem";
 	/**
 	 * 项目分类
 	 */
@@ -1008,7 +984,7 @@ public class PermissionKey {
 	/**
 	 * 取货计划管理
 	 */
-	public static final String PICKUP_PLAN_MANAGE = "pickup_plan_manage";
+	public static final String RCVPLANM = "rcvplanm";
 	/**
 	 * 货款核对管理
 	 */
@@ -1506,6 +1482,26 @@ public class PermissionKey {
 	 */
 	public static final String SPOTCHECKFORMM2 = "spotcheckformm2";
 	/**
+	 * 稼动时间管理
+	 */
+	public static final String UPTIMEM_APP = "uptimem_app";
+	/**
+	 * 生产表单管理
+	 */
+	public static final String PRODFORMM_APP = "prodformm_app";
+	/**
+	 * 【API】制造工单
+	 */
+	public static final String API_MODOC = "api_modoc";
+	/**
+	 * 【API】制造工单-生产退料
+	 */
+	public static final String API_MOMATERIALSRETURNM = "api_momaterialsreturnm";
+	/**
+	 * 现品票
+	 */
+	public static final String API_MOMOINVBATCH = "api_momoinvbatch";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -1993,7 +1989,6 @@ public class PermissionKey {
 	 * 提交审核
 	 */
 	public static final String PURCHASE_INSTRUMENT_SUBMIT = "purchase_instrument_submit";
-
 	/**
 	 * 删除
 	 */
@@ -2437,19 +2432,19 @@ public class PermissionKey {
 	/**
 	 * 提审
 	 */
-	public static final String CURRENT_STOCK_SUBMIT = "current_stock_submit";
+	public static final String CURRENTSTOCK_SUBMIT = "currentstock_submit";
 	/**
 	 * 通过
 	 */
-	public static final String CURRENT_STOCK_APPROVE = "current_stock_approve";
+	public static final String CURRENTSTOCK_APPROVE = "currentstock_approve";
 	/**
 	 * 不通过
 	 */
-	public static final String CURRENT_STOCK_REJECT = "current_stock_reject";
+	public static final String CURRENTSTOCK_REJECT = "currentstock_reject";
 	/**
 	 * 反审核
 	 */
-	public static final String CURRENT_STOCK_REVERSE_APPROVE = "current_stock_reverse_approve";
+	public static final String CURRENTSTOCK_REVERSE_APPROVE = "currentstock_reverse_approve";
 	/**
 	 * 撤回
 	 */
@@ -2475,9 +2470,9 @@ public class PermissionKey {
 	 */
 	public static final String FORM_APP_BATCH_REJECT_AUDIT = "form_app_batch_reject_audit";
 	/**
-	 * 撤回审批
+	 * 撤回
 	 */
-	public static final String CURRENT_STOCK_WITHDRAW = "current_stock_withdraw";
+	public static final String CURRENTSTOCK_WITHDRAW = "currentstock_withdraw";
 	/**
 	 * 提审
 	 */
@@ -2513,15 +2508,15 @@ public class PermissionKey {
 	/**
 	 * 批量反审
 	 */
-	public static final String CURRENT_STOCK_BATCH_REVERSE_APPROVE = "current_stock_batch_reverse_approve";
+	public static final String CURRENTSTOCK_BATCH_REVERSE_APPROVE = "currentstock_batch_reverse_approve";
 	/**
 	 * 批量审核通过
 	 */
-	public static final String CURRENT_STOCK_BATCH_APPROVE = "current_stock_batch_approve";
+	public static final String CURRENTSTOCK_BATCH_APPROVE = "currentstock_batch_approve";
 	/**
 	 * 批量审核不通过
 	 */
-	public static final String CURRENT_STOCK_BATCH_REJECT = "current_stock_batch_reject";
+	public static final String CURRENTSTOCK_BATCH_REJECT = "currentstock_batch_reject";
 	/**
 	 * 提审
 	 */
@@ -2734,28 +2729,172 @@ public class PermissionKey {
 	 * 现品票
 	 */
 	public static final String MOMOINVBATCH = "momoinvbatch";
-	public static final String WEEKORDERM_ADD = "weekorderm_add";
-	public static final String WEEKORDERM_SAVETABLESUBMIT = "weekorderm_savetablesubmit";
-	public static final String WEEKORDERM_EDIT = "weekorderm_edit";
-	public static final String WEEKORDERM_DELETE = "weekorderm_delete";
-	public static final String WEEKORDERM_DELETEBYIDS = "weekorderm_deletebyids";
+	/**
+	 * 保存
+	 */
 	public static final String ANNUALORDERM_SAVETABLESUBMIT = "annualorderm_savetablesubmit";
+	/**
+	 * 编辑
+	 */
 	public static final String ANNUALORDERM_EDIT = "annualorderm_edit";
+	/**
+	 * 删除
+	 */
 	public static final String ANNUALORDERM_DELETE = "annualorderm_delete";
+	/**
+	 * 批量删除
+	 */
 	public static final String ANNUALORDERM_DELETEBYIDS = "annualorderm_deletebyids";
+	/**
+	 * 新增
+	 */
+	public static final String WEEKORDERM_ADD = "weekorderm_add";
+	/**
+	 * 保存
+	 */
+	public static final String WEEKORDERM_SAVETABLESUBMIT = "weekorderm_savetablesubmit";
+	/**
+	 * 编辑
+	 */
+	public static final String WEEKORDERM_EDIT = "weekorderm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WEEKORDERM_DELETE = "weekorderm_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String WEEKORDERM_DELETEBYIDS = "weekorderm_deletebyids";
+	/**
+	 * 新增
+	 */
 	public static final String MANUALORDERM_ADD = "manualorderm_add";
+	/**
+	 * 保存
+	 */
 	public static final String MANUALORDERM_SAVETABLESUBMIT = "manualorderm_savetablesubmit";
+	/**
+	 * 编辑
+	 */
 	public static final String MANUALORDERM_EDIT = "manualorderm_edit";
+	/**
+	 * 删除
+	 */
 	public static final String MANUALORDERM_DELETE = "manualorderm_delete";
+	/**
+	 * 批量删除
+	 */
 	public static final String MANUALORDERM_DELETEBYIDS = "manualorderm_deletebyids";
+	/**
+	 * 新增
+	 */
 	public static final String MONTHORDERM_ADD = "monthorderm_add";
+	/**
+	 * 保存
+	 */
 	public static final String MONTHORDERM_SAVETABLESUBMIT = "monthorderm_savetablesubmit";
+	/**
+	 * 编辑
+	 */
 	public static final String MONTHORDERM_EDIT = "monthorderm_edit";
+	/**
+	 * 删除
+	 */
 	public static final String MONTHORDERM_DELETE = "monthorderm_delete";
+	/**
+	 * 批量删除
+	 */
 	public static final String MONTHORDERM_DELETEBYIDS = "monthorderm_deletebyids";
+	/**
+	 * 新增
+	 */
 	public static final String SUBCONTRACTSALEORDERM_ADD = "subcontractsaleorderm_add";
+	/**
+	 * 保存
+	 */
 	public static final String SUBCONTRACTSALEORDERM_SAVETABLESUBMIT = "subcontractsaleorderm_savetablesubmit";
+	/**
+	 * 编辑
+	 */
 	public static final String SUBCONTRACTSALEORDERM_EDIT = "subcontractsaleorderm_edit";
+	/**
+	 * 删除
+	 */
 	public static final String SUBCONTRACTSALEORDERM_DELETE = "subcontractsaleorderm_delete";
+	/**
+	 * 批量删除
+	 */
 	public static final String SUBCONTRACTSALEORDERM_DELETEBYIDS = "subcontractsaleorderm_deletebyids";
+	/**
+	 * 新增
+	 */
+	public static final String CUSTOMER_ADD = "customer_add";
+	/**
+	 * 编辑
+	 */
+	public static final String CUSTOMER_EDIT = "customer_edit";
+	/**
+	 * 删除
+	 */
+	public static final String CUSTOMER_DELETE = "customer_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CUSTOMER_EXPORT = "customer_export";
+	/**
+	 * 导入
+	 */
+	public static final String CUSTOMER_IMPORT = "customer_import";
+	/**
+	 * 位置档案
+	 */
+	public static final String 	LOCLISTCN = "	loclistcn";
+	/**
+	 * 撤回
+	 */
+	public static final String RCVPLANM_WITHDRAW = "rcvplanm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String RCVPLANM_SUBMIT = "rcvplanm_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String RCVPLANM_APPROVE = "rcvplanm_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String RCVPLANM_REJECT = "rcvplanm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String RCVPLANM_BATCH_APPROVE = "rcvplanm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String RCVPLANM_BATCH_REJECT = "rcvplanm_batch_reject";
+	/**
+	 * 批量反审核
+	 */
+	public static final String RCVPLANM_BATCH_REVERSE_APPROVE = "rcvplanm_batch_reverse_approve";
+	/**
+	 * 反审核
+	 */
+	public static final String RCVPLANM_REVERSE_APPROVE = "rcvplanm_reverse_approve";
+	/**
+	 * 生成现品票
+	 */
+	public static final String API_CREATEMOMOINVBATCH = "api_createMomoinvbatch";
+	/**
+	 * 撤回
+	 */
+	public static final String API_WITHDRAW = "api_withdraw";
+	/**
+	 * 修改数量
+	 */
+	public static final String API_UPDATENUMBER = "api_updateNumber";
+	/**
+	 * 批量打印
+	 */
+	public static final String BATCHPRINT = "batchPrint";
 }
