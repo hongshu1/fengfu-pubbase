@@ -43,8 +43,10 @@ public class CustomerAddrService extends BaseService<CustomerAddr> {
 		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
 	}
 
-	public List<CustomerAddr> list(Long icustomermid){
-		return find("SELECT * FROM Bd_CustomerAddr t1 LEFT JOIN Bd_Warehouse t2 ON t2.iAutoId = t1.iWarehouseId WHERE iCustomerId = ?", icustomermid);
+	public List<Record> list(Long icustomermid){
+		return findRecord("SELECT t1.*,t2.cWhName, t2.cWhCode FROM Bd_CustomerAddr t1 LEFT JOIN Bd_Warehouse t2 ON t2.iAutoId = t1" +
+				".iWarehouseId " +
+				"WHERE iCustomerId = '"+icustomermid+"'");
 	}
 
 	/**

@@ -47,8 +47,8 @@ public class CustomerAddrAdminController extends BaseAdminController {
     }
 
     public void list(@Para(value = "icustomermid") Long icustomermid) {
-        ValidationUtils.validateId(icustomermid, "客户ID");
-        
+//        ValidationUtils.validateId(icustomermid, "客户ID");
+        icustomermid = isOk(icustomermid)?icustomermid : ' ';
         renderJsonData(service.list(icustomermid));
     }
 
