@@ -169,10 +169,10 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
         tx(() -> {
             List<SysProductin> sysProductins = find("select *  from T_Sys_ProductIn where AutoID in (" + ids + ")");
             for (SysProductin s : sysProductins) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
-                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                     ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
@@ -194,10 +194,10 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
     public Ret delete(Long id) {
         tx(() -> {
             SysProductin first = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + id + ")");
-            if (!"0".equals(String.valueOf(first.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(first.getIAuditStatus())) || !"3".equals(String.valueOf(first.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "编号：" + first.getBillNo() + "单据状态已改变，不可删除！");
             }
-            if(first.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            if(!first.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                 ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + first.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);

@@ -140,10 +140,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     public Ret delete(Long id) {
         tx(() -> {
             SysOtherin s = findFirst("select *  from T_Sys_OtherIn where AutoID in (" + id + ")");
-            if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
             }
-            if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                 ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
@@ -160,10 +160,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         tx(() -> {
             List<SysOtherin> sysOtherins = find("select *  from T_Sys_OtherIn where AutoID in (" + ids + ")");
             for (SysOtherin s : sysOtherins) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
-                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                     ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
@@ -596,6 +596,8 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      */
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        //添加现品票 ,todo 推送u8
+        this.passagetwo(formAutoId);
         return null;
     }
 
@@ -728,5 +730,14 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         first = dbTemplate("sysotherin.barcode", kv).findFirst();
         ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
         return first;
+    }
+
+
+    //审核通过后的业务逻辑
+    public String passagetwo(Long formAutoId) {
+        SysOtherin byId = findById(formAutoId);
+        List<SysOtherindetail> sysOtherindetails = sysotherindetailservice.find("select * from T_Sys_OtherInDetail  where MasID = ? ", byId.getAutoID());
+        this.pushU8(byId,sysOtherindetails);
+        return "";
     }
 }

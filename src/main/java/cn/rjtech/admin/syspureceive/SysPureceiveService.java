@@ -175,10 +175,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         tx(() -> {
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
             for (SysPureceive s : sysPureceives) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus()))) {
+                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
-                if(s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+                if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                     ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
@@ -198,10 +198,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     public Ret delete(Long id) {
         tx(() -> {
             SysPureceive byId = findById(id);
-            if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
+            if (!"0".equals(String.valueOf(byId.getIAuditStatus())) && !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
-            if(byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
+            if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                 ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
