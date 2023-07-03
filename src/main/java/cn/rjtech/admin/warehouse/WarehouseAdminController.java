@@ -121,11 +121,13 @@ public class WarehouseAdminController extends BaseAdminController {
         renderJson(service.toggleBoolean(getLong(0), "isDeleted"));
     }
 
-    //仓库下拉信息查询
+    /**
+     * 仓库下拉信息查询
+     */
+    @UnCheck
     public void list() {
         renderJsonData(service.list(getKv()));
     }
-
 
     /**
      * Excel模板下载

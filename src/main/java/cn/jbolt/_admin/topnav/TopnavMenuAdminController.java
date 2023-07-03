@@ -2,6 +2,7 @@ package cn.jbolt._admin.topnav;
 
 import java.util.List;
 
+import cn.jbolt.core.permission.UnCheck;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -47,9 +48,11 @@ public class TopnavMenuAdminController extends JBoltBaseController {
 	/**
 	 * 获取左侧导航选中数据
 	 */
+    @UnCheck
 	public void getChecked() {
 		renderJsonData(service.getCheckedLeftMenus(getLong(0)));
 	}
+    
 	/**
 	 * 清空一个顶部导航下的菜单配置
 	 */
