@@ -19,6 +19,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
@@ -107,6 +108,15 @@ public class SysOtherinAdminController extends BaseAdminController {
                 set("venname", first2.getCVenName());
             }
         }
+        // 查业务类型名称
+        if (null != sysOtherin.getBillType()) {
+            String billtypeNmea = service.getBilltypeNmea(sysOtherin.getBillType());
+            if (null != billtypeNmea) {
+                set("cbtchname", billtypeNmea);
+            }
+        }
+
+
         Boolean edit = getBoolean("edit");
         set("edit", Optional.ofNullable(getBoolean("edit")).orElse(false));
         set("sysotherin", sysOtherin);
@@ -183,6 +193,17 @@ public class SysOtherinAdminController extends BaseAdminController {
                 }
             }
         }
+
+        renderJsonData(barcodeDatas);
+    }
+
+    /**
+     * 根据条码带出其他数据
+     */
+    @UnCheck
+    public void barcode(@Para(value = "barcode") String barcode) {
+        ValidationUtils.notBlank(barcode, "请扫码");
+        Record barcodeDatas = service.barcode(Kv.by("barcode", barcode));
 
         renderJsonData(barcodeDatas);
     }
