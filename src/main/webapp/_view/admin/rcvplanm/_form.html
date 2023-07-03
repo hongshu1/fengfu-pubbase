@@ -1,261 +1,311 @@
+#set(pageId=RandomUtil.random(6))
+#set(iYear=DateUtil.getYear())
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
+#set(precisionConfig4=JBoltGlobalConfigCache.getConfigValue("precision_config4"))
+#set(precisionConfig5=JBoltGlobalConfigCache.getConfigValue("precision_config5"))
 <div class="jbolt_page_title">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="col">
-                        <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
-                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
-                                class="fa fa-refresh"></i> 保存</button>
-                        <button onclick="" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 提交审批
-                        </button>
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 关闭
-                        </button>
-                    </div>
-                </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="col">
+            <div class="dropdown-menu" aria-labelledby="importMenuButton">
+              <a data-downloadbtn href="/admin/rcvplanm/downloadTpl" class="btn dropdown-item"><i
+                  class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+              <div class="j_upload_file_box"
+                   data-name="file"
+                   data-btn-class="btn dropdown-item"
+                   data-placeholder="上传导入"
+                   data-form="rcvplanm_#(pageId)"
+                   data-confirm="确认导入数据？"
+                   data-accept="excel"
+                   data-maxsize="20480"
+                   data-handler="uploadFile"
+                   data-upload-success-handler="uploadHandler"
+                   data-url="/admin/rcvplanm/importExcelData">
+              </div>
             </div>
+            #if(readonly != 'readonly')
+            <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-sx" onclick="submitThisForm()">
+              保存
+            </button>
+            #end
+            #if(rcvplanm.iAutoId??)
+            #include("/_view/_common/_approval_btns.html", uri="/admin/pickupPlanManage", formSn="SM_RcvPlanM",
+            o=rcvplanm, primaryKeyName="iAutoId", className="cn.rjtech.admin.rcvplanm.RcvPlanMService",
+            permissionKeyPrefix="rcvplanm")
+            #end
+            <button onclick="closeHandler()" class="btn btn-outline-secondary btn-sx">关闭</button>
+          </div>
         </div>
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <form onsubmit="return false;" id="rcvplanm_#(pageId)" action="#(action)" method="post">
-                        #if(rcvplanm.iAutoId??)
-                        <input type="hidden" name="rcvplanm.iAutoId" value="#(rcvplanm.iAutoId??)" />
-                        #end
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">取货计划单号</label>
-                                    <div class="col-9">
-                                        <input type="text" data-rule="required" data-notnull="true"
-                                            data-tips="请输入取货计划单号" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入订单号" maxlength="40"
-                                            name="rcvplanm.cRcvPlanNo" value="#(rcvplanm.cRcvPlanNo??)" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="form-group row">
-                                    <input type="hidden" name="rcvplanm.iCustomerId" value="#(rcvplanm.iCustomerId??)"
-                                        id="iCustomerId" data-value-attr="iautoid" />
-                                    <label class="col-sm-3 col-form-label">客户名称</label>
-                                    <div class="col-9">
-                                        <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/customer/autocomplete" data-rule="required"
-                                            data-hidden-input="iCustomerId" data-text-attr="ccusname"
-                                            data-column-attr="ccuscode,ccusname,ccusabbname" placeholder="请选择客户名称"
-                                            data-tips="请选择客户名称" data-header="客户编码,客户名称,客户简称" maxlength="40"
-                                            value="#(rcvplanm.ccusname??)">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <form onsubmit="return false;" id="rcvplanm_#(pageId)" action="#(action)" method="post">
+            #if(rcvplanm.iAutoId??)
+            <input type="hidden" name="rcvplanm.iAutoId" value="#(rcvplanm.iAutoId??)"/>
+            #end
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">取货计划单号</label>
+                  <div class="col-9">
+                    <input type="text" data-rule="required" data-notnull="true"
+                           data-tips="请输入取货计划单号" data-with-clearbtn="true" autocomplete="off"
+                           class="form-control" placeholder="请输入订单号" maxlength="40"
+                           name="rcvplanm.cRcvPlanNo" value="#(rcvplanm.cRcvPlanNo??)"/>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group row">
+                  <input type="hidden" name="rcvplanm.iCustomerId" value="#(rcvplanm.iCustomerId??)"
+                         id="iCustomerId" data-value-attr="iautoid"/>
+                  <label class="col-sm-3 col-form-label">客户名称</label>
+                  <div class="col-9">
+                    <input type="text" class="form-control" data-autocomplete
+                           data-url="admin/customer/autocomplete" data-rule="required"
+                           data-hidden-input="iCustomerId" data-text-attr="ccusname"
+                           data-column-attr="ccuscode,ccusname,ccusabbname" placeholder="请选择客户名称"
+                           data-tips="请选择客户名称" data-header="客户编码,客户名称,客户简称" maxlength="40"
+                           value="#(rcvplanm.ccusname??)">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+### 新增之后，并且为审核流
+#if(rcvplanm.iautoid?? && rcvplanm.iauditway == 2 && rcvplanm.iauditstatus > 0)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=rcvplanm.iAutoId, primaryKeyName="iAutoId", formSn="SM_RcvPlanM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.rcvplanm.RcvPlanMService")
+#end
+
 <div class="jbolt_page_content">
-    <script type="text/template" id="rcvplanm_tpl_#(pageId)">
-        {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>
-                <a href="admin/rcvpland/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " 
-                tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
-                class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
-   
-            </td>
-            <td>${data.ccarno}</td>
-            <td>${data.cplancode}</td>
-            <td>${data.crcvdate}</td>
-            <td>${data.crcvtime}</td>
-            <td>${data.cbarcode}</td>
-            <td>${data.cversion}</td>
-            <td>${data.caddress}</td>
-            <td>${data.cinvcode}</td>
-            <td>${data.cinvcode1}</td>
-            <td>${data.cinvname1}</td>
-            <td>${data.iqty}</td>
-
-
-        </tr>
-        {@/each}
-    </script>
-    <div class="jbolt_table_toolbar" id="rcvplanm_toolbar_#(pageId)">
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
-                id="toolbar_deleteBtn_#(pageId)" data-url="admin/rcvpland/deleteByIds?ids=" data-confirm="确定删除选中数据？"
-                class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
-        </div>
-
+  <script type="text/template" id="rcvplanm_tpl_#(pageId)">
+    {@each datas as data,index}
+    <tr data-id="${data.iautoid}">
+      <td>${pageNumber,pageSize,index | rownum}</td>
+      <td>
+        #if(readonly != 'readonly')
+        <a onclick="jboltTableRemoveRow(this)" tooltip data-title="移除行" data-handler="removeTr" data-confirm="确定删除此数据？"
+           class="btn btn-danger bat-sm">移除行</a>
+        #end
+      </td>
+      <td title="${data.ccarno}">${data.ccarno}</td>
+      <td title="${data.cplancode}">${data.cplancode}</td>
+      <td title="${data.crcvdate}">${data.crcvdate}</td>
+      <td title="${data.crcvtime}">${data.crcvtime}</td>
+      <td title="${data.cbarcode}">${data.cbarcode}</td>
+      <td title="${data.cversion}">${data.cversion}</td>
+      <td title="${data.caddress}">${data.caddress}</td>
+      <td title="${data.cinvcode}">${data.cinvcode}</td>
+      <td title="${data.cinvcode1}">${data.cinvcode1}</td>
+      <td title="${data.cinvname1}">${data.cinvname1}</td>
+      <td title="${data.iqty}">${data.iqty}</td>
+    </tr>
+    {@/each}
+  </script>
+  <div class="jbolt_table_toolbar" id="rcvplanm_toolbar_#(pageId)">
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+      <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
     </div>
+    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+      <button onclick="jboltTableRemoveCheckedRow(this, true, false)" data-confirm="确定批量删除选中数据？"
+              class="btn btn-danger btn-sm">
+        批量删除
+      </button>
+    </div>
+  </div>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center" data-jbolttable #if(rcvplanm.iAutoId??)
-        data-ajax="true" data-url="admin/rcvpland/findEditTableDatas?rcvplanmid=#(rcvplanm.iAutoId??)" #end
-        id="jbolt_Table_#(pageId)" data-column-resize="true" data-tfoot-fixed="true" data-column-prepend="1:checkbox"
-        data-rowtpl="rcvplanm_tpl_#(pageId)" data-toolbar="rcvplanm_toolbar_#(pageId)" data-editable="true"
-        data-page="rcvplanm_tpl_#(pageId)" data-editable-option="getJBoltTableEditableColsOpton">
-        <thead class="fw_normal">
-            <tr>
-                <th data-width="60">序号</th>
-                <th data-width="150">操作</th>
-                <th data-width="100" data-column="ccarno">取货车次号</th>
-                <th data-width="100" data-column="cplancode">计划代码</th>
-                <th data-width="100" data-column="crcvdate">取货日期</th>
-                <th data-width="100" data-column="crcvtime">取货时间</th>
-                <th data-width="100" data-column="cbarcode">传票号</th>
-                <th data-width="100" data-column="cversion">传票版本号</th>
-                <th data-width="100" data-column="caddress">收货地点</th>
-                <th data-width="100" data-column="cinvcode">存货编码</th>
-                <th data-width="100" data-column="cinvcode1">客户部番</th>
-                <th data-width="100" data-column="cinvname1">部品名称</th>
-                <th data-width="100" data-column="iqty">计划数量</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <th></th>
-            <th>合计</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tfoot>
-    </table>
+  <table id="jbolt_Table_#(pageId)"
+         class="jbolt_table thead_font_normal table-bordered table-center"
+         data-jbolttable
+         #if(rcvplanm.iAutoId??)
+         data-ajax="true"
+         data-url="admin/rcvpland/findEditTableDatas?rcvplanmid=#(rcvplanm.iAutoId??)"
+         #end
+         data-column-resize="true"
+         data-tfoot-fixed="true"
+         data-column-prepend="1:checkbox"
+         data-rowtpl="rcvplanm_tpl_#(pageId)"
+         data-toolbar="rcvplanm_toolbar_#(pageId)"
+         data-editable="true"
+         data-page="rcvplanm_tpl_#(pageId)"
+         data-editable-option="getJBoltTableEditableColsOpton">
+    <thead class="fw_normal">
+    <tr>
+      <th data-width="60">序号</th>
+      <th data-width="150">操作</th>
+      <th data-width="150" data-column="ccarno">取货车次号</th>
+      <th data-width="150" data-column="cplancode">计划代码</th>
+      <th data-width="150" data-column="crcvdate">取货日期</th>
+      <th data-width="150" data-column="crcvtime">取货时间</th>
+      <th data-width="150" data-column="cbarcode">传票号</th>
+      <th data-width="80" data-column="cversion">传票版本号</th>
+      <th data-width="150" data-column="caddress">收货地点</th>
+      <th data-width="150" data-column="cinvcode">存货编码</th>
+      <th data-width="180" data-column="cinvcode1">客户部番</th>
+      <th data-width="180" data-column="cinvname1">部品名称</th>
+      <th data-width="100" data-column="iqty">计划数量</th>
+    </tr>
+    </thead>
+    <!--<tfoot>
+        <th></th>
+        <th>合计</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tfoot>-->
+  </table>
 
 </div>
 #define js()
 <script>
-    hideParentLayerDialogBtn(0);
-    hideParentLayerDialogBtn(1);
-    function submitThisForm() {
-        jboltTableSubmit("#jbolt_Table_#(pageId)");
-    }
+  hideParentLayerDialogBtn(0);
+  hideParentLayerDialogBtn(1);
+  /*function submitThisForm() {
+      jboltTableSubmit("#jbolt_Table_#(pageId)");
+  }*/
 
-    function getJBoltTableEditableColsOpton() {
-        var editableTableOptions = {
+  var submit = false;
 
-            submit: {
-                withForm: ["rcvplanm_#(pageId)"],
-                name: 'rcvplanm',
-                type: "all",
-                url: "/admin/pickupPlanManage/submitAll",
-                success: function (res) {
-                    LayerMsgBox.success("提交成功", 600, function () {
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
-                }
-            },
-            cols: {
-                iautoid: {
-                    submitAttr: "iautoid",
-                },
-                ccarno: {
-                    type: "input",//类型
-                    //maxLength:10,  //输入长度
-                    placeholder: "取货车次号", //输入提示，里面
-                    tooltip: "取货车次号",//输入提示，上方
-                    //rule:"pint", //校验规则
-                    //min:1,//最小值
-                    //max:4,//最大值
-                    required: true,//必填
-                    //cssClass:"bg-danger text-white",//样式
-                    //cssStyle:"font-size:20px",//字体大小
-                },
-                cplancode: {
-                    type: "input",//类型
-                    placeholder: "计划代码", //输入提示，里面
-                    tooltip: "计划代码",//输入提示，上方
-                },
-                crcvdate: {
-                    type: "date",//类型
-                    placeholder: "取货日期", //输入提示，里面
-                    tooltip: "取货日期",//输入提示，上方
-                },
-                crcvtime: {
-                    type: "date",//类型
-                    placeholder: "取货时间", //输入提示，里面
-                    tooltip: "取货时间",//输入提示，上方
-                },
-                cbarcode: {
-                    type: "input",//类型
-                    placeholder: "传票号", //输入提示，里面
-                    tooltip: "传票号",//输入提示，上方
-                    required: true,//必填
-                },
-                cversion: {
-                    type: "input",//类型
-                    placeholder: "传票版本号", //输入提示，里面
-                    tooltip: "传票版本号",//输入提示，上方
-                },
-                caddress: {
-                    type: "input",//类型
-                    placeholder: "收货地点", //输入提示，里面
-                    tooltip: "收货地点",//输入提示，上方
-                },
-                cinvcode: {
-                    // type:"select",
-                    // url:admin/inventory/autocomplete,//url地址
-                    //valueAttr:"",//显示的字段，可以设置多个
-                    //onlyleaf:true,//树形结构只能选择叶子节点
-                    //required:true,//必填
-                    // changeColumns:[{column: "iinventoryid",//显示绑定的字段
-                    //                 use: "cinvcode"        //数据源的字段
-                    //                 }
-                    // ]   
-                    type: "autocomplete",
-                    url: "admin/inventory/autocomplete",
-                    maxLength: 100,
-                    required: true,
-                    placeholder: "请选择存货编码",
-                    textAttr: "cinvcode",
-                    width: 500,
-                    valueAttr: "cinvcode",//选择赋值的字段
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
-                    changeColumns: [{ column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
-                    { column: "cuomname", use: "cuomname" }, { column: "iinventoryid", use: "iautoid" }]
-                },
-                iqty: {
-                    type: "amount",//类型
-                    //maxLength:10,  //输入长度
-                    placeholder: "数量", //输入提示，里面
-                    tooltip: "数量",//输入提示，上方
-                    //rule:"pint", //校验规则
-                    min: 0,//最小值
-                    //max:4,//最大值
-                    required: true,//必填
-                    //cssClass:"bg-danger text-white",//样式
-                    //cssStyle:"font-size:20px",//字体大小
-                    summary: [{
-                        dir: "v",// v 纵向 ，h 横向
-                        tofixed: 2,//保留两位小数
-                        roundtag: "round",//四舍五入
-                        removezero: true,//去0
-                        formula: "sum"   //求和公式
-                    }]
-                },
+  function submitThisForm_#(pageId)(s){
+    // 保存并提交
+    submit = ele;
+    $("#operationType").val("submit");
+    jboltTableSubmit("#jbolt_Table_#(pageId)");
+    $("#operationType").val();
+  }
+
+  /**
+   * 新增/修改/提审
+   */
+  function successHandler(msg, iautoid) {
+    LayerMsgBox.success(msg, 600, function () {
+      // 新增/修改，均跳转到详情页
+      location.href = '/admin/pickupPlanManage/edit?iautoid=' + iautoid + '&_jb_rqtype_=dialog';
+      parent.refreshPjaxContainer();
+    });
+  }
+
+  function getJBoltTableEditableColsOpton() {
+    var editableTableOptions = {
+      submit: {
+        withForm: ["rcvplanm_#(pageId)"],
+        name: 'rcvplanm',
+        type: "all",
+        url: "/admin/pickupPlanManage/submitAll",
+        success: function (res) {
+          var state = res.state;
+          if (state === 'ok') {
+            if (submit) {
+              let iautoid = res.iautoid;
+              submit_
+              #(pageId)(iautoid, function () {
+                successHandler('提交审核成功', iautoid);
+              });
+            } else {
+              successHandler(ret.msg, iautoid);
             }
-        };
-        return editableTableOptions;
-    }
+          } else {
+            LayerMsgBox.error(res.msg);
+          }
+        }
+      },
+      cols: {
+        iautoid: {
+          submitAttr: "iautoid",
+        },
+        ccarno: {
+          type: "input",//类型
+          //maxLength:10,  //输入长度
+          placeholder: "取货车次号", //输入提示，里面
+          tooltip: "取货车次号",//输入提示，上方
+          required: true,//必填
+        },
+        cplancode: {
+          type: "input",//类型
+          placeholder: "计划代码", //输入提示，里面
+          tooltip: "计划代码",//输入提示，上方
+        },
+        crcvdate: {
+          type: "date",//类型
+          placeholder: "取货日期", //输入提示，里面
+          tooltip: "取货日期",//输入提示，上方
+        },
+        crcvtime: {
+          type: "date",//类型
+          placeholder: "取货时间", //输入提示，里面
+          tooltip: "取货时间",//输入提示，上方
+        },
+        cbarcode: {
+          type: "input",//类型
+          placeholder: "传票号", //输入提示，里面
+          tooltip: "传票号",//输入提示，上方
+          required: true,//必填
+        },
+        cversion: {
+          type: "input",//类型
+          placeholder: "传票版本号", //输入提示，里面
+          tooltip: "传票版本号",//输入提示，上方
+        },
+        caddress: {
+          type: "input",//类型
+          placeholder: "收货地点", //输入提示，里面
+          tooltip: "收货地点",//输入提示，上方
+        },
+        cinvcode: {
+          type: "autocomplete",
+          url: "admin/inventory/autocomplete",
+          maxLength: 100,
+          required: true,
+          placeholder: "请选择存货编码",
+          textAttr: "cinvcode",
+          width: 500,
+          valueAttr: "cinvcode",//选择赋值的字段
+          columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
+          header: '存货编码,客户部番,部品名称,规格,库存主单位',
+          changeColumns: [{column: "cinvcode", use: "cinvcode"}, {column: "cinvcode1", use: "cinvcode1"},
+            {column: "cinvname1", use: "cinvname1"}, {column: "cinvstd", use: "cinvstd"},
+            {column: "cuomname", use: "cuomname"}, {column: "iinventoryid", use: "iautoid"}]
+        },
+        iqty: {
+          type: "amount",//类型
+          placeholder: "数量", //输入提示，里面
+          tooltip: "数量",//输入提示，上方
+          min: 0,//最小值
+          required: true,//必填
+          summary: [{
+            dir: "v",// v 纵向 ，h 横向
+            tofixed: 2,//保留两位小数
+            roundtag: "round",//四舍五入
+            removezero: true,//去0
+            formula: "sum"   //求和公式
+          }]
+        },
+      }
+    };
+    return editableTableOptions;
+  }
 
 </script>
 #end

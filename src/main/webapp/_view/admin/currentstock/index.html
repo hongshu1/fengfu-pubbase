@@ -7,28 +7,52 @@
             <div class="col-12 text-left">
                 <form class="form-inline text-left" id="PuDeliveryDetailForm_#(pageId)" onsubmit="return false;"
                       method="post">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="=仓库名称=" name="whname"
-                           value=""/>
+                    <select class="form-control"
+                            name="whname"
+                            data-autoload
+                            data-url="admin/SysEnumeration/wareHouse"
+                            data-select-type="select2"
+                            data-text="=仓库名称="
+                            data-value=""
+                            data-value-attr="whname"
+                            data-text-attr="whname"
+                            data-select="#(whname??)"></select>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=盘点单号=" name="billno"
                            value=""/>
-                    <select class="form-control" data-autoload data-url="admin/dictionary/options?key=checktype"
-                            name="checktype" data-tips="=盘点方式=" data-text="=盘点方式=" data-value=""
-                            data-value-attr="sn"></select>
+                    <select style="width:150px" class="form-control"
+                            data-autoload
+                            data-text="=盘点方式="
+                            name="checktype"
+                    >
+                        <option value="">=盘点方式=</option>
+                        <option value="0">明盘</option>
+                        <option value="1">暗盘</option>
+                    </select>
 
-                    <input type="text" autocomplete="off" class="form-control" placeholder="=状态=" name="venname"
-                           value=""/>
+
+                    <select style="width:150px" class="form-control"
+                            data-autoload
+                            data-text="=状态="
+                            name="iorderstatus"
+                    >
+                        <option value="">=状态=</option>
+                        <option value="0">盘点中</option>
+                        <option value="1">待审核</option>
+                        <option value="2">已完成</option>
+                        <option value="3">审核不通过</option>
+                    </select>
 
                     <div class="input-group d-inline-block text-nowrap">
                         <div class="input-group-prepend">
                             <input type="text" class="form-control" data-date data-type="date" data-fmt="yyyy-MM-dd"
-                                   autocomplete="off" placeholder="开始日期" maxlength="27" name="sdate"/>
+                                   autocomplete="off" placeholder="开始日期" maxlength="27" name="startdate"/>
                         </div>
                         <div class="input-group-append">
                             <span class="input-group-text">至</span>
                         </div>
                         <div class="input-group-append">
                             <input type="text" class="form-control" data-date data-type="date" data-fmt="yyyy-MM-dd"
-                                   autocomplete="off" placeholder="结束日期" maxlength="27" name="edate"/>
+                                   autocomplete="off" placeholder="结束日期" maxlength="27" name="enddate"/>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-light"><i class="fa fa-search"></i> 查询</button>
@@ -44,23 +68,9 @@
             {@each datas as data,index}
             <tr data-id="${data.autoid}">
                 <td>${pageNumber,pageSize,index | rownum}</td>
-                <td>${data.createdate|date_ymdhms}</td>
-
-                <td>
-                    {@if data.iauditstatus == '0'}
-                    <span>盘点中</span>
-                    {@else if data.iauditstatus == '1'}
-                    <span>待审核</span>
-                    {@else if data.iauditstatus == '2'}
-                    <span>已完成</span>
-                    {@/if}
-                </td>
-                <td>
-                    <a class="jbolt_table_editbtn" href="admin/currentstock/stockEdit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑特殊领料单列表">编辑</i></a>
-                </td>
-
                 <td>${data.whcode}</td>
                 <td>${data.whname}</td>
+                <td>${data.poscodes}</td>
                 <td>${data.billno}</td>
                 <td>
                     {@if data.checktype == 0}
@@ -69,14 +79,31 @@
                     <span>暗盘</span>
                     {@/if}
                 </td>
-                <td>${data.venname}</td>
-                <td>${data.venname}</td>
-                <td>${data.venname}</td>
-                <td>${data.venname}</td>
+                <td>应盘料品</td>
+                <td>已盘料品</td>
+                <td>未盘料品</td>
+                <td>盘盈料品</td>
+                <td>盘亏料品</td>
+                <td>${data.auditstate}</td>
+                <td>${data.ccreatename}</td>
+                <td>${data.memo}</td>
+                <td>${data.dcreatetime}</td>
 
 
-                <td>${data.checkperson}</td>
-                <td>${data.null}</td>
+
+                <td>
+                    {@if data.iauditstatus != '0'}
+                    <a class="jbolt_table_editbtn" href="admin/currentstock/stockEdit/${data.autoid}?&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" data-title="材料出库单列表详情">查看</i></a>
+                    {@/if}
+                    {@if data.iauditstatus == '0'}
+                    <a href="admin/materialreturnlist/deleteByIds?ids=${data.autoid}" data-ajaxbtn data-loading="执行中 "
+                       tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
+                       class="jbolt_table_delbtn">删除</a>
+                    <a class="jbolt_table_editbtn" href="admin/currentstock/stockEdit/${data.autoid}" data-fs="true" data-handler="refreshJBoltTable"  data-title="编辑材料出库单列表">编辑</i></a>
+                    {@else if data.iauditstatus == '1'}
+                    <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=T_Sys_StockCheckVouch&primaryKeyName=autoid&formAutoId=${data.autoid}&permissionKey=currentstock_withdraw&className=cn.rjtech.admin.currentstock.CurrentStockService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip  data-title="撤回材料出库表" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">撤回</i></a>
+                    {@/if}
+                    </td>
             </tr>
             {@/each}
         </script>
@@ -101,24 +128,29 @@
                data-rowtpl="PuInsStoreDetailRowtpl_#(pageId)"
                data-toolbar="jbolt_table_toolbar_#(pageId)"
                data-page="PuDeliveryDetailPage_#(pageId)"
-               data-row-dblclick-active="true">
+               data-row-dblclick-active="true"
+               data-fixed-columns-right="-1"
+        >
             <thead>
             <thead class="thead-blue">
             <tr>
                 <th data-width="80" data-min-width="100" data-column="index">序号</th>
-                <th data-min-width="160" data-column="rcvno">盘点时间</th>
-                <th data-min-width="90" data-column="status">状态</th>
 
                 <th data-width="100" data-column="whcode">仓库编码</th>
                 <th data-width="150" data-column="whname">仓库名称</th>
+                <th data-width="150" data-column="whname">库区名称</th>
                 <th data-width="150" data-column="billno">盘点单号</th>
                 <th data-width="90" data-column="checktype">盘点方式</th>
                 <th data-width="200" data-column="createperson">应盘料品</th>
                 <th data-width="200" data-column="createdate">已盘料品</th>
                 <th data-min-width="160" data-column="rcvno">未盘料品</th>
                 <th data-min-width="160" data-column="rcvno">盘盈料品</th>
-                <th data-min-width="160" data-column="checkperson">盘点人</th>
-                <th data-min-width="160" data-column="rcvno">盘点备注</th>
+                <th data-min-width="160" data-column="rcvno">盘亏料品</th>
+                <th data-min-width="90" data-column="status">状态</th>
+                <th data-min-width="160" data-column="ccreatename">盘点人</th>
+                <th data-min-width="160" data-column="mono">盘点备注</th>
+                <th data-min-width="160" data-column="ccreatename">盘点时间</th>
+                <th data-width="150" data-column="">操作</th>
             </tr>
             </thead>
             <tbody>

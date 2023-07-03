@@ -427,6 +427,9 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("200".equals(jsonObject.getString("code"))) {
+                    SysOtherin byId = findById(sysotherin.getAutoID());
+                    byId.setU8BillNo("");
+                    byId.update();
                     return Ret.ok().setOk().data(jsonObject);
                 }
             }

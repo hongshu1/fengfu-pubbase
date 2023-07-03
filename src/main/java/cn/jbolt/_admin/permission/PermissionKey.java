@@ -338,6 +338,18 @@ public class PermissionKey {
 	 */
 	public static final String INVENTORYSPOTCHECKFORM = "inventoryspotcheckform";
 	/**
+	 * 新增
+	 */
+	public static final String WAREHOUSE_AREA_ADD = "warehouse_area_add";
+	/**
+	 * 编辑
+	 */
+	public static final String WAREHOUSE_AREA_EDIT = "warehouse_area_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_AREA_DELETE = "warehouse_area_delete";
+	/**
 	 * 功能权限
 	 */
 	public static final String MENU_PERMISSION = "menu_permission";
@@ -353,6 +365,54 @@ public class PermissionKey {
 	 * 客户档案明细
 	 */
 	public static final String CUSTOMERD = "customerd";
+	/**
+	 * 新增
+	 */
+	public static final String WAREHOUSE_SHELVES_ADD = "warehouse_shelves_add";
+	/**
+	 * 编辑
+	 */
+	public static final String WAREHOUSE_SHELVES_EDIT = "warehouse_shelves_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_SHELVES_DELETE = "warehouse_shelves_delete";
+	/**
+	 * 导出
+	 */
+	public static final String WAREHOUSE_SHELVES_EXPORT = "warehouse_shelves_export";
+	/**
+	 * 导入
+	 */
+	public static final String WAREHOUSE_SHELVES_IMPORT = "warehouse_shelves_import";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_SHELVES_PRINT = "warehouse_shelves_print";
+	/**
+	 * 新增
+	 */
+	public static final String WAREHOUSE_POSITION_ADD = "warehouse_position_add";
+	/**
+	 * 编辑
+	 */
+	public static final String WAREHOUSE_POSITION_EDIT = "warehouse_position_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WAREHOUSE_POSITION_DELETE = "warehouse_position_delete";
+	/**
+	 * 导出
+	 */
+	public static final String WAREHOUSE_POSITION_EXPORT = "warehouse_position_export";
+	/**
+	 * 导入
+	 */
+	public static final String WAREHOUSE_POSITION_IMPORT = "warehouse_position_import";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_POSITION_PRINT = "warehouse_position_print";
 	/**
 	 * 新增
 	 */
@@ -649,6 +709,14 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String WORKREGIONM_IMPORT = "workregionm_import";
+	/**
+	 * 导出
+	 */
+	public static final String WAREHOUSE_AREA_EXPORT = "warehouse_area_export";
+	/**
+	 * 导入
+	 */
+	public static final String WAREHOUSE_AREA_IMPORT = "warehouse_area_import";
 	/**
 	 * 卷料采购送货单
 	 */
@@ -2822,79 +2890,11 @@ public class PermissionKey {
 	 */
 	public static final String WAREHOUSE_EXPORT = "warehouse_export";
 	/**
-	 * 数据导入
+	 * 导入
 	 */
 	public static final String WAREHOUSE_IMPORT = "warehouse_import";
 	/**
 	 * 批量报工
 	 */
 	public static final String API_WORKBYIDS = "api_workbyids";
-	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_AREA_ADD = "warehouse_area_add";
-	/**
-	 * 修改
-	 */
-	public static final String WAREHOUSE_AREA_EDIT = "warehouse_area_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_AREA_DELETE = "warehouse_area_delete";
-	/**
-	 * 数据导出
-	 */
-	public static final String WAREHOUSE_AREA_EXPORT = "warehouse_area_export";
-	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_SHELVES_ADD = "warehouse_shelves_add";
-	/**
-	 * 修改
-	 */
-	public static final String WAREHOUSE_SHELVES_EDIT = "warehouse_shelves_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_SHELVES_DELETE = "warehouse_shelves_delete";
-	/**
-	 * 数据导出
-	 */
-	public static final String WAREHOUSE_SHELVES_EXPORT = "warehouse_shelves_export";
-	/**
-	 * 数据导入
-	 */
-	public static final String WAREHOUSE_SHELVES_IMPORT = "warehouse_shelves_import";
-	/**
-	 * 新增
-	 */
-	public static final String WAREHOUSE_POSITION_ADD = "warehouse_position_add";
-	/**
-	 * 修改
-	 */
-	public static final String WAREHOUSE_POSITION_EDIT = "warehouse_position_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WAREHOUSE_POSITION_DELETE = "warehouse_position_delete";
-	/**
-	 * 数据导出
-	 */
-	public static final String WAREHOUSE_POSITION_EXPORT = "warehouse_position_export";
-	/**
-	 * 数据导入
-	 */
-	public static final String WAREHOUSE_POSITION_IMPORT = "warehouse_position_import";
-	/**
-	 * 数据导入
-	 */
-	public static final String WAREHOUSE_AREA_IMPORT = "warehouse_area_import";
-	/**
-	 * 新增
-	 */
-	public static final String FITEMSS97_ADD = "fitemss97_add";
-	/**
-	 * 删除
-	 */
-	public static final String FITEMSS97_DELETED = "fitemss97_deleted";
 }
