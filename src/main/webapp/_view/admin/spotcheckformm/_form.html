@@ -29,7 +29,8 @@
     <div class="py-2" style="padding:.5rem 0rem;">
         <span class="py-1"><strong>工单信息</strong></span>
     </div>
-    #if(readonly == 'readonly')
+    #if(readonly != 'readonly')
+    #if(controls == '1')
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -85,6 +86,7 @@
         </div>
     </div>
     #end
+    #end
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -105,11 +107,13 @@
                 <div class="col-2">
                     <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="20" name="spotCheckFormM.cequipmentmodelname" value="#(spotCheckFormM.cequipmentnames??)"/>
                 </div>
-                #if(readonly == 'readonly')
+                #if(readonly != 'readonly')
+                #if(controls == '1')
                 <label class="col-sm-1 col-form-label">状态</label>
                 <div class="col-2">
                     <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="20" name="statename" value="#(data.statename??)"/>
                 </div>
+                #end
                 #end
 
             </div>
@@ -125,7 +129,8 @@
     <div class="py-2" style="padding:.5rem 0rem;margin-top: 10px">
 
     </div>
-    #if(readonly == 'readonly')
+    #if(readonly != 'readonly')
+    #if(controls == '1')
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -189,6 +194,7 @@
 
     </div>
     #end
+    #end
 </form>
 #define js()
 #include("_table3_js.html")
@@ -219,12 +225,16 @@
         }, function (ret) {
             if (ret.state === 'ok') {
                 LayerMsgBox.success(ret.msg, 1000, function () {
+                    console.log(ret);
                     // 表格保存之后，判断是否需要提审处理
                     // 提交审核（审批）调用
                     if (submit) {
+                        console.log(ret);
                         // 提审
                         submit_#(pageId)(ret.data.data.iautoid, function (data) {
-                            successHandler('提审成功', ret.data.data.iautoid);
+                            // successHandler('提审成功', ret.data.data.iautoid);
+                            LayerMsgBox.success('提审成功', 2);
+                            location.reload();
                         });
                     } else {
                         successHandler(ret.msg, ret.data.data.iautoid);
@@ -247,7 +257,7 @@
         var controls = $("input[name='controls']").val();
         var croutingname = $("input[name='croutingname']").val();
         var cequipmentnames = $("input[name='spotCheckFormM.cequipmentmodelname']").val();
-
+        console.log(spotcheckformmid);
         LayerMsgBox.success(msg, 600, function () {
             // 新增/修改，均跳转到详情页
             var url="admin/spotCheckFormM/edit?coperationname="+coperationname+'&iinventoryid='+iinventoryid

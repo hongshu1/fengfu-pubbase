@@ -22,8 +22,8 @@
 <a class=jbolt_table_editbtn href="admin/spotCheckFormM/edit?
     iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
-    &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
-    &cspotcheckformname=${data.cspotcheckformname}"
+    &spotcheckformmid=${data.spotcheckformmid}&controls=1&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
+    &cspotcheckformname=${data.cspotcheckformname}&readonly=readonly"
     data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="详情"><i class="fa fa-eye"></i>查看</a>
 
     {@if data.iauditstatus == '未生成' }
@@ -40,7 +40,7 @@
     <a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
     &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
-    &cspotcheckformname=${data.cspotcheckformname}
+    &cspotcheckformname=${data.cspotcheckformname}&controls=0
     &edit=true"
     data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable"
     data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>

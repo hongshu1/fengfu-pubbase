@@ -69,6 +69,9 @@ where
       #if(itye)
       and  a.iType=#para(itye)
       #end
+      #if(coperationname)
+      and  c.cOperationName=#para(coperationname)
+      #end
 
 
 #end
