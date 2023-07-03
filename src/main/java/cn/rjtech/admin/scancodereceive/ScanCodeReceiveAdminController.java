@@ -153,18 +153,18 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     @UnCheck
     public void getResource(){
         String q = get("q");
-        if (notOk(q)){
+        /*if (notOk(q)){
             renderJsonSuccess();
             return;
-        }
-        String itemHidden = get("itemHidden");
+        }*/
+        String detailHidden = get("detailHidden");
         String groupCode = get("groupCode");
         String sourceBillType = get("sourceBillType");
         Kv kv = new Kv();
-        kv.set("keywords",q);
+        kv.setIfNotNull("keywords",q);
         kv.setIfNotNull("sourceBillType", sourceBillType);
         kv.setIfNotNull("combination", groupCode);
-        kv.setIfNotNull("itemHidden", itemHidden);
+        kv.setIfNotNull("detailHidden", detailHidden);
         kv.setIfNotNull("barcodetype", "转换前");
         renderJsonData(service.getResource(kv));
     }
@@ -183,5 +183,5 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
         kv.set("supplier",notOk(supplier)?' ':supplier);
         renderJsonData(service.getBarcodeDatas(kv));
     }
-    
+
 }

@@ -5,12 +5,15 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.StockCheckVouchBarcode;
 import cn.rjtech.model.momdata.StockCheckVouchDetail;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 import static cn.jbolt.core.para.JBoltParaValidator.isOk;
@@ -130,6 +133,10 @@ public class StockCheckVouchDetailService extends BaseService<StockCheckVouchDet
 			return true;
 		});
 		return SUCCESS;
+	}
+
+	public List<StockCheckVouchDetail> findListByMasId(Long masid) {
+		return find("select * from T_Sys_StockCheckVouchDetail where MasID=?", masid);
 	}
 
 }
