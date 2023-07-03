@@ -3,6 +3,7 @@ package cn.rjtech.admin.rcvdocdefect;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
@@ -213,6 +214,8 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 						String cApproach = rcvDocDefect.getCApproach();
 						System.out.println("==="+cApproach.equals("1"));
 						System.out.println("==="+cApproach=="1");
+						rcvDocDefect.setIQcUserId(JBoltUserKit.getUserId());        //检验用户ID
+						rcvDocDefect.setDQcTime(now); 								//检验时间
 						if (cApproach.equals("1")){
 							RcvDocQcFormM docQcFormM=rcvDocQcFormMService.findById(rcvDocDefect.getIRcvDocQcFormMid());
 
@@ -249,7 +252,15 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 
 
 		//录入填写的数据
-		rcvDocDefect.setIStatus(2);
+		if (formRecord.getStr("param")!=null){
+			rcvDocDefect.setIStatus(1);
+		}else {
+			rcvDocDefect.setIStatus(2);
+		}
+		//更新人和时间
+		rcvDocDefect.setIUpdateBy(JBoltUserKit.getUserId());
+		rcvDocDefect.setCUpdateName(JBoltUserKit.getUserName());
+		rcvDocDefect.setDUpdateTime(now);
 		rcvDocDefect.setIQcUserId(JBoltUserKit.getUserId());        //检验用户ID
 		rcvDocDefect.setDQcTime(now);        						//检验时间
 		rcvDocDefect.setIDqQty(formRecord.getBigDecimal("idqqty"));
@@ -257,7 +268,6 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		rcvDocDefect.setIsFirstTime(formRecord.getBoolean("isfirsttime"));
 		rcvDocDefect.setCBadnessSns(formRecord.getStr("cbadnesssns"));
 		rcvDocDefect.setCDesc(formRecord.getStr("cdesc"));
-
 		rcvDocDefect.update();
 	}
 
@@ -282,8 +292,8 @@ public class RcvDocDefectService extends BaseService<RcvDocDefect> {
 		rcvDocDefect.setCUpdateName(userName);
 		rcvDocDefect.setDUpdateTime(date);
 		rcvDocDefect.setIUpdateBy(userId);
-//		rcvDocDefect.setIQcUserId(docQcFormM.getIQcUserId());        //检验用户ID
-//		rcvDocDefect.setDQcTime(docQcFormM.getDUpdateTime());        //检验时间
+		rcvDocDefect.setIQcUserId(JBoltUserKit.getUserId());        //检验用户ID
+		rcvDocDefect.setDQcTime(date);        						//检验时间
 //		rcvDocDefect.setCBadnessSns("不良项目");
 	}
 
