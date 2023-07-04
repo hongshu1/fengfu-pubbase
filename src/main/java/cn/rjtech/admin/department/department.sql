@@ -76,3 +76,6 @@ select * from Bd_Department where ipid=#para(ipid)
 #end
 
 
+#sql("findERPPersons")
+SELECT * FROM Person where cpersoncode in (#(sqlPersonCode))
+#end
