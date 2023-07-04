@@ -1800,7 +1800,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 查询审批过程待审批的人员
      */
-    public List<Long> getNextApprovalUserNames(Long formAutoId, Integer size) {
+    public List<String> getNextApprovalUserNames(Long formAutoId, Integer size) {
         Kv kv = Kv.by("formAutoId", formAutoId)
                 .set("size", size);
 

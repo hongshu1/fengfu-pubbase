@@ -9,7 +9,7 @@ FROM
 	Bd_Warehouse_Shelves ws
 	LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = ws.iWarehouseId
 	LEFT JOIN Bd_Warehouse_Area wa ON wa.iAutoId = ws.iWarehouseAreaId
-	WHERE 1=1
+	WHERE ws.isDeleted=0
     #if(cshelvescode)
         AND ws.cShelvesCode LIKE CONCAT('%', #para(cshelvescode), '%')
     #end
@@ -22,8 +22,8 @@ FROM
     #if(isenabled)
         AND ws.isEnabled = #para(isenabled)
     #end
-    #if(isdeleted)
-        AND ws.isDeleted = #para(isdeleted)
+    #if(iwarehouseareaid)
+    AND ws.iWarehouseAreaId=#(iwarehouseareaid)
     #end
     #if(ids)
         AND CHARINDEX(','+cast((select ws.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0

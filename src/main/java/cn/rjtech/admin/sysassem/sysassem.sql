@@ -220,7 +220,9 @@ from PS_PurchaseOrderDBatch a
          left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
 	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
 	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
-where a.isEffective = '1' and change.iAutoId is not null
+	     left join T_Sys_PUInStoreDetail pdetail on pdetail.BarCode = a.cCompleteBarcode
+	     left join T_Sys_PUInStore store on store.AutoID = pdetail.MasID
+where a.isEffective = '1' and change.iAutoId is not null  and store.iAuditStatus = '2' and pdetail.AutoId is not null
   and m.IsDeleted = '0'
 ###   and m.hideInvalid = '0'
   and d.isDeleted = '0'
@@ -245,8 +247,8 @@ where a.isEffective = '1' and change.iAutoId is not null
   #if(detailHidden)
   and t.SourceBillDid not in (#(detailHidden))
   #end
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
-  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.barcode = t.barcode)
+###   and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
+###   and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.barcode = t.barcode)
 #end
 
 
@@ -294,7 +296,9 @@ from PS_PurchaseOrderDBatch a
          left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
 	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
 	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
-where a.isEffective = '1' and change.iAutoId is not null
+	     left join T_Sys_PUInStoreDetail pdetail on pdetail.BarCode = a.cCompleteBarcode
+	     left join T_Sys_PUInStore store on store.AutoID = pdetail.MasID
+where a.isEffective = '1' and change.iAutoId is not null  and store.iAuditStatus = '2' and pdetail.AutoId is not null
   and m.IsDeleted = '0'
 ###   and m.hideInvalid = '0'
   and d.isDeleted = '0'
@@ -323,8 +327,8 @@ where a.isEffective = '1' and change.iAutoId is not null
   and t.barcode = #para(barcode)
   #end
 
-  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
-  and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.Barcode = t.barcode)
+ ###  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
+ ###   and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.Barcode = t.barcode)
 #end
 
 

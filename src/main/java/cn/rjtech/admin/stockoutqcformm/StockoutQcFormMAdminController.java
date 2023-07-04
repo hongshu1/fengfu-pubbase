@@ -1,6 +1,7 @@
 package cn.rjtech.admin.stockoutqcformm;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.para.JBoltPara;
@@ -111,6 +112,9 @@ public class StockoutQcFormMAdminController extends BaseAdminController {
         service.checkAutoCreateStockoutQcFormD(record.getLong("iautoid"));
         // 表头项目
         List tableHeadData = rcvDocQcFormMService.getTableHeadData(record.getLong("iqcformid"));
+        if (StrUtil.isBlank(record.getStr("cmeasurereason"))) {
+            record.set("cmeasurereason", record.getStr("cmeasure"));
+        }
         set("columns", tableHeadData);
         set("record", record);
         render("checkout.html");

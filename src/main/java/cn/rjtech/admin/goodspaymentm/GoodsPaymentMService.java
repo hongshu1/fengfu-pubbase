@@ -9,6 +9,7 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.GoodsPaymentM;
 import cn.rjtech.util.ValidationUtils;
@@ -42,6 +43,9 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
+
+	@Inject
+	private FormApprovalService formApprovalService;
 
 	/**
 	 * 后台管理数据查询
@@ -177,11 +181,9 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 		tx(()->{
 			//通过 id 判断是新增还是修改
 			if(rcvplanm.getIAutoId() == null){
-				rcvplanm.setIOrgId(getOrgId());
 				rcvplanm.setCOrgCode(getOrgCode());
 				rcvplanm.setCOrgName(getOrgName());
-				rcvplanm.setIStatus(1);
-
+				rcvplanm.setCGoodsPaymentNo(JBoltSnowflakeKit.me.nextIdStr());
 				rcvplanm.setICreateBy(user.getId());
 				rcvplanm.setCCreateName(user.getName());
 				rcvplanm.setDCreateTime(now);
@@ -207,7 +209,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 			deleteTableSubmitDatas(jBoltTable);
 			return true;
 		});
-		return SUCCESS;
+		return Ret.ok().set("autoid", rcvplanm.getIAutoId());
 	}
 
 	//可编辑表格提交-新增数据
@@ -253,5 +255,29 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 		for (Object id : ids) {
 			goodsPaymentDservice.deleteById(id);
 		}
+	}
+
+	/**
+	 * 提审批
+	 */
+	public Ret submit(Long iautoid) {
+		tx(() -> {
+
+			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.goodspaymentm.GoodsPaymentMService");
+			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
+
+			return true;
+		});
+		return SUCCESS;
+	}
+
+
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String iCustomerId1) {
+		return dbTemplate("goodspaymentm.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("icustomerid", iCustomerId1)).find();
 	}
 }

@@ -808,7 +808,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             otherOut.setDCreateTime(now);
             otherOut.setCUpdateName(userName);
             otherOut.setDupdateTime(now);
-            otherOut.setType("OtherOut");
+            otherOut.setType("StockCheckVouch");
             otherOut.setIAuditWay(1);
             otherOut.setIAuditStatus(1);//待审核
             otherOut.setIsDeleted(false);

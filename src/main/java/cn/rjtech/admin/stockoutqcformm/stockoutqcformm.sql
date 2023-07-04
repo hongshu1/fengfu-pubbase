@@ -9,7 +9,7 @@ SELECT t1.*,
        t3.cInvAddCode,
        t6.cEquipmentName,
        u.cUomCode,u.cUomName,
-       t7.cpics,t7.ctypeids,t7.ctypenames,
+       t7.cpics,t7.ctypeids,t7.ctypenames,t7.cmeasure,
        t8.ccusname,
        co.cOrderNo,
        statusname =
@@ -52,6 +52,9 @@ where t1.IsDeleted = '0'
   #end
   #if(iscompleted)
   AND t1.iscompleted =#para(iscompleted)
+  #end
+  #if(iscompleteds)
+  AND t1.iscompleted =#para(iscompleteds)
   #end
   #if(istatus)
   AND t1.istatus =#para(istatus)

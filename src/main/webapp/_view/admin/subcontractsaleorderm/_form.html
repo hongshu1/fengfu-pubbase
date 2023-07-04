@@ -12,7 +12,7 @@
                         #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-sx">保存</button>
                         #end
-                        #if(subcontractsaleorderm.iAutoId??)
+                        #if(subcontractsaleorderm.iAutoId?? && subcontractsaleorderm.iorderstatus != 7)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/subcontractsaleorderm",
                         formSn="Co_SubcontractSaleOrderM", o=subcontractsaleorderm, primaryKeyName="iAutoId",
                         className="cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService",  permissionKeyPrefix="subcontractsaleorderm")

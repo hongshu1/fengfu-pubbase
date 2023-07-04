@@ -6,7 +6,9 @@ SELECT
              WHEN t1.iAuditStatus=2 THEN '审核通过'
              WHEN t1.iAuditStatus=3 THEN '审核不通过' END,
         TypeName =
-        CASE WHEN t1.Type='OtherOutMES' THEN '特殊领料单'
+        CASE
+             WHEN t1.Type='OtherOutMES' THEN '特殊领料单'
+             WHEN t1.Type='StockCheckVouch' THEN '库存盘点单'
              WHEN t1.Type='OtherOut' THEN '手动新增'END,
     t1.*,
     t4.cDepName,

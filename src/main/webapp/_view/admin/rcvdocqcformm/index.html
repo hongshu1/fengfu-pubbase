@@ -18,7 +18,8 @@
     <div class="row">
       <div class="col">
         <form class="form-inline" id="rcvDocQcFormMForm_#(pageId)" style="left: 30px;text-align: left">
-          <input type="hidden"  id="iscompleted" name="iscompleted2" value="#(iscompleted??)"/>
+          <input type="hidden"  id="switchiscompleted" name="switchiscompleted" value="#(iscompleted??)"/>
+          <input type="hidden"  id="switchiscompleted2" name="switchiscompleted2" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="crcvdocqcformno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=收料单号=" name="crcvdocno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=供应商名称=" name="cvenname" value=""/>
@@ -158,7 +159,7 @@
         <th data-width="120" data-column="iStatus">检验结果</th><!--0. 未生成 1. 待检 2. 不合格 3. 合格-->
         <th data-width="120" data-column="isCompleted">状态</th>
         <th data-width="150" data-column="iMask">标记</th><!--1. 正常 2. 初物-->
-        <th data-width="150" data-column="cQcFormName">检验表格名称</th>
+        <th data-width="200" data-column="cQcFormName">检验表格名称</th>
         <th data-width="180" data-column="cRcvDocQcFormNo">检验单号</th>
         <th data-width="180" data-column="cRcvDocNo">收料单号</th>
         <th data-width="180" data-column="cVenName">供应商名称</th>
@@ -184,9 +185,8 @@
 <script type="text/javascript">
 
   function selectFinishDocList(iscompleted) {
-    console.log(iscompleted);
-    let val = $('#iscompleted').val(iscompleted);
-    $('#stockoutqcformmForm_#(pageId)').submit();
+    $('#switchiscompleted2').val(iscompleted);
+    $('#rcvDocQcFormMForm_#(pageId)').submit();
     LayerMsgBox.success();
   }
 

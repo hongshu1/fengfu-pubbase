@@ -19,6 +19,7 @@
       <div class="col">
         <form class="form-inline" id="stockoutqcformmForm_#(pageId)" style="left: 30px;text-align: left">
           <input type="text" hidden id="iscompleted" name="iscompleted2" value="#(iscompleted??)"/>
+          <input type="hidden" id="iscompleteds" name="iscompleteds" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=检验单号=" name="cstockoutqcformno" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
           <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvcode1" value=""/>
@@ -176,9 +177,10 @@
 <script type="text/javascript">
 
   function selectFinishDocList(iscompleted) {
+    console.log("switchiscompleted==>"+iscompleted);
     $('#iscompleted').val(iscompleted);
+    $('#iscompleteds').val(iscompleted);
     $('#stockoutqcformmForm_#(pageId)').submit();
-    LayerMsgBox.success();
   }
 
   /*
