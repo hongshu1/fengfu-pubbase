@@ -1,5 +1,7 @@
 package cn.rjtech.api.spotcheckformm;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.inventoryspotcheckform.InventorySpotCheckFormService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
@@ -19,6 +21,8 @@ import io.github.yedaxia.apidocs.ApiDoc;
  * 点检管理
  * @author yjllzy
  */
+@CheckPermission(PermissionKey.API_SPOTCHECKFORMM)
+@ApiDoc
 public class SpotCheckFormMApiController extends BaseApiController {
 
     @Inject
@@ -108,7 +112,7 @@ public class SpotCheckFormMApiController extends BaseApiController {
     @UnCheck
     public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
                            @Para(value = "tableJsonData") String tableJsonDataStr){
-        renderJsonData(service.submitForm(formJsonDataStr, tableJsonDataStr));
+        renderJBoltApiRet(service.submitForm(formJsonDataStr, tableJsonDataStr));
     }
 
 }
