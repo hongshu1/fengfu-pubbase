@@ -42,20 +42,18 @@ public class ApiRoutes extends Routes {
     public void config() {
         this.add("/api/org", OrgApiController.class);
         this.add("/api/user", UserApiController.class);
-        this.add("/api/upload", UploadApiController.class);
-        this.add("/api/erp/common", CommonApiController.class);
-        this.add("/api/appversion", AppversionApiController.class);
-
-        // 通用接口
-        this.add("/api/general", GeneralApiController.class);
-        // 制造工单
         this.add("/api/modoc", ModocApiController.class);
-        //生产退料
-        this.add("/api/momaterialsreturnm",MoMaterialsreturnmApiController.class);
-		 // 现品票
+        this.add("/api/upload", UploadApiController.class);
+        this.add("/web/common/print", PrintController.class);
+        this.add("/api/general", GeneralApiController.class);
+        this.add("/api/uptimem", UptimeMApiController.class);
+        this.add("/api/erp/common", CommonApiController.class);
+        this.add("/api/prodformm", ProdFormMApiController.class);
+        this.add("/api/appversion", AppversionApiController.class);
+        this.add("/api/formuploadm", FormUploadMApiController.class);
+        this.add("/api/workregionm", WorkRegionmApiController.class);
+        this.add("/api/formapproval", FormApprovalApiController.class);
         this.add("/api/momoinvbatch", MoMoinvbatchApiController.class);
-
-        // NFC刷卡
         this.add("/api/nfcswipecard", NfcSwipeCardApiController.class);
         this.add("/api/rcvdocdefect", RcvDocDefectApiController.class);
         this.add("/api/qcinspection", QcInspectionApiController.class);
@@ -64,32 +62,13 @@ public class ApiRoutes extends Routes {
         this.add("/api/rcvdocqcformm", RcvDocQcFormMApiController.class);
         this.add("/api/instockqcformm", InStockQcFormMApiController.class);
         this.add("/api/stockoutdefect", StockoutDefectApiController.class);
-        this.add("/api/stockoutqcformm", StockOutQcFormMApiController.class);
-
-        // 产线
-        this.add("/api/workregionm", WorkRegionmApiController.class);
-        // 齐料检查
-        this.add("/api/momaterialsscansum", MoMaterialsscansumApiController.class);
-        //记录上传
-        this.add("/api/formuploadm", FormUploadMApiController.class);
-        //记录上传-分类管理
-        this.add("/api/formuploadcategory", FormUploadCategoryApiController.class);
-        //工单工序
-        this.add("/api/momoroutingconfigoperation", MoMoroutingconfigOperationApiController.class);
-        //补焊记录
         this.add("/api/momopatchweldm", MoMopatchweldmApiController.class);
-        //稼动时间管理
-        this.add("/api/uptimem", UptimeMApiController.class);
-        //审批流/审核
-        this.add("/api/formapproval", FormApprovalApiController.class);
-
-        this.add("/api/prodformm", ProdFormMApiController.class);
-
         this.add("/api/spotcheckformm", SpotCheckFormMApiController.class);
-
-
-        this.add("/web/common/print", PrintController.class);
-        this.add("/api/momaterialsreturnm", MoMaterialsreturnmApiController.class);
+        this.add("/api/stockoutqcformm", StockOutQcFormMApiController.class);
+        this.add("/api/momaterialsscansum", MoMaterialsscansumApiController.class);
+        this.add("/api/formuploadcategory", FormUploadCategoryApiController.class);
+        this.add("/api/momaterialsreturnm",MoMaterialsreturnmApiController.class);
+        this.add("/api/momoroutingconfigoperation", MoMoroutingconfigOperationApiController.class);
     }
 
 }
