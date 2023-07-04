@@ -114,8 +114,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
 	 */
 	@SuppressWarnings("unchecked")
 	public void dataExport() throws Exception {
-		List<Record> rows = service.list(getKv());
-		renderJxls("warehousearea.xlsx", Kv.by("rows", rows), "库区列表_" + DateUtil.today() + ".xlsx");
+		renderJxls("warehousearea.xlsx", Kv.by("rows", service.list(getKv())), "库区列表_" + DateUtil.today() + ".xlsx");
 	}
 
 
