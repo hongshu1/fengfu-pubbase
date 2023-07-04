@@ -1,19 +1,32 @@
 package cn.rjtech.admin.uptimetplm;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.model.momdata.UptimeTplM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
+import com.jfinal.upload.UploadFile;
+
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 稼动时间建模-稼动时间模板主表
  * @ClassName: UptimeTplMAdminController
@@ -79,6 +92,15 @@ public class UptimeTplMAdminController extends BaseAdminController {
 		renderJson(service.update(uptimeTplM));
 	}
 
+	/**
+	 * 切换isEnabled
+	 */
+	@Before(Tx.class)
+	@TxConfig(DataSourceConstants.MOMDATA)
+	public void toggleIsEnabled() {
+		renderJson(service.toggleBoolean(getLong(0),"isEnabled"));
+	}
+
    /**
 	* 批量删除
 	*/
@@ -104,5 +126,54 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	public void submitAll()
 	{
 		renderJson(service.submitAll(getKv()));
+	}
+
+	/**
+	 * 导出
+	 */
+	public void exportExcelAll() throws Exception {
+		Page<Record> recordPage = service.getAdminDatas(1, 100000, getKv());
+		List<Record> rows = recordPage.getList();
+		if (!rows.isEmpty()) {
+			rows = rows.stream().map(row -> {
+				row.put("isenabled", row.getBoolean("isenabled") ? "是" : "否");
+				row.put("dcreatetime", DateUtil.format(row.getDate("dcreatetime"), "yyyy-MM-dd HH:mm"));
+				return row;
+			}).collect(Collectors.toList());
+		}
+		renderJxls("uptimetplm.xlsx", Kv.by("rows", recordPage.getList()), "稼动时间模板导出_" + DateUtil.today() + ".xlsx");
+	}
+
+	/**
+	 * 模板下载
+	 */
+	@SuppressWarnings("unchecked")
+	public void downloadTpl() {
+		try {
+			renderJxls("uptimetplmtemplate.xlsx", Kv.by("rows", null), "嫁接时间模板.xlsx");
+		} catch (Exception e) {
+			ValidationUtils.error("模板下载失败");
+		}
+	}
+
+	/**
+	 * 数据导入
+	 */
+	@SuppressWarnings("unchecked")
+	public void importExcelData() {
+		UploadFile uploadFile = getFile("file");
+		ValidationUtils.notNull(uploadFile, "上传文件不能为空");
+
+		File file = uploadFile.getFile();
+
+		List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+
+		// 截取最后一个“.”之前的文件名，作为导入格式名
+		String cformatName = list.get(0);
+
+		String extension = list.get(1);
+
+		ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+		renderJson(service.importExcelData(file, cformatName));
 	}
 }
