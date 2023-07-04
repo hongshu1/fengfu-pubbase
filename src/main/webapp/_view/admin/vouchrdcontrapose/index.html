@@ -25,9 +25,12 @@
         {@each datas as data,index}
         <tr data-id="${data.iautoid}" >
             <td>${pageNumber,pageSize,index | rownum}</td>
+
             <td>
+            	{@if data.isource == 1}
                 <a href="admin/vouchrdcontrapose/edit/${data.iautoid}" data-area="900,400"  tooltip data-title="修改"  data-handler="refreshJBoltTable" data-dialog-title="修改单据类型与收发类别对照表" class="jbolt_table_editbtn">修改</a>
                 <a href="admin/vouchrdcontrapose/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+            {@/if}
             </td>
             <td>${data.cvbtid}</td>
             <td>${data.cvtchname}${data.cbtchname|bracket}</td>
@@ -50,7 +53,7 @@
             <div class="clearfix"></div>
         </div>
 
-        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal hover_info"
+        <table class="jbolt_table jbolt_main_table table-center table-bordered thead_font_normal"
                data-jbolttable
                data-width="auto"
                data-height="fill"
@@ -93,7 +96,7 @@
 #define js()
 <script type="text/javascript">
 
-	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+/*	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
 		$(tempTr1).data('url', '/admin/vouchrdcontrapose/edit/' + rowData.iautoid)
 			.data('area', '900,400')
 			.data('handler','refreshJBoltTable')
@@ -101,6 +104,6 @@
 			.data('btn', '确认,关闭');
 
 		DialogUtil.openBy(tempTr1);
-	}
+	}*/
 </script>
 #end
