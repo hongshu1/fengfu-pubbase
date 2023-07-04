@@ -7,12 +7,14 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.bomm.BomMService;
+import cn.rjtech.admin.bommtrl.BommTrlService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.model.momdata.BomCompare;
 import cn.rjtech.model.momdata.BomM;
+import cn.rjtech.model.momdata.BommTrl;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -40,7 +42,8 @@ public class BomCompareAdminController extends BaseAdminController {
 	private BomMService bomMService;
 	@Inject
 	private EquipmentModelService equipmentModelService;
-	
+	@Inject
+	private BommTrlService bommTrlService;
 	
    /**
 	* 首页
@@ -98,7 +101,11 @@ public class BomCompareAdminController extends BaseAdminController {
 	public void info(){
 		BomM bomM = bomMService.findById(getLong(0));
 		ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
-		BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(bomM.getIType());
+		Kv kv = getKv();
+		bomMService.setBomRecord(getLong(0), false, true, kv);
+		setAttrs(kv);
+		render("manual_form.html");
+		/*BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(bomM.getIType());
 		ValidationUtils.notNull(bomSourceTypeEnum, "未知新增类型");
 		BomSourceTypeEnum manualTypeAdd = BomSourceTypeEnum.MANUAL_TYPE_ADD;
 		Kv kv = getKv();
@@ -109,6 +116,17 @@ public class BomCompareAdminController extends BaseAdminController {
 			render("manual_form.html");
 			return;
 		}
+		getBomMaster(bomM);
+		setAttrs(kv);
+		render("/_view/admin/bommaster/edit.html");*/
+	}
+	
+	public void fileInfo(){
+		
+		BommTrl bommTrl = bommTrlService.findById(getLong(0));
+		ValidationUtils.notNull(bommTrl, "为找导入文件数据");
+		Kv kv = getKv();
+		BomM bomM = bomMService.findById(bommTrl.getIBomMid());
 		getBomMaster(bomM);
 		setAttrs(kv);
 		render("/_view/admin/bommaster/edit.html");

@@ -177,3 +177,36 @@ WHERE
         )
     #end
 #end
+
+#sql("getFileRecord")
+SELECT
+	minv.cInvCode,
+	minv.cInvName,
+	minv.cInvStd,
+	minv.cInvCode1,
+	minv.cInvAddCode1,
+	minv.cInvName1,
+	minv.cInvName2,
+	m.dCreateTime,
+	m.cCreateName,
+	trl.*
+FROM
+	Bd_BomM_Trl trl
+	INNER JOIN Bd_BomM m ON m.iAutoId = trl.iBomMid
+	INNER JOIN Bd_Inventory minv ON minv.iAutoId = m.iInventoryId
+WHERE
+	1 = 1
+	#if(orgId)
+	AND  m.iOrgId = #para(orgId)
+	#end
+	#if(cInvCode)
+	    AND minv.cInvCode LIKE CONCAT('%',#para(cInvCode),'%')
+	#end
+	#if(cInvCode1)
+	    AND minv.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%')
+	#end
+	#if(cInvName1)
+	    AND minv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
+	#end
+	ORDER BY m.dCreateTime DESC
+#end

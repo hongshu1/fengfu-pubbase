@@ -449,6 +449,28 @@ public class BomMService extends BaseService<BomM> {
 		return SUCCESS;
 	}
 	
+	/**
+	 * 删除导入文件
+	 * @param id
+	 * @return
+	 */
+	public Ret delFile(Long id){
+		BommTrl bommTrl = bommTrlService.findById(id);
+		Long bomMid = bommTrl.getIBomMid();
+		BomData bomData = bomDataService.getBomData(bomMid);
+		tx(() -> {
+			bommTrlService.deleteById(id);
+			if (ObjectUtil.isNotNull(bomData)){
+				bomDataService.deleteById(bomData.getIAutoId());
+			}
+			return true;
+		});
+		bommTrlService.deleteById(id);
+		bomDataService.deleteById(bomData.getIAutoId());
+		
+		return SUCCESS;
+	}
+	
 	public boolean isOverlapping(BomM bomM, Record otherBom) {
 		
 		Date dEnableDate = otherBom.getDate(BomM.DENABLEDATE);
@@ -605,16 +627,17 @@ public class BomMService extends BaseService<BomM> {
 		bommTrl.setIBomMid(bomMasterId);
 		tx(() -> {
 			
-			if(StrUtil.isBlank(bomMaster.getCVersion())){
-				bomMaster.setCVersion(getNextVersion(getOrgId(), bomMaster.getIInventoryId()));
-			}
-			
 			for (BomM bomM : bomMListMap.keySet()){
 				List<BomD> bomDList = bomMListMap.get(bomM);
 				Inventory inventory = inventoryService.findById(bomM.getIInventoryId());
 				ValidationUtils.notNull(inventory, "产成品存货记录不存在");
 				bomM.setCInvName(inventory.getCInvName());
 				bomM.setCInvCode(inventory.getCInvCode());
+				if(StrUtil.isBlank(bomM.getCVersion())){
+					bomM.setCVersion(getNextVersion(getOrgId(), bomM.getIInventoryId()));
+				}
+				bomM.setDEnableDate(bomMaster.getDEnableDate());
+				bomM.setDDisableDate(bomMaster.getDDisableDate());
 				save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 				bomDService.batchSave(bomDList);
 			}
@@ -898,7 +921,7 @@ public class BomMService extends BaseService<BomM> {
 		}
 		
 		List<BomD> bomCompareList = new ArrayList<>();
-		
+		List<BomM> removeBoms = new ArrayList<>();
 		for (BomM bom : bomMListMap.keySet()){
 			List<BomD> bomDList = bomMListMap.get(bom);
 			List<BomD> bomDS = new ArrayList<>();
@@ -909,14 +932,22 @@ public class BomMService extends BaseService<BomM> {
 				bomDS.add(bomD);
 			}
 			if (CollectionUtil.isEmpty(bomDS)){
-				Inventory inventory = inventoryService.findById(bomM.getIInventoryId());
-				ValidationUtils.notNull(inventory, "存货未找到【"+bomM.getIInventoryId()+"】");
-				ValidationUtils.notEmpty(bomDS, "存货编码【"+inventory.getCInvCode()+"】未找到子件数据");
+//				Inventory inventory = inventoryService.findById(bom.getIInventoryId());
+//				ValidationUtils.notNull(inventory, "存货未找到【"+bom.getIInventoryId()+"】");
+//				ValidationUtils.notEmpty(bomDS, "存货编码【"+inventory.getCInvCode()+"】未找到子件数据");
+				// 删除key
+//				bomMListMap.remove(bom);
+				removeBoms.add(bom);
+				continue;
 			}
 			bomCompareList.addAll(bomDS);
 			bomMListMap.put(bom, bomDS);
 		}
-		
+		if (CollectionUtil.isNotEmpty(removeBoms)){
+			for (BomM bom : removeBoms){
+				bomMListMap.remove(bom);
+			}
+		}
 		// 存货id
 		List<Long> invIds = bomCompareList.stream().filter(bomD -> ObjUtil.isNotNull(bomD.getIInventoryId())).map(BomD::getIInventoryId).collect(Collectors.toList());
 		// 供应商id
@@ -1492,5 +1523,10 @@ public class BomMService extends BaseService<BomM> {
 			sql.eq(BomM.IORGID, orgId);
 		}
 		return find(sql);
+	}
+	
+	public Page<Record> getFileRecord(Integer pageNumber, Integer pageSize, Kv kv) {
+		Page<Record> page = dbTemplate("bomm.getFileRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
+		return page;
 	}
 }

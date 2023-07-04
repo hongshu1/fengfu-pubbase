@@ -111,6 +111,11 @@ public class BomMAdminController extends BaseAdminController {
 	public void getVersionRecord() {
 		renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
 	}
+	
+	@UnCheck
+	public void getFileRecord() {
+		renderJsonData(service.getFileRecord(getPageNumber(), getPageSize(), getKv()));
+	}
 
     @UnCheck
 	public void getBomComparePageData(){
@@ -128,6 +133,10 @@ public class BomMAdminController extends BaseAdminController {
 	
 	public void del() {
 		renderJson(service.del(getLong(0)));
+	}
+	
+	public void delFile() {
+		renderJson(service.delFile(getLong(0)));
 	}
 	
 	// 拷贝

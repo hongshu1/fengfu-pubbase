@@ -236,6 +236,10 @@ public class BomMasterAdminController extends BaseAdminController {
         keepPara();
         render("version_index.html");
     }
+    
+    public void queryFileIndex(){
+        render("query_fiel_index.html");
+    }
 
     @UnCheck
     public void getVersionRecord() {
