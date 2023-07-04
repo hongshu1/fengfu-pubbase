@@ -255,7 +255,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
 
     @UnCheck
     public void findPurchaseType() {
-        renderJsonData(purchaseTypeService.selectAll(getPageNumber(),getPageSize(),getKv()));
+        renderJsonData(purchaseTypeService.selectAll(getKv()));
     }
 
     @UnCheck

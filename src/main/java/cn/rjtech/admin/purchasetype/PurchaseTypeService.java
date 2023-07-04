@@ -42,7 +42,11 @@ public class PurchaseTypeService extends BaseService<PurchaseType> {
 	public Page<PurchaseType> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
 		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
 	}
-
+	
+	public List<Record> selectAll (Kv kv){
+		return dbTemplate("purchasetype.selectAll",kv).find();
+	}
+	
 	public Page<Record> selectAll (int pageNumber, int pageSize,Kv kv){
 		List<Record> list = dbTemplate("purchasetype.selectAll", kv).find();
 
@@ -180,7 +184,7 @@ public class PurchaseTypeService extends BaseService<PurchaseType> {
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override

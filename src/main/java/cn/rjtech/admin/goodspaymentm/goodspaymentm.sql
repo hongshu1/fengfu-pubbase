@@ -40,3 +40,24 @@ where a.isDeleted = '0'
 	#end
 ORDER BY a.dUpdateTime DESC
 #end
+
+
+#sql("getBarcodeDatas")
+SELECT top #(limit)
+	cwm.iCustomerId,
+	bi.cInvAddCode,
+	bi.cinvcode,
+	bi.cInvCode1,
+	bi.cInvName1,
+	bi.cinvStd,
+	bi.iSalesUomId,
+	cwd.*
+FROM
+	Co_WeekOrderD cwd
+	LEFT JOIN bd_inventory bi ON bi.iAutoId = cwd.iInventoryId 	AND bi.isDeleted = 0
+	LEFT JOIN Co_WeekOrderM cwm ON cwd.iWeekOrderMid = cwm.iAutoId AND cwm.IsDeleted=0
+where cwm.iCustomerId = #para(icustomerid)
+  #if(q)
+    and (bi.cinvcode like concat('%',#para(q),'%') or bi.cInvName1 like concat('%',#para(q),'%'))
+  #end
+#end
