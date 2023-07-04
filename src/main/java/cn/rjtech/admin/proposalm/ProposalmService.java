@@ -17,7 +17,6 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
-import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.core.util.ModelMap;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -238,12 +237,18 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
 		}
         return recordPage;
     }
-
+    public List<Record> findExportDatas(Kv para) {
+    	para.set("iservicetype",ServiceTypeEnum.EXPENSE_BUDGET.getValue());
+        List<Record> list = dbTemplate("proposalm.paginateDetails", para.set("iorgid", getOrgId())).find();
+        for (Record row : list) {
+        	row.set("cpurposename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PURPOSE.getValue(), row.getStr("cpurposesn")));
+		}
+        return list;
+    }
     /**
      * 禀议明细导出
      */
-    public JBoltExcel getExcelReport(String iautoids) {
-        ValidationUtils.notBlank(iautoids, JBoltMsg.PARAM_ERROR);
+    public JBoltExcel getExcelReport(Kv para) {
         return JBoltExcel.create().setSheets(
                 JBoltExcelSheet.create("禀议明细导出数据")
                         .setHeaders(1,
@@ -270,7 +275,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
                                 JBoltExcelHeader.create("cvencode	", "预定供应商", 12),
                                 JBoltExcelHeader.create("ddemanddate", "需求日", 12),
                                 JBoltExcelHeader.create("cbudgetdepcode", "预算对应部门", 12))
-                        .setRecordDatas(2, paginateDetails(1, JBoltArrayUtil.listFrom(iautoids, ",").size(), Kv.by("iautoids", iautoids)).getList()));
+                        .setRecordDatas(2, findExportDatas(para)));
     }
     public Ret saveTableSubmit(JBoltTableMulti tableMulti, User user, Date now) {
         JBoltTable proposalTable = tableMulti.getJBoltTable("proposalds");

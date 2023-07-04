@@ -198,3 +198,8 @@ where a.isEffective = '1'
 
 
 #end
+
+
+#sql("findU8RdRecord01Id")
+select r.* from UFDATA_001_2023.dbo.RdRecord08 r where r.cCode = #para(cCode)
+#end

@@ -322,10 +322,18 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 			prodFormM.setCUpdateName(user.getName());
 			prodFormM.setDUpdateTime(date);
 			prodFormM.setIUpdateBy(user.getId());
-			prodFormM.setIProdFormId(formJsonData.getLong("prodFormM.iProdFormId"));
-			prodFormM.setIWorkRegionMid(formJsonData.getLong("prodFormM.iWorkRegionMid"));
-			prodFormM.setIWorkShiftMid(formJsonData.getLong("prodFormM.iWorkShiftMid"));
-			prodFormM.setDDate(formJsonData.getDate("prodFormM.ddate"));
+			if (ObjUtil.isNotNull(formJsonData.getLong("prodFormM.iProdFormId"))) {
+				prodFormM.setIProdFormId(formJsonData.getLong("prodFormM.iProdFormId"));
+			}
+			if (ObjUtil.isNotNull(formJsonData.getLong("prodFormM.iWorkRegionMid"))) {
+				prodFormM.setIWorkRegionMid(formJsonData.getLong("prodFormM.iWorkRegionMid"));
+			}
+			if (ObjUtil.isNotNull(formJsonData.getLong("prodFormM.iWorkShiftMid"))){
+				prodFormM.setIWorkShiftMid(formJsonData.getLong("prodFormM.iWorkShiftMid"));
+			}
+			if(ObjUtil.isNotNull(formJsonData.getDate("prodFormM.ddate"))){
+				prodFormM.setDDate(formJsonData.getDate("prodFormM.ddate"));
+			}
 			ValidationUtils.isTrue(prodFormM.update(), "修改失败");
 			//根据主表id获取数据
 			List<ProdFormD> formDList = prodFormDService.findByPid(prodFormM.getIAutoId());

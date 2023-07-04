@@ -2897,4 +2897,8 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String FITEMSS97_DELETED = "fitemss97_deleted";
+	/**
+	 * 制作管理-点检
+	 */
+	public static final String API_SPOTCHECKFORMM= "api_spotcheckformm";
 }

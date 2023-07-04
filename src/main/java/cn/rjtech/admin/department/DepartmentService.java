@@ -17,6 +17,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -24,8 +25,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -323,15 +323,93 @@ public class DepartmentService extends BaseService<Department> {
         if (CollUtil.isNotEmpty(departmentList)){
             List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("org_type", true);
             Map<String, Dictionary> dictionaryMap = dictionaryList.stream().collect(Collectors.toMap(Dictionary::getSn, dictionary -> dictionary));
+            //获取负责人code,name
+            Map<String, String> personMap = getPersonMap(departmentList);
+
             for (Department department : departmentList){
                 String type =  department.getCType();
                 if (dictionaryMap.containsKey(type)){
                     department.setCType(dictionaryMap.get(type).getName());
                 }
+
+                String cDepPerson = department.getCDepPerson();
+                if(StringUtils.isNotBlank(cDepPerson)){
+                    //通过cDepPerson 获取 cDepPersonName
+                    String personName = getPersonName(personMap, cDepPerson);
+                    department.setCDepPersonName(personName);
+                }
+
+
             }
         }
         return convertToModelTree(departmentList, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
+
+
+    /**
+     * 通过cDepPerson 获取 cDepPersonName
+     * */
+    public String getPersonName(Map<String, String> personMap,String personCodes) {
+        String personNames="";
+        if(StringUtils.isNotBlank(personCodes)){
+            String[] split = personCodes.split(",");
+            for (String personCode : split) {
+                String personName = personMap.get(personCode);
+                personNames+=personName+",";
+            }
+            personNames=personNames.substring(0,personNames.length()-1);
+
+        }
+
+
+
+        return personNames;
+    }
+
+
+
+    /**
+     *  获取负责人code,name
+     *  key    负责人  code
+     *  value  负责人  name
+     * */
+    public Map<String,String> getPersonMap(List<Department> departmentList) {
+        Map<String,String> targetMap=new HashMap<>();
+        Set<String> personCodeSet=new HashSet<>();
+        String sqlPersonCode="";
+        for (Department department : departmentList) {
+            String cDepPerson = department.getCDepPerson();
+            if(StringUtils.isNotBlank(cDepPerson)){
+                String[] split = cDepPerson.split(",");
+                for (String personCode : split) {
+                    personCodeSet.add(personCode);
+                }
+            }
+        }
+
+        if(personCodeSet.size()>0){
+            for (String personcode : personCodeSet) {
+                sqlPersonCode+="'"+personcode+"',";
+            }
+            sqlPersonCode=sqlPersonCode.substring(0,sqlPersonCode.length()-1);
+        }
+
+        List<Record> erpPersons = findERPPersons(sqlPersonCode);
+        for (Record erpPerson : erpPersons) {
+            targetMap.put(erpPerson.getStr("cpersoncode"),erpPerson.getStr("cpersonname"));
+        }
+
+        return targetMap;
+    }
+
+    /**
+     * 通过人员编码查找
+     * */
+    public List<Record> findERPPersons(String sqlPersonCode) {
+        List<Record> datas = dbTemplate(u8SourceConfigName(getOrgId()),"department.findERPPersons", Kv.by("sqlPersonCode",sqlPersonCode)).find();
+        return datas;
+    }
+
 
     public List<Department> treeDatasForProposalSystem(Kv kv) {
         List<Department> datas = daoTemplate("department.list", kv).find();

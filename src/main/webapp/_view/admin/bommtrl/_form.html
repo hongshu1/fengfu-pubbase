@@ -1,0 +1,129 @@
+<form onsubmit="return false;" id="BommTrl_Form" action="#(action)" method="post">
+	#if(bommTrl.iAutoId??)
+	<input type="hidden" name="bommTrl.iAutoId" value="#(bommTrl.iAutoId??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">主键ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入主键ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入主键ID" maxlength="40" name="bommTrl.iAutoId" value="#(bommTrl.iAutoId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">物料清单主表ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入物料清单主表ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入物料清单主表ID" maxlength="40" name="bommTrl.iBomMid" value="#(bommTrl.iBomMid??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">机型ID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入机型ID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入机型ID" maxlength="40" name="bommTrl.iEquipmentModelId" value="#(bommTrl.iEquipmentModelId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">文件名称</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入文件名称"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入文件名称" maxlength="40" name="bommTrl.cDocName" value="#(bommTrl.cDocName??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">文件编码</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入文件编码"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入文件编码" maxlength="40" name="bommTrl.cDocCode" value="#(bommTrl.cDocCode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">版本/版次</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入版本/版次"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入版本/版次" maxlength="40" name="bommTrl.cBomVersion" value="#(bommTrl.cBomVersion??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">启用日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入启用日期" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入启用日期" maxlength="20" name="bommTrl.dEnableDate"    value="#datetime(bommTrl.dEnableDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">停用日期</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly"  data-rule="required"  data-notnull="true" data-tips="请输入停用日期" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入停用日期" maxlength="20" name="bommTrl.dDisableDate"    value="#datetime(bommTrl.dDisableDate??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">序号1</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入序号1" maxlength="40" name="bommTrl.cNo1" value="#(bommTrl.cNo1??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变号1</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入设变号1" maxlength="40" name="bommTrl.cDcNo1" value="#(bommTrl.cDcNo1??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设备日期1</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设备日期1" maxlength="20" name="bommTrl.dDcDate1"    value="#datetime(bommTrl.dDcDate1??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">序号2</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入序号2" maxlength="40" name="bommTrl.cNo2" value="#(bommTrl.cNo2??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变号2</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入设变号2" maxlength="40" name="bommTrl.cDcNo2" value="#(bommTrl.cDcNo2??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变日期2</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设变日期2" maxlength="20" name="bommTrl.dDcDate2"    value="#datetime(bommTrl.dDcDate2??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">序号3</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入序号3" maxlength="40" name="bommTrl.cNo3" value="#(bommTrl.cNo3??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变号3</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入设变号3" maxlength="40" name="bommTrl.cDcNo3" value="#(bommTrl.cDcNo3??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">设变日期3</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入设变日期3" maxlength="20" name="bommTrl.dDcDate3"    value="#datetime(bommTrl.dDcDate3??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">客户ID</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入客户ID" maxlength="40" name="bommTrl.iCustomerId" value="#(bommTrl.iCustomerId??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">备注共用件</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入备注共用件" maxlength="200" name="bommTrl.cCommonPartMemo">#(bommTrl.cCommonPartMemo??)</textarea>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="BommTrl_Form")
+#end
+

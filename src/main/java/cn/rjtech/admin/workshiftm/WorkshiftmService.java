@@ -355,4 +355,7 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
         return SUCCESS;
     }
 
+    public Workshiftm findByName(String cworkshiftname) {
+        return findFirst(selectSql().eq("isDeleted", "0").eq("isEnabled", "1").eq("cWorkShiftName", cworkshiftname));
+    }
 }

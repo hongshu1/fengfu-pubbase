@@ -9,11 +9,13 @@ import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
 import cn.rjtech.admin.period.PeriodService;
+import cn.rjtech.constants.Constants;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.ExpenseBudget;
 import cn.rjtech.model.momdata.ExpenseBudgetItem;
@@ -25,7 +27,6 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import java.util.List;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -210,4 +211,36 @@ public class ExpenseBudgetItemService extends BaseService<ExpenseBudgetItem> {
 	public void deleteByCbudgetNo(String ccode) {
 		delete(deleteSql().eq("cbudgetno", ccode));
 	}
+
+	public void constructExportDifferencesManagementDatas(Kv para,List<JBoltExcelPositionData> excelPositionDatas) {
+		List<Record> list = differencesManagementDatas(para);
+		if(CollUtil.isEmpty(list)) return;
+		int startRow = 2;
+		for (int i=0;i<list.size(); i++) {
+			Record record = list.get(i);
+			int nowDatasRow = startRow + i;
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 1, i+1));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 2, record.getStr("chighestsubjectname")));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 3, record.getStr("clowestsubjectname")));
+			String ibudgettype = DiffReportBudgetTypeEnum.toEnum(record.getInt("ibudgettype")).getText();
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 4, ibudgettype));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 5, Constants.kFormat(record.getBigDecimal("imonthamount1"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 6, Constants.kFormat(record.getBigDecimal("imonthamount2"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 7, Constants.kFormat(record.getBigDecimal("imonthamount3"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 8, Constants.kFormat(record.getBigDecimal("imonthamount4"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 9, Constants.kFormat(record.getBigDecimal("imonthamount5"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 10, Constants.kFormat(record.getBigDecimal("imonthamount6"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 11, Constants.kFormat(record.getBigDecimal("imonthamount7"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 12, Constants.kFormat(record.getBigDecimal("imonthamount8"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 13, Constants.kFormat(record.getBigDecimal("imonthamount9"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 14, Constants.kFormat(record.getBigDecimal("imonthamount10"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 15, Constants.kFormat(record.getBigDecimal("imonthamount11"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 16, Constants.kFormat(record.getBigDecimal("imonthamount12"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 17, Constants.kFormat(record.getBigDecimal("ifirsthalfofyear"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 18, Constants.kFormat(record.getBigDecimal("isecondhalfofyear"))));
+			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 19, Constants.kFormat(record.getBigDecimal("iallofyear"))));
+		}
+	}
+
+
 }
