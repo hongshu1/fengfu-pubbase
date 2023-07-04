@@ -521,8 +521,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 					if (StrUtil.isNotBlank(jsonObject.getString("cvalue"))){
 						prodformdLine.setCValue(jsonObject.getString("cvalue"));
 					}
-					prodformdLine.save();
-
+					prodformdLines.add(prodformdLine);
 				}
 
 				spotCheckFormDService.batchSave(prodFormDS);
