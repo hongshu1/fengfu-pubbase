@@ -1828,7 +1828,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             return (String) method.invoke(o, args);
         } catch (Exception e) {
             e.printStackTrace();
-            return e.getLocalizedMessage();
+            return "审批回调异常：" + e.getLocalizedMessage();
         }
     }
 

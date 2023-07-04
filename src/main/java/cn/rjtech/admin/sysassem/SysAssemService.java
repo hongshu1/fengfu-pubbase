@@ -18,6 +18,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.person.PersonService;
@@ -101,6 +102,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     @Inject
     private DemandPlanDService demandPlanDService;
+
+    @Inject
+    private DepartmentService departmentservice;
 
     /**
      * 后台管理数据查询
@@ -461,8 +465,8 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             jsonObject.set("ORdName", "");
             jsonObject.set("ORdType", sysassem.getORdCode());
             jsonObject.set("Tag", "AssemVouch");
-            jsonObject.set("IDeptCode", sysassem.getDeptCode());
-            jsonObject.set("ODeptCode", sysassem.getDeptCode());
+            jsonObject.set("IDeptCode",departmentservice.getRefDepId(sysassem.getDeptCode()));
+            jsonObject.set("ODeptCode",departmentservice.getRefDepId(sysassem.getDeptCode()));
             jsonObject.set("VouchTemplate", "");
             jsonObject.set("RowNo", s.getRowNo());
             maindata.add(jsonObject);
