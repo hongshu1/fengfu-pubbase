@@ -1,9 +1,12 @@
 #@jboltLayout()
 #define main()
 #define css()
+<link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
+<link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
 <style>
     .spread-container {
-        height: 600px;
+        height:63vh;
     }
 
     .gc-statusbar {
@@ -69,8 +72,6 @@
     .but_box button {
         padding: 3px 10px;
         margin-right: 8px;
-        background-color: #fff;
-        border: #797979 1px solid;
         border-radius: 5px;
     }
     /*  锁定弹出框样式  */
@@ -251,6 +252,14 @@
         font-size: 16px;
         margin-bottom: 10px;
     }
+    .btn-success{
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .btn{
+        border: #28a745 1px solid;
+    }
 </style>
 #end
 #set(pageId=RandomUtil.random(6))
@@ -282,8 +291,8 @@
                 <span>部品名称:</span>
                 <input style="width:150px;height:20px;" id="cinvname1"/>
             </div>
-            <div class="select">
-                <div class="form-group row">
+            <div class="">
+                <div class="row">
                     <p>日期：</p>
                     <div class="col" style="display:flex;">
                         <input type="date" id="search_start-time" name="search_start-time">
@@ -293,7 +302,12 @@
                 </div>
             </div>
             <div>
-                <button class="button" onClick="search()" style="height:26px;">搜索</button>
+                <button class="button" onClick="search()" style="height:26px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                    搜索
+                </button>
                 <button class="button" style="height:26px;">重置</button>
             </div>
         </div>
@@ -306,10 +320,22 @@
             <div id="table-tool">
                 <!-- 表格工具开始 -->
                 <div class="but_box">
-                    <button id="content">计划生成</button>
-                    <button onClick="loadExcel()">数据导出</button>
-                    <button id="indicate_save">预示保存</button>
-                    <button>到货计划保存</button>
+                    <button id="content" lay-on="test-page-custom" style="border: #797979 1px solid;padding: 5px 10px">计划生成</button>
+                    <button onClick="loadExcel()" style="border: #797979 1px solid;padding: 5px 10px;background-color: #ffc107;border-color: #ffc107;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                            <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                        </svg>
+                        数据导出
+                    </button>
+                    <button id="indicate_save" class="btn-success btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                            <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
+                            <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
+                        </svg>
+                        预示保存
+                    </button>
+                    <button class="" style="border: #797979 1px solid;padding: 5px 10px">到货计划保存</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>
@@ -371,6 +397,7 @@
     <script type="text/javascript" src="assets/plugins/Grape/gc.spread.sheets.all.12.0.7.min.js"></script>
     <script type="text/javascript" src="assets/plugins/Grape/gc.spread.excelio.12.0.7.min.js"></script>
     <script type="text/javascript" src="assets/plugins/Grape/FileSaver.min.js"></script>
+    <script src="assets/js/pagination/layui/layui.js"></script>
 <script type="text/javascript">
     /**
      * @param Api 公共接口
@@ -735,65 +762,57 @@
     }
     //计划生成弹出框
     var myAlert = document.getElementById("alert");
-    var reg = document.getElementById("content");
-    var mClose = document.getElementById("close");
-    var mClose_But = document.getElementById("alert_save");
-    //打开计划生成弹出层
-    reg.onclick = function(){
-        //防止出现多个弹框
-        if(myIndicate.style.display !== "block"){
-            myAlert.style.display = "block";
-            myAlert.style.position = "absolute";
-            myAlert.style.top = "50%";
-            myAlert.style.left = "50%";
-            myAlert.style.marginTop = "-75px";
-            myAlert.style.marginLeft = "-150px";
-            mybg = document.createElement("div");
-            mybg.setAttribute("id", "mybg");
-            mybg.style.background = "#000";
-            mybg.style.width = "100%";
-            mybg.style.height = "100%";
-            mybg.style.position = "absolute";
-            mybg.style.top = "0";
-            mybg.style.left = "0";
-            mybg.style.zIndex = "1000";
-            mybg.style.opacity = "0.3";
-            document.body.appendChild(mybg);
-            document.body.style.overflow = "hidden";
-            const datetimeLocalInput = document.getElementById('datetime-local');
-            const now = new Date();
-            const timestamp = now.getTime();
-            const isoString = new Date(timestamp).toISOString();
-            datetimeLocalInput.value = isoString.slice(0, 16);
-            parms.openBoxTime=isoString.slice(0, 16);
-        }
-    }
-    //弹出层关闭事件
-    mClose.onclick = function(){
-        myAlert.style.display = "none";
-        mybg.style.display = "none";
-    }
-    //计划生成确定按钮事件
-    mClose_But.onclick = function(){
-        const datetimeLocalInput = document.getElementById('datetime-local');
-        const myVal = datetimeLocalInput.value.substring(0,10);
-            let url =Api+"admin/schedudemandplan/apsScheduDemandPlan?endDate=2023-06-30";
-            $.ajax({
-                url,
-                data:{
-                    endDate:myVal
-                },
-                type:'post',
-                dataType:'json',
-                success:function (res){
-                    console.log(res);
-                    myAlert.style.display = "none";
-                    mybg.style.display = "none";
-                },error: function(error) {
-                    console.log(error);
-                }
-            })
-    }
+    layui.use(function(){
+        const $ = layui.$;
+        const layer = layui.layer;
+        const util = layui.util;
+        const form = layui.form;
+        // 事件
+        util.on('lay-on', {
+            'test-page-custom': function(){
+                layer.open({
+                    type: 1,
+                    area: '350px',
+                    resize: false,
+                    shadeClose: true,
+                    title: '请选择计划',
+                    content: `<div class="layui-form" lay-filter="filter-test-layer" style="margin: 16px;">
+                    <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
+                                <label class="col-form-label" >截止日期：</label>
+                                <input type="date" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">
+                                <div class="layui-form-item" style="margin-top:20px;width:20%;">
+                                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="demo-login">登录</button>
+                                </div>
+                            </div></div>`,
+                    success: ()=>{
+                        // 对弹层中的表单进行初始化渲染
+                       form.render();
+                       // 表单提交事件
+                       form.on('submit(demo-login)', function(data){
+                           const myVal = data.field['datetime-local'].substring(0,10);
+                           let url =Api+"admin/schedudemandplan/apsScheduDemandPlan";
+                           $.ajax({
+                               url,
+                               data:{
+                                   endDate:myVal
+                               },
+                               type:'post',
+                               dataType:'json',
+                               success:function (res){
+                                   if(res.data.msg=="操作成功"){
+                                       layer.closeAll();
+                                   }
+                               },error: function(error) {
+                                   console.log(error);
+                               }
+                           })
+                           return false; //阻止默认form跳转
+                       });
+                    }
+                });
+            }
+        })
+    });
 
     var myIndicate = document.getElementById("indicate_Mode");
     var save = document.getElementById("indicate_save");

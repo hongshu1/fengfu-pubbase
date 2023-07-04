@@ -10,8 +10,10 @@ import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.admin.proditem.ProdItemService;
 import cn.rjtech.model.momdata.QcItem;
 import cn.rjtech.model.momdata.QcParam;
+import cn.rjtech.model.momdata.UptimeParam;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
@@ -26,10 +28,7 @@ import cn.rjtech.model.momdata.ProdParam;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 生产表单建模-生产表单参数
@@ -46,6 +45,8 @@ public class ProdParamService extends BaseService<ProdParam> {
 	}
 	@Inject
 	private CusFieldsMappingDService cusFieldsMappingDService;
+	@Inject
+	private ProdItemService prodItemService;
 	@Override
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
@@ -178,44 +179,26 @@ public class ProdParamService extends BaseService<ProdParam> {
 	/**
 	 * 从系统导入字段配置，获得导入的数据
 	 */
-	public Ret importExcelClass(File file) {
-		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+	public Ret importExcelClass(File file,String cformatName) {
+		Ret records = cusFieldsMappingDService.getImportDatas(file, cformatName);
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
 
+			ArrayList<Map> datas = (ArrayList<Map>) records.get("data");
+			// 封装数据
+			for (Map<String, String> map : datas) {
+				// 分类名称不存在就新增
+				Long iUptimeCategoryId = prodItemService.getOrAddUptimeCategoryByName(map.get("cproditemname"));
 
-		for (Record record : records) {
-
-			if (StrUtil.isBlank(record.getStr("iProdItemId"))) {
-				return fail("生产项目名称不能为空");
+				ProdParam prodParam = new ProdParam();
+				prodParam.setCProdParamName(map.get("cprodparamname"));
+				prodParam.setIProdItemId(iUptimeCategoryId);
+				prodParam.setIsEnabled(true);
+				// 保存数据
+				save(prodParam);
 			}
-			if (StrUtil.isBlank(record.getStr("cProdParamName"))) {
-				return fail("参数名称不能为空");
-			}
 
-
-			Date now=new Date();
-
-			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
-			record.set("iOrgId", getOrgId());
-			record.set("cOrgCode", getOrgCode());
-			record.set("cOrgName", getOrgName());
-			record.set("iCreateBy", JBoltUserKit.getUserId());
-			record.set("dCreateTime", now);
-			record.set("cCreateName", JBoltUserKit.getUserName());
-			record.set("isEnabled",1);
-			record.set("isDeleted",0);
-			record.set("iUpdateBy", JBoltUserKit.getUserId());
-			record.set("dUpdateTime", now);
-			record.set("cUpdateName", JBoltUserKit.getUserName());
+			return SUCCESS;
 		}
-
-		// 执行批量操作
-		tx(() -> {
-			batchSaveRecords(records);
-			return true;
-		});
-		return SUCCESS;
-	}
 }

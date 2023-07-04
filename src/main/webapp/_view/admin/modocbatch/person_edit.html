@@ -367,6 +367,7 @@
         sheet.defaults.rowHeight = 30;
         spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
         spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
+        sheet.frozenRowCount(4); // 将第一行冻结
         //设置value值和该单元格的对齐方式
         parms.activeSheet.getCell(parms.rowindex, parms.columnindex).text("序号");
         parms.activeSheet.setColumnWidth(parms.columnindex, 40);//设置指定单元格的width
@@ -535,15 +536,19 @@
                         sheet.addSpan(rowIndex,colIndex,jsonData.data[i].rowdatas.length,1);
                         //产线名称
                         sheet.setValue(rowIndex, serialCol,jsonData.data[i].cworkname);
+                        sheet.getCell(rowIndex, serialCol).locked(false);
                         parms.activeSheet.addSpan(rowIndex,serialCol,jsonData.data[i].rowdatas.length,1);
                         //存货编码
                         sheet.setValue(rowIndex, serialCol+1,jsonData.data[i].cinvcode);
+                        sheet.getCell(rowIndex, serialCol+1).locked(false);
                         parms.activeSheet.addSpan(rowIndex,serialCol+1,jsonData.data[i].rowdatas.length,1);
                         //客户部番
                         sheet.setValue(rowIndex, serialCol+2,jsonData.data[i].cinvcode1);
+                        sheet.getCell(rowIndex, serialCol+2).locked(false);
                         parms.activeSheet.addSpan(rowIndex,serialCol+2,jsonData.data[i].rowdatas.length,1);
                         //部品名称
                         sheet.setValue(rowIndex, serialCol+3,jsonData.data[i].cinvname1);
+                        sheet.getCell(rowIndex, serialCol+3).locked(false);
                         parms.activeSheet.addSpan(rowIndex,serialCol+3,jsonData.data[i].rowdatas.length,1);
                         rowIndex = rowIndex+jsonData.data[i].rowdatas.length;
                     }else{
@@ -552,15 +557,19 @@
                         sheet.addSpan(rowIndex,colIndex,jsonData.data[i].rowdatas.length,1);
                         //产线名称
                         sheet.setValue(rowIndex, serialCol,jsonData.data[i].cworkname);
+                        sheet.getCell(rowIndex, serialCol).locked(false);
                         parms.activeSheet.addSpan(rowIndex,serialCol,jsonData.data[i].rowdatas.length,1);
                         //存货编码
                         sheet.setValue(rowIndex, serialCol+1,jsonData.data[i].cinvcode);
+                        sheet.getCell(rowIndex, serialCol+1).locked(false);
                         parms.activeSheet.addSpan(rowIndex,serialCol+1,jsonData.data[i].rowdatas.length,1);
                         //客户部番
                         sheet.setValue(rowIndex, serialCol+2,jsonData.data[i].cinvcode1);
+                        sheet.getCell(rowIndex, serialCol+2).locked(false);
                         parms.activeSheet.addSpan(rowIndex,serialCol+2,jsonData.data[i].rowdatas.length,1);
                         //部品名称
                         sheet.setValue(rowIndex, serialCol+3,jsonData.data[i].cinvname1);
+                        sheet.getCell(rowIndex, serialCol+3).locked(false);
                         parms.activeSheet.addSpan(rowIndex,serialCol+3,jsonData.data[i].rowdatas.length,1);
                         rowIndex = rowIndex+jsonData.data[i].rowdatas.length+4;
                     }

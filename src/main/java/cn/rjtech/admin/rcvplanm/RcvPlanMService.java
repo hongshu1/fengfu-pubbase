@@ -428,7 +428,7 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
     }
 
     /*
-     * 公共撤回方法
+     * 公共审批方法
      * */
     public void comonApproveMethods(RcvPlanM planM, int status, Date date) {
         planM.setIStatus(status);

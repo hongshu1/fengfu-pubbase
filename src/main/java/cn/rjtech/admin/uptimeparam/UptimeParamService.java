@@ -154,18 +154,36 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 		Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
 		ValidationUtils.isTrue(ret.isOk(), "导入失败");
 		ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-		// 封装数据
-		for (Map<String, String> map : datas) {
-			Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimeparamname"));
+		tx(() -> {
+			// 封装数据
+			for (Map<String, String> map : datas) {
+				// 分类名称不存在就新增
+				Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimeparamname"));
 
-			UptimeParam uptimeParam = new UptimeParam();
-			uptimeParam.setCUptimeParamName(map.get("cuptimeparamname"));
-			uptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
-			uptimeParam.setIsEnabled(true);
-			// 保存数据
-			save(uptimeParam);
+				UptimeParam uptimeParam = new UptimeParam();
+				uptimeParam.setCUptimeParamName(map.get("cuptimeparamname"));
+				uptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
+				uptimeParam.setIsEnabled(true);
+				// 保存数据
+				save(uptimeParam);
+			}
+			return true;
+		});
+		return SUCCESS;
+	}
+
+	public Long getOrAddUptimeParamByName(Long iUptimeCategoryId, String cuptimeparamname) {
+		UptimeParam uptimeParam = findFirst(selectSql().eq("isDeleted", "0").eq("cUptimeParamName", cuptimeparamname));
+		if (isOk(uptimeParam)) {
+			return uptimeParam.getIAutoId();
 		}
 
-		return SUCCESS;
+		UptimeParam saveUptimeParam = new UptimeParam();
+		saveUptimeParam.setCUptimeParamName(cuptimeparamname);
+		saveUptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
+		saveUptimeParam.setIsEnabled(true);
+		// 保存数据
+		save(saveUptimeParam);
+		return saveUptimeParam.getIAutoId();
 	}
 }

@@ -1,20 +1,28 @@
 package cn.rjtech.api.spotcheckformm;
 
+import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.inventoryspotcheckform.InventorySpotCheckFormService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformitem.SpotCheckFormItemService;
 import cn.rjtech.admin.spotcheckformm.SpotCheckFormMService;
 import cn.rjtech.base.controller.BaseApiController;
+import cn.rjtech.entity.vo.prodformm.ProdFormMVo;
+import cn.rjtech.entity.vo.spotcheckformm.SpotCheckFormMEditVo;
+import cn.rjtech.entity.vo.spotcheckformm.SpotCheckFormMResVo;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import io.github.yedaxia.apidocs.ApiDoc;
 
 
 /**
  * 点检管理
  * @author yjllzy
  */
+@CheckPermission(PermissionKey.API_SPOTCHECKFORMM)
+@ApiDoc
 public class SpotCheckFormMApiController extends BaseApiController {
 
     @Inject
@@ -36,7 +44,7 @@ public class SpotCheckFormMApiController extends BaseApiController {
      *  ispotcheckformid 表格id
      *
      */
-    @UnCheck
+    @ApiDoc(result = SpotCheckFormMResVo.class)
     public void datas(@Para(value = "pageNumber", defaultValue = "1") Integer pageNumber,
                       @Para(value = "pageSize", defaultValue = "15") Integer pageSize,
                       @Para(value = "itype") String itype,
@@ -62,7 +70,7 @@ public class SpotCheckFormMApiController extends BaseApiController {
      *
      *
      */
-    @UnCheck
+    @ApiDoc(result = SpotCheckFormMEditVo.class)
     public void edit(@Para(value = "coperationname") String coperationname,
                      @Para(value = "iinventoryid") String iinventoryid,
                      @Para(value = "modocid") String modocid,
@@ -104,7 +112,7 @@ public class SpotCheckFormMApiController extends BaseApiController {
     @UnCheck
     public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
                            @Para(value = "tableJsonData") String tableJsonDataStr){
-        renderJsonData(service.submitForm(formJsonDataStr, tableJsonDataStr));
+        renderJBoltApiRet(service.submitForm(formJsonDataStr, tableJsonDataStr));
     }
 
 }

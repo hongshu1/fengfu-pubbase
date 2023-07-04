@@ -12,6 +12,7 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltArrayUtil;
@@ -222,81 +223,69 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
-	/*@SuppressWarnings("unchecked")
-	public Ret importInvestmentPlanTpl(String filePath) throws Exception  {
-		// 读取excel中数据
-		Integer dataStartRow = ReadInventmentExcelUtil.START_ROW;
-        HashMap<String, Object> excelMap = ReadInventmentExcelUtil.readExcelInfo(filePath);
-        String ibudgetyear = (String)excelMap.get("ibudgetyear");
-        String ibudgettype = (String)excelMap.get("ibudgettype");
-        String cdepname = (String)excelMap.get("cdepcode");
-        ValidationUtils.notNull(ibudgetyear, "预算年份不能为空");
-        ValidationUtils.notNull(ibudgetyear, "预算类型不能为空");
-        ValidationUtils.notNull(ibudgetyear, "部门不能为空");
-        Integer ibudgetYearDb = null;
-        Integer ibudgetTypeDb = null;
-        String cdepcodeDb = "";
-        Date now = new Date();
-        try {
-        	ibudgetYearDb = Integer.parseInt(ibudgetyear.replace("年", ""));
-		} catch (Exception e) {
-			ValidationUtils.error( "预算年度不合法,请检查导入模板");
-		}
-        try {
-	    	for (InvestmentBudgetTypeEnum typeenum : InvestmentBudgetTypeEnum.values()) {
-				if(typeenum.getText().equals(ibudgettype)){
-					ibudgetTypeDb = typeenum.getValue();
-					break;
-				}
+	
+    public void contrustExportExcelPositionDatas(List<JBoltExcelPositionData> excelPositionDatas,InvestmentPlan investmentPlan,
+			List<Record> itemList) {
+    	excelPositionDatas.add(JBoltExcelPositionData.create(4, 3, investmentPlan.getIBudgetYear()+"年"));
+		excelPositionDatas.add(JBoltExcelPositionData.create(4, 5, InvestmentBudgetTypeEnum.toEnum(investmentPlan.getIBudgetType()).getText()));
+		excelPositionDatas.add(JBoltExcelPositionData.create(4, 7, departmentService.getCdepName(investmentPlan.getCDepCode())));
+    	if(CollUtil.isNotEmpty(itemList)){
+    		int startRow = ReadInventmentExcelUtil.START_ROW+1;
+    		int startColumn = ReadInventmentExcelUtil.START_COLUMN;
+    		for (int i=0;i<itemList.size();i++) {
+    			Record row = itemList.get(i);
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn, i+1));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+1, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_TYPE.getValue(), row.getStr("iinvestmenttype"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+2, row.getStr("cproductline")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+3, row.getStr("cmodelinvccode")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+4, row.getStr("cparts")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+5, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CAREER_TYPE.getValue(), row.getStr("icareertype"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+6, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_DISTINCTION.getValue(), row.getStr("iinvestmentdistinction"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+7, row.getStr("cplanno")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+8, row.getStr("citemname")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+9, row.getInt("isimport") == null?null:IsEnableEnum.toEnum(row.getInt("isimport")).getText()));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+10, row.getStr("iquantity")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+11, row.getStr("cunit")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+12, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CASSETTYPE.getValue(), row.getStr("cassettype"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+13, row.getStr("cpurpose")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+14, row.getStr("ceffectamount")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+15, row.getStr("creclaimyear")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+16, row.getStr("clevel")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+17, row.getInt("ispriorreport") == null?null:IsEnableEnum.toEnum(row.getInt("ispriorreport")).getText()));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+18, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PAYMENT_PROGRESS.getValue(), row.getStr("cpaymentprogress"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+19, row.getBigDecimal("itaxrate")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+20, row.getBigDecimal("itotalamountplan")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+21, row.getBigDecimal("itotalamountactual")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+22, row.getBigDecimal("itotalamountdiff")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+23, row.getStr("itotalamountdiffreason")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+24, row.getBigDecimal("iyeartotalamountplan")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+25, row.getBigDecimal("iyeartotalamountactual")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+26, row.getBigDecimal("iyeartotalamountdiff")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+27, row.getStr("iyeartotalamountdiffreason")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+28, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.EDITTYPE.getValue(), row.getStr("cedittype"))));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+29, row.getStr("cmemo")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+30, row.getInt("iitemyear")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+31, row.getStr("cperiodprogress1")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+32, row.getStr("dperioddate1")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+33, row.getBigDecimal("iamount1")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+34, row.getStr("cperiodprogress2")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+35, row.getStr("dperioddate2")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+36, row.getBigDecimal("iamount2")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+37, row.getStr("cperiodprogress3")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+38, row.getStr("dperioddate3")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+39, row.getBigDecimal("iamount3")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+40, row.getStr("cperiodprogress4")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+41, row.getStr("dperioddate4")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+42, row.getBigDecimal("iamount4")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+43, row.getStr("cperiodprogress5")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+44, row.getStr("dperioddate5")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+45, row.getBigDecimal("iamount5")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+46, row.getStr("cperiodprogress6")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+47, row.getStr("dperioddate6")));
+    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+48, row.getBigDecimal("iamount6")));
 			}
-	    	ValidationUtils.notNull(ibudgetTypeDb, "预算类型不合法,请检查导入模板!");
-		} catch (Exception e) {
-			ValidationUtils.error( "预算类型不合法,请检查导入模板!");
-		}
-        try {
-        	cdepcodeDb = departmentService.getCdepCodeByName(cdepname);
-		} catch (Exception e) {
-			ValidationUtils.error( "预算部门获取失败,请检查导入模板!");
-		}
-        ValidationUtils.isTrue(!isExistsInvestmentPlan(Kv.by("ibudgetyear", ibudgetYearDb).set("ibudgettype",ibudgetTypeDb).set("cdepcode",cdepcodeDb)),
-        		"投资计划已经存在，请勿重复导入!");
-        Long iInvestmentPlanId = JBoltSnowflakeKit.me.nextId();
-        InvestmentPlan investmentplan = new InvestmentPlan();
-        investmentplan.setIautoid(iInvestmentPlanId);
-        investmentplan.setIorgid(getOrgId());
-        investmentplan.setCorgcode(getOrgCode());
-        investmentplan.setCdepcode(cdepcodeDb);
-        investmentplan.setIbudgettype(ibudgetTypeDb);
-        investmentplan.setIbudgetyear(ibudgetYearDb);
-        investmentplan.setIauditstatus(AuditStatusEnum.NOT_AUDIT.getValue());
-        investmentplan.setDcreatetime(now);
-        investmentplan.setIeffectivestatus(EffectiveStatusEnum.INVAILD.getValue());
-        investmentplan.setIcreateby(JBoltUserKit.getUserId());
-        List<InvestmentPlanItem> investmentPlanItemList = new ArrayList<InvestmentPlanItem>();
-        List<InvestmentPlanItemd> investmentPlanItemdList = new ArrayList<InvestmentPlanItemd>();
-        StringBuilder errorMsg = new StringBuilder();
-        List<Record> excelRowList = (List<Record>)excelMap.get("rows");
-        if(CollUtil.isEmpty(excelRowList)) return SUCCESS;
-        int msgStartRow = dataStartRow + 1; //excel读取从0下标开始读取,所以错误提示信息的行数需要加1
-        tx(()->{
-        	//excel每行对应一条投资计划项目数据(InvestmentPlanItem)  ，多条投资计划项目明细数据(InvestmentPlanItemd)
-            for (Record record : excelRowList) {
-            	InvestmentPlanItem investmentPlanItem = new InvestmentPlanItem();
-            	Long iplanitemid = JBoltSnowflakeKit.me.nextId();
-            	investmentPlanItem.setIautoid(iplanitemid);
-            	investmentPlanItem.setIplanid(iInvestmentPlanId);
-            	constructInvestmentPlanItemForImport(record,investmentPlanItem,investmentplan,errorMsg,msgStartRow,now);
-            	investmentPlanItemList.add(investmentPlanItem);
-            	constructInvestmentPlanitemdForImport(record,investmentPlanItem,investmentplan,investmentPlanItemdList,msgStartRow,errorMsg,now);
-    		}
-            if (errorMsg.toString().length() > 0) ValidationUtils.error( errorMsg.toString());
-            ValidationUtils.isTrue(investmentplan.save(), ErrorMsg.SAVE_FAILED);
-            investmentPlanItemService.batchSave(investmentPlanItemList);
-        	investmentPlanItemdService.batchSave(investmentPlanItemdList);
-        	return true;
-        });
-		return SUCCESS;
-	}*/
+    	}
+	}
 	
 	@SuppressWarnings("unchecked")
 	public Ret importTableInvestmentPlanTpl(String filePath,Long iplanid) throws Exception  {
