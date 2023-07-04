@@ -138,5 +138,8 @@ public class Constants {
                 throw new ParameterException("未知审批类型");
         }
     }
-
+	public static BigDecimal kFormat(BigDecimal k){
+		if(k == null) return k;
+		return k.divide(new BigDecimal("1000")).setScale(2, RoundingMode.HALF_UP);
+	}
 }

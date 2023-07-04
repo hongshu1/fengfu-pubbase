@@ -9,7 +9,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -22,10 +21,12 @@ import cn.rjtech.admin.vouchtypedic.VouchTypeDicService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.SysOtherin;
+import cn.rjtech.model.momdata.SysOtherindetail;
+import cn.rjtech.model.momdata.VouchTypeDic;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
-import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -38,11 +39,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
-
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -462,18 +458,23 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      * */
     public String getDeleteDTO(String u8billno) {
         User user = JBoltUserKit.getUser();
+        
         Record userRecord = this.findU8UserByUserCode(user.getUsername());
         Record u8Record = this.findU8RdRecord01Id(u8billno);
+        
         SysPuinstoreDeleteDTO deleteDTO = new SysPuinstoreDeleteDTO();
         SysPuinstoreDeleteDTO.data data = new SysPuinstoreDeleteDTO.data();
+        
         data.setAccid(getOrgCode());
         data.setPassword(userRecord.get("u8_pwd"));
         data.setUserID(userRecord.get("u8_code"));
         Long id = u8Record.getLong("id");
         data.setVouchId(String.valueOf(id));//u8单据id
         deleteDTO.setData(data);
-        System.out.println(JSON.toJSONString(deleteDTO));
-        return JSON.toJSONString(deleteDTO);
+
+        String json = JSON.toJSONString(deleteDTO);
+        LOG.info(json);
+        return json;
     }
     public Record findU8UserByUserCode(String userCode) {
         return dbTemplate(u8SourceConfigName(), "syspuinstore.findU8UserByUserCode", Kv.by("usercode", userCode)).findFirst();
@@ -795,12 +796,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         SysOtherin byId = findById(formAutoId);
         //todo 删除u8的数据
         String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
-        try {
-            String post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
-        } catch (Exception ex) {
-            return ex.getMessage();
-        }
-        return null;
+        return this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
     }
 
     //批量审核通过后的业务逻辑
@@ -817,17 +813,16 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     //批量反审后的操作
     public String delectbelowtwo(List<Long> formAutoId){
-        if(CollectionUtil.isEmpty(formAutoId))return "主表id不能为空";
+        if(CollectionUtil.isEmpty(formAutoId)) {
+            return "主表id不能为空";
+        }
+        
         for (Long s : formAutoId) {
             //主表数据
             SysOtherin byId = findById(s);
             //todo 删除u8的数据
             String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
-            try {
-                String post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
-            } catch (Exception ex) {
-                return ex.getMessage();
-            }
+            String post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
         }
         return null;
     }
@@ -836,40 +831,32 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      * 通知U8删其他入库单
      * */
     public String deleteVouchProcessDynamicSubmitUrl(String json) {
-
-        String vouchSumbmitUrl = AppConfig.getStockApiUrl() + "?op=OtherInUnConfirmV1";
-        String inUnVouchGet = HttpUtil.get(vouchSumbmitUrl + "?dataJson=" + json);
-
+        String vouchSumbmitUrl = AppConfig.getStockApiUrl() + "/OtherInUnConfirmV1";
+        Map<String, Object> para = new HashMap<>();
+        para.put("dataJson", json);
+        String inUnVouchGet = HttpUtil.post(vouchSumbmitUrl, para);
         String res = XmlUtil.readObjectFromXml(inUnVouchGet);
+        LOG.info("res: {}", res);
         com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(res);
-
-        ValidationUtils.notNull(jsonObject, "解析JSON为空");
         String code = jsonObject.getString("code");
         String message = StrUtil.nullToDefault(jsonObject.getString("message"), jsonObject.getString("msg"));
-        LOG.info("res: {}", res);
+        if(!"200".equals(code))return message;
 
-        if (ObjUtil.equal(jsonObject.getString("state"), "fail")) {
-            ValidationUtils.error(message);
-        }
-        ValidationUtils.notNull(code, "json:" + json + ";" + message);
-        ValidationUtils.equals(code, "200", message);
-
-        String deleteUrl = AppConfig.getStockApiUrl() + "?op=OtherInDelete";
-        String deleteGet = HttpUtil.get(deleteUrl + "?dataJson=" + json);
-        String deleteRes = XmlUtil.readObjectFromXml(deleteGet);
+        String deleteUrl = AppConfig.getStockApiUrl() + "/OtherInDeleteV1";
+        String deleteGet1 = HttpUtil.get(deleteUrl + "?dataJson=" + json);
+//        LOG.info("rdeleteGet1: {}", deleteGet1);
+//        String deleteGet = HttpUtil.post(deleteUrl, para);
+//        LOG.info("deleteGet: {}", deleteGet);
+//        LOG.info("para: {}", para);
+        String deleteRes = XmlUtil.readObjectFromXml(deleteGet1);
         com.alibaba.fastjson.JSONObject deleteJsonObject = JSON.parseObject(deleteRes);
-
-        ValidationUtils.notNull(deleteJsonObject, "解析JSON为空");
         String deleteCode = deleteJsonObject.getString("code");
         String deleteMessage = StrUtil.nullToDefault(deleteJsonObject.getString("message"), deleteJsonObject.getString("msg"));
         LOG.info("deleteRes: {}", deleteRes);
-
-        if (ObjUtil.equal(deleteJsonObject.getString("state"), "fail")) {
-            ValidationUtils.error(deleteMessage);
+        if("200".equals(deleteCode)){
+            return null;
+        }else {
+            return deleteMessage;
         }
-        ValidationUtils.notNull(deleteCode, "json:" + json + ";" + deleteMessage);
-        ValidationUtils.equals(deleteCode, "200", deleteMessage);
-
-        return code;
     }
 }

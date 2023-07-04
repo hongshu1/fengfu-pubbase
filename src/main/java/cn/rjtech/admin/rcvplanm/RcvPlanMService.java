@@ -2,6 +2,7 @@ package cn.rjtech.admin.rcvplanm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -15,6 +16,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.RcvPlanD;
 import cn.rjtech.model.momdata.RcvPlanM;
+import cn.rjtech.model.momdata.base.BaseRcvPlanD;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 
@@ -28,6 +30,7 @@ import com.jfinal.upload.UploadFile;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 发货管理-取货计划主表
@@ -126,14 +129,22 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
     public Ret deleteBatchByIds(String ids) {
         List<RcvPlanM> rcvPlanMList = getListByIds(ids);
         ArrayList<RcvPlanM> deleteRcvPlanMS = new ArrayList<>();
+        List<RcvPlanD> deletePlanDList = new ArrayList<>();
         Date date = new Date();
         for (RcvPlanM planM : rcvPlanMList) {
             commonDeleteMethod(planM, date);
             deleteRcvPlanMS.add(planM);
+
+            List<RcvPlanD> planDList = planDService.findListByMasid(StrUtil.toString(planM.getIAutoId()));
+            if (!planDList.isEmpty()){
+                deletePlanDList.addAll(planDList);
+            }
         }
         tx(() -> {
+            //明细表：物理删除
+            commonDeleteDetailMethods(deletePlanDList);
+            //主表数据：逻辑删除
             ValidationUtils.isTrue(batchUpdate(deleteRcvPlanMS).length > 0, JBoltMsg.FAIL);
-
             return true;
         });
 
@@ -148,6 +159,10 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
             RcvPlanM planM = findById(id);
             commonDeleteMethod(planM, new Date());
 
+            List<RcvPlanD> planDList = planDService.findListByMasid(StrUtil.toString(planM.getIAutoId()));
+            //明细表：物理删除
+            commonDeleteDetailMethods(planDList);
+            //主表：逻辑删除
             ValidationUtils.isTrue(planM.update(), JBoltMsg.FAIL);
             return true;
         });
@@ -163,6 +178,15 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
         planM.setCUpdateName(JBoltUserKit.getUserName());
         planM.setDUpdateTime(date);
         planM.setIUpdateBy(JBoltUserKit.getUserId());
+    }
+
+    public void commonDeleteDetailMethods(List<RcvPlanD> planDList){
+        if (planDList.isEmpty()){
+            return;
+        }
+        List<Long> collect = planDList.stream().map(BaseRcvPlanD::getIAutoId).collect(Collectors.toList());
+        String ids = collect.stream().map(Object::toString).collect(Collectors.joining(", "));
+        planDService.deleteByIds(ids);
     }
 
     /**

@@ -26,6 +26,8 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
     public static final String IDEPGRADE = "iDepGrade";
     /**负责人编码*/
     public static final String CDEPPERSON = "cDepPerson";
+	/**负责人编码*/
+	public static final String CDEPPERSONNAME = "cDepPersonName";
     /**部门属性*/
     public static final String CDEPPROP = "cDepProp";
     /**电话*/
@@ -232,6 +234,15 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	}
 
 	/**
+	 * 负责人名称
+	 */
+	public M setCDepPersonName(java.lang.String cDepPersonName) {
+		set("cDepPersonName", cDepPersonName);
+		return (M)this;
+	}
+
+
+	/**
 	 * 负责人编码
 	 */
 	@JBoltField(name="cdepperson" ,columnName="cDepPerson",type="String", remark="负责人编码", required=false, maxLength=20, fixed=0, order=8)
@@ -239,6 +250,19 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	public java.lang.String getCDepPerson() {
 		return getStr("cDepPerson");
 	}
+
+
+	/**
+	 * 负责人名称
+	 */
+	@JBoltField(name="cdeppersonname" ,columnName="cdeppersonname",type="String", remark="负责人名称", required=false, maxLength=20, fixed=0, order=8)
+	@JSONField(name = "cdeppersonname")
+	public java.lang.String getCDepPersonName() {
+		return getStr("cDepPersonName");
+	}
+
+
+
 
 	/**
 	 * 部门属性

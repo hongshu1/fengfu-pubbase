@@ -20,6 +20,7 @@ import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -57,6 +58,28 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         Page<Record> recordPage = dbTemplate("sysSaleDeliver.pageList", kv).paginate(kv.getInt("page"), kv.getInt("pageSize"));
         JBoltCamelCaseUtil.keyToCamelCase(recordPage.getList());
         return recordPage;
+    }
+
+
+    /**
+     * 查询form页面数据
+     */
+    public Record getFormDatas(String AutoID) {
+        Kv kv = new Kv();
+        kv.setIfNotNull("AutoID",AutoID);
+        kv.setIfNotNull("OrganizeCode",getOrgCode());
+        Record recordPage = dbTemplate("sysSaleDeliver.getFormDatas", kv).findFirst();
+        return recordPage;
+    }
+
+
+    /**
+     * 导出订单列表
+     */
+    public List<Record> download(Kv kv, String sqlTemplate) {
+        kv.setIfNotNull("OrganizeCode",getOrgCode());
+        List<Record> list = dbTemplate(sqlTemplate, kv).find();
+        return list;
     }
 
     /**

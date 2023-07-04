@@ -355,12 +355,65 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
         return records;
     }
 
+//    public Ret saveTableSubmit(JBoltTable jBoltTable) {
+//        MoMaterialsreturnm moMaterialsreturnm = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
+//        ValidationUtils.notNull(moMaterialsreturnm, JBoltMsg.PARAM_ERROR);
+//        ValidationUtils.validateId(moMaterialsreturnm.getIMoDocId(), "缺少生产订单ID参数");
+//
+//        List<Record> save = jBoltTable.getSaveRecordList();
+//        ValidationUtils.notEmpty(save, "缺少表格保存的内容");
+//
+//        Date now = new Date();
+//
+//        moMaterialsreturnm.setIAuditWay(AuditFormConfigCache.ME.getAuditWay(table()));
+//        moMaterialsreturnm.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
+//
+//        moMaterialsreturnm.setCOrgCode(getOrgCode());
+//        moMaterialsreturnm.setIOrgId(getOrgId());
+//        moMaterialsreturnm.setCOrgName(getOrgName());
+//        moMaterialsreturnm.setICreateBy(JBoltUserKit.getUserId());
+//        moMaterialsreturnm.setCCreateName(JBoltUserKit.getUserName());
+//        moMaterialsreturnm.setDCreateTime(now);
+//        moMaterialsreturnm.setIUpdateBy(JBoltUserKit.getUserId());
+//        moMaterialsreturnm.setCUpdateName(JBoltUserKit.getUserName());
+//        moMaterialsreturnm.setDUpdateTime(now);
+//
+//        for (Record record : save) {
+//            record.remove("cinvaddcode", "cinvcode", "cinvname", "cmemo", "iqty", "iscannedqty", "iuomclassid", "type")
+//                    .set("IAutoId", JBoltSnowflakeKit.me.nextId())
+//                    .set("IMaterialsReturnMid", moMaterialsreturnm.getIAutoId())
+//                    .set("IMoDocId", moMaterialsreturnm.getIMoDocId())
+//                    .set("IInventoryId", record.get("iInventoryId"))
+//                    .set("IQty", record.get("iqtys"))
+//                    .set("cbarcode", record.get("cbarcode"))
+//                    .remove("iqtys");
+//        }
+//
+//        tx(() -> {
+//
+//            moMaterialsreturnm.save();
+//
+//            materialsreturndService.batchSaveRecords(save);
+//
+//            return true;
+//        });
+//
+//        return SUCCESS;
+//    }
+
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
         MoMaterialsreturnm moMaterialsreturnm = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
+        List<Record> save = jBoltTable.getSaveRecordList();
+
+        return saveTableSubmitV2(save, moMaterialsreturnm);
+    }
+
+    public Ret saveTableSubmitV2(List<Record> save, MoMaterialsreturnm moMaterialsreturnm) {
+        //MoMaterialsreturnm moMaterialsreturnm = jBoltTable.getFormModel(MoMaterialsreturnm.class, "moMaterialsreturnm");
         ValidationUtils.notNull(moMaterialsreturnm, JBoltMsg.PARAM_ERROR);
         ValidationUtils.validateId(moMaterialsreturnm.getIMoDocId(), "缺少生产订单ID参数");
 
-        List<Record> save = jBoltTable.getSaveRecordList();
+        //List<Record> save = jBoltTable.getSaveRecordList();
         ValidationUtils.notEmpty(save, "缺少表格保存的内容");
 
         Date now = new Date();
@@ -392,9 +445,9 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
         tx(() -> {
 
             moMaterialsreturnm.save();
-            
+
             materialsreturndService.batchSaveRecords(save);
-            
+
             return true;
         });
 

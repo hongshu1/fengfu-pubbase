@@ -13,8 +13,10 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Department;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -25,10 +27,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * 仓库建模-仓库档案
@@ -46,6 +46,12 @@ public class WarehouseService extends BaseService<Warehouse> {
 
   @Inject
   private DepartmentService departmentService;
+
+  @Inject
+  private CusFieldsMappingDService cusFieldsMappingdService;
+
+  @Inject
+  private PersonService personService;
 
   @Override
   protected Warehouse dao() {
@@ -111,12 +117,12 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     Integer isRepetition1 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhcode", warehouse.getCWhCode())).queryInt();
     if (isRepetition1 >= 1) {
-      ValidationUtils.error("【仓库编码】" + warehouse.getCWhCode() + "已经存在，请修改后保存");
+      ValidationUtils.error("【仓库编码】" + warehouse.getCWhCode() + "已存在，请修改后保存");
     }
 
     Integer isRepetition2 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhname", warehouse.getCWhName())).queryInt();
     if (isRepetition2 >= 1) {
-      ValidationUtils.error("【仓库名称】" + warehouse.getCWhName() + "已经存在，请修改后保存");
+      ValidationUtils.error("【仓库名称】" + warehouse.getCWhName() + "已存在，请修改后保存");
     }
 
     //创建信息
@@ -160,20 +166,22 @@ public class WarehouseService extends BaseService<Warehouse> {
     Integer isRepetition1 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhcode", warehouse.getCWhCode()).
         set("iautoid", warehouse.getIAutoId())).queryInt();
     if (isRepetition1 >= 1) {
-      ValidationUtils.error("【仓库编码】已经存在，请修改后保存");
+      ValidationUtils.error("【仓库编码】" + warehouse.getCWhCode() + "已存在，请修改后保存");
     }
 
     Integer isRepetition2 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhname", warehouse.getCWhName()).
         set("iautoid", warehouse.getIAutoId())).queryInt();
     if (isRepetition2 >= 1) {
-      ValidationUtils.error("【仓库名称】已经存在，请修改后保存");
+      ValidationUtils.error("【仓库名称】" + warehouse.getCWhName() + "已存在，请修改后保存");
     }
 
-    //if(existsName(warehouse.getName(), warehouse.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+    //更新信息
+    warehouse.setIupdateby(JBoltUserKit.getUserId());
+    warehouse.setCupdatename(JBoltUserKit.getUserName());
+    warehouse.setDupdatetime(new Date());
     boolean success = warehouse.update();
     if (success) {
       //添加日志
-      //addUpdateSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(), warehouse.getName())
     }
     return ret(success);
   }
@@ -208,32 +216,6 @@ public class WarehouseService extends BaseService<Warehouse> {
   @Override
   protected String afterToggleBoolean(Warehouse warehouse, String column, Kv kv) {
     //addUpdateSystemLog(warehouse.getIAutoId(), JBoltUserKit.getUserId(), warehouse.getName(),"的字段["+column+"]值:"+warehouse.get(column))
-        /*
-         switch(column){
-         case "bFreeze":
-         break;
-         case "bMRP":
-         break;
-         case "bShop":
-         break;
-         case "bInCost":
-         break;
-         case "bInAvailCalcu":
-         break;
-         case "bProxyWh":
-         break;
-         case "bBondedWh":
-         break;
-         case "bWhAsset":
-         break;
-         case "bCheckSubitemCost":
-         break;
-         case "bEB":
-         break;
-         case "isDeleted":
-         break;
-         }
-         */
     return null;
   }
 
@@ -260,99 +242,6 @@ public class WarehouseService extends BaseService<Warehouse> {
     Long userDeptId = JBoltUserKit.getUserDeptId();
     kv.setIfNotNull("iorgId", userDeptId);
     return dbTemplate("warehouse.paginateAdminDatas", kv).find();
-  }
-
-  /**
-   * 仓库档案导入
-   */
-  public Ret importExcelData(File file) {
-    StringBuilder errorMsg = new StringBuilder();
-
-    Date now = new Date();
-
-    JBoltExcel jBoltExcel = JBoltExcel
-        //从excel文件创建JBoltExcel实例
-        .from(file)
-        //设置工作表信息
-        .setSheets(
-            JBoltExcelSheet.create("sheet1")
-                //设置列映射 顺序 标题名称
-                .setHeaders(
-                    JBoltExcelHeader.create("cwhcode", "仓库编码"),
-                    JBoltExcelHeader.create("cwhname", "仓库名称"),
-                    JBoltExcelHeader.create("cDepCode", "所属部门"),
-                    JBoltExcelHeader.create("cWhAddress", "地址"),
-                    JBoltExcelHeader.create("cWhPerson", "负责人"),
-                    JBoltExcelHeader.create("iMaxStock", "最大存储数量"),
-                    JBoltExcelHeader.create("iMaxSpace", "最大存储空间"),
-                    JBoltExcelHeader.create("isSpaceControlEnabled", "是否启用空间管控"),
-                    JBoltExcelHeader.create("isStockWarnEnabled", "启用库存预警"),
-                    JBoltExcelHeader.create("cWhMemo", "备注")
-                )
-                //特殊数据转换器
-                .setDataChangeHandler((data, index) -> {
-                  ValidationUtils.notNull(data.get("cwhcode"), "第" + (index + 1) + "的【仓库编码】不能为空！");
-                  ValidationUtils.notNull(data.get("cwhname"), "第" + (index + 1) + "的【仓库名称】不能为空！");
-                  ValidationUtils.notBlank(data.getStr("cdepcode"), "第" + (index + 1) + "的【所属部门名称】不能为空");
-                  ValidationUtils.notNull(data.get("isStockWarnEnabled"), "第" + (index + 1) + "的【是否启用空间掌控】不能为空！");
-                  ValidationUtils.notNull(data.get("isSpaceControlEnabled"), "第" + (index + 1) + "的【启用库存预警】不能为空！");
-                  ValidationUtils.notNull(data.get("isSpaceControlEnabled"), "第" + (index + 1) + "的【启用库区】不能为空！");
-
-                  data.changeStrToBoolean("isSpaceControlEnabled", "是");
-                  data.changeStrToBoolean("isStockWarnEnabled", "是");
-
-                  // 查重
-                  ValidationUtils.assertNull(findByWhCode(data.getStr("cwhcode")), "第" + (index + 1) + "的【仓库编码】重复！");
-                  ValidationUtils.assertNull(findByWhName(data.getStr("cwhname")), "第" + (index + 1) + "的【仓库名称】重复！");
-                  Department dept = departmentService.findByCdepcode(getOrgId(), data.getStr("cdepcode"));
-                  ValidationUtils.notNull(dept, "第" + (index + 1) + "的【所属部门名称】不存在！");
-                  if (data.getStr("iMaxStock") != null || data.getStr("iMaxSpace") != null) {
-                    if (data.getStr("iMaxStock").equals("否")) {
-                      ValidationUtils.error("第" + (index + 1) + "的【是否启用空间掌控】为否时，【最大存储数量】【最大存储空间】必须为空！");
-                    }
-                  } else {
-                    if (data.getStr("iMaxStock").equals("是")) {
-                      ValidationUtils.error("第" + (index + 1) + "的【是否启用空间掌控】为是时，【最大存储数量】【最大存储空间】不能为空！");
-                    }
-                  }
-
-                  // 创建相关信息
-                  data.change("iCreateBy", JBoltUserKit.getUserId());
-                  data.change("cCreateName", JBoltUserKit.getUserName());
-                  data.change("dCreateTime", now);
-                  // 更新相关信息
-                  data.change("iUpdateBy", JBoltUserKit.getUserId());
-                  data.change("cUpdateName", JBoltUserKit.getUserName());
-                  data.change("dUpdateTime", now);
-                  // 组织相关信息
-                  data.change("cOrgCode", getOrgCode());
-                  data.change("cOrgName", getOrgName());
-                  data.change("iOrgId", getOrgId());
-                  data.change("iSource", SourceEnum.MES.getValue());
-                })
-                //从第三行开始读取
-                .setDataStartRow(3)
-        );
-
-    //从指定的sheet工作表里读取数据
-    List<Warehouse> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", Warehouse.class, errorMsg);
-    if (notOk(models)) {
-      if (errorMsg.length() > 0) {
-        return fail(errorMsg.toString());
-      } else {
-        return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-      }
-    }
-
-    //读取数据没有问题后判断必填字段
-    if (models.size() > 0) {
-      tx(() -> {
-        batchSave(models);
-        return true;
-      });
-    }
-
-    return SUCCESS;
   }
 
   public List<Record> findByWarehouse() {
@@ -394,149 +283,113 @@ public class WarehouseService extends BaseService<Warehouse> {
   }
 
   /**
-   * 从系统导入字段配置，获得导入的数据
+   * 根据仓库id获得对应的数据
+   *
+   * @param id
+   * @return
    */
-  public Ret importExcelClass(File file) {
-    List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
-    if (notOk(records)) {
-      return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-    }
+  public Warehouse findById(Long id) {
+    return dao.findById(id);
+  }
 
-    int i = 1;
-    Map<String, Object> codeMap = new HashMap<>();
-    Map<String, Object> nameMap = new HashMap<>();
-    for (Record record : records) {
-      String str = "第【" + i + "】行的";
-      if (StrUtil.isBlank(record.getStr("cWhCode"))) {
-        return fail(str + "【仓库编码】不能为空");
-      }
-      if (StrUtil.isBlank(record.getStr("cWhName"))) {
-        return fail(str + "【仓库名称】不能为空");
-      }
-      if (StrUtil.isBlank(record.getStr("cDepCode"))) {
-        return fail(str + "【所属部门名称】不能为空");
-      }
+  /**
+   * 数据导入
+   *
+   * @param file
+   * @param cformatName
+   * @return
+   */
+  public Ret importExcelData(File file, String cformatName) {
+    Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
+    ValidationUtils.isTrue(ret.isOk(), "导入失败");
+    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
+    StringBuilder msg = new StringBuilder();
 
-
-      //<editor-fold desc="是否启用空间管控数据判断">
-      if (StrUtil.isBlank(record.getStr("isSpaceControlEnabled"))) {
-        return fail("是否启用空间管控不能为空");
-      }
-      if (record.getStr("isSpaceControlEnabled").equals("是")) {
-
-      } else if (record.getStr("isSpaceControlEnabled").equals("否")) {
-
-      } else {
-        String msg = str + "【是否启用空间管控数据】不能为 " + record.getStr("isSpaceControlEnabled");
-        return fail(msg);
-      }
-      //</editor-fold>
-
-      //<editor-fold desc="启用库存预警判断">
-      if (StrUtil.isBlank(record.getStr("isStockWarnEnabled"))) {
-        return fail("启用库存预警不能为空");
-      }
-      if (record.getStr("isStockWarnEnabled").equals("是")) {
-
-      } else if (record.getStr("isStockWarnEnabled").equals("否")) {
-
-      } else {
-        String msg = str + "【启用库存预警】数据不能为 " + record.getStr("isStockWarnEnabled");
-        return fail(msg);
-      }
-      //</editor-fold>
-
-      //<editor-fold desc="启用库区判断">
-      if (record.getStr("isReservoirArea").equals("是")) {
-
-      } else if (record.getStr("isReservoirArea").equals("否")) {
-
-      } else {
-        String msg = str + "【启用库区】数据不能为 " + record.getStr("isReservoirArea");
-        return fail(msg);
-      }
-      //</editor-fold>
-
-      if (i == 1) {
-        codeMap.put(record.getStr("cwhcode"), i);
-        nameMap.put(record.getStr("cwhname"), i);
-      } else {
-        if (codeMap.get(record.getStr("cwhcode")) != null) {
-          return fail(str + "【仓库编码】和第【" + codeMap.get(record.getStr("cwhcode")) + "】行的【仓库编码】重复，请修改后重新导入");
-        }
-        if (nameMap.get(record.getStr("cwhname")) != null) {
-          return fail(str + "【仓库名称】和第【" + nameMap.get(record.getStr("cwhname")) + "】行的【仓库名称】重复，请修改后重新导入");
-        }
-        codeMap.put(record.getStr("cwhcode"), i);
-        nameMap.put(record.getStr("cwhname"), i);
-      }
-
-
-      Integer isRepetition1 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhcode", record.getStr("cwhcode"))).queryInt();
-      if (isRepetition1 >= 1) {
-        String msg = str + "【仓库编码】已经存在，请修改后重新导入";
-        return fail(msg);
-      }
-
-      Integer isRepetition2 = dbTemplate("warehouse.verifyDuplication", Kv.by("cwhname", record.getStr("cwhname"))).queryInt();
-      if (isRepetition2 >= 1) {
-        return fail(str + "【仓库名称】已经存在，请修改后重新导入");
-      }
-
-      String cdepcode = dbTemplate("warehouse.getCdepnameByCdepcode", Kv.by("cdepname", record.getStr("cdepcode"))).queryStr();
-      if (StrUtil.isBlank(cdepcode)) {
-        return fail(str + "【所属部门名称】未找到对应的部门数据信息,请检查【" + record.getStr("cdepcode") + "】部门数据是否存在部门档案");
-      }
-
-      if (record.getStr("isspacecontrolenabled").equals("否")) {
-        if (!StrUtil.isBlank(record.getStr("isspacecontrolenabled")) && !StrUtil.isBlank(record.getStr("isspacecontrolenabled"))) {
-          return fail(str + "【是否启用空间管控】为【否】时，【最大存储数】【最大存储空间】的数据必须为空，请确定数据后修改重新导入");
-        }
-      }
-
-      //空间管控
-      int isSpaceControlEnabled = record.getStr("isspacecontrolenabled").equals("是") ? 1 : 0;
-      //库存预警
-      int isStockWarnEnabled = record.getStr("isstockwarnenabled").equals("是") ? 1 : 0;
-      //启动库区
-      int isreservoirarea = record.getStr("isReservoirArea").equals("是") ? 1 : 0;
-
-      if (!StrUtil.isBlank(record.getStr("cwhperson"))) {
-        String cpsn_num = dbTemplate("warehouse.getCpsnnameByCpsnnum", Kv.by("cdepname", record.getStr("cWhPerson"))).queryStr();
-        if (StrUtil.isBlank(cpsn_num)) {
-          return fail(str + "【负责人姓名】未找到对应的人员数据信息,请检查【" + record.getStr("cWhPerson") + "】人员数据是否存在人员档案");
-        } else {
-          record.set("cwhperson", cpsn_num);
-        }
-      }
-
-      Date now = new Date();
-
-      record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
-      record.set("iOrgId", getOrgId());
-      record.set("cOrgCode", getOrgCode());
-      record.set("cOrgName", getOrgName());
-      record.set("iSource", SourceEnum.MES.getValue());
-      record.set("iCreateBy", JBoltUserKit.getUserId());
-      record.set("dCreateTime", now);
-      record.set("cCreateName", JBoltUserKit.getUserName());
-      record.set("isEnabled", 1);
-      record.set("isDeleted", 0);
-      record.set("iUpdateBy", JBoltUserKit.getUserId());
-      record.set("dUpdateTime", now);
-      record.set("cUpdateName", JBoltUserKit.getUserName());
-      record.set("isreservoirarea", isreservoirarea);
-      record.set("isSpaceControlEnabled", isSpaceControlEnabled);
-      record.set("isStockWarnEnabled", isStockWarnEnabled);
-      record.set("cdepcode", cdepcode);
-      i++;
-    }
-
-    // 执行批量操作
     tx(() -> {
-      batchSaveRecords(records);
+      Integer iseq = 1;
+      // 封装数据
+      for (Map<String, Object> data : datas) {
+        // 基本信息校验
+        ValidationUtils.notNull(data.get("cwhcode"), "第" + iseq + "行的【仓库编码】不能为空！");
+        ValidationUtils.notNull(data.get("cwhname"), "第" + iseq + "行的【仓库名称】不能为空！");
+        ValidationUtils.notNull(data.get("cdepcode"), "第" + iseq + "行的【所属部门名称】不能为空");
+        ValidationUtils.notNull(data.get("isstockwarnenabled"), "第" + iseq + "行的【是否启用空间掌控】不能为空！");
+        ValidationUtils.notNull(data.get("isspacecontrolenabled"), "第" + iseq + "行的【启用库存预警】不能为空！");
+        ValidationUtils.notNull(data.get("isspacecontrolenabled"), "第" + iseq + "行的【启用库区】不能为空！");
+
+        // 查重
+        ValidationUtils.assertNull(findByWhCode(data.get("cwhcode") + ""), "第" + iseq + "行的【仓库编码】已存在！");
+        ValidationUtils.assertNull(findByWhName(data.get("cwhname") + ""), "第" + iseq + "行的【仓库名称】已存在！");
+        Department dept = departmentService.findByCdepName(data.get("cdepcode") + "");
+        ValidationUtils.notNull(dept, "第" + iseq + "行的【所属部门名称】未找到对应的部门档案数据！");
+        if (data.get("imaxstock") != null || data.get("imaxspace") != null) {
+          if ((data.get("isspacecontrolenabled") + "").equals("否")) {
+            ValidationUtils.error("第" + iseq + "行的【是否启用空间掌控】为否时，【最大存储数量】【最大存储空间】必须为空！");
+          }
+        } else {
+          if ((data.get("isspacecontrolenabled") + "").equals("是")) {
+            ValidationUtils.error("第" + iseq + "行的【是否启用空间掌控】为是时，【最大存储数量】【最大存储空间】不能为空！");
+          }
+        }
+
+        //仓库数据保存
+        Warehouse warehouse = new Warehouse();
+        //组织数据
+        warehouse.setIOrgId(getOrgId());
+        warehouse.setCOrgCode(getOrgCode());
+        warehouse.setCOrgName(getOrgName());
+
+        //创建人
+        warehouse.setIcreateby(JBoltUserKit.getUserId());
+        warehouse.setCcreatename(JBoltUserKit.getUserName());
+        warehouse.setDCreateTime(new Date());
+
+        //更新人
+        warehouse.setIupdateby(JBoltUserKit.getUserId());
+        warehouse.setCupdatename(JBoltUserKit.getUserName());
+        warehouse.setDupdatetime(new Date());
+
+        //是否删除，是否启用,数据来源
+        warehouse.setIsDeleted(false);
+        warehouse.setIsEnabled(true);
+        warehouse.setISource(1);
+
+        //数据添加
+        warehouse.setCWhCode(data.get("cwhcode") + "");
+        warehouse.setCWhName(data.get("cwhname") + "");
+        warehouse.setCDepCode(dept.getCDepCode());
+        if (data.get("cwhperson") != null) {
+          Person person = personService.findFirstByCpersonName(data.get("cwhperson") + "");
+          if (person == null) {
+            ValidationUtils.error("第" + iseq + "行的【负责人】未找到对应的人员档案数据！");
+          } else {
+            warehouse.setCWhPerson(person.getCpsnNum());
+          }
+        }
+        if (data.get("imaxstock") != null) {
+          warehouse.setIMaxStock(BigDecimal.valueOf(Integer.parseInt(data.get("imaxstock") + "")));
+        }
+        if (data.get("imaxspace") != null) {
+          warehouse.setImaxspace(BigDecimal.valueOf(Integer.parseInt(data.get("imaxspace") + "")));
+        }
+        //空间掌控
+        boolean isspacecontrolenabled = (data.get("isspacecontrolenabled") + "").equals("是") ? true : false;
+        //库存预警
+        boolean isstockwarnenabled = (data.get("isstockwarnenabled") + "").equals("是") ? true : false;
+        warehouse.setIsSpaceControlEnabled(isspacecontrolenabled);
+        warehouse.setIsStockWarnEnabled(isstockwarnenabled);
+        warehouse.setCWhAddress(data.get("cwhaddress") + "");
+        warehouse.setIsReservoirAread(true);
+        warehouse.setCWhMemo(data.get("cwhmemo") + "");
+
+        warehouse.save();
+        iseq++;
+      }
+
       return true;
     });
+
+    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
     return SUCCESS;
   }
 }

@@ -13,10 +13,12 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -24,8 +26,8 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -323,15 +325,93 @@ public class DepartmentService extends BaseService<Department> {
         if (CollUtil.isNotEmpty(departmentList)){
             List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("org_type", true);
             Map<String, Dictionary> dictionaryMap = dictionaryList.stream().collect(Collectors.toMap(Dictionary::getSn, dictionary -> dictionary));
+            //获取负责人code,name
+            Map<String, String> personMap = getPersonMap(departmentList);
+
             for (Department department : departmentList){
                 String type =  department.getCType();
                 if (dictionaryMap.containsKey(type)){
                     department.setCType(dictionaryMap.get(type).getName());
                 }
+
+                String cDepPerson = department.getCDepPerson();
+                if(StringUtils.isNotBlank(cDepPerson)){
+                    //通过cDepPerson 获取 cDepPersonName
+                    String personName = getPersonName(personMap, cDepPerson);
+                    department.setCDepPersonName(personName);
+                }
+
+
             }
         }
         return convertToModelTree(departmentList, "iautoid", "ipid", (p) -> notOk(p.getIPid()));
     }
+
+
+    /**
+     * 通过cDepPerson 获取 cDepPersonName
+     * */
+    public String getPersonName(Map<String, String> personMap,String personCodes) {
+        String personNames="";
+        if(StringUtils.isNotBlank(personCodes)){
+            String[] split = personCodes.split(",");
+            for (String personCode : split) {
+                String personName = personMap.get(personCode);
+                personNames+=personName+",";
+            }
+            personNames=personNames.substring(0,personNames.length()-1);
+
+        }
+
+
+
+        return personNames;
+    }
+
+
+
+    /**
+     *  获取负责人code,name
+     *  key    负责人  code
+     *  value  负责人  name
+     * */
+    public Map<String,String> getPersonMap(List<Department> departmentList) {
+        Map<String,String> targetMap=new HashMap<>();
+        Set<String> personCodeSet=new HashSet<>();
+        String sqlPersonCode="";
+        for (Department department : departmentList) {
+            String cDepPerson = department.getCDepPerson();
+            if(StringUtils.isNotBlank(cDepPerson)){
+                String[] split = cDepPerson.split(",");
+                for (String personCode : split) {
+                    personCodeSet.add(personCode);
+                }
+            }
+        }
+
+        if(personCodeSet.size()>0){
+            for (String personcode : personCodeSet) {
+                sqlPersonCode+="'"+personcode+"',";
+            }
+            sqlPersonCode=sqlPersonCode.substring(0,sqlPersonCode.length()-1);
+        }
+
+        List<Record> erpPersons = findERPPersons(sqlPersonCode);
+        for (Record erpPerson : erpPersons) {
+            targetMap.put(erpPerson.getStr("cpersoncode"),erpPerson.getStr("cpersonname"));
+        }
+
+        return targetMap;
+    }
+
+    /**
+     * 通过人员编码查找
+     * */
+    public List<Record> findERPPersons(String sqlPersonCode) {
+        List<Record> datas = dbTemplate(u8SourceConfigName(getOrgId()),"department.findERPPersons", Kv.by("sqlPersonCode",sqlPersonCode)).find();
+        return datas;
+    }
+
 
     public List<Department> treeDatasForProposalSystem(Kv kv) {
         List<Department> datas = daoTemplate("department.list", kv).find();
@@ -632,6 +712,105 @@ public class DepartmentService extends BaseService<Department> {
      */
     public Department findByid(Long id){
         return dao.findById(id);
+    }
+
+
+
+    public Ret importRecordsFromExcel(File file) {
+        StringBuilder errorMsg = new StringBuilder();
+
+        JBoltExcel excel = JBoltExcel
+                // 从excel文件创建JBoltExcel实例
+                .from(file)
+                // 设置工作表信息
+                .setSheets(
+                        JBoltExcelSheet.create("Sheet")
+                                // 设置列映射 顺序 标题名称
+                                .setHeaders(2,
+                                        JBoltExcelHeader.create("cdepcode", "部门编码"),
+                                        JBoltExcelHeader.create("cdepname", "部门名称"),
+                                        JBoltExcelHeader.create("cdeptype", "部门类型"),
+                                        JBoltExcelHeader.create("cpersonname", "负责人"),
+                                        JBoltExcelHeader.create("isapsinvoled", "是否参与排产"),
+                                        JBoltExcelHeader.create("dcreatetime", "创建时间"),
+                                        JBoltExcelHeader.create("cdepmemo", "备注")
+
+
+
+                                )
+                                // 从第三行开始读取
+                                .setDataStartRow(2)
+                );
+
+        // 从指定的sheet工作表里读取数据
+        List<Record> rows = JBoltExcelUtil.readRecords(excel, 0, true, errorMsg);
+        if (notOk(rows)) {
+            if (errorMsg.length() > 0) {
+                return fail(errorMsg.toString());
+            } else {
+                return fail("数据为空!");
+            }
+        }
+
+        // 工序新增的记录
+        List<Record> routingAddRecordList = new ArrayList<>();
+        // 工价新增的记录
+        List<Record> priceAddRecordList = new ArrayList<>();
+
+        List<String> list = new ArrayList<>();
+        Date date = new Date();
+        /*
+        for (Record record : rows) {
+            Record recordByRoutingCode = findRecordByRoutingCode(record.getStr("croutingcode"));
+
+            String name = routerecordService.findrecord(record.getStr("cdeptcode"));
+            if (recordByRoutingCode != null) {
+                list.add(String.format("%s数据编码已存在<br/>", record.getStr("croutingcode")));
+            }
+
+            if (name == null) {
+                list.add(String.format("%s数据车间已存在<br/>", record.getStr("cdeptcode")));
+            }
+
+            int a = 0;
+            for (Record record1 : rows) {
+                if (record.getStr("croutingcode").equals(record1.getStr("croutingcode"))) {
+                    a += 1;
+                }
+                if (a == 2) {
+                    list.add(String.format("%sEXCEL编码重复<br/>", record.getStr("croutingcode")));
+                }
+            }
+
+        }
+
+        LinkedHashSet<String> hashSet = new LinkedHashSet<>(list);
+        ArrayList<String> listWithoutDuplicates = new ArrayList<>(hashSet);
+        ValidationUtils.assertEmpty(listWithoutDuplicates, CollUtil.join(listWithoutDuplicates, COMMA));
+
+        for (Record row : Objects.requireNonNull(rows)) {
+
+            // ValidationUtils.isTrue(row.getBigDecimal("iprice").compareTo(BigDecimal.ZERO) != 0 || row.getBigDecimal("iprice").compareTo(BigDecimal.ZERO) != 0.0, "工价不能为0");
+            // 工序
+            Record routingRecord = findRecordByRoutingCode(row.getStr("croutingcode"));
+
+            // 新增
+            if (null == routingRecord) {
+                routingAddRecordList.add(row.set("iautoid", JBoltSnowflakeKit.me.nextId())
+                        .set("icreateby", userId)
+                        .set("dcreatedate", date).set("cdeptname", routerecordService.findrecord(row.getStr("cdeptcode"))));
+
+            }
+
+
+        }
+        */
+        tx(() -> {
+
+            return true;
+        });
+
+        return SUCCESS;
     }
 
 }
