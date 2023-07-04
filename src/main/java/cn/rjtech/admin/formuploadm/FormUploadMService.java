@@ -322,7 +322,6 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
                 formUploadM.setICategoryId(Long.parseLong(icategoryid));
                 formUploadM.setDDate(ddate);
                 formUploadM.setDUpdateTime(new Date());
-                formUploadM.setIAuditWay(2);
                 formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
                 formUploadM.setCUpdateName(JBoltUserKit.getUserName());
                 ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
