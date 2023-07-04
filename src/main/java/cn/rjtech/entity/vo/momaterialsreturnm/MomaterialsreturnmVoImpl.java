@@ -48,6 +48,77 @@ public class MomaterialsreturnmVoImpl implements Serializable {
     private  String cBarcode;
     /**数量*/
     private BigDecimal iQty;
+    /**存货编码*/
+    private String cinvcode;
+
+    public String getCinvcode() {
+        return cinvcode;
+    }
+
+    public void setCinvcode(String cinvcode) {
+        this.cinvcode = cinvcode;
+    }
+
+    public String getCinvaddcode() {
+        return cinvaddcode;
+    }
+
+    public void setCinvaddcode(String cinvaddcode) {
+        this.cinvaddcode = cinvaddcode;
+    }
+
+    public String getCinvname() {
+        return cinvname;
+    }
+
+    public void setCinvname(String cinvname) {
+        this.cinvname = cinvname;
+    }
+
+    public String getCinvstd() {
+        return cinvstd;
+    }
+
+    public void setCinvstd(String cinvstd) {
+        this.cinvstd = cinvstd;
+    }
+
+    public String getEmpty() {
+        return empty;
+    }
+
+    public void setEmpty(String empty) {
+        this.empty = empty;
+    }
+
+    public Long getIuomaclassid() {
+        return iuomaclassid;
+    }
+
+    public void setIuomaclassid(Long iuomaclassid) {
+        this.iuomaclassid = iuomaclassid;
+    }
+
+    public BigDecimal getIqtys() {
+        return iqtys;
+    }
+
+    public void setIqtys(BigDecimal iqtys) {
+        this.iqtys = iqtys;
+    }
+
+    /**存货代码*/
+    private String cinvaddcode;
+    /**存货名称*/
+    private String cinvname;
+    /**规格型号*/
+    private String cinvstd;
+    /**品牌*/
+    private String empty;
+    /**主计量单位*/
+    private Long iuomaclassid;
+    /**数量**/
+    private BigDecimal iqtys;
 
     public Long getiMaterialsReturnMid() {
         return iMaterialsReturnMid;

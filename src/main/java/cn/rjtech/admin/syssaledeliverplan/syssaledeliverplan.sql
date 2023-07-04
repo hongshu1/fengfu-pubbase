@@ -103,7 +103,7 @@ LEFT JOIN  Bd_SaleType sa on sa.cSTCode = a.RdCode
 LEFT JOIN Bd_Department de on de.cDepCode = a.DeptCode
 LEFT JOIN Co_SubcontractSaleOrderM sm on sm.cOrderNo = a.BillNo
 LEFT JOIN Bd_Customer cr on  sm.iCustomerId = cr.iAutoId
-where 1=1
+where 1=1 and a.isDeleted = '0'
 	#if(billno)
 		and a.BillNo like concat('%',#para(billno),'%')
 	#end

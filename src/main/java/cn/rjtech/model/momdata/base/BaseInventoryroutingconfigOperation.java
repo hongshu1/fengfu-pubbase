@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,20 +10,23 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseInventoryroutingconfigOperation<M extends BaseInventoryroutingconfigOperation<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**料品工艺档案配置ID*/
     public static final String IINVENTORYROUTINGCONFIGID = "iInventoryRoutingConfigId";
     /**工序档案ID*/
     public static final String IOPERATIONID = "iOperationId";
-    /**备注*/
-    public static final String CMEMO = "cMemo";
+    /**工序名称*/
+    public static final String COPERATIONNAME = "cOperationName";
     /**创建人*/
     public static final String ICREATEBY = "iCreateBy";
     /**创建人名称*/
     public static final String CCREATENAME = "cCreateName";
     /**创建时间*/
     public static final String DCREATETIME = "dCreateTime";
+    /**备注*/
+    public static final String CMEMO = "cMemo";
 	/**
 	 * 主键ID
 	 */
@@ -77,20 +79,20 @@ public abstract class BaseInventoryroutingconfigOperation<M extends BaseInventor
 	}
 
 	/**
-	 * 备注
+	 * 工序名称
 	 */
-	public M setCMemo(java.lang.String cMemo) {
-		set("cMemo", cMemo);
+	public M setCOperationName(java.lang.String cOperationName) {
+		set("cOperationName", cOperationName);
 		return (M)this;
 	}
 
 	/**
-	 * 备注
+	 * 工序名称
 	 */
-	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=4)
-	@JSONField(name = "cmemo")
-	public java.lang.String getCMemo() {
-		return getStr("cMemo");
+	@JBoltField(name="coperationname" ,columnName="cOperationName",type="String", remark="工序名称", required=true, maxLength=200, fixed=0, order=4)
+	@JSONField(name = "coperationname")
+	public java.lang.String getCOperationName() {
+		return getStr("cOperationName");
 	}
 
 	/**
@@ -121,7 +123,7 @@ public abstract class BaseInventoryroutingconfigOperation<M extends BaseInventor
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=50, fixed=0, order=6)
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=true, maxLength=60, fixed=0, order=6)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCCreateName() {
 		return getStr("cCreateName");
@@ -142,6 +144,23 @@ public abstract class BaseInventoryroutingconfigOperation<M extends BaseInventor
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
+	}
+
+	/**
+	 * 备注
+	 */
+	public M setCMemo(java.lang.String cMemo) {
+		set("cMemo", cMemo);
+		return (M)this;
+	}
+
+	/**
+	 * 备注
+	 */
+	@JBoltField(name="cmemo" ,columnName="cMemo",type="String", remark="备注", required=false, maxLength=200, fixed=0, order=8)
+	@JSONField(name = "cmemo")
+	public java.lang.String getCMemo() {
+		return getStr("cMemo");
 	}
 
 }
