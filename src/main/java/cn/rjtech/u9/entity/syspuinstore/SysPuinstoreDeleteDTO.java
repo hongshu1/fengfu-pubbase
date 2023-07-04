@@ -1,18 +1,18 @@
 package cn.rjtech.u9.entity.syspuinstore;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.alibaba.fastjson.annotation.JSONField;
 /**
  * @version 1.0
  * @Author cc
  * @Create 2023/6/13 14:21
  * @Description 通知U8删除采购入库单
  */
-
 @XmlRootElement(name = "SysPuinstoreDeleteDTO")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class SysPuinstoreDeleteDTO {
@@ -86,8 +86,6 @@ public class SysPuinstoreDeleteDTO {
 
     @Override
     public String toString() {
-        return "SysPuinstoreDeleteDTO{" +
-            "data=" + data +
-            '}';
+        return "SysPuinstoreDeleteDTO{" + "data=" + data + '}';
     }
 }

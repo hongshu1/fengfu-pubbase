@@ -12,6 +12,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
 import java.util.Date;
+import java.util.List;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -113,15 +114,18 @@ public class InventoryroutingconfigOperationService extends BaseService<Inventor
 		return null;
 	}
 	
-	public InventoryroutingconfigOperation create(Long iInventoryRoutingConfigId, Long iOperationId, Long iCreateBy, String cCreateName, String cMemo, Date dCreateTime){
+	public InventoryroutingconfigOperation create(Long iInventoryRoutingConfigId, Long iOperationId, String cOperationName, Long iCreateBy, String cCreateName, String cMemo, Date dCreateTime, List<Long> longList){
 		InventoryroutingconfigOperation inventoryroutingconfigOperation = new InventoryroutingconfigOperation();
-		inventoryroutingconfigOperation.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		Long mid = JBoltSnowflakeKit.me.nextId();
+		inventoryroutingconfigOperation.setIAutoId(mid);
 		inventoryroutingconfigOperation.setIInventoryRoutingConfigId(iInventoryRoutingConfigId);
 		inventoryroutingconfigOperation.setIOperationId(iOperationId);
+		inventoryroutingconfigOperation.setCOperationName(cOperationName);
 		inventoryroutingconfigOperation.setICreateBy(iCreateBy);
 		inventoryroutingconfigOperation.setCCreateName(cCreateName);
 		inventoryroutingconfigOperation.setCMemo(cMemo);
 		inventoryroutingconfigOperation.setDCreateTime(dCreateTime);
+		longList.add(mid);
 		return inventoryroutingconfigOperation;
 	}
 

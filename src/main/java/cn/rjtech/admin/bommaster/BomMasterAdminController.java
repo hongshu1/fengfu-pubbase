@@ -1,5 +1,6 @@
 package cn.rjtech.admin.bommaster;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -203,7 +204,8 @@ public class BomMasterAdminController extends BaseAdminController {
         BomM bomM = bomMService.findById(get(0));
         ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
         ValidationUtils.isTrue(bomM.getIAuditStatus() == AuditStatusEnum.APPROVED.getValue(), "已审核的物料清单才能复制");
-        set(BomM.DENABLEDATE, bomM.getDDisableDate());
+        DateTime dateTime = DateUtil.offsetDay(bomM.getDDisableDate(), 1);
+        set(BomM.DENABLEDATE, DateUtil.formatDate(dateTime));
         set(BomM.CVERSION, bomMService.getNextVersion(getOrgId(), bomM.getIInventoryId()));
         render("_copy_form.html");
     }

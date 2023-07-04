@@ -832,47 +832,31 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      * */
     public String deleteVouchProcessDynamicSubmitUrl(String json) {
         String vouchSumbmitUrl = AppConfig.getStockApiUrl() + "/OtherInUnConfirmV1";
-        LOG.info("OtherInUnConfirmV1: {}", vouchSumbmitUrl);
-        LOG.info("json: {}", json);
-
         Map<String, Object> para = new HashMap<>();
         para.put("dataJson", json);
-        
         String inUnVouchGet = HttpUtil.post(vouchSumbmitUrl, para);
-        LOG.info("inUnVouchGet: {}", inUnVouchGet);
-        
         String res = XmlUtil.readObjectFromXml(inUnVouchGet);
         LOG.info("res: {}", res);
-        
         com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(res);
-
-        ValidationUtils.notNull(jsonObject, "解析JSON为空");
         String code = jsonObject.getString("code");
         String message = StrUtil.nullToDefault(jsonObject.getString("message"), jsonObject.getString("msg"));
-        LOG.info("res: {}", res);
+        if(!"200".equals(code))return message;
 
-        if (ObjUtil.equal(jsonObject.getString("state"), "fail")) {
-            ValidationUtils.error(message);
-        }
-        ValidationUtils.notNull(code, "json:" + json + ";" + message);
-        ValidationUtils.equals(code, "200", message);
-
-        String deleteUrl = AppConfig.getStockApiUrl() + "?op=OtherInDelete";
-        String deleteGet = HttpUtil.get(deleteUrl + "?dataJson=" + json);
-        String deleteRes = XmlUtil.readObjectFromXml(deleteGet);
+        String deleteUrl = AppConfig.getStockApiUrl() + "/OtherInDeleteV1";
+        String deleteGet1 = HttpUtil.get(deleteUrl + "?dataJson=" + json);
+//        LOG.info("rdeleteGet1: {}", deleteGet1);
+//        String deleteGet = HttpUtil.post(deleteUrl, para);
+//        LOG.info("deleteGet: {}", deleteGet);
+//        LOG.info("para: {}", para);
+        String deleteRes = XmlUtil.readObjectFromXml(deleteGet1);
         com.alibaba.fastjson.JSONObject deleteJsonObject = JSON.parseObject(deleteRes);
-
-        ValidationUtils.notNull(deleteJsonObject, "解析JSON为空");
         String deleteCode = deleteJsonObject.getString("code");
         String deleteMessage = StrUtil.nullToDefault(deleteJsonObject.getString("message"), deleteJsonObject.getString("msg"));
         LOG.info("deleteRes: {}", deleteRes);
-
-        if (ObjUtil.equal(deleteJsonObject.getString("state"), "fail")) {
-            ValidationUtils.error(deleteMessage);
+        if("200".equals(deleteCode)){
+            return null;
+        }else {
+            return deleteMessage;
         }
-        ValidationUtils.notNull(deleteCode, "json:" + json + ";" + deleteMessage);
-        ValidationUtils.equals(deleteCode, "200", deleteMessage);
-
-        return code;
     }
 }
