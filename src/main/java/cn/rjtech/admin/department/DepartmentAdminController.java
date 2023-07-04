@@ -5,7 +5,6 @@ import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
@@ -310,5 +309,5 @@ public class DepartmentAdminController extends BaseAdminController {
 
         renderJsonData(service.getCommonList(kv, "dCreateTime", "desc"));
     }
-
+    
 }

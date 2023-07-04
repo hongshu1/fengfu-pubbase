@@ -52,12 +52,14 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
   @Inject
   private WarehouseService warehouseService;
 
+  @Inject
+  private CusFieldsMappingDService cusFieldsMappingdService;
+
   /**
    * 后台管理分页查询
    */
   public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
     return dbTemplate("warehousearea.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
-    //return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
   }
 
   public List<Record> list(Kv kv) {
@@ -69,6 +71,10 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 
   public WarehouseArea findByWhAreaCode(String careacode) {
     return findFirst(Okv.by("cAreaCode", careacode).set("isDeleted", false), "iautoid", "asc");
+  }
+
+  public WarehouseArea findByWhAreaName(String careaname) {
+    return findFirst(Okv.by("cAreaName", careaname).set("isDeleted", false), "iautoid", "asc");
   }
 
   public List<WarehouseArea> findAreaListByWhName(String carename) {
@@ -87,7 +93,15 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
     if (warehouseArea == null || isOk(warehouseArea.getIautoid())) {
       return fail(JBoltMsg.PARAM_ERROR);
     }
-    ValidationUtils.isTrue(findByWhAreaCode(warehouseArea.getCareacode()) == null, warehouseArea.getCareacode() + " 编码重复");
+    Warehouse warehouse = warehouseService.findById(warehouseArea.getIwarehouseid());
+    if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careacode", warehouseArea.getCareacode()).
+        set("iwarehouseid", warehouseArea.getIwarehouseid())).queryInt() > 0) {
+      ValidationUtils.error("【" + warehouse.getCWhName() + "】下【库区编码】" + warehouseArea.getCareacode() + "已存在，请修改后保存");
+    }
+    if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careaname", warehouseArea.getCareaname()).
+        set("iwarehouseid", warehouseArea.getIwarehouseid())).queryInt() > 0) {
+      ValidationUtils.error("【" + warehouse.getCWhName() + "】下【库区名称】" + warehouseArea.getCareaname() + "已存在，请修改后保存");
+    }
 
     //if(existsName(warehouseArea.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
     warehouseArea.setIcreateby(JBoltUserKit.getUserId());
@@ -119,12 +133,14 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
       return fail(JBoltMsg.DATA_NOT_EXIST);
     }
 
-    //查询编码是否存在
-    WarehouseArea ware = findByWhAreaCode(warehouseArea.getCareacode());
-
-    //编码重复判断
-    if (ware != null && !warehouseArea.getIautoid().equals(ware.getIautoid())) {
-      ValidationUtils.assertNull(ware.getCareacode(), warehouseArea.getCareacode() + " 编码重复！");
+    Warehouse warehouse = warehouseService.findById(warehouseArea.getIwarehouseid());
+    if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careacode", warehouseArea.getCareacode()).
+        set("iwarehouseid", warehouseArea.getIwarehouseid()).set("iautoid", warehouseArea.getIautoid())).queryInt() > 0) {
+      ValidationUtils.error("【" + warehouse.getCWhName() + "】下【库区编码】" + warehouseArea.getCareacode() + "已存在，请修改后保存");
+    }
+    if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careaname", warehouseArea.getCareaname()).
+        set("iwarehouseid", warehouseArea.getIwarehouseid()).set("iautoid", warehouseArea.getIautoid())).queryInt() > 0) {
+      ValidationUtils.error("【" + warehouse.getCWhName() + "】下【库区名称】" + warehouseArea.getCareaname() + "已存在，请修改后保存");
     }
 
     warehouseArea.setIupdateby(JBoltUserKit.getUserId());
@@ -236,91 +252,6 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
     return null;
   }
 
-  /**
-   * 库区导入
-   *
-   * @param file
-   * @return
-   */
-  public Ret importExcelData(File file) {
-    StringBuilder errorMsg = new StringBuilder();
-
-
-    JBoltExcel jBoltExcel = JBoltExcel
-        //从excel文件创建JBoltExcel实例
-        .from(file)
-        //设置工作表信息
-        .setSheets(
-            JBoltExcelSheet.create("sheet1")
-                //设置列映射 顺序 标题名称
-                .setHeaders(
-                    JBoltExcelHeader.create("careacode", "库区编码"),
-                    JBoltExcelHeader.create("careaname", "库区名称"),
-                    JBoltExcelHeader.create("cwhcode", "所属仓库编码"),
-                    JBoltExcelHeader.create("imaxcapacity", "最大存储数"),
-                    JBoltExcelHeader.create("cmemo", "备注")
-
-                )
-                //特殊数据转换器
-                .setDataChangeHandler((data, index) -> {
-
-                  /**
-                   * 非空判断
-                   */
-                  ValidationUtils.notNull(data.get("careacode"), "库区编码为空！");
-                  ValidationUtils.notNull(data.get("careaname"), "库区名称为空！");
-                  ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
-
-                  /**
-                   * 判断编码是否重复
-                   */
-                  ValidationUtils.isTrue(findByWhAreaCode(data.getStr("careacode")) == null, data.getStr("careacode") + " 编码重复");
-
-                  /**
-                   * 判断是否存在这个仓库编码
-                   */
-                  Warehouse warehouse = warehouseService.findByWhCode(data.getStr("cwhcode"));
-                  ValidationUtils.notNull(warehouse, data.getStr("cwhcode") + JBoltMsg.DATA_NOT_EXIST);
-
-                  data.change("iwarehouseid", warehouse.getIAutoId());
-                  data.remove("cwhcode");
-                  data.change("icreateby", JBoltUserKit.getUserId());
-                  data.change("ccreatename", JBoltUserKit.getUserName());
-                  data.change("corgcode", getOrgCode());
-                  data.change("corgname", getOrgName());
-                  data.change("iorgid", getOrgId());
-
-                })
-                //从第三行开始读取
-                .setDataStartRow(3)
-        );
-
-    // 从指定的sheet工作表里读取数据
-    List<WarehouseArea> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", WarehouseArea.class, errorMsg);
-    if (notOk(models)) {
-      if (errorMsg.length() > 0) {
-        return fail(errorMsg.toString());
-      } else {
-        return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-      }
-    }
-    /**
-     *
-     */
-    for (WarehouseArea model : models) {
-      model.set("dCreateTime", new Date());
-    }
-
-    //读取数据没有问题后判断必填字段
-    if (models.size() > 0) {
-      tx(() -> {
-        batchSave(models);
-        return true;
-      });
-    }
-    return SUCCESS;
-  }
-
   public List<Record> findByWareHouseId(long wareHouseId) {
     return dbTemplate("warehousearea.findByWareHouseId", Okv.by("wareHouseId", wareHouseId)).find();
   }
@@ -340,80 +271,75 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
   }
 
   /**
-   * 从系统导入字段配置，获得导入的数据
+   * 数据导入
+   *
+   * @param file
+   * @param cformatName
+   * @return
    */
-  public Ret importExcelClass(File file) {
-    List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
-    if (notOk(records)) {
-      return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-    }
-    Map<String, Object> codeMap = new HashMap<>();
-    Map<String, Object> nameMap = new HashMap<>();
-    int i = 1;
-    for (Record record : records) {
-      String str = "第【" + i + "】行的";
-      if (StrUtil.isBlank(record.getStr("cAreaCode"))) {
-        return fail(str + "【库区编码】不能为空");
-      }
-      if (StrUtil.isBlank(record.getStr("cAreaName"))) {
-        return fail(str + "【库区名称】不能为空");
-      }
-      if (StrUtil.isBlank(record.getStr("iWarehouseId"))) {
-        return fail(str + "【所属仓库】不能为空");
-      }
+  public Ret importExcelData(File file, String cformatName) {
+    Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
+    ValidationUtils.isTrue(ret.isOk(), "导入失败");
+    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
+    StringBuilder msg = new StringBuilder();
 
-      Integer careacodeQty = dbTemplate("warehousearea.verifyDuplication", Kv.by("careacode", record.getStr("cAreaCode"))).queryInt();
-      if (careacodeQty > 0) {
-        return fail(str + "【库区编码】已存在，请修改后重新导入");
-      }
-
-      Integer careanameQty = dbTemplate("warehousearea.verifyDuplication", Kv.by("careaname", record.getStr("cAreaName"))).queryInt();
-      if (careanameQty > 0) {
-        return fail(str + "【库区名称】已存在，请修改后重新导入");
-      }
-
-      if (i == 1) {
-        codeMap.put(record.getStr("cAreaCode"), i);
-        nameMap.put(record.getStr("cAreaName"), i);
-      } else {
-        if (codeMap.get(record.getStr("cAreaCode")) != null) {
-          return fail(str + "【库区编码】和第【" + codeMap.get(record.getStr("cAreaCode")) + "】行的【库区编码】重复，请修改后重新导入");
-        }
-        if (nameMap.get(record.getStr("cAreaName")) != null) {
-          return fail(str + "【库区名称】和第【" + nameMap.get(record.getStr("cAreaName")) + "】行的【库区名称】重复，请修改后重新导入");
-        }
-        codeMap.put(record.getStr("cAreaCode"), i);
-        nameMap.put(record.getStr("cAreaName"), i);
-      }
-
-      String cdepcode = dbTemplate("warehousearea.getiAutoIdByCwhname", Kv.by("cwhname", record.getStr("iWarehouseId"))).queryStr();
-      if (StrUtil.isBlank(cdepcode)) {
-        return fail(str + "【所属仓库】未找到对应的仓库数据信息,请检查【" + record.getStr("iWarehouseId") + "】仓库数据是否存在仓库档案");
-      }
-
-      Date now = new Date();
-      record.set("iWarehouseId", cdepcode);
-      record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
-      record.set("iOrgId", getOrgId());
-      record.set("cOrgCode", getOrgCode());
-      record.set("cOrgName", getOrgName());
-      record.set("iSource", SourceEnum.MES.getValue());
-      record.set("iCreateBy", JBoltUserKit.getUserId());
-      record.set("dCreateTime", now);
-      record.set("cCreateName", JBoltUserKit.getUserName());
-      record.set("isEnabled", 1);
-      record.set("isDeleted", 0);
-      record.set("iUpdateBy", JBoltUserKit.getUserId());
-      record.set("dUpdateTime", now);
-      record.set("cUpdateName", JBoltUserKit.getUserName());
-      i++;
-    }
-
-    // 执行批量操作
     tx(() -> {
-      batchSaveRecords(records);
+      Integer iseq = 1;
+      // 封装数据
+      for (Map<String, Object> data : datas) {
+        // 基本信息校验
+        ValidationUtils.notNull(data.get("careacode"), "第" + iseq + "行的【库区编码】不能为空！");
+        ValidationUtils.notNull(data.get("careaname"), "第" + iseq + "行的【库区名称】不能为空！");
+        ValidationUtils.notNull(data.get("cwhname"), "第" + iseq + "行的【所属仓库名称】不能为空！");
+
+        //判断是否存在这个仓库名称
+        Warehouse warehouse = warehouseService.findByWhName(data.get("cwhname") + "");
+        ValidationUtils.notNull(warehouse, "第" + iseq + "行【" + data.get("cwhname") + "】" + JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(warehouse.getIsEnabled(), "第" + iseq + "行【" + data.get("cwhname") + "】未启用库区选项");
+
+
+        if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careacode", data.get("careacode")).
+            set("iwarehouseid", warehouse.getIAutoId())).queryInt() > 0) {
+          ValidationUtils.error("第" + iseq + "行的【" + warehouse.getCWhName() + "】下【库区编码】" + data.get("careacode") + "已存在，请修改后保存");
+        }
+        if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careaname", data.get("careaname")).
+            set("iwarehouseid", warehouse.getIAutoId())).queryInt() > 0) {
+          ValidationUtils.error("第" + iseq + "行的【" + warehouse.getCWhName() + "】下【库区名称】" + data.get("careaname") + "已存在，请修改后保存");
+        }
+        WarehouseArea warehouseArea = new WarehouseArea();
+        //组织数据
+        warehouseArea.setIorgid(getOrgId());
+        warehouseArea.setCorgcode(getOrgCode());
+        warehouseArea.setCorgname(getOrgName());
+
+        //创建人
+        warehouseArea.setIcreateby(JBoltUserKit.getUserId());
+        warehouseArea.setCcreatename(JBoltUserKit.getUserName());
+        warehouseArea.setDcreatetime(new Date());
+
+        //更新人
+        warehouseArea.setIupdateby(JBoltUserKit.getUserId());
+        warehouseArea.setCupdatename(JBoltUserKit.getUserName());
+        warehouseArea.setDupdatetime(new Date());
+
+        //是否删除，是否启用,数据来源
+        warehouseArea.setIsdeleted(false);
+        warehouseArea.setIsenabled(true);
+        warehouseArea.setIsource(1);
+
+        warehouseArea.setCareacode(data.get("careacode") + "");
+        warehouseArea.setCareaname(data.get("careaname") + "");
+
+        warehouseArea.setIMaxCapacity(Long.parseLong(data.get("imaxcapacity") + ""));
+        warehouseArea.setIwarehouseid(warehouse.getIAutoId());
+        warehouseArea.setCmemo(data.get("cmemo") + "");
+        ValidationUtils.isTrue(warehouseArea.save(), "第" + iseq + "行保存数据失败");
+        iseq++;
+      }
       return true;
     });
+
+    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
     return SUCCESS;
   }
 }

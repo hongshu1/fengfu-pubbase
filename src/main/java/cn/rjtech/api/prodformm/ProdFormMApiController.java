@@ -1,7 +1,9 @@
 package cn.rjtech.api.prodformm;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.prodform.ProdFormService;
 import cn.rjtech.admin.prodformitem.ProdFormItemService;
@@ -25,6 +27,7 @@ import java.util.List;
  * @author yjllzy
  */
 @ApiDoc
+@CheckPermission(PermissionKey.PRODFORMM_APP)
 public class ProdFormMApiController extends BaseApiController {
     @Inject
     private ProdFormMApiService service;
