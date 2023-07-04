@@ -604,11 +604,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         Record first = dbTemplate("syspureceive.paginateAdminDatas", Kv.by("careacode", row.getStr("poscode"))).findFirst();
         if(null != first && !"".equals(first)){
             Integer imaxcapacity = first.getInt("imaxcapacity");
-            BigDecimal bigDecimal = new BigDecimal(imaxcapacity);
-            BigDecimal qty = row.getBigDecimal("qty");
-            if (ObjUtil.isNotNull(imaxcapacity)) {
-                if (qty.compareTo(bigDecimal) == 1) {
-                    ValidationUtils.error(String.format("第%d行%s现品票号实收数量超出对应库存最大存储量，请选择其他库区录入", i + 1, row.get("barcode")));
+            if(null != imaxcapacity && !"".equals(imaxcapacity)){
+                BigDecimal bigDecimal = new BigDecimal(imaxcapacity);
+                BigDecimal qty = row.getBigDecimal("qty");
+                if (ObjUtil.isNotNull(imaxcapacity)) {
+                    if (qty.compareTo(bigDecimal) == 1) {
+                        ValidationUtils.error(String.format("第%d行%s现品票号实收数量超出对应库存最大存储量，请选择其他库区录入", i + 1, row.get("barcode")));
+                    }
                 }
             }
         }
