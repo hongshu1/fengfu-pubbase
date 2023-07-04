@@ -362,6 +362,22 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 		return dbTemplate("materialsout.getBarcodeDatas",kv).find();
 	}
 
+
+	/**
+	 * 获取条码列表
+	 * 通过关键字匹配
+	 * autocomplete组件使用
+	 */
+	public Record barcode(Kv kv) {
+		Record first2 = dbTemplate("materialsout.materialsoutBarcodeDatas", kv).findFirst();
+////		先查询条码是否已添加
+		if(null == first2){
+			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "没有此数据！！！");
+		}
+
+		return first2;
+	}
+
 	public Ret pushU8(String ids) {
 		List<Record> list = dbTemplate("materialsout.pushU8List", Kv.by("autoid", ids)).find();
 
@@ -387,10 +403,10 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 				jsonObject.set("deliverqty","");
 				jsonObject.set("qty",record.get("qty"));
 				jsonObject.set("barcode",record.get("barcode"));
-				jsonObject.set("billrowno",record.get("billno"));
+				jsonObject.set("billrowno","");
 				jsonObject.set("billid",record.get("billid"));
 				jsonObject.set("billdid",record.get("billdid"));
-				jsonObject.set("billnorow",record.get("billno"));
+				jsonObject.set("billnorow",record.get("billnorow"));
 				jsonObject.set("billno",record.get("billno"));
 				jsonObject.set("odeptcode",record.get("deptcode"));
 				jsonObject.set("odeptname",record.get("cdepname"));
@@ -398,7 +414,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 				jsonObject.set("oposcode","");
 				jsonObject.set("invcode",record.get("invcode"));
 				jsonObject.set("invstd","");
-				jsonObject.set("invname","");
+				jsonObject.set("invname",record.get("invname"));
 				jsonObject.set("sourcebillno","");
 				jsonObject.set("sourcebillnorow","");
 				jsonObject.set("cusname","");
@@ -447,10 +463,10 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 						String bill = s[0];
 						LOG.info("s===>" + bill);
 						LOG.info("data====" + data);
-						int update = update("update T_Sys_OtherOut set AuditStatus ='2' where AutoID IN("+ids+")" );
-
-						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-								"推送数据失败," + "失败原因" + msg);
+//						int update = update("update T_Sys_OtherOut set AuditStatus ='2' where AutoID IN("+ids+")" );
+//
+//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+//								"推送数据失败," + "失败原因" + msg);
 					}
 					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
 				} else {
@@ -461,8 +477,8 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
 				e.printStackTrace();
 			} finally {
-				systemLog.setTitle(stringBuilder.toString());
-				systemLog.save();
+//				systemLog.setTitle(stringBuilder.toString());
+//				systemLog.save();
 			}
 			return fail("请求失败");
 		} else {

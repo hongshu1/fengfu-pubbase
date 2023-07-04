@@ -89,6 +89,9 @@ WHERE
 	    #if(cVenName)
 	        AND ven.cVenName LIKE CONCAT('%', #para(cVenName), '%')
 	    #end
+	    #if(itemHidden)
+            AND inv.iAutoId not in (#(itemHidden))
+	    #end
 #end
 
 #sql("inventoryAutocompleteNew")

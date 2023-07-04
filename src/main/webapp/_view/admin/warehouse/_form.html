@@ -15,7 +15,8 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">仓库名称</label>
         <div class="col-10">
-          <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control" placeholder="请输入仓库名称"
+          <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control"
+                 placeholder="请输入仓库名称"
                  maxlength="40" name="warehouse.cWhName" value="#(warehouse.cWhName??)"/>
         </div>
       </div>
@@ -97,33 +98,37 @@
         <label class="col-sm-2 col-form-label">启用空间管控</label>
         <div class="col" style="padding-top: 1px;">
           <div class="radio radio-primary  radio-inline">
-            <input id="r_isSpaceControlEnabled_true" type="radio" name="warehouse.isSpaceControlEnabled" value="true"/>
+            <input id="r_isSpaceControlEnabled_true" type="radio" onclick="isSpaceControlEnabledBtn(1)"
+                   name="warehouse.isSpaceControlEnabled" value="true"/>
             <label for="r_isSpaceControlEnabled_true">启用</label>
           </div>
 
           <div class="radio radio-primary  radio-inline">
             <input id="r_isSpaceControlEnabled_false" type="radio" name="warehouse.isSpaceControlEnabled"
+                   onclick="isSpaceControlEnabledBtn(2)"
                    value="false"/>
             <label for="r_isSpaceControlEnabled_false">禁用</label>
           </div>
         </div>
       </div>
-      <!--<div id="iscontrolhide">
-          <div class="form-group row">
-              <label class="col-sm-2 col-form-label">
-                  <input  type="radio" name="warehouse.imaxtype" value="1" #((warehouse && warehouse.imaxtype==1)?'checked':''??)  onclick="silderMaxType()"/>最大存储数</label>
-              <div class="col">
-                  <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;"  data-notnull="false" placeholder="请输入最大存储数"  maxlength="24" name="warehouse.imaxstock" value="#(warehouse.imaxstock??)"/>
-              </div>
+      <div id="iscontrolhide">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">最大存储数</label>
+          <div class="col">
+            <input type="text" id="imaxstock" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   data-rule="pnumber;fix<=6;" data-notnull="false" placeholder="请输入最大存储数" maxlength="24"
+                   name="warehouse.imaxstock" value="#(warehouse.imaxstock??)"/>
           </div>
-          <div class="form-group row">
-              <label class="col-sm-2 col-form-label">
-                  <input  type="radio" name="warehouse.imaxtype" value="2" #((warehouse && warehouse.imaxtype==2)?'checked':''??) onclick="silderMaxType()"/>最大存储空间</label>
-              <div class="col">
-                  <input type="text" data-with-clearbtn="true"  autocomplete="off"  class="form-control" data-rule="pnumber;fix<=6;"  data-notnull="false" placeholder="请输入最大存储空间"  maxlength="24" name="warehouse.imaxspace" value="#(warehouse.imaxspace??)"/>
-              </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">最大存储空间</label>
+          <div class="col">
+            <input type="text" id="imaxspace" data-with-clearbtn="true" autocomplete="off" class="form-control"
+                   data-rule="pnumber;fix<=6;" data-notnull="false" placeholder="请输入最大存储空间" maxlength="24"
+                   name="warehouse.imaxspace" value="#(warehouse.imaxspace??)"/>
           </div>
-      </div>-->
+        </div>
+      </div>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">仓库地址</label>
@@ -192,14 +197,24 @@
   function sliderChangeHandlerwh(e) {
     var iscontrol = $("input[name='warehouse.iscontrol']:checked").val() || '#(warehouse.iscontrol??)';
     if (iscontrol == 'true') {
-      $("#iscontrolhide").show();
+
     } else {
-      $("#iscontrolhide").hide();
+
     }
   }
 
   function silderMaxType() {
     var imaxtype = $("input[name='warehouse.imaxtype']:checked").val()
+  }
+
+  function isSpaceControlEnabledBtn(index) {
+    if (index == 1) {
+      $("#iscontrolhide").show();
+    } else {
+      $("#iscontrolhide").hide();
+      $("#imaxstock").val("");
+      $("#imaxspace").val("");
+    }
   }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="warehouseForm_")
