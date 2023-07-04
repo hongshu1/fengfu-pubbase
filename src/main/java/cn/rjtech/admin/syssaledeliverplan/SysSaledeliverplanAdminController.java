@@ -72,7 +72,7 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      * 编辑
      */
     public void edit() {
-        SysSaledeliverplan sysSaledeliverplan = service.findById(getLong(0));
+        SysSaledeliverplan sysSaledeliverplan = service.findById(getLong("autoid"));
         if (sysSaledeliverplan == null) {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
