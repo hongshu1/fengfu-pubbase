@@ -226,7 +226,7 @@ public class MoDocService extends BaseService<MoDoc> {
         if (configperson != null) {
           String[] arr = configperson.split(",");
           for (int i = 0; i < arr.length; i++) {
-            System.out.println(arr[i]);
+            ValidationUtils.notNull(arr[i], "第"+i+"行未维护人员");
             MoMoroutingconfigPerson mp = new MoMoroutingconfigPerson();
             mp.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
             mp.setIPersonId(Long.parseLong(arr[i]));
@@ -236,7 +236,10 @@ public class MoDocService extends BaseService<MoDoc> {
         //设备
         List<InventoryRoutingEquipment> iInventoryEquipments = inventoryRoutingEquipmentService
             .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+        int eq=0;
         for (InventoryRoutingEquipment iInventoryEquipment : iInventoryEquipments) {
+          eq++;
+          ValidationUtils.notNull(iInventoryEquipment.getIEquipmentId(), "第"+eq+"行未维护设备!");
           Long iEquipmentId = iInventoryEquipment.getIEquipmentId();
           MoMoroutingequipment moMoroutingequipment = new MoMoroutingequipment();
           moMoroutingequipment.setIEquipmentId(iEquipmentId);
@@ -246,7 +249,10 @@ public class MoDocService extends BaseService<MoDoc> {
         //物料集
         List<InventoryRoutingInvc> iInventoryRoutingInvcs = inventoryRoutingInvcService
             .getCommonListByKeywords(inventoryRoutingConfigServiceById.getIAutoId().toString(), "iAutoId", "iInventoryRoutingConfigId");
+        int inv=0;
         for (InventoryRoutingInvc iInventoryRoutingInvc : iInventoryRoutingInvcs) {
+          inv++;
+          ValidationUtils.notNull(inventoryRoutingConfigServiceById.getIAutoId(), "第"+eq+"行未维护物料!");
           MoMoroutinginvc moMoroutinginvc = new MoMoroutinginvc();
           moMoroutinginvc.setIInventoryRoutingConfigId(inventoryRoutingConfigServiceById.getIAutoId());
           moMoroutinginvc.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());

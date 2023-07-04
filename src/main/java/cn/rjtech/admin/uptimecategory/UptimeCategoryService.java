@@ -40,7 +40,7 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize,Kv kv) {
-		return dbTemplate("uptimecategory.getAdminDatas").paginate(pageNumber, pageSize);
+		return dbTemplate("uptimecategory.getAdminDatas", kv).paginate(pageNumber, pageSize);
 	}
 
 	/**

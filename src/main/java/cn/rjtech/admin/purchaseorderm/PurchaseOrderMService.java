@@ -1087,13 +1087,12 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				jsonObject.put("irowno", order.get("irowno"));
 				jsonObject.put("KL", order.get("KL"));
 				jsonObject.put("iNatDisCount", order.get("iNatDisCount"));
-				// 将其他字段也添加到 jsonObject 中
+                jsonObject.put("cPayType", order.get("cPayType"));
 				jsonArray.add(jsonObject);
 			}
 			JSONObject params = new JSONObject();
 			params.put("data",jsonArray);
 			tx(() -> {
-				String url="";
 				String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
 				JSONObject jsonObject = JSONObject.parseObject(result);
 				String remark=jsonObject.getString("remark");

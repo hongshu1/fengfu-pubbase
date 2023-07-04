@@ -156,6 +156,7 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 		ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
 		// 封装数据
 		for (Map<String, String> map : datas) {
+			// 分类名称不存在就新增
 			Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimeparamname"));
 
 			UptimeParam uptimeParam = new UptimeParam();
