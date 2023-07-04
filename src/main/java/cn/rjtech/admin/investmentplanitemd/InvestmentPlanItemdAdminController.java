@@ -16,11 +16,13 @@ import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.investmentplan.InvestmentPlanService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.DictionaryTypeKeyEnum;
 import cn.rjtech.enums.InvestmentBudgetTypeEnum;
 import cn.rjtech.enums.IsEnableEnum;
+import cn.rjtech.model.momdata.InvestmentPlan;
 import cn.rjtech.model.momdata.InvestmentPlanItemd;
 import cn.rjtech.util.ReadInventmentExcelUtil;
 import cn.rjtech.util.ValidationUtils;
@@ -52,6 +54,8 @@ public class InvestmentPlanItemdAdminController extends BaseAdminController {
 	private PeriodService periodService;
 	@Inject
 	private DepartmentService departmentService;
+	@Inject
+	private InvestmentPlanService investmentPlanService;
 
 	/**
 	 * 首页
@@ -241,4 +245,35 @@ public class InvestmentPlanItemdAdminController extends BaseAdminController {
 		set("list", JsonKit.toJson(list));
 		render("print.html");
 	}
+	
+    /**
+     * 投资计划明细报表导出
+     * */
+    @UnCheck
+    public void exportInvestmentPlanItemdReportDatas(){
+    	Kv para = getKv();
+    	String cdepcode = para.getStr("cdepcode");
+    	Integer ibudgetyear = para.getInt("ibudgetyear");
+    	Integer ibudgettype = para.getInt("ibudgettype");
+    	String paraNullMsg = "请选择部门,预算年份,预算类型导出";
+    	ValidationUtils.notBlank(cdepcode, paraNullMsg);
+    	ValidationUtils.notNull(ibudgetyear, paraNullMsg);
+    	ValidationUtils.notNull(ibudgettype, paraNullMsg);
+    	InvestmentPlan investmentPlan = investmentPlanService.findModelByYearAndType(ibudgetyear, ibudgettype, cdepcode);
+    	ValidationUtils.notNull(investmentPlan, "投资计划为空,导出失败!");
+    	List<Record> itemList = investmentPlanService.findInvestmentPlanItemDatas(investmentPlan.getIAutoId());
+    	List<JBoltExcelPositionData> excelPositionDatas=new ArrayList<JBoltExcelPositionData>();//定位数据集合
+    	investmentPlanService.contrustExportExcelPositionDatas(excelPositionDatas,investmentPlan,itemList);
+    	//2、创建JBoltExcel
+		JBoltExcel jBoltExcel=JBoltExcel
+				.createByTpl("investmentplanTpl.xlsx")//创建JBoltExcel 从模板加载创建
+				.addSheet(//设置sheet
+						JBoltExcelSheet.create("投资计划录入表")//创建sheet name保持与模板中的sheet一致
+						.setPositionDatas(excelPositionDatas)//设置定位数据
+						)
+				.setFileName("投资计划导出");
+		//3、导出
+		renderBytesToExcelXlsxFile(jBoltExcel);
+
+    }
 }

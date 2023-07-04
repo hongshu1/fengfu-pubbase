@@ -101,6 +101,15 @@ where 1=1
 	#if(ccusname)
 		and cr.cCusName like concat('%',#para(ccusname),'%')
 	#end
+	#if(iauditstatus)
+	    and a.iauditstatus=#para(iauditstatus)
+	#end
+    #if(starttime)
+        and t1.dCreateTime >= #para(starttime)
+    #end
+    #if(endtime)
+        and t1.dCreateTime <= #para(endtime)
+    #end
 ORDER BY a.dupdatetime DESC
 #end
 

@@ -16,6 +16,7 @@ import com.jfinal.kit.Ret;
 
 /**
  * 系统配置-平板端设置
+ *
  * @ClassName: PadAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-03 17:17
@@ -26,85 +27,86 @@ import com.jfinal.kit.Ret;
 @Path(value = "/admin/pad", viewPath = "/_view/admin/pad")
 public class PadAdminController extends BaseAdminController {
 
-	@Inject
-	private PadService service;
+  @Inject
+  private PadService service;
 
-   /**
-	* 首页
-	*/
-	public void index() {
-		render("index.html");
-	}
-   /**
-	* 数据源
-	*/
-   @UnCheck
-	public void datas() {
-		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
-	}
+  /**
+   * 首页
+   */
+  public void index() {
+    render("index.html");
+  }
 
-   /**
-	* 新增
-	*/
-	public void add() {
-		if(getOrgId() == null)
-		{
-			renderFail("未选择组织!");
-		}else
-		render("add.html");
-	}
+  /**
+   * 数据源
+   */
+  @UnCheck
+  public void datas() {
+    renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
+  }
 
-   /**
-	* 保存
-	*/
-	public void save() {
-		renderJson(service.save(getModel(Pad.class, "pad")));
-	}
+  /**
+   * 新增
+   */
+  public void add() {
+    if (getOrgId() == null) {
+      renderFail("未选择组织!");
+    } else {
+      render("add.html");
+    }
+  }
 
-   /**
-	* 编辑
-	*/
-	public void edit() {
-		Pad pad=service.findById(getLong(0));
-		if(pad == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("pad",pad);
-		render("edit.html");
-	}
+  /**
+   * 保存
+   */
+  public void save() {
+    renderJson(service.save(getModel(Pad.class, "pad")));
+  }
 
-   /**
-	* 更新
-	*/
-	public void update() {
-		renderJson(service.update(getModel(Pad.class, "pad")));
-	}
+  /**
+   * 编辑
+   */
+  public void edit() {
+    Pad pad = service.findById(getLong(0));
+    if (pad == null) {
+      renderFail(JBoltMsg.DATA_NOT_EXIST);
+      return;
+    }
+    set("pad", pad);
+    render("edit.html");
+  }
 
-   /**
-	* 删除
-	*/
-	public void delete() {
-		renderJson(service.deleteById(getLong(0)));
-	}
+  /**
+   * 更新
+   */
+  public void update() {
+    renderJson(service.update(getModel(Pad.class, "pad")));
+  }
 
-	/**
-	 * 保存新增或编辑数据
-	 */
-	public void formSubmit(){
-		JBoltTable jBoltTable = getJBoltTable();
-		Pad pad = jBoltTable.getFormBean(Pad.class, "pad");
+  /**
+   * 删除
+   */
+  public void delete() {
+    renderJson(service.deleteById(getLong(0)));
+  }
 
-		Ret result = null;
+  /**
+   * 保存新增或编辑数据
+   */
+  public void formSubmit() {
+    JBoltTable jBoltTable = getJBoltTable();
+    Pad pad = jBoltTable.getFormBean(Pad.class, "pad");
 
-		if(pad.getIAutoId() != null){
+    Ret result = null;
 
-			result = service.updateForm(pad,jBoltTable);
+    if (pad.getIAutoId() != null) {
 
-		}else {
-			result = service.saveForm(pad,jBoltTable);
-		}
+      result = service.updateForm(pad, jBoltTable);
 
-		renderJson(result);
-	}
+    } else {
+      result = service.saveForm(pad, jBoltTable);
+    }
+
+    renderJson(result);
+  }
 }

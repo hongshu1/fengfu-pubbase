@@ -142,6 +142,6 @@ public class FormapprovaldUserService extends BaseService<FormapprovaldUser> {
 	 * @return
 	 */
 	public List<FormapprovaldUser> findByDid(Long Did){
-		return find("select * from from Bd_FormApprovalD_User where iFormApprovalDid = "+Did +" order by iSeq asc");
+		return find("select * from Bd_FormApprovalD_User where iFormApprovalDid = "+Did +" order by iSeq asc");
 	}
 }

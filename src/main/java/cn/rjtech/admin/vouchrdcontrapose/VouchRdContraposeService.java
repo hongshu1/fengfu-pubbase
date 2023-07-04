@@ -1,5 +1,6 @@
 package cn.rjtech.admin.vouchrdcontrapose;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -109,7 +110,7 @@ public class VouchRdContraposeService extends BaseService<VouchRdContrapose> {
         List<Record> list = selectCvrrcodeOnCvrsCodeList();
 
         for (Record row : list) {
-            if (row.get("cvrrCode").equals(cvrrCode) && row.get("cvrsCode").equals(cvrsCode)) {
+            if (StrUtil.equals(cvrrCode, row.get("cvrrCode")) && (StrUtil.equals(cvrsCode,row.get("cvrsCode")))) {
                 ValidationUtils.error("修改失败，类别已存在");
             }
         }

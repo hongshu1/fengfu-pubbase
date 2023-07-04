@@ -226,7 +226,6 @@ public class MoDocService extends BaseService<MoDoc> {
         if (configperson != null) {
           String[] arr = configperson.split(",");
           for (int i = 0; i < arr.length; i++) {
-            System.out.println(arr[i]);
             MoMoroutingconfigPerson mp = new MoMoroutingconfigPerson();
             mp.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
             mp.setIPersonId(Long.parseLong(arr[i]));
