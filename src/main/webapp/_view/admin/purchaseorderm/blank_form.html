@@ -197,7 +197,13 @@
 #if(isView??0 !=1)
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+        <button onclick="jboltTableChooseAndInsert(this)"
+                data-url="admin/purchaseorderm/inventory_dialog_index"
+                data-dialogbtn
+                data-link-para-ele="#itemHidden" id="buttonDialog_#(pageId)"
+                data-area="90%,90%" data-btn="选中,取消" data-title="批量选择资源" class="btn btn-success btn-sm"><i
+                class="fa fa-folder-open-o"></i> 新增行
+        </button>
         <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
         </button>
     </div>
@@ -284,29 +290,29 @@
                 iinventoryid:{
                     submitAttr: "iinventoryid"
                 },
-                cinvcode: {
-                    type:"dialogbtn",
-                    required:true,
-                    placeholder:"选择存货",
-                    maxLength:100,
-                    dialog:{
-                        url:"admin/purchaseorderm/inventory_dialog_index",
-                        jbt_link_ele_id:"iautoid,cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
-                        area:"80%,80%",
-                        title:"选择存货",
-                        btn:"选择,关闭"
-                    },
-                    changeColumns:[
-                        {column: "cinvcode", use: "cinvcode"},
-                        {column: "cinvcode1", use: "cinvcode1"},
-                        {column: "cinvname1", use: "cinvname1"},
-                        {column: "cinvstd", use: "cinvstd"},
-                        {column: "cuomname", use: "cuomname"},
-                        {column: "iinventoryid", use: "iinventoryid"},
-                        {column: "ipkgqty", use: "ipkgqty"},
-                        {column: "ispresent", use: "ispresent"}
-                    ]
-                },
+                // cinvcode: {
+                //     type:"dialogbtn",
+                //     required:true,
+                //     placeholder:"选择存货",
+                //     maxLength:100,
+                //     dialog:{
+                //         url:"admin/purchaseorderm/inventory_dialog_index",
+                //         jbt_link_ele_id:"iautoid,cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",
+                //         area:"80%,80%",
+                //         title:"选择存货",
+                //         btn:"选择,关闭"
+                //     },
+                //     changeColumns:[
+                //         {column: "cinvcode", use: "cinvcode"},
+                //         {column: "cinvcode1", use: "cinvcode1"},
+                //         {column: "cinvname1", use: "cinvname1"},
+                //         {column: "cinvstd", use: "cinvstd"},
+                //         {column: "cuomname", use: "cuomname"},
+                //         {column: "iinventoryid", use: "iinventoryid"},
+                //         {column: "ipkgqty", use: "ipkgqty"},
+                //         {column: "ispresent", use: "ispresent"}
+                //     ]
+                // },
                 ivendoraddrid:{
 
                     type:"select",
@@ -356,6 +362,21 @@
             }
         });
     #end
+
+    /**
+     * 获取已选数据函数
+     * */
+    function tableDataSuccess() {
+        let result = jboltTableGetAllDatas(getJboltId(), ["iinventoryid"]);
+        let array = [];
+        if (result != null) {
+            for (let i = 0; i < result.length; i++) {
+                array.push("'" + result[i].iinventoryid + "'");
+            }
+            let codes = array.join(',');
+            $("#itemHidden").val(codes);
+        }
+    }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
 #end

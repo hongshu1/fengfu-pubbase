@@ -26,7 +26,7 @@ FROM
         AND wa.iMaxCapacity <= #para(imaxcapacityMax)
     #end
     #if(ids)
-        AND CHARINDEX(','+cast((select wa.iAutoId) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
+        AND wa.iAutoId IN (#(ids))
     #end
     #if(cwhcode)
         AND wh.cwhcode LIKE CONCAT('%', #para(cwhcode), '%')

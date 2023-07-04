@@ -105,8 +105,8 @@ public class SpotcheckformdLineService extends BaseService<SpotcheckformdLine> {
 		//这里用来覆盖 检测是否被其它表引用
 		return null;
 	}
-	public List<SpotcheckformdLine> findBySpotCheckFormDId(Long formDIAutoId) {
-		return  find("select * from PL_SpotCheckFormD_Line where iSpotCheckFormDid=?",formDIAutoId);
+	public SpotcheckformdLine findBySpotCheckFormDId(Long formDIAutoId) {
+		return  findFirst("select * from PL_SpotCheckFormD_Line where iSpotCheckFormDid=?",formDIAutoId);
 	}
 
 }

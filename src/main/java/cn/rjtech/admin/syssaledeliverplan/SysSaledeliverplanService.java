@@ -11,8 +11,11 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.syssaledeliverplandetail.SysSaledeliverplandetailService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.model.momdata.RcvPlanM;
 import cn.rjtech.model.momdata.SysSaledeliverplan;
 import cn.rjtech.model.momdata.SysSaledeliverplandetail;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -30,7 +33,7 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 10:01
  */
-public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
+public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> implements IApprovalService {
     private final SysSaledeliverplan dao = new SysSaledeliverplan().dao();
 
     @Override
@@ -43,30 +46,6 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-
-//    /**
-//     * 后台管理数据查询
-//     *
-//     * @param pageNumber     第几页
-//     * @param pageSize       每页几条数据
-//     * @param keywords       关键词
-//     * @param SourceBillType 来源类型;MO生产工单
-//     * @param BillType       业务类型
-//     * @return
-//     */
-//    public Page<SysSaledeliverplan> getAdminDatas(int pageNumber, int pageSize, String keywords, String SourceBillType, String BillType) {
-//        // 创建sql对象
-//        Sql sql = selectSql().page(pageNumber, pageSize);
-//        // sql条件处理
-//        sql.eq("SourceBillType", SourceBillType);
-//        sql.eq("BillType", BillType);
-//        // 关键词模糊查询
-//        sql.like("ExchName", keywords);
-//        // 排序
-//        sql.desc("AutoID");
-//        return paginate(sql);
-//    }
-
 
     public List<Record> getAdminDatas(Kv kv) {
         List<Record> records = dbTemplate("syssaledeliverplan.syssaledeliverplanList", kv).find();
@@ -256,11 +235,10 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
             Record row = list.get(i);
             SysSaledeliverplandetail sysdetail = new SysSaledeliverplandetail();
             sysdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
-//            row.set("iautoid", JBoltSnowflakeKit.me.nextId());
-            sysdetail.setBarcode(row.get("barcode"));
-            sysdetail.setInvCode(row.get("cinvcode"));
-            sysdetail.setWhCode(row.get("whcode"));
-            sysdetail.setQty(new BigDecimal(row.get("qty").toString()));
+            sysdetail.setBarcode(row.getStr("barcode"));
+            sysdetail.setInvCode(row.getStr("cinvcode"));
+            sysdetail.setWhCode(row.getStr("whcode"));
+            sysdetail.setQty(row.getBigDecimal("qty"));
             sysdetail.setMasID(sysotherin.getAutoID());
             sysdetail.setSourceBillType(row.getStr("sourcebilltype"));
             sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
@@ -283,12 +261,11 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
         for(int i = 0;i < list.size(); i++){
             Record row = list.get(i);
             SysSaledeliverplandetail sysdetail = new SysSaledeliverplandetail();
-            sysdetail.setAutoID(row.get("autoid").toString());
-            sysdetail.setBarcode(row.get("barcode"));
-            sysdetail.setInvCode(row.get("cinvcode"));
-//            System.out.println(row.get("whcode").toString());
-            sysdetail.setWhCode(row.get("whcode").toString());
-            sysdetail.setQty(new BigDecimal(row.get("qty").toString()));
+            sysdetail.setAutoID(row.getStr("autoid")    );
+            sysdetail.setBarcode(row.getStr("barcode"));
+            sysdetail.setInvCode(row.getStr("cinvcode"));
+            sysdetail.setWhCode(row.getStr("whcode"));
+            sysdetail.setQty(row.getBigDecimal("qty"));
             sysdetail.setMasID(sysotherin.getAutoID());
             sysdetail.setSourceBillType(row.getStr("sourcebilltype"));
             sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
@@ -309,4 +286,104 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
         syssaledeliverplandetailservice.deleteByIds(ids);
     }
 
+    /*处理审批通过的其他业务操作，如有异常返回错误信息*/
+    @Override
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        SysSaledeliverplan saledeliverplan = findById(formAutoId);
+
+        return null;
+    }
+
+    /*处理审批不通过的其他业务操作，如有异常处理返回错误信息*/
+    @Override
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        SysSaledeliverplan saledeliverplan = findById(formAutoId);
+
+        return null;
+    }
+
+    /*实现反审之前的其他业务操作，如有异常返回错误信息*/
+    @Override
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /*实现反审之后的其他业务操作, 如有异常返回错误信息*/
+    @Override
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        SysSaledeliverplan saledeliverplan = findById(formAutoId);
+
+        return null;
+    }
+
+    /*提审前业务，如有异常返回错误信息*/
+    @Override
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /*提审后业务处理，如有异常返回错误信息*/
+    @Override
+    public String postSubmitFunc(long formAutoId) {
+        SysSaledeliverplan saledeliverplan = findById(formAutoId);
+
+        return null;
+    }
+
+    /*撤回审核业务处理，如有异常返回错误信息*/
+    @Override
+    public String postWithdrawFunc(long formAutoId) {
+        SysSaledeliverplan saledeliverplan = findById(formAutoId);
+
+        return null;
+    }
+
+    /*从待审批中，撤回到已保存，业务实现，如有异常返回错误信息*/
+    @Override
+    public String withdrawFromAuditting(long formAutoId) {
+        //comonWithDraw(formAutoId, OrderStatusEnum.NOT_AUDIT.getValue());
+        return null;
+    }
+
+    /*从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息*/
+    @Override
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /*从已审核，撤回到已保存，业务实现，如有异常返回错误信息*/
+    @Override
+    public String postWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /*批量审核（审批）通过，后置业务实现*/
+    @Override
+    public String postBatchApprove(List<Long> formAutoIds) {
+        Date date = new Date();
+        return null;
+    }
+
+    /*批量审批（审核）不通过，后置业务实现*/
+    @Override
+    public String postBatchReject(List<Long> formAutoIds) {
+        Date date = new Date();
+        return null;
+    }
+
+    /*批量撤销审批，后置业务实现*/
+    @Override
+    public String postBatchBackout(List<Long> formAutoIds) {
+        Date date = new Date();
+        List<SysSaledeliverplandetail> saledeliverplandetailList = new ArrayList<>();
+
+        return null;
+    }
+
+    /*
+     * 公共方法
+     * */
+    public void comonApproveMethods(SysSaledeliverplan saledeliverplan, int status, Date date) {
+
+    }
 }

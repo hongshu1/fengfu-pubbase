@@ -6,6 +6,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.investmentplanitem.InvestmentPlanItemService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.EffectiveStatusEnum;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
 import cn.rjtech.model.momdata.InvestmentPlanItemd;
 import cn.rjtech.util.ValidationUtils;
@@ -41,6 +42,7 @@ public class InvestmentPlanItemdService extends BaseService<InvestmentPlanItemd>
 	 */
 
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("ieffectivestatus",EffectiveStatusEnum.CANCLE.getValue());
 		return dbTemplate("investmentplanitemd.paginateAdminDatas",para).paginate(pageNumber,pageSize);
 	}
 

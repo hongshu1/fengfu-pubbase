@@ -34,7 +34,7 @@ import java.util.List;
 @CheckPermission(PermissionKey.SALES_SHIPMENT_LIST)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/salesShipmentList", viewPath = "/_view/admin/sysSaledeliverplan")
+@Path(value = "/admin/salesShipmentList", viewPath = "/_view/admin/syssaledeliverplan")
 public class SysSaledeliverplanAdminController extends BaseAdminController {
 
     @Inject
@@ -47,21 +47,12 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         render("index.html");
     }
 
-//    /**
-//     * 数据源
-//     */
-//    public void datas() {
-//        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("SourceBillType"), get("BillType")));
-//    }
-
-
     /**
      * 数据源
      */
     public void datas() {
         renderJsonData(service.getAdminDatas(getKv()));
     }
-
 
     /**
      * 新增

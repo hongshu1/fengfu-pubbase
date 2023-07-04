@@ -300,6 +300,10 @@ public class WorkClassService extends BaseService<Workclass> {
         return queryColumn(selectSql().select(Workclass.IAUTOID).eq(Workclass.CWORKCLASSCODE, cworkclasscode));
     }
 
+    public List<Workclass> findAllIsDeletedFalse(){
+        return find("select * from Bd_WorkClass where isDeleted = '0'");
+    }
+
     /**
      * 生成Excel 导入模板的数据 byte[]
      */

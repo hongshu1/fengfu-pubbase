@@ -1,12 +1,19 @@
 package cn.rjtech.admin.formapprovaldrole;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.FormapprovaldRole;
+import cn.rjtech.model.momdata.FormapprovaldUser;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+
+import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
+
 /**
  * 表单审批流 Service
  * @ClassName: FormapprovaldRoleService
@@ -123,4 +130,21 @@ public class FormapprovaldRoleService extends BaseService<FormapprovaldRole> {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
+	/**
+	 * 根据外键查询
+	 * @param Did
+	 * @return
+	 */
+	public List<FormapprovaldRole> findByDid(Long Did){
+		return find("select * from Bd_FormApprovalD_Role where iFormApprovalDid = "+Did +" order by iSeq asc");
+	}
+
+	/**
+	 * 删除本位及子表数据
+	 */
+	public Ret deleteBenAndZi(Object[] ids){
+		delete("DELETE FROM Bd_FormApprovalD_RoleUsers WHERE iFormApprovaldRoleId IN (" + ArrayUtil.join(ids, COMMA) + ")");
+
+		return realDeleteByIds(ids);
+	}
 }

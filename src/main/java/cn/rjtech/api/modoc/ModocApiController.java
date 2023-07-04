@@ -243,6 +243,6 @@ public class ModocApiController extends BaseApiController {
                             @Para(value = "jBoltTableList")String jBoltTableList){
       ValidationUtils.notNull(imodocid, "id不能为空");
       ValidationUtils.notNull(jBoltTableList, "data不能为空");
-    renderJBoltApiSuccessWithData(moMaterialscanusedlogmService.saveMoLogMApi(imodocid, JSON.parseArray(jBoltTableList)));
+      renderJBoltApiSuccessWithData(moMaterialscanusedlogmService.saveMoLogMApi(imodocid, JSON.parseArray(jBoltTableList)));
   }
 }
