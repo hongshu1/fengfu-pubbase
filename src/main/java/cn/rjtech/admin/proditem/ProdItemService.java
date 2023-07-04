@@ -8,8 +8,10 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.model.momdata.QcItem;
+import cn.rjtech.model.momdata.UptimeCategory;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Page;
@@ -274,5 +276,19 @@ public class ProdItemService extends BaseService<ProdItem> {
 			return true;
 		});
 		return SUCCESS;
+	}
+
+	public Long getOrAddUptimeCategoryByName(String cprodparamname) {
+		ProdItem prodItem = findFirst(selectSql().eq("cProdItemName", cprodparamname));
+		if (notNull(prodItem)) {
+			return prodItem.getIAutoId();
+		}
+
+		ProdItem newProdItem = new ProdItem();
+		newProdItem.setCProdItemCode(JBoltRandomUtil.randomNumber(6));//待优化
+		newProdItem.setCProdItemName(cprodparamname);
+		save(newProdItem);
+		return newProdItem.getIAutoId();
+
 	}
 }

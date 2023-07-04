@@ -15,15 +15,24 @@
                    #if(readonly != 'readonly')
                     <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
                     #end
+
+                    #if(prodFormM.iautoid??)
                     #include("/_view/_common/_approval_btns.html", uri="/admin/prodFormM",
                     formSn="PL_ProdFormM", primaryKeyName="iAutoId", o=prodFormM,
                     permissionKeyPrefix="prodformm",  className="cn.rjtech.admin.prodformm.ProdFormMService")
-
+                    #end
                     <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
                 </div>
             </div>
         </div>
     </div>
+</form>
+#if(prodFormM.iautoid?? && prodFormM.iauditway == 2 && prodFormM.iauditstatus > 0)
+#include("/_view/admin/approvalm/form_approval_flow.html",
+formAutoId=prodFormM.iautoid, primaryKeyName="iAutoId",
+formSn="PL_ProdFormM", btnNeed=1, pId=pageId,
+className="cn.rjtech.admin.prodformm.ProdFormMService")
+#end
     <div class="py-2" style="padding:.5rem 0rem;">
         <span class="py-1"><strong></strong></span>
     </div>
@@ -145,7 +154,7 @@
     <div id="qcformtable_portal_div" class="card-body overflow-auto" style="height: 300px;">
         #ajaxPortal("/admin/prodFormM/table3","dictionaryPortal",true)
     </div>
-</form>
+
 #define js()
 #include("_table3_js.html")
 <script>
