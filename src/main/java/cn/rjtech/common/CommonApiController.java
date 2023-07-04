@@ -25,7 +25,7 @@ public class CommonApiController extends BaseApiController {
         if (ObjUtil.equals("200", result.getStr("code"))) {
             renderJBoltApiRet(JBoltApiRet.API_SUCCESS_WITH_DATA(result));
         } else {
-            renderJson(Kv.by("code", result.getStr("code")).set("data", result));
+            renderJson(result);
         }
     }
 
@@ -38,7 +38,7 @@ public class CommonApiController extends BaseApiController {
         if (ObjUtil.equals("200", result.getStr("code"))) {
             renderJBoltApiRet(JBoltApiRet.API_SUCCESS_WITH_DATA(result));
         } else {
-            renderJson(Kv.by("code", result.getStr("code")).set("data", result));
+            renderJson(result);
         }
     }
 
