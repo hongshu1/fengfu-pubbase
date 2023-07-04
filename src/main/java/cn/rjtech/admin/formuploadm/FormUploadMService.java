@@ -543,7 +543,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 
         ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
         ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
-
+        batchUpdate(notAuditList);
         return SUCCESS;
     }
 }
