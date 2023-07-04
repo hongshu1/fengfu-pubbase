@@ -161,10 +161,11 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		purchaseOrderD.setIsPresent(isPresent);
 		purchaseOrderD.setCMemo(cMemo);
 		purchaseOrderD.setCAddress(cAddress);
+		Integer pkgQty = 0;
 		if (StrUtil.isNotBlank(iPkgQty)){
-			purchaseOrderD.setIPkgQty(Integer.valueOf(iPkgQty));
+			pkgQty = Integer.valueOf(iPkgQty);
 		}
-		
+		purchaseOrderD.setIPkgQty(pkgQty);
 		return purchaseOrderD;
 	}
 	
