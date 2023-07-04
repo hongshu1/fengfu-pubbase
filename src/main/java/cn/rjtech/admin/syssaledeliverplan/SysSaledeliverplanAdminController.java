@@ -47,21 +47,12 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         render("index.html");
     }
 
-//    /**
-//     * 数据源
-//     */
-//    public void datas() {
-//        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("SourceBillType"), get("BillType")));
-//    }
-
-
     /**
      * 数据源
      */
     public void datas() {
         renderJsonData(service.getAdminDatas(getKv()));
     }
-
 
     /**
      * 新增

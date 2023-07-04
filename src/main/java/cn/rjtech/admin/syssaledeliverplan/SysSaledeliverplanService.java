@@ -44,30 +44,6 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-//    /**
-//     * 后台管理数据查询
-//     *
-//     * @param pageNumber     第几页
-//     * @param pageSize       每页几条数据
-//     * @param keywords       关键词
-//     * @param SourceBillType 来源类型;MO生产工单
-//     * @param BillType       业务类型
-//     * @return
-//     */
-//    public Page<SysSaledeliverplan> getAdminDatas(int pageNumber, int pageSize, String keywords, String SourceBillType, String BillType) {
-//        // 创建sql对象
-//        Sql sql = selectSql().page(pageNumber, pageSize);
-//        // sql条件处理
-//        sql.eq("SourceBillType", SourceBillType);
-//        sql.eq("BillType", BillType);
-//        // 关键词模糊查询
-//        sql.like("ExchName", keywords);
-//        // 排序
-//        sql.desc("AutoID");
-//        return paginate(sql);
-//    }
-
-
     public List<Record> getAdminDatas(Kv kv) {
         List<Record> records = dbTemplate("syssaledeliverplan.syssaledeliverplanList", kv).find();
         return records;

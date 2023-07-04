@@ -5,9 +5,6 @@
 
   <div class="jbolt_page_title">
     <div class="row">
-     <!-- <div class="col-md-auto">
-        <h1>工种档案</h1>
-      </div>-->
       <div class="col">
         <form class="form-inline text-left" id="workclassForm_#(pageId)" onsubmit="return false;" method="post"
               style="left: 40px;text-align: left">
@@ -34,15 +31,15 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.cworkclasscode}</td>
-<td>${data.cworkclassname}</td>
-<td>${data.ileveldes}</td><!--ileveldes、ilevel-->
-<td>${data.isalary}</td>
+<td title="${data.cworkclasscode}">${data.cworkclasscode}</td>
+<td title="${data.cworkclassname}">${data.cworkclassname}</td>
+<td title="${data.ileveldes}">${data.ileveldes}</td><!--ileveldes、ilevel-->
+<td title="${data.isalary}">${data.isalary}</td>
 <td><img data-switchbtn data-confirm="确定切换是否启用？" data-value="${data.isenabled}" data-handler="refreshJBoltTable"
          data-url="admin/workclass/toggleIsenabled/${data.iautoid}"/></td>
-<td>${data.cmemo}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
+<td title="${data.cmemo}">${data.cmemo}</td>
+<td title="${data.ccreatename}">${data.ccreatename}</td>
+<td title="${data.dcreatetime}">${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
@@ -88,21 +85,18 @@
           <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
           </button>
-          <div class="btn-group dropdown">
-            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
-            <div class="dropdown-menu" aria-labelledby="importMenuButton">
-              <a href="assets/exceltpl/workclass.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-              <div class="j_upload_file_box"
-                   data-name="file"
-                   data-btn-class="btn dropdown-item"
-                   data-placeholder="上传导入"
-                   data-confirm="确认导入数据？"
-                   data-accept="excel"
-                   data-maxsize="20480"
-                   data-handler="uploadFile"
-                   data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-                   data-url="/admin/workclass/importExcelClass">
-              </div>
+          <div class="dropdown-menu" aria-labelledby="importMenuButton">
+            <a href="assets/exceltpl/workclass.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                 data-url="/admin/workclass/importExcelClass">
             </div>
           </div>
         </div>
@@ -133,7 +127,7 @@
         <th data-width="30" data-column="ileveldes">工种等级</th>
         <th data-width="100" data-column="iSalary">工种薪酬</th>
         <th data-width="80" data-column="isEnabled">是否启用</th>
-        <th data-width="100" data-column="cMemo">备注</th>
+        <th data-width="150" data-column="cMemo">备注</th>
         <th data-width="100" data-column="cCreateName">创建人</th>
         <th data-width="100" data-column="dCreateTime">创建时间</th>
       </tr>
