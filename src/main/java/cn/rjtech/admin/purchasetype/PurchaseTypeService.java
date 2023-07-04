@@ -46,8 +46,9 @@ public class PurchaseTypeService extends BaseService<PurchaseType> {
 	public List<Record> selectAll (Kv kv){
 		return dbTemplate("purchasetype.selectAll",kv).find();
 	}
-	
-	public Page<Record> selectAll (int pageNumber, int pageSize,Kv kv){
+
+
+	public Page<Record> selectDatas ( int pageNumber, int pageSize,Kv kv){
 		List<Record> list = dbTemplate("purchasetype.selectAll", kv).find();
 
 		long totalRow;
@@ -65,6 +66,12 @@ public class PurchaseTypeService extends BaseService<PurchaseType> {
 
 		return  new Page<>(recordArrayList, pageNumber, pageSize, totalPage, (int) totalRow);
 	}
+
+
+
+
+	
+
 
 	/**
 	 * 保存

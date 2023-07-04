@@ -1833,7 +1833,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             return Constants.removeExceptionPrefix(e.getCause().getLocalizedMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return e.getLocalizedMessage();
+            return "审批回调异常：" + e.getLocalizedMessage();
         }
     }
 
