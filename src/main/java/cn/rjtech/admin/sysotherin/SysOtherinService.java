@@ -1,10 +1,15 @@
 package cn.rjtech.admin.sysotherin;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.base.config.JBoltConfig;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
@@ -14,23 +19,35 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.vouchtypedic.VouchTypeDicService;
+import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
+import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 其它入库单
@@ -280,10 +297,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         }
         sysotherindetailservice.batchUpdate(systailsList);
 
-        // 测试调用接口
-        System.out.println("```````````````````````````````"+ new Date());
-        Ret ret = pushU8(sysotherin, systailsList);
-        System.out.println("```````````````````````````````"+ret);
     }
 
     // 可编辑表格提交-删除数据
@@ -359,22 +372,17 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     }
 
     //推送u8数据接口
-    public Ret pushU8(SysOtherin sysotherin,List<SysOtherindetail> sysotherindetail) {
+    public String pushU8(SysOtherin sysotherin,List<SysOtherindetail> sysotherindetail) {
         if(!CollectionUtils.isNotEmpty(sysotherindetail)){
-            return Ret.ok().msg("数据不能为空");
+            return "数据不能为空";
         }
 
         User user = JBoltUserKit.getUser();
         JSONObject data = new JSONObject();
-
-
         data.set("userCode",user.getUsername());
         data.set("organizeCode",this.getdeptid());
         data.set("token","");
-
         JSONObject preallocate = new JSONObject();
-
-
         preallocate.set("userCode",user.getUsername());
         preallocate.set("organizeCode",this.getdeptid());
         preallocate.set("CreatePerson",user.getId());
@@ -382,7 +390,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         preallocate.set("loginDate",DateUtil.format(new Date(), "yyyy-MM-dd"));
         preallocate.set("tag","OtherIn");
         preallocate.set("type","OtherIn");
-
         data.set("PreAllocate",preallocate);
         ArrayList<Object> maindata = new ArrayList<>();
         sysotherindetail.stream().forEach(s -> {
@@ -397,6 +404,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             jsonObject.set("vt_id","");
             jsonObject.set("defwhname","");
             jsonObject.set("billDate",DateUtil.format(s.getDcreatetime(), "yyyy-MM-dd"));
+            jsonObject.set("iwhcode",sysotherin.getWhcode());
             jsonObject.set("invcode",s.getInvCode());
             jsonObject.set("userCode",user.getUsername());
             jsonObject.set("iswhpos","1");
@@ -411,33 +419,69 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             jsonObject.set("IRdType","101");
             jsonObject.set("IRdName","其他入库");
             jsonObject.set("IRdCode","101");
-
             maindata.add(jsonObject);
         });
         data.set("MainData",maindata);
-        System.out.println(data);
 
         //            请求头
         Map<String, String> header = new HashMap<>(5);
         header.put("Content-Type", "application/json");
         String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-
         try {
             String post = HttpApiUtils.httpHutoolPost(url, data, header);
-            com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(post, JsonObject.class);
             if (isOk(post)) {
-                if ("200".equals(jsonObject.getString("code"))) {
+                if ("200".equals(jsonObject.get("code").getAsString())) {
                     SysOtherin byId = findById(sysotherin.getAutoID());
-                    byId.setU8BillNo("");
+                    byId.setU8BillNo(this.extractU8Billno(jsonObject.get("message").getAsString()));
                     byId.update();
-                    return Ret.ok().setOk().data(jsonObject);
+                    return null;
+                }else {
+                    return "上传u8接口报错:"+jsonObject.get("message").getAsString();
                 }
+            }else {
+                return "上传u8接口返回数据为null";
             }
         }catch (Exception e){
             e.printStackTrace();
+            return "上传u8失败:"+e.getMessage();
         }
-        return fail("上传u8失败");
     }
+    /**
+     * 提取字符串里面的数字
+     */
+    public String extractU8Billno(String message) {
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(message);
+        return m.replaceAll("").trim();
+    }
+    /*
+     * 获取删除的json
+     * */
+    public String getDeleteDTO(String u8billno) {
+        User user = JBoltUserKit.getUser();
+        Record userRecord = this.findU8UserByUserCode(user.getUsername());
+        Record u8Record = this.findU8RdRecord01Id(u8billno);
+        SysPuinstoreDeleteDTO deleteDTO = new SysPuinstoreDeleteDTO();
+        SysPuinstoreDeleteDTO.data data = new SysPuinstoreDeleteDTO.data();
+        data.setAccid(getOrgCode());
+        data.setPassword(userRecord.get("u8_pwd"));
+        data.setUserID(userRecord.get("u8_code"));
+        Long id = u8Record.getLong("id");
+        data.setVouchId(String.valueOf(id));//u8单据id
+        deleteDTO.setData(data);
+        System.out.println(JSON.toJSONString(deleteDTO));
+        return JSON.toJSONString(deleteDTO);
+    }
+    public Record findU8UserByUserCode(String userCode) {
+        return dbTemplate(u8SourceConfigName(), "syspuinstore.findU8UserByUserCode", Kv.by("usercode", userCode)).findFirst();
+    }
+    public Record findU8RdRecord01Id(String cCode) {
+        return dbTemplate(u8SourceConfigName(), "sysotherin.findU8RdRecord01Id", Kv.by("cCode", cCode)).findFirst();
+    }
+
 
 
     //通过当前登录人名称获取部门id
@@ -573,8 +617,8 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             List<SysOtherindetail> sysOtherindetails = sysotherindetailservice.find("select *  from T_Sys_OtherIn where AutoID in (" + sysOtherin.getAutoID() + ")");
             // 测试调用接口
             System.out.println("```````````````````````````````"+ new Date());
-            Ret ret = pushU8(sysOtherin, sysOtherindetails);
-            System.out.println(new Date()+"```````````````````````````````"+ret);
+            String s1 = pushU8(sysOtherin, sysOtherindetails);
+            System.out.println(new Date()+"```````````````````````````````"+s1);
         }
 
     }
@@ -600,8 +644,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         //添加现品票 ,todo 推送u8
-        this.passagetwo(formAutoId);
-        return null;
+        return this.passagetwo(formAutoId);
     }
 
     /**
@@ -613,7 +656,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     }
 
     /**
-     * todo 实现反审之前的其他业务操作，如有异常返回错误信息
+     * 实现反审之前的其他业务操作，如有异常返回错误信息
      */
     @Override
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
@@ -621,10 +664,13 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     }
 
     /**
-     * todo 实现反审之前的其他业务操作，如有异常返回错误信息
+     * todo 实现反审之后的其他业务操作, 如有异常返回错误信息
      */
     @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        if(isLast){
+            return this.delectbelowtwo(formAutoId);
+        }
         return null;
     }
 
@@ -661,7 +707,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     }
 
     /**
-     *  todo 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     *  从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
      */
     @Override
     public String preWithdrawFromAuditted(long formAutoId) {
@@ -673,7 +719,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      */
     @Override
     public String postWithdrawFromAuditted(long formAutoId) {
-        return null;
+      return this.delectbelowtwo(formAutoId);
     }
 
     /**
@@ -681,7 +727,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      */
     @Override
     public String postBatchApprove(List<Long> formAutoIds) {
-        return null;
+        return this.passagetwo(formAutoIds);
     }
 
     /**
@@ -697,7 +743,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      */
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
-        return null;
+        return this.delectbelowtwo(formAutoIds);
     }
 
 
@@ -740,7 +786,90 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     public String passagetwo(Long formAutoId) {
         SysOtherin byId = findById(formAutoId);
         List<SysOtherindetail> sysOtherindetails = sysotherindetailservice.find("select * from T_Sys_OtherInDetail  where MasID = ? ", byId.getAutoID());
-        this.pushU8(byId,sysOtherindetails);
-        return "";
+        return this.pushU8(byId,sysOtherindetails);
+    }
+
+    //反审后的操作
+    public String delectbelowtwo(long formAutoId){
+        //主表数据
+        SysOtherin byId = findById(formAutoId);
+        //todo 删除u8的数据
+        String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
+        try {
+            String post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+        return null;
+    }
+
+    //批量审核通过后的业务逻辑
+    public String passagetwo(List<Long> formAutoId) {
+        if(CollectionUtil.isEmpty(formAutoId))return "主表id不能为空";
+        String s1 = null;
+        for (Long s : formAutoId){
+            SysOtherin byId = findById(s);
+            List<SysOtherindetail> sysOtherindetails = sysotherindetailservice.find("select * from T_Sys_OtherInDetail  where MasID = ? ", byId.getAutoID());
+            s1 = this.pushU8(byId, sysOtherindetails);
+        }
+        return s1;
+    }
+
+    //批量反审后的操作
+    public String delectbelowtwo(List<Long> formAutoId){
+        if(CollectionUtil.isEmpty(formAutoId))return "主表id不能为空";
+        for (Long s : formAutoId) {
+            //主表数据
+            SysOtherin byId = findById(s);
+            //todo 删除u8的数据
+            String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
+            try {
+                String post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+            } catch (Exception ex) {
+                return ex.getMessage();
+            }
+        }
+        return null;
+    }
+
+    /*
+     * 通知U8删其他入库单
+     * */
+    public String deleteVouchProcessDynamicSubmitUrl(String json) {
+
+        String vouchSumbmitUrl = AppConfig.getStockApiUrl() + "?op=OtherInUnConfirmV1";
+        String inUnVouchGet = HttpUtil.get(vouchSumbmitUrl + "?dataJson=" + json);
+
+        String res = XmlUtil.readObjectFromXml(inUnVouchGet);
+        com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(res);
+
+        ValidationUtils.notNull(jsonObject, "解析JSON为空");
+        String code = jsonObject.getString("code");
+        String message = StrUtil.nullToDefault(jsonObject.getString("message"), jsonObject.getString("msg"));
+        LOG.info("res: {}", res);
+
+        if (ObjUtil.equal(jsonObject.getString("state"), "fail")) {
+            ValidationUtils.error(message);
+        }
+        ValidationUtils.notNull(code, "json:" + json + ";" + message);
+        ValidationUtils.equals(code, "200", message);
+
+        String deleteUrl = AppConfig.getStockApiUrl() + "?op=OtherInDelete";
+        String deleteGet = HttpUtil.get(deleteUrl + "?dataJson=" + json);
+        String deleteRes = XmlUtil.readObjectFromXml(deleteGet);
+        com.alibaba.fastjson.JSONObject deleteJsonObject = JSON.parseObject(deleteRes);
+
+        ValidationUtils.notNull(deleteJsonObject, "解析JSON为空");
+        String deleteCode = deleteJsonObject.getString("code");
+        String deleteMessage = StrUtil.nullToDefault(deleteJsonObject.getString("message"), deleteJsonObject.getString("msg"));
+        LOG.info("deleteRes: {}", deleteRes);
+
+        if (ObjUtil.equal(deleteJsonObject.getString("state"), "fail")) {
+            ValidationUtils.error(deleteMessage);
+        }
+        ValidationUtils.notNull(deleteCode, "json:" + json + ";" + deleteMessage);
+        ValidationUtils.equals(deleteCode, "200", deleteMessage);
+
+        return code;
     }
 }

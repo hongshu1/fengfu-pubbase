@@ -94,6 +94,13 @@ public class AppConfig {
     /**
      * 通知U8删除采购入库单
      */
+    public static String getStockApiUrl() {
+        return JBoltConfig.prop.get("u8.stock.api");
+    }
+    
+    /**
+     * 通知U8删除采购入库单
+     */
     public static String deleteVouchProcessDynamicSubmitUrl() {
         return String.format("%s/PurchasesInDeleteV1", JBoltConfig.prop.get("u8.stock.api"));
     }
