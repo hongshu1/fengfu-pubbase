@@ -6,6 +6,7 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
              <td>${data.rolesn}</td>
             <td>${data.rolename}</td>
+            {@if data.iautoid}
             <td>
                 <a
                         href="admin/formapprovald/roleUsers?autoId=${data.iautoid}&roleId=${data.iroleid}&approvaling=#(approvaling??)"
@@ -17,6 +18,9 @@
                     data-title="用户列表" data-area="90%,90%" class="jbolt_table_btn"><i
                         class="fa fa-users c-danger"></i></a>-->
             </td>
+            {@else}
+            <td></td>
+            {@/if}
             <td style="display: none">${data.iroleid}</td>
         </tr>
     {@/each}

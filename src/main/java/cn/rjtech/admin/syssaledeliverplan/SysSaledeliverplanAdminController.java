@@ -34,7 +34,7 @@ import java.util.List;
 @CheckPermission(PermissionKey.SALES_SHIPMENT_LIST)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
-@Path(value = "/admin/salesShipmentList", viewPath = "/_view/admin/sysSaledeliverplan")
+@Path(value = "/admin/salesShipmentList", viewPath = "/_view/admin/syssaledeliverplan")
 public class SysSaledeliverplanAdminController extends BaseAdminController {
 
     @Inject
