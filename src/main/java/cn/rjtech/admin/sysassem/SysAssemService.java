@@ -6,6 +6,8 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -16,6 +18,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.person.PersonService;
@@ -23,15 +26,21 @@ import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
+import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
+import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.Kv;
@@ -43,6 +52,8 @@ import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 组装拆卸及形态转换单
@@ -91,6 +102,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     @Inject
     private DemandPlanDService demandPlanDService;
+
+    @Inject
+    private DepartmentService departmentservice;
 
     /**
      * 后台管理数据查询
@@ -414,36 +428,29 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         if (!CollectionUtils.isNotEmpty(sysassemdetail)) {
             return "推u8从表数据不能为空";
         }
-
         User user = JBoltUserKit.getUser();
         JSONObject data = new JSONObject();
-
         data.set("userCode", user.getUsername());
-
-        data.set("organizeCode", getOrgCode());
+        data.set("organizeCode", this.getdeptid());
         data.set("token", "");
-
         JSONObject preallocate = new JSONObject();
-
         preallocate.set("userCode", user.getUsername());
         preallocate.set("password", "123456");
-        preallocate.set("organizeCode", getOrgCode());
+        preallocate.set("organizeCode", this.getdeptid());
         preallocate.set("CreatePerson", user.getId());
         preallocate.set("CreatePersonName", user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
         preallocate.set("tag", "AssemVouch");
         preallocate.set("type", "AssemVouch");
-
         data.set("PreAllocate", preallocate);
         ArrayList<Object> maindata = new ArrayList<>();
-
         sysassemdetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("IWhCode", s.getWhCode());
             jsonObject.set("iwhname", "");
             jsonObject.set("invcode", s.getInvcode());
             jsonObject.set("userCode", user.getUsername());
-            jsonObject.set("organizeCode", getOrgCode());
+            jsonObject.set("organizeCode", this.getdeptid());
             jsonObject.set("OWhCode", s.getPosCode());
             jsonObject.set("owhname", "");
             jsonObject.set("barcode", s.getBarcode());
@@ -458,11 +465,10 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             jsonObject.set("ORdName", "");
             jsonObject.set("ORdType", sysassem.getORdCode());
             jsonObject.set("Tag", "AssemVouch");
-            jsonObject.set("IDeptCode", sysassem.getDeptCode());
-            jsonObject.set("ODeptCode", sysassem.getDeptCode());
+            jsonObject.set("IDeptCode",departmentservice.getRefDepId(sysassem.getDeptCode()));
+            jsonObject.set("ODeptCode",departmentservice.getRefDepId(sysassem.getDeptCode()));
             jsonObject.set("VouchTemplate", "");
             jsonObject.set("RowNo", s.getRowNo());
-
             maindata.add(jsonObject);
         });
         data.set("MainData", maindata);
@@ -471,24 +477,62 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         Map<String, String> header = new HashMap<>(5);
         header.put("Content-Type", "application/json");
         String url = "http://localhost:8081/web/erp/common/vouchProcessDynamicSubmit";
-
         try {
             String post = HttpApiUtils.httpHutoolPost(url, data, header);
-            com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(post, JsonObject.class);
+
             if (isOk(post)) {
-                //u8 返回什么才是正确的 然后返回null 作用，提示事物成功，不是null则事物失败
-                if ("200".equals(jsonObject.getString("code"))) {
-//                    return Ret.ok().setOk().data(jsonObject);
+                if ("200".equals(jsonObject.get("code").getAsString())) {
                     SysAssem byId = findById(sysassem.getAutoID());
-                    byId.setU8BillNo("");
+                    byId.setU8BillNo(this.extractU8Billno(jsonObject.get("message").getAsString()));
                     byId.update();
                     return null;
+                }else {
+                    return "上传u8接口报错:"+jsonObject.get("message").getAsString();
                 }
+            }else {
+                return "上传u8接口返回数据为null";
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return "上传u8失败:"+e.getMessage();
         }
-        return "上传u8失败";
+    }
+
+    /**
+     * 提取字符串里面的数字
+     */
+    public String extractU8Billno(String message) {
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(message);
+        return m.replaceAll("").trim();
+    }
+    /*
+     * 获取删除的json
+     * */
+    public String getDeleteDTO(String u8billno) {
+        User user = JBoltUserKit.getUser();
+        Record userRecord = findU8UserByUserCode(user.getUsername());
+        Record u8Record = findU8RdRecord01Id(u8billno);
+        SysPuinstoreDeleteDTO deleteDTO = new SysPuinstoreDeleteDTO();
+        SysPuinstoreDeleteDTO.data data = new SysPuinstoreDeleteDTO.data();
+        data.setAccid(getOrgCode());
+        data.setPassword(userRecord.get("u8_pwd"));
+        data.setUserID(userRecord.get("u8_code"));
+        Long id = u8Record.getLong("id");
+        data.setVouchId(String.valueOf(id));//u8单据id
+        deleteDTO.setData(data);
+        return JSON.toJSONString(deleteDTO);
+    }
+
+    public Record findU8UserByUserCode(String userCode) {
+        return dbTemplate(u8SourceConfigName(), "syspuinstore.findU8UserByUserCode", Kv.by("usercode", userCode)).findFirst();
+    }
+
+    public Record findU8RdRecord01Id(String cCode) {
+        return dbTemplate(u8SourceConfigName(), "sysassem.findU8RdRecord01Id", Kv.by("cCode", cCode)).findFirst();
     }
 
 
@@ -497,7 +541,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         String dept = "001";
         User user = JBoltUserKit.getUser();
         Person person = personservice.findFirstByUserId(user.getId());
-        if (null != person && "".equals(person)) {
+        if(null != person && "".equals(person)){
             dept = person.getCOrgCode();
         }
         return dept;
@@ -603,7 +647,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         //添加现品票 ,todo 推送u8
-        return  this.passagetwo(formAutoId);
+        return this.passagetwo(formAutoId) ;
 
     }
 
@@ -612,12 +656,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         return null;
     }
 
-    /**
-     * todo 实现反审之前的其他业务操作，如有异常返回错误信息
-     */
+
     @Override
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
-        //查看u8单据是否可删除
         return null;
     }
 
@@ -718,9 +759,8 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         List<SysAssemdetail> firstByall = sysassemdetailservice.findFirstByall(formAutoId);
         ArrayList<SysAssemdetail> merge = this.merge(firstByall);
 
-        System.out.println("开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8开始上传u8" + new Date());
         String s = this.pushU8(byId, merge);
-        System.out.println(new Date() + "u8上传结束，u8上传结束，u8上传结束，u8上传结束，u8上传结束" + s);
+
         return s;
     }
 
@@ -746,7 +786,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             //查转换前，转换后的数据
             List<SysAssemdetail> firstByall = sysassemdetailservice.findFirstByall(s);
             ArrayList<SysAssemdetail> merge = this.merge(firstByall);
-            s1 = this.pushU8(byId, merge);
+            String s2 = this.pushU8(byId, merge);
         }
         return s1;
     }
@@ -841,6 +881,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     //反审后的操作
     public String delectbelowtwo(long formAutoId){
+        //主表数据
+        SysAssem byId = findById(formAutoId);
+        //从表数据
         List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstByall(formAutoId);
         if(CollectionUtils.isNotEmpty(firstBy)){
             for (SysAssemdetail s : firstBy ){
@@ -855,9 +898,41 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             }
         }
         //todo 删除u8的数据
-
-        return null;
+        return this.deleteVouchProcessDynamicSubmitUrl(this.getDeleteDTO(byId.getU8BillNo()));
     }
 
+
+    /*
+     * 通知U8删其他入库单
+     * */
+    public String deleteVouchProcessDynamicSubmitUrl(String json) {
+        String vouchSumbmitUrl = AppConfig.getStockApiUrl() + "/ShapeChangVouchUnConfirmV1";
+        Map<String, Object> para = new HashMap<>();
+        para.put("dataJson", json);
+        String inUnVouchGet = HttpUtil.post(vouchSumbmitUrl, para);
+        String res = XmlUtil.readObjectFromXml(inUnVouchGet);
+        LOG.info("res: {}", res);
+        com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(res);
+        String code = jsonObject.getString("code");
+        String message = StrUtil.nullToDefault(jsonObject.getString("message"), jsonObject.getString("msg"));
+        if(!"200".equals(code))return message;
+
+        String deleteUrl = AppConfig.getStockApiUrl() + "/ShapeChangVouchDeleteV1";
+        String deleteGet1 = HttpUtil.get(deleteUrl + "?dataJson=" + json);
+//        LOG.info("rdeleteGet1: {}", deleteGet1);
+//        String deleteGet = HttpUtil.post(deleteUrl, para);
+//        LOG.info("deleteGet: {}", deleteGet);
+//        LOG.info("para: {}", para);
+        String deleteRes = XmlUtil.readObjectFromXml(deleteGet1);
+        com.alibaba.fastjson.JSONObject deleteJsonObject = JSON.parseObject(deleteRes);
+        String deleteCode = deleteJsonObject.getString("code");
+        String deleteMessage = StrUtil.nullToDefault(deleteJsonObject.getString("message"), deleteJsonObject.getString("msg"));
+        LOG.info("deleteRes: {}", deleteRes);
+        if("200".equals(deleteCode)){
+            return null;
+        }else {
+            return deleteMessage;
+        }
+    }
 
 }

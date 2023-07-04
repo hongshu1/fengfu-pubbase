@@ -79,3 +79,10 @@ select * from Bd_Department where ipid=#para(ipid)
 #sql("findERPPersons")
 SELECT * FROM Person where cpersoncode in (#(sqlPersonCode))
 #end
+
+#sql("getU8DepByCode")
+	select * from department where 1=1
+	#if(cdepcode)
+		and cdepcode = #para(cdepcode)
+	#end
+#end

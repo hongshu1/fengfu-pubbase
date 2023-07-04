@@ -382,7 +382,7 @@ public class WarehouseService extends BaseService<Warehouse> {
         warehouse.setIsReservoirAread(true);
         warehouse.setCWhMemo(data.get("cwhmemo") + "");
 
-        warehouse.save();
+        ValidationUtils.isTrue(warehouse.save(), "第" + iseq + "行保存数据失败");
         iseq++;
       }
 

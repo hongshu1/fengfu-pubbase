@@ -10,24 +10,24 @@ public class ProdFormMResVo {
     /**
      * 动态表格标题
      */
-    private List<Record> formItemLists;
+    private List<ProdFormMFormItemVo> formItemLists;
 
     /**
      * 动态表格内容
      */
-    private  List<Record> findByIdGetDetail;
+    private  List<ProdformDetailVo> findByIdGetDetail;
 
-    public List<Record> getFormItemLists(){
+    public List<ProdFormMFormItemVo> getFormItemLists(){
         return  formItemLists;
     }
-    public void  setFormItemLists(List<Record> formItemLists){
+    public void  setFormItemLists(List<ProdFormMFormItemVo> formItemLists){
         this.formItemLists=formItemLists;
     }
 
-    public List<Record> getFindByIdGetDetail(){
+    public List<ProdformDetailVo> getFindByIdGetDetail(){
         return  findByIdGetDetail;
     }
-    public void setFindByIdGetDetail(List<Record> findByIdGetDetail){
+    public void setFindByIdGetDetail(List<ProdformDetailVo> findByIdGetDetail){
         this.findByIdGetDetail=findByIdGetDetail;
     }
 
