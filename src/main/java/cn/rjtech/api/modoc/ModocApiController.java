@@ -1,31 +1,28 @@
 package cn.rjtech.api.modoc;
 
 import cn.jbolt.core.permission.UnCheck;
-import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.momaterialscanusedlog.MoMaterialscanusedlogmService;
+import cn.rjtech.admin.specmaterialsrcvm.SpecMaterialsRcvMService;
 import cn.rjtech.base.controller.BaseApiController;
+import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.modoc.ModocApiPageVo;
-import cn.rjtech.entity.vo.modoc.ModocApiResVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocGetCoperationnameByModocIdVo;
 import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocGetMoroutingsopByInventoryroutingconfigIdVo;
-import cn.rjtech.model.momdata.MoMaterialscanusedlogm;
-import cn.rjtech.model.momdata.Personswipelog;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.sun.jna.platform.win32.WinDef;
 import io.github.yedaxia.apidocs.ApiDoc;
 
 import java.util.Date;
 
 /**
+ * 制造工单
+ *
  * @version 1.0
  * @Author XLL
  * @Create 2023/5/12 11:08
- * @Description 制造工单
  */
 @ApiDoc
 public class ModocApiController extends BaseApiController {
@@ -99,7 +96,7 @@ public class ModocApiController extends BaseApiController {
      *
      * @param imodocid 工单ID
      */
-    @ApiDoc(result = ModocApiResVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void getModocdetails(@Para(value = "imodocid") Long imodocid) {
         ValidationUtils.notNull(imodocid, "缺少工单ID");
@@ -113,7 +110,6 @@ public class ModocApiController extends BaseApiController {
      * @param pageNumber 页数，必传
      * @param pageSize   页面数量，必传
      */
-//  @ApiDoc(result = ModocApiResVo.class)
     @UnCheck
     public void getSpecmaterialsrcvmDatas(@Para(value = "imodocid") Long imodocid,
                                           @Para(value = "pageNumber") Integer pageNumber,
@@ -201,48 +197,52 @@ public class ModocApiController extends BaseApiController {
         renderJBoltApiSuccessWithData(specMaterialsRcvMService.revocationSpecMaterialsRcvMById(iautoid));
     }
 
-  /**
-   *获取材料耗用为扫码数据
-   * @param pageNumber
-   * @param pageSize
-   * @param imodocid
-   * @param iautoids 传入逗号隔开的多个齐料检查主键id,用于扫码时排除扫码的那条数据，
-   *                 由于未扫码数据没有表记录扫码状态，前端在扫码使用隐藏域记录id传入后端
-   */
-  @UnCheck
-  public void getBarcodeAllBycBarcodeApi(@Para(value = "pageNumber") Integer pageNumber,
-                                         @Para(value = "pageSize") Integer pageSize,
-                                         @Para(value = "imodocid") Long imodocid,
-                                         @Para(value = "iautoids") String iautoids){
-      ValidationUtils.notNull(imodocid, "缺少工单ID");
-      ValidationUtils.notNull(pageNumber, "缺少页数");
-      ValidationUtils.notNull(pageSize, "缺少页面数量");
-    renderJBoltApiSuccessWithData(moMaterialscanusedlogmService.getBarcodeAllBycBarcode(pageNumber, pageSize,Kv.by("imodocid",imodocid).set("iautoid",iautoids)));
-  }
+    /**
+     * 获取材料耗用为扫码数据
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param imodocid
+     * @param iautoids   传入逗号隔开的多个齐料检查主键id,用于扫码时排除扫码的那条数据，
+     *                   由于未扫码数据没有表记录扫码状态，前端在扫码使用隐藏域记录id传入后端
+     */
+    @UnCheck
+    public void getBarcodeAllBycBarcodeApi(@Para(value = "pageNumber") Integer pageNumber,
+                                           @Para(value = "pageSize") Integer pageSize,
+                                           @Para(value = "imodocid") Long imodocid,
+                                           @Para(value = "iautoids") String iautoids) {
+        ValidationUtils.notNull(imodocid, "缺少工单ID");
+        ValidationUtils.notNull(pageNumber, "缺少页数");
+        ValidationUtils.notNull(pageSize, "缺少页面数量");
+        renderJBoltApiSuccessWithData(moMaterialscanusedlogmService.getBarcodeAllBycBarcode(pageNumber, pageSize, Kv.by("imodocid", imodocid).set("iautoid", iautoids)));
+    }
 
-  /**
-   * 获取材料耗用已扫描数据
-   * @param imodocid 制造工单主表id
-   * @param barcode 现品票
-   */
-  @UnCheck
-  public void getMaterialScanUsedLogApi(@Para(value = "imodocid") Long imodocid,
-                                        @Para(value = "barcode") String barcode){
-      ValidationUtils.notNull(imodocid, "ID不能为空");
-      ValidationUtils.notNull(barcode, "现品票不能为空");
-    renderJBoltApiSuccessWithData(moMaterialscanusedlogmService.getMaterialScanUsedLog(Kv.by("imodocid",imodocid).set("barcode",barcode)));
-  }
+    /**
+     * 获取材料耗用已扫描数据
+     *
+     * @param imodocid 制造工单主表id
+     * @param barcode  现品票
+     */
+    @UnCheck
+    public void getMaterialScanUsedLogApi(@Para(value = "imodocid") Long imodocid,
+                                          @Para(value = "barcode") String barcode) {
+        ValidationUtils.notNull(imodocid, "ID不能为空");
+        ValidationUtils.notNull(barcode, "现品票不能为空");
+        
+        renderJBoltApiSuccessWithData(moMaterialscanusedlogmService.getMaterialScanUsedLog(Kv.by("imodocid", imodocid).set("barcode", barcode)));
+    }
 
-  /**
-   * 新增材料耗用单，推送材料出库单
-   * @param imodocid
-   * @param jBoltTableList 详情数据
-   */
-  @UnCheck
-  public void saveMoLogMApi(@Para(value = "imodocid")Long imodocid,
-                            @Para(value = "jBoltTableList")String jBoltTableList){
-      ValidationUtils.notNull(imodocid, "id不能为空");
-      ValidationUtils.notNull(jBoltTableList, "data不能为空");
-      renderJBoltApiSuccessWithData(moMaterialscanusedlogmService.saveMoLogMApi(imodocid, JSON.parseArray(jBoltTableList)));
-  }
+    /**
+     * 新增材料耗用单，推送材料出库单
+     *
+     * @param imodocid
+     * @param jBoltTableList 详情数据
+     */
+    @UnCheck
+    public void saveMoLogMApi(@Para(value = "imodocid") Long imodocid,
+                              @Para(value = "jBoltTableList") String jBoltTableList) {
+        ValidationUtils.notNull(imodocid, "id不能为空");
+        ValidationUtils.notNull(jBoltTableList, "data不能为空");
+        renderJBoltApiSuccessWithData(moMaterialscanusedlogmService.saveMoLogMApi(imodocid, JSON.parseArray(jBoltTableList)));
+    }
 }

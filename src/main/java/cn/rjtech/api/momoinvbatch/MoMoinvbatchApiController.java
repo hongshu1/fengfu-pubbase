@@ -6,7 +6,7 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.momoinvbatch.MoMoinvbatchService;
 import cn.rjtech.base.controller.BaseApiController;
-import cn.rjtech.entity.vo.moinvbatch.MoinvbatchApiResVo;
+import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
@@ -31,7 +31,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
      *
      * @param imodocid
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void getModocData(@Para(value = "imodocid") Long imodocid) {
         ValidationUtils.notNull(imodocid, "缺少工单主键");
@@ -41,7 +41,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 获取现成票信息（表体）
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @UnCheck
     public void getMoMoinvbatchDatas(@Para(value = "imodocid") Long imodocid,
                                      @Para(value = "iprintstatus") Integer iprintstatus) {
@@ -53,7 +53,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 生成现品票
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.API_CREATEMOMOINVBATCH)
     public void createMomoinvbatch(@Para(value = "imodocid") Long imodocid) {
         ValidationUtils.notNull(imodocid, "缺少工单主键");
@@ -64,7 +64,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 撤回
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.API_WITHDRAW)
     public void withdraw(@Para(value = "iautoid") Long iautoid) {
         ValidationUtils.notNull(iautoid, "缺少现品票主键");
@@ -75,7 +75,7 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 修改数量
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.API_UPDATENUMBER)
     public void updateNumber(@Para(value = "iautoid") Long iautoid,
                              @Para(value = "newqty") Integer newQty) {
@@ -88,24 +88,28 @@ public class MoMoinvbatchApiController extends BaseApiController {
     /**
      * 批量打印
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.API_BATCHPRINT)
-    public void batchPrint(@Para(value = "imodocid") String imodocid, @Para(value = "ids") String ids) {
+    public void batchPrint(@Para(value = "imodocid") String imodocid, 
+                           @Para(value = "ids") String ids) {
         ValidationUtils.notNull(imodocid, "缺少工单主键");
         ValidationUtils.notNull(ids, "缺少现品票主键集合");
         ValidationUtils.isTrue(moMoinvbatchService.batchPrint(imodocid, ids).isOk(), "批量打印更新数据失败");
+        
         renderJBoltApiSuccess();
     }
 
     /**
      * 批量报工
      */
-    @ApiDoc(result = MoinvbatchApiResVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.API_WORKBYIDS)
     public void workByIds(@Para(value = "imodocid") String imodocid, @Para(value = "ids") String ids) {
         ValidationUtils.notNull(imodocid, "缺少工单主键");
         ValidationUtils.notNull(ids, "缺少现品票主键集合");
+        
         ValidationUtils.isTrue(moMoinvbatchService.workByIds(imodocid, ids).isOk(), "批量报工更新数据失败");
         renderJBoltApiSuccess();
     }
+    
 }

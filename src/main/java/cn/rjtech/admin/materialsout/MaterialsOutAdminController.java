@@ -8,8 +8,10 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -129,6 +131,18 @@ public class MaterialsOutAdminController extends BaseAdminController {
 		kv.setIfNotNull("orgCode",getOrgCode());
 
 		renderJsonData(service.getBarcodeDatas(kv));
+	}
+
+
+	/**
+	 * 根据条码带出其他数据
+	 */
+	@UnCheck
+	public void barcode(@Para(value = "barcode") String barcode,
+						@Para(value = "autoid") Long autoid,
+						@Para(value = "detailHidden") String detailHidden) {
+		ValidationUtils.notBlank(barcode, "请扫码");
+		renderJsonData(service.barcode(Kv.by("barcode", barcode).set("autoid",autoid).set("detailHidden",detailHidden).set("orgCode",getOrgCode())));
 	}
 
 	/**

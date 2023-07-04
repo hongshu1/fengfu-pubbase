@@ -460,8 +460,8 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 				stringBuilder.append("<span class='text-primary'>[失败异常=").append(e.getMessage()).append("]</span>");
 				e.printStackTrace();
 			} finally {
-				systemLog.setTitle(stringBuilder.toString());
-				systemLog.save();
+//				systemLog.setTitle(stringBuilder.toString());
+//				systemLog.save();
 			}
 			return fail("请求失败");
 		} else {
