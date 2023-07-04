@@ -9,6 +9,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.padworkregion.PadWorkRegionService;
 import cn.rjtech.model.momdata.Pad;
 import cn.rjtech.model.momdata.PadWorkRegion;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -179,21 +180,29 @@ public class PadService extends BaseService<Pad> {
     res.set(SUCCESS);
     tx(() -> {
       update(pad);
+      int qty = 0;
       List<PadWorkRegion> saveBeanList = jBoltTable.getSaveBeanList(PadWorkRegion.class);
       if (saveBeanList != null && saveBeanList.size() > 0) {
-        for (PadWorkRegion workRegion : saveBeanList) {
-          workRegion.setIPadId(pad.getIAutoId());
-          workRegion.setIsDeleted(false);
+        for (int i = 0; i < saveBeanList.size(); i++) {
+          saveBeanList.get(i).setIPadId(pad.getIAutoId());
+          saveBeanList.get(i).setIsDeleted(false);
+          if (saveBeanList.get(i).getIsDefault()) {
+            qty++;
+          }
         }
         padWorkRegionService.batchSave(saveBeanList);
       }
       List<PadWorkRegion> updateBeanList = jBoltTable.getUpdateBeanList(PadWorkRegion.class);
       if (updateBeanList != null && updateBeanList.size() > 0) {
-        for (PadWorkRegion workRegion : updateBeanList) {
-          workRegion.setIPadId(pad.getIAutoId());
+        for (int i = 0; i < updateBeanList.size(); i++) {
+          updateBeanList.get(i).setIPadId(pad.getIAutoId());
+          if (updateBeanList.get(i).getIsDefault()) {
+            qty++;
+          }
         }
         padWorkRegionService.batchUpdate(updateBeanList);
       }
+      ValidationUtils.isTrue(qty > 1, "所属生产线列表的【是否默认】只能存在一个是");
       Object[] delete = jBoltTable.getDelete();
       // 删除
       if (ArrayUtil.isNotEmpty(delete)) {

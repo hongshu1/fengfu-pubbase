@@ -113,14 +113,13 @@ public class VouchTypeDicService extends BaseService<VouchTypeDic> {
         if (dbVouchTypeDic == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
-
         String cvbtid = vouchTypeDic.getCVTID()+vouchTypeDic.getCBTID();
         List<Record> list = selectListCvbtid();
-        for (Record row : list) {
+/*        for (Record row : list) {
             if (row.get("cvbtid").equals(cvbtid)){
                 ValidationUtils.error("修改失败，单据业务类型已存在");
             }
-        }
+        }*/
         // 单据类型
         vouchTypeDic.setCVTChName(JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.VouchType.name(), vouchTypeDic.getCVTID()));
         // 单据业务
