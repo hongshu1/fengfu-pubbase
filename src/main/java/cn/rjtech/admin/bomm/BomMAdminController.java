@@ -131,8 +131,8 @@ public class BomMAdminController extends BaseAdminController {
 	}
 	
 	// 拷贝
-	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "dDisableDate") String dDisableDate,  @Para(value = "oldId") Long oldId) {
-		renderJson(service.saveCopy(oldId, dDisableDate, cVersion));
+	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "dDisableDate") String dDisableDate, @Para(value = "dEnableDate") String dEnableDate,  @Para(value = "oldId") Long oldId) {
+		renderJson(service.saveCopy(oldId, dEnableDate, dDisableDate, cVersion));
 	}
 	
 	public void submitForm(@Para(value = "formJsonData") String formJsonData, @Para(value = "tableJsonData") String tableJsonData) {
@@ -152,5 +152,5 @@ public class BomMAdminController extends BaseAdminController {
     public void getTreeTableDatas(){
 		renderJsonData(bomDService.getTreeTableDatas(getKv()));
 	}
-    
+ 
 }

@@ -7,7 +7,7 @@
     <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
     <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
 
-    <input type="hidden" name="itemHidden" id="itemHidden" value=""/>
+    <input type="hidden"  name="itemHidden" id="itemHidden" value=""/>
     <div class="row">
 
         <div class="col">
@@ -167,7 +167,7 @@
             <td>${pageNumber,pageSize,index | rownum}</td>
             #if(isView??0 !=1)
                  <td>
-                    <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
+                    <a tabindex="-1" class="ml-1 " href="javascript:void(0)" tooltip data-title="移除此行" onclick="tableRemoveRow(this)" ><i class="fa fa-trash text-danger">删除</i></a>
                 </td>
             #end
             <td>${data.cinvcode}</td>
@@ -206,7 +206,7 @@
                 data-area="90%,90%" data-btn="选中,取消" data-title="批量选择资源" class="btn btn-success btn-sm"><i
                 class="fa fa-folder-open-o"></i> 新增行
         </button>
-        <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+        <button onclick="tableRemove(this,true);" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
         </button>
     </div>
 </div>
@@ -370,7 +370,6 @@
      * 获取已选数据函数
      * */
     function tableDataSuccess() {
-
         let result = jboltTableGetAllDatas("PurchaseOrderM_Table_", ["iinventoryid"]);
         let array = [];
         if (result != null) {
@@ -381,6 +380,72 @@
             $("#itemHidden").val(codes);
         }
     }
+
+    function tableRemoveRow(ele) {
+
+        var table=getJBoltTable(ele);
+        if(isOk(table)){
+            if(!table.data("editable")){
+                LayerMsgBox.alert("表格组件配置异常 data-editable=\"true\"",2);
+                return false;
+            }
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                var action=getRealJqueryObject(ele);
+                if(isOk(action)){
+                    var success = checkMasterTableId(action);
+                    if(!success){
+                        return false;
+                    }
+                }
+                if(isOk(action)&&(isOk(action.closest("table[data-jbolttable]"))||isOk(action.closest(".jbolt_table_fixed")))){
+                    var tr=action.closest("tr");
+//				var tempid=tr.data("tempid");
+                    var id=tr.data("id");
+                    if(id){
+                        LayerMsgBox.confirm("此行数据并非新加临时数据，已经存在数据库中，确认删除？",function(){
+                            jboltTable.me.removeRow(jboltTable,tr.data("index"));
+                            tableDataSuccess();
+                        });
+                    }else{
+                        jboltTable.me.removeRow(jboltTable,tr.data("index"));
+                        tableDataSuccess();
+                    }
+                    return true;
+                }
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常",2);
+        return false;
+    }
+
+    function tableRemove(ele, confirm, callback) {
+        var action = getRealJqueryObject(ele);
+        if (isOk(action)) {
+            var success = checkMasterTableId(action);
+            if (!success) {
+                return false;
+            }
+        }
+        var isCheckedNone = jboltTableIsCheckedNone(ele);
+        if (isCheckedNone) {
+            LayerMsgBox.alert("请至少选择一行数据", 2);
+        } else {
+            var ids = jboltTableGetCheckedIds(ele, true);
+            if (ids) {
+                LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？", function () {
+                    removeJBoltTableCheckedTr(ele, false, callback);
+                    tableDataSuccess();
+                });
+            } else {
+                removeJBoltTableCheckedTr(ele, confirm, callback);
+                tableDataSuccess();
+            }
+            return true;
+        }
+        return false;
+    }
+
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="PurchaseOrderM_Form")
 #end

@@ -816,15 +816,15 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         if(CollectionUtil.isEmpty(formAutoId)) {
             return "主表id不能为空";
         }
-        
+        String post = null;
         for (Long s : formAutoId) {
             //主表数据
             SysOtherin byId = findById(s);
             //todo 删除u8的数据
             String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
-            String post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+            post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
         }
-        return null;
+        return post;
     }
 
     /*
