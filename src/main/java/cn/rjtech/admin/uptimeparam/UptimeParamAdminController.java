@@ -141,7 +141,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	@SuppressWarnings("unchecked")
 	public void downloadTpl() {
 		try {
-			renderJxls("uptimeparamtemplate.xlsx", Kv.by("rows", null), "嫁接时间参数.xlsx");
+			renderJxls("uptimeparamtemplate.xlsx", Kv.by("rows", null), "稼动时间参数.xlsx");
 		} catch (Exception e) {
 			ValidationUtils.error("模板下载失败");
 		}

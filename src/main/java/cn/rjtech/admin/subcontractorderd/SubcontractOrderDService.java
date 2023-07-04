@@ -163,9 +163,11 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 		subcontractOrderD.setIsPresent(isPresent);
 		subcontractOrderD.setCMemo(cMemo);
 		subcontractOrderD.setCAddress(cAddress);
+		Integer pkgQty = 0;
 		if (StrUtil.isNotBlank(iPkgQty)){
-			subcontractOrderD.setIPkgQty(Integer.valueOf(iPkgQty));
+			pkgQty = Integer.valueOf(iPkgQty);
 		}
+		subcontractOrderD.setIPkgQty(pkgQty);
 		return subcontractOrderD;
 	}
 	

@@ -79,7 +79,6 @@ public class SpotCheckFormMApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet submitForm(String formJsonDataStr, String tableJsonDataStr) {
-        service.submitForm(formJsonDataStr,tableJsonDataStr);
-        return JBoltApiRet.API_SUCCESS;
+        return JBoltApiRet.successWithData(service.submitForm(formJsonDataStr,tableJsonDataStr));
     }
 }
