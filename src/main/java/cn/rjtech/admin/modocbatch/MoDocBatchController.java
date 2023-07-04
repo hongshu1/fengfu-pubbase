@@ -38,18 +38,18 @@ public class MoDocBatchController extends BaseAdminController {
     render("index.html");
   }
 
-    /**
-     * 数据源
-     */
-    @UnCheck
-    public void datas() {
-        renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
-    }
+  /**
+   * 数据源
+   */
+  @UnCheck
+  public void datas() {
+    renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
+  }
 
-    @UnCheck
-    public void getPlanPage() {
-        renderJsonData(service.getPlanPage(getKv()));
-    }
+  @UnCheck
+  public void getPlanPage() {
+    renderJsonData(service.getPlanPage(getKv()));
+  }
 
   /**
    * 保存
@@ -124,6 +124,13 @@ public class MoDocBatchController extends BaseAdminController {
   public void savePlan(String modoc) {
     ValidationUtils.notBlank(modoc, "参数为空!");
     List<Record> list = JBoltModelKit.getFromRecords(JSONArray.parseArray(modoc));
+    if (list != null) {
+      if (list.size() < 0) {
+        ValidationUtils.error("未传入任何数据");
+      }
+    } else {
+      ValidationUtils.error("未传入任何数据");
+    }
     renderJsonData(moDocService.savePlan(list));
   }
 
