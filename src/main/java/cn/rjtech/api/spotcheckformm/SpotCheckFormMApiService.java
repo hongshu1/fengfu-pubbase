@@ -1,5 +1,6 @@
 package cn.rjtech.api.spotcheckformm;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
@@ -61,6 +62,12 @@ public class SpotCheckFormMApiService extends JBoltApiBaseService {
                 SpotCheckFormM checkFormM = service.findById(spotcheckformmid);
                 record.set("iauditstatus",checkFormM.getIAuditStatus());
                 record.set("iauditway",checkFormM.getIAuditWay());
+                if (StrUtil.isNotBlank(checkFormM.getCDesc())){
+                    record.set("cdesc",checkFormM.getCDesc());
+                }
+                if (StrUtil.isNotBlank(checkFormM.getCMethod())){
+                    record.set("cmethod",checkFormM.getCMethod());
+                }
             }
             kv.set("spotcheckformm",record);
             kv.set("coperationname",coperationname);
@@ -69,7 +76,7 @@ public class SpotCheckFormMApiService extends JBoltApiBaseService {
             kv.set("routingconfigid",routingconfigid);
             kv.set("spotcheckformid",spotCheckForm.getIAutoId());
             kv.set("itype",itype);
-            //生产表单项目标题
+            //项目标题
             List<Record> formItemLists = spotCheckFormItemService.formItemLists(Kv.by("iqcformid", ispotcheckformid));
             kv.set("lineRoll",formItemLists);
             List<Record> byIdGetDetail = spotCheckFormService.findByIdGetDetail(String.valueOf(ispotcheckformid));
@@ -79,7 +86,6 @@ public class SpotCheckFormMApiService extends JBoltApiBaseService {
     }
 
     public JBoltApiRet submitForm(String formJsonDataStr, String tableJsonDataStr) {
-        service.submitForm(formJsonDataStr,tableJsonDataStr);
-        return JBoltApiRet.API_SUCCESS;
+        return JBoltApiRet.successWithData(service.submitForm(formJsonDataStr,tableJsonDataStr));
     }
 }

@@ -6,6 +6,8 @@
     <input type="hidden" name="iType" value="#(purchaseOrderM.itype??)"/>
     <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
     <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
+
+    <input type="hidden" name="itemHidden" id="itemHidden" value=""/>
     <div class="row">
 
         <div class="col">
@@ -223,6 +225,7 @@
        data-column-resize="true"
        data-rowtpl="puraseOrder_tpl_1"
        data-column-prepend="1:checkbox:true:false:false"
+       data-ajax-success-handler="tableDataSuccess"
        #if(isView??0 !=1)
        data-toolbar="PurchaseOrderD_toolbar_#(pageId)"
        data-editable="true"
@@ -367,7 +370,8 @@
      * 获取已选数据函数
      * */
     function tableDataSuccess() {
-        let result = jboltTableGetAllDatas(getJboltId(), ["iinventoryid"]);
+
+        let result = jboltTableGetAllDatas("PurchaseOrderM_Table_", ["iinventoryid"]);
         let array = [];
         if (result != null) {
             for (let i = 0; i < result.length; i++) {

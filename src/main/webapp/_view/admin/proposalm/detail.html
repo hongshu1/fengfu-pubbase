@@ -90,17 +90,18 @@
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="proposalDetail_toolbar_#(pageId)">
             <div class="btn-group" role="group" aria-label="btn-group">
-                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+            	<a data-downloadbtn href="admin/proposalm/detaiDatasExport" data-form="proposalDetailForm_#(pageId)" class="btn btn-outline-primary btn-sm"><i class="fa fa-file-excel-o"></i> 导出</a>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
             </div>
 
-            <div class="btn-group pull-right" role="group" aria-label="btn-group">
+<!--             <div class="btn-group pull-right" role="group" aria-label="btn-group">
                 <a class="btn btn-outline-info"
                         data-downloadbtn
                         data-usecheckedids="true"
                         data-url="admin/proposalm/detaiDatasExport">
                     <i class="fa fa-download"></i> 导出Excel
                 </a>
-            </div>
+            </div> -->
         </div>
 
         <table class="jbolt_table jbolt_main_table table-center"

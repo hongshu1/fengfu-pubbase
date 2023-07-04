@@ -4,28 +4,51 @@
 #if(readonly != 'readonly' && (formUploadM.iauditstatus??0 == 1 || formUploadM.iauditstatus??0 == 2))
 #set(readonly = 'readonly')
 #end
-<form onsubmit="return false;" id="spotCheckFormMForm" action="#(action)" method="post">
+<div class="jbolt_page_title">
 
-    <input type="hidden" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)" />
-    <input type="hidden" maxlength="255" id="spotCheckFormMiautoid" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)"/>
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="col">
-                    #if(readonly != 'readonly')
-                    #if(controls != '1')
-                    <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
-                    #end
-                    #end
-                    #include("/_view/_common/_approval_btns.html", uri="/admin/spotCheckFormM",
-                    formSn="PL_SpotCheckFormM", primaryKeyName="iAutoId", o=spotCheckFormM,
-                    permissionKeyPrefix="spotcheckformm",  className="cn.rjtech.admin.spotcheckformm.SpotCheckFormMService")
-
-                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        #if(readonly != 'readonly')
+                        #if(controls != '1')
+                        <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
+                        #end
+                        #end
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/spotCheckFormM",
+                        formSn="PL_SpotCheckFormM", primaryKeyName="iAutoId", o=spotCheckFormM,
+                        permissionKeyPrefix="spotcheckformm",  className="cn.rjtech.admin.spotcheckformm.SpotCheckFormMService")
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+</div>
+### 新增之后，并且为审核流
+#if(spotCheckFormM.iautoid?? && spotCheckFormM.iauditway == 2 && spotCheckFormM.iauditstatus > 0)
+### 参数列表
+### formAutoId:                 单据ID
+### formSn:                     表单名
+### btnNeed:                    是否需要显示审批按钮
+### pId:                        当前页面绑定的pageId
+### primaryKeyName:             主键名
+### className:                  实现审批业务的类名
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=spotCheckFormM.iAutoId, primaryKeyName="iAutoId", formSn="PL_SpotCheckFormM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.spotcheckformm.SpotCheckFormMService")
+#end
+<div class="jbolt_page_content">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+<form onsubmit="return false;" id="spotCheckFormMForm" action="#(action)" method="post">
+
+    <input type="hidden" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)" />
+    <input type="hidden" maxlength="255" id="spotCheckFormMiautoid" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)"/>
+
     <div class="py-2" style="padding:.5rem 0rem;">
         <span class="py-1"><strong>工单信息</strong></span>
     </div>
@@ -196,6 +219,10 @@
     #end
     #end
 </form>
+                </div>
+            </div>
+        </div>
+    </div>
 #define js()
 #include("_table3_js.html")
 <script>

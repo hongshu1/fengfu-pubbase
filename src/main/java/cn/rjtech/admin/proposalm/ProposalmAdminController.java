@@ -606,9 +606,9 @@ public class ProposalmAdminController extends BaseAdminController {
     /**
      * 禀议明细数据导出
      */
-    @CheckPermission(PermissionKey.PROPOSAL_DETAIL_EXPORT)
+    @UnCheck
     public void detaiDatasExport() {
-        renderBytesToExcelXlsFile(service.getExcelReport(get("ids")).setFileName("禀议明细Excel"));
+        renderBytesToExcelXlsFile(service.getExcelReport(getKv()).setFileName("禀议明细Excel"));
     }
 
     /**

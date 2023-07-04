@@ -85,8 +85,7 @@ public class ProdFormMApiService extends JBoltApiBaseService {
      * 保存
      */
     public JBoltApiRet submitForm(String formJsonDataStr, String tableJsonDataStr) {
-        prodFormMService.submitForm(formJsonDataStr,tableJsonDataStr);
-        return JBoltApiRet.API_SUCCESS;
+        return JBoltApiRet.successWithData(prodFormMService.submitForm(formJsonDataStr,tableJsonDataStr));
     }
 
 
