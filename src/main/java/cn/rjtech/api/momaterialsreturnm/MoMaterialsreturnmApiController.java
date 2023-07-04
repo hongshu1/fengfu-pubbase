@@ -18,8 +18,8 @@ import io.github.yedaxia.apidocs.ApiDoc;
  *
  * @author Kephon
  */
-@CheckPermission(PermissionKey.API_MOMATERIALSRETURNM)
-@UnCheckIfSystemAdmin
+//@CheckPermission(PermissionKey.API_MOMATERIALSRETURNM)
+//@UnCheckIfSystemAdmin
 @ApiDoc
 public class MoMaterialsreturnmApiController extends BaseApiController {
 
@@ -30,45 +30,47 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
     private MoMaterialsreturnmService moMaterialsreturnmService;
 
 
-//    /**
-//     * 查询单条生产退料现品票
-//     * @param barcode  现品票
-//     */
-//    @ApiDoc(result = MomaterialsreturnmVo.class)
-//    @UnCheck
-//    public void addBarcode(@Para(value = "barcode") String barcode){
-//        ValidationUtils.notNull(barcode,"缺少现品票");
-//        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeInfo(barcode));
-//    }
-//
-//
-//    /**
-//     * 查询全部生产退料现品票
-//     */
-//    @ApiDoc(result = MomaterialsreturnmVo.class)
-//    @UnCheck
-//    public void getmomaterialscanusedlogList(){
-//        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeList());
-//    }
-//
-//    /**
-//     * 保存生产退料
-//     */
-//    @ApiDoc(result = MomaterialsreturnmVo.class)
-//    @CheckPermission(PermissionKey.API_MOMATERIALSRETURNM)
-//    public void saveTableSubmit(@Para(value ="jboltTable" )JBoltTable jBoltTable){
-//        ValidationUtils.isTrue(moMaterialsreturnmService.saveTableSubmit(jBoltTable).isOk(),"保存失败");
-//        renderJBoltApiSuccess();
-//    }
-//
-//    /**
-//     * 查看生产退料详情
-//     */
-//    @ApiDoc(result = MomaterialsreturnmVo.class)
-//    @UnCheck
-//    public void getmomaterialscanuseMList(@Para(value = "iautoid") String iautoid){
-//        ValidationUtils.notNull(iautoid,"缺少退料表单ID");
-//        renderJBoltApiRet(moMaterialsreturnmApiService.getModandMomlist(iautoid));
-//    }
+    /**
+     * 查询单条生产退料现品票
+     * @param barcode  现品票
+     */
+    @ApiDoc(result = MomaterialsreturnmVo.class)
+    @UnCheck
+    public void addBarcode(@Para(value = "barcode") String barcode){
+        ValidationUtils.notNull(barcode,"缺少现品票");
+        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeInfo(barcode));
+    }
+
+
+    /**
+     * 查询全部生产退料现品票
+     */
+    @ApiDoc(result = MomaterialsreturnmVo.class)
+    @UnCheck
+    public void getmomaterialscanusedlogList(){
+        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeList());
+    }
+
+    /**
+     * 保存生产退料
+     * @param jBoltTable 表单数据
+     */
+    @ApiDoc(result = MomaterialsreturnmVo.class)
+    @CheckPermission(PermissionKey.API_MOMATERIALSRETURNM)
+    public void saveTableSubmit(@Para(value ="jboltTable" )JBoltTable jBoltTable){
+        ValidationUtils.isTrue(moMaterialsreturnmService.saveTableSubmit(jBoltTable).isOk(),"保存失败");
+        renderJBoltApiSuccess();
+    }
+
+    /**
+     * 查看生产退料详情
+     * 生产退料主表iautid
+     */
+    @ApiDoc(result = MomaterialsreturnmVo.class)
+    @UnCheck
+    public void getmomaterialscanuseMList(@Para(value = "iautoid") String iautoid){
+        ValidationUtils.notNull(iautoid,"缺少退料表单ID");
+        renderJBoltApiRet(moMaterialsreturnmApiService.getModandMomlist(iautoid));
+    }
 
 }
