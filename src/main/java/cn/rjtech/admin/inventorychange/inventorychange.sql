@@ -61,13 +61,13 @@ SELECT
     t2.cEquipmentModelName
 FROM
     Bd_Inventory inv
-        LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1
-        LEFT JOIN Bd_Uom puom ON puom.iAutoId = inv.iPurchaseUomId
-        LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId
-        LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId
-        left join Bd_EquipmentModel t2 on inv.iEquipmentModelId = t2.iAutoId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = inv.iInventoryUomId1 and uom.isDeleted = '0'
+        LEFT JOIN Bd_Uom puom ON puom.iAutoId = inv.iPurchaseUomId and puom.isDeleted = '0'
+        LEFT JOIN Bd_InventoryStockConfig invstock ON invstock.iInventoryId = inv.iAutoId and invstock.isDeleted = '0'
+        LEFT JOIN Bd_Vendor ven ON ven.iAutoId = invstock.iVendorId and ven.isDeleted = '0'
+        left join Bd_EquipmentModel t2 on inv.iEquipmentModelId = t2.iAutoId and t2.isDeleted = '0'
 WHERE
-        1 = 1
+        inv.isDeleted = '0'
         #if(q)
             AND (inv.cInvCode LIKE CONCAT('%', #para(q), '%') OR inv.cInvCode1 LIKE CONCAT('%', #para(q), '%') OR inv.cInvName1 LIKE CONCAT('%', #para(q), '%'))
 	    #end

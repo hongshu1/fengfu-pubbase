@@ -1,4 +1,5 @@
 package cn.rjtech.admin.currentstock;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -31,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 
 /**
@@ -403,6 +406,31 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             //addUpdateSystemLog(sysPuinstore.getAutoid(), JBoltUserKit.getUserId(), sysPuinstore.getName());
         }
         return ret(success);
+    }
+
+    /**
+     * 删除 指定多个ID
+     * @param ids
+     * @return
+     */
+    public Ret deleteByBatchIds(String ids) {
+        tx(() -> {
+            //软删除盘点单
+            update("UPDATE T_Sys_StockCheckVouch SET isDeleted = 1 WHERE AutoID = "+ids+" ");
+            update("UPDATE T_Sys_StockCheckVouchBarcode SET isDeleted = 1 WHERE MasID = "+ids+" ");
+            update("UPDATE T_Sys_StockCheckVouchDetail SET isDeleted = 1 WHERE MasID = "+ids+" ");
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 导出订单列表
+     */
+    public List<Record> download(Kv kv, String sqlTemplate) {
+        kv.setIfNotNull("OrganizeCode",getOrgCode());
+        List<Record> list = dbTemplate(sqlTemplate, kv).find();
+        return list;
     }
 
 

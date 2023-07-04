@@ -10,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -26,8 +27,6 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
     public static final String IDEPGRADE = "iDepGrade";
     /**负责人编码*/
     public static final String CDEPPERSON = "cDepPerson";
-	/**负责人编码*/
-	public static final String CDEPPERSONNAME = "cDepPersonName";
     /**部门属性*/
     public static final String CDEPPROP = "cDepProp";
     /**电话*/
@@ -106,6 +105,10 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
     public static final String ISOURCEID = "iSourceId";
     /**是否禀议：0. 否 1. 是*/
     public static final String ISPROPOSAL = "isProposal";
+    /**推单U8部门ID*/
+    public static final String IREFDEPID = "iRefDepId";
+    /**(不填,动态查询)负责人名称*/
+    public static final String CDEPPERSONNAME = "cDepPersonName";
 	/**
 	 * 主键ID
 	 */
@@ -234,15 +237,6 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	}
 
 	/**
-	 * 负责人名称
-	 */
-	public M setCDepPersonName(java.lang.String cDepPersonName) {
-		set("cDepPersonName", cDepPersonName);
-		return (M)this;
-	}
-
-
-	/**
 	 * 负责人编码
 	 */
 	@JBoltField(name="cdepperson" ,columnName="cDepPerson",type="String", remark="负责人编码", required=false, maxLength=20, fixed=0, order=8)
@@ -250,19 +244,6 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	public java.lang.String getCDepPerson() {
 		return getStr("cDepPerson");
 	}
-
-
-	/**
-	 * 负责人名称
-	 */
-	@JBoltField(name="cdeppersonname" ,columnName="cdeppersonname",type="String", remark="负责人名称", required=false, maxLength=20, fixed=0, order=8)
-	@JSONField(name = "cdeppersonname")
-	public java.lang.String getCDepPersonName() {
-		return getStr("cDepPersonName");
-	}
-
-
-
 
 	/**
 	 * 部门属性
@@ -925,6 +906,40 @@ public abstract class BaseDepartment<M extends BaseDepartment<M>> extends JBoltB
 	@JSONField(name = "isproposal")
 	public java.lang.Boolean getIsProposal() {
 		return getBoolean("isProposal");
+	}
+
+	/**
+	 * 推单U8部门ID
+	 */
+	public M setIRefDepId(java.lang.Long iRefDepId) {
+		set("iRefDepId", iRefDepId);
+		return (M)this;
+	}
+
+	/**
+	 * 推单U8部门ID
+	 */
+	@JBoltField(name="irefdepid" ,columnName="iRefDepId",type="Long", remark="推单U8部门ID", required=false, maxLength=19, fixed=0, order=48)
+	@JSONField(name = "irefdepid", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIRefDepId() {
+		return getLong("iRefDepId");
+	}
+
+	/**
+	 * (不填,动态查询)负责人名称
+	 */
+	public M setCDepPersonName(java.lang.String cDepPersonName) {
+		set("cDepPersonName", cDepPersonName);
+		return (M)this;
+	}
+
+	/**
+	 * (不填,动态查询)负责人名称
+	 */
+	@JBoltField(name="cdeppersonname" ,columnName="cDepPersonName",type="String", remark="(不填,动态查询)负责人名称", required=false, maxLength=255, fixed=0, order=49)
+	@JSONField(name = "cdeppersonname")
+	public java.lang.String getCDepPersonName() {
+		return getStr("cDepPersonName");
 	}
 
 }
