@@ -6,6 +6,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.SysSaledeliverplandetail;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -15,11 +16,13 @@ import java.util.List;
 
 /**
  * 销售出货(计划)明细
+ *
  * @ClassName: SysSaledeliverplandetailService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 10:13
  */
 public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverplandetail> {
+
     private final SysSaledeliverplandetail dao = new SysSaledeliverplandetail().dao();
 
     @Override
@@ -39,7 +42,6 @@ public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverp
      * @param pageSize       每页几条数据
      * @param TrackType      跟单类型
      * @param SourceBillType 来源单据类型
-     * @return
      */
     public Page<SysSaledeliverplandetail> getAdminDatas(int pageNumber, int pageSize, String TrackType, String SourceBillType) {
         // 创建sql对象
@@ -54,9 +56,6 @@ public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverp
 
     /**
      * 保存
-     *
-     * @param sysSaledeliverplandetail
-     * @return
      */
     public Ret save(SysSaledeliverplandetail sysSaledeliverplandetail) {
         if (sysSaledeliverplandetail == null || isOk(sysSaledeliverplandetail.getAutoID())) {
@@ -73,9 +72,6 @@ public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverp
 
     /**
      * 更新
-     *
-     * @param sysSaledeliverplandetail
-     * @return
      */
     public Ret update(SysSaledeliverplandetail sysSaledeliverplandetail) {
         if (sysSaledeliverplandetail == null || notOk(sysSaledeliverplandetail.getAutoID())) {
@@ -100,7 +96,6 @@ public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverp
      *
      * @param sysSaledeliverplandetail 要删除的model
      * @param kv                       携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(SysSaledeliverplandetail sysSaledeliverplandetail, Kv kv) {
@@ -113,7 +108,6 @@ public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverp
      *
      * @param sysSaledeliverplandetail model
      * @param kv                       携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(SysSaledeliverplandetail sysSaledeliverplandetail, Kv kv) {
@@ -125,6 +119,10 @@ public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverp
         ValidationUtils.notNull(kv.getLong("masid"), JBoltMsg.PARAM_ERROR);
         List<Record> records = dbTemplate("syssaledeliverplan.dList", kv).find();
         return records;
+    }
+
+    public List<SysSaledeliverplandetail> findListByMasid(String masid) {
+        return find("select * from T_Sys_SaleDeliverPlanDetail where masid=?", masid);
     }
 
 }

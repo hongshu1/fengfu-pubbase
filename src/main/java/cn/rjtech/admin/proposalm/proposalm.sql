@@ -40,7 +40,7 @@ ORDER BY m.iautoid DESC
 ### 获取禀议数据
 #sql("paginateDetails")
 select * from (
-select pm.cproposalno,mdp.cdepname,pm.cApplyPersonName,pm.dApplyDate,pm.cprojectcode,
+select pm.iautoid,pm.cproposalno,mdp.cdepname,pm.cApplyPersonName,pm.dApplyDate,pm.cprojectcode,
 	pm.cprojectname,bpc.cCategoryName,
 	(select top 1 ccode from Bas_Project_Card where iautoid = pd.iProjectCardId) cBudgetNo,
 	(select top 1 sm.csubjectname from Bas_Project_Card pc

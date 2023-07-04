@@ -8,19 +8,28 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.rjtech.admin.syssaledeliverdetail.SysSaledeliverdetailService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.model.momdata.SysSaledeliver;
 import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.rjtech.util.Util;
+import cn.rjtech.util.ValidationUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.IRow;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -143,7 +152,8 @@ public class SysSaledeliverAdminController extends BaseAdminController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        set("sysSaledeliver", sysSaledeliver);
+        IRow<Record> formDatas = service.getFormDatas(sysSaledeliver.getAutoID());
+        set("sysSaledeliver", formDatas);
         render("edit.html");
     }
 
@@ -185,6 +195,57 @@ public class SysSaledeliverAdminController extends BaseAdminController {
 //            System.out.println(ret);
 //            System.out.println("结束u8，结束u8，结束u8，结束u8，结束u8"+new Date());
         });
+    }
+
+    /***
+     * 勾选导出
+     */
+    public void downloadChecked(){
+        Kv kv = getKv();
+        String ids = kv.getStr("ids");
+        if (ids != null) {
+            String[] split = ids.split(",");
+            String sqlids = "";
+            for (String id : split) {
+                sqlids += "'" + id + "',";
+            }
+            ValidationUtils.isTrue(sqlids.length() > 0, "请至少选择一条数据!");
+            sqlids = sqlids.substring(0, sqlids.length() - 1);
+            kv.set("sqlids", sqlids);
+        }
+
+        String sqlTemplate = "sysSaleDeliver.pageList";
+        List<Record> list = service.download(kv, sqlTemplate);
+        JBoltCamelCaseUtil.keyToCamelCase(list);
+        //2、创建JBoltExcel
+        JBoltExcel jBoltExcel = JBoltExcel
+                .create()//创建JBoltExcel
+                .addSheet(//设置sheet
+                        JBoltExcelSheet.create("销售出库单列表")
+                                .setHeaders(1,//sheet里添加表头
+                                        JBoltExcelHeader.create("sourcebill", "来源单号", 20),
+                                        JBoltExcelHeader.create("billno", "出库单号", 20),
+                                        JBoltExcelHeader.create("erpbillno", "ERP单据号", 20),
+                                        JBoltExcelHeader.create("billdate", "出库日期", 20),
+                                        JBoltExcelHeader.create("invcode", "存货编码", 20),
+                                        JBoltExcelHeader.create("whname", "仓库名称", 40),
+                                        JBoltExcelHeader.create("rdcode", "出库类别", 40),
+                                        JBoltExcelHeader.create("billtype", "业务类型", 40),
+                                        JBoltExcelHeader.create("salenum", "业务号", 40),
+                                        JBoltExcelHeader.create("depname", "销售部门", 40),
+                                        JBoltExcelHeader.create("salename", "业务员", 40),
+                                        JBoltExcelHeader.create("cusname", "客户简称", 40),
+                                        JBoltExcelHeader.create("auditdate", "审批日期", 40),
+                                        JBoltExcelHeader.create("memo", "备注", 40),
+                                        JBoltExcelHeader.create("createperson", "创建人", 40),
+                                        JBoltExcelHeader.create("createdate", "创建日期", 40)
+                                ).setDataChangeHandler((data, index) -> {
+                        })
+                                .setRecordDatas(2, list)//设置数据
+                ).setFileName("销售出库单列表-" + new SimpleDateFormat("yyyyMMdd").format(new Date()));
+        //3、导出
+        renderBytesToExcelXlsFile(jBoltExcel);
+
     }
 
 

@@ -17,6 +17,17 @@ public class SpotCheckFormMVo {
      */
     private Integer iauditway;
 
+    /**
+     * 点检异常记录
+     */
+    private String cdesc;
+
+    /**
+     *处理方法
+     */
+
+    private String cmethod;
+
     public Long getIautoid(){
         return iautoid;
     }
@@ -38,4 +49,16 @@ public class SpotCheckFormMVo {
         this.iauditstatus=iauditstatus;
     }
 
+    public  String getCdesc(){
+        return cdesc;
+    }
+    public void setCdesc(String cdesc){
+        this.cdesc=cdesc;
+    }
+    public String getCmethod(){
+        return cmethod;
+    }
+    public void setCmethod(String cmethod){
+        this.cmethod=cmethod;
+    }
 }

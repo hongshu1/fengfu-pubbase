@@ -2273,6 +2273,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                                 moMoroutingconfigOperation.setIMoInventoryRoutingId(moRoutingConfigId);
                                 moMoroutingconfigOperation.setIInventoryRoutingConfigId(invOperation.getIInventoryRoutingConfigId());
                                 moMoroutingconfigOperation.setIOperationId(invOperation.getIOperationId());
+                                moMoroutingconfigOperation.setCOperationName(invOperation.getCOperationName());
                                 moMoroutingconfigOperationList.add(moMoroutingconfigOperation);
                             }
                         }

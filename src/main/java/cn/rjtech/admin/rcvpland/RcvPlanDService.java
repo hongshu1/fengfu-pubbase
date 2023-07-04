@@ -143,4 +143,8 @@ public class RcvPlanDService extends BaseService<RcvPlanD> {
         return SUCCESS;
     }
 
+    public List<RcvPlanD> findListByMasid(String iRcvPlanMid){
+        return find("select * from SM_RcvPlanD where iRcvPlanMid=?",iRcvPlanMid);
+    }
+
 }
