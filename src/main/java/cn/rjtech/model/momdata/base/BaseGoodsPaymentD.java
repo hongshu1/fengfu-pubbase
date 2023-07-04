@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**货款核对主表ID*/
@@ -85,10 +85,20 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
     public static final String DDEFINE29 = "dDefine29";
     /**自定义字段30*/
     public static final String DDEFINE30 = "dDefine30";
-	/**创建时间*/
-	public static final String DCREATETIME = "dCreateTime";
-	/**更新时间*/
-	public static final String DUPDATETIME = "dUpdateTime";
+    /**删除状态*/
+    public static final String ISDELETED = "isDeleted";
+    /**创建时间*/
+    public static final String DCREATETIME = "dCreateTime";
+    /**更新时间*/
+    public static final String DUPDATETIME = "dUpdateTime";
+    /**创建人ID*/
+    public static final String ICREATEBY = "iCreateBy";
+    /**创建人名称*/
+    public static final String CCREATENAME = "cCreateName";
+    /**更新人ID*/
+    public static final String IUPDATEBY = "iUpdateBy";
+    /**更新人名称*/
+    public static final String CUPDATENAME = "cUpdateName";
 	/**
 	 * 主键ID
 	 */
@@ -151,7 +161,7 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
 	/**
 	 * 取货车次号
 	 */
-	@JBoltField(name="ccarno" ,columnName="cCarNo",type="String", remark="取货车次号", required=true, maxLength=40, fixed=0, order=4)
+	@JBoltField(name="ccarno" ,columnName="cCarNo",type="String", remark="取货车次号", required=false, maxLength=40, fixed=0, order=4)
 	@JSONField(name = "ccarno")
 	public java.lang.String getCCarNo() {
 		return getStr("cCarNo");
@@ -717,6 +727,24 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
 	public java.util.Date getDDefine30() {
 		return getDate("dDefine30");
 	}
+
+	/**
+	 * 删除状态
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 删除状态
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态", required=false, maxLength=1, fixed=0, order=38)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
+	}
+
 	/**
 	 * 创建时间
 	 */
@@ -728,11 +756,12 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=12)
+	@JBoltField(name="dcreatetime" ,columnName="dCreateTime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=39)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
 	}
+
 	/**
 	 * 更新时间
 	 */
@@ -744,10 +773,79 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
 	/**
 	 * 更新时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=15)
+	@JBoltField(name="dupdatetime" ,columnName="dUpdateTime",type="Date", remark="更新时间", required=false, maxLength=23, fixed=3, order=40)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDUpdateTime() {
 		return getDate("dUpdateTime");
 	}
+
+	/**
+	 * 创建人ID
+	 */
+	public M setICreateBy(java.lang.Long iCreateBy) {
+		set("iCreateBy", iCreateBy);
+		return (M)this;
+	}
+
+	/**
+	 * 创建人ID
+	 */
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=false, maxLength=19, fixed=0, order=41)
+	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getICreateBy() {
+		return getLong("iCreateBy");
+	}
+
+	/**
+	 * 创建人名称
+	 */
+	public M setCCreateName(java.lang.String cCreateName) {
+		set("cCreateName", cCreateName);
+		return (M)this;
+	}
+
+	/**
+	 * 创建人名称
+	 */
+	@JBoltField(name="ccreatename" ,columnName="cCreateName",type="String", remark="创建人名称", required=false, maxLength=60, fixed=0, order=42)
+	@JSONField(name = "ccreatename")
+	public java.lang.String getCCreateName() {
+		return getStr("cCreateName");
+	}
+
+	/**
+	 * 更新人ID
+	 */
+	public M setIUpdateBy(java.lang.Long iUpdateBy) {
+		set("iUpdateBy", iUpdateBy);
+		return (M)this;
+	}
+
+	/**
+	 * 更新人ID
+	 */
+	@JBoltField(name="iupdateby" ,columnName="iUpdateBy",type="Long", remark="更新人ID", required=false, maxLength=19, fixed=0, order=43)
+	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIUpdateBy() {
+		return getLong("iUpdateBy");
+	}
+
+	/**
+	 * 更新人名称
+	 */
+	public M setCUpdateName(java.lang.String cUpdateName) {
+		set("cUpdateName", cUpdateName);
+		return (M)this;
+	}
+
+	/**
+	 * 更新人名称
+	 */
+	@JBoltField(name="cupdatename" ,columnName="cUpdateName",type="String", remark="更新人名称", required=false, maxLength=60, fixed=0, order=44)
+	@JSONField(name = "cupdatename")
+	public java.lang.String getCUpdateName() {
+		return getStr("cUpdateName");
+	}
+
 }
 

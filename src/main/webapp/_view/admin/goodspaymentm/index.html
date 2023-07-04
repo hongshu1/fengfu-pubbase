@@ -34,15 +34,21 @@
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
+     {@if data.iauditstatus == '0'|| data.iauditstatus == '3'}
 	<a href="admin/paymentCheckManage/edit/${data.iautoid}" data-area="100%,100%" tooltip data-title="编辑"
        data-handler="refreshJBoltTable" data-dialog-title="编辑货款核对表" class="jbolt_table_editbtn"><i
             class="fa fa-edit"></i>编辑</a>
-
     <a href="admin/paymentCheckManage/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
        data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i
             class="fa fa-remove c-danger">删除</i></a>
+    {@/if}
+    {@if data.iauditstatus != '0' && data.iauditstatus != '3'}
+    	<a href="admin/paymentCheckManage/edit/${data.iautoid}" data-area="100%,100%" tooltip data-title="查看"
+           data-handler="refreshJBoltTable" data-dialog-title="查看货款核对表" class="jbolt_table_editbtn"><i
+                class="fa fa-edit"></i>查看</a>
+    {@/if}
 </td>
-<td>${data.istatus}</td>
+<td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
 <td>${data.cgoodspaymentno}</td>
 <td>${data.icustomerid}</td>
 <td>${data.ccuscode}</td>
@@ -56,9 +62,11 @@
     <div class="jbolt_table_toolbar" id="GoodsPaymentM_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 			<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增发货管理-取货计划主表" data-url="admin/paymentCheckManage/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
-			<button data-dialogbtn data-area="100%,100%"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="批量审批取货计划主表" data-check-handler="jboltTableGetCheckedId" data-url="admin/paymentCheckManage/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量审批</button>
-			<button data-dialogbtn data-area="100%,100%"  data-handler="refreshJBoltTable"  id="side_toolbar_editBtn_#(pageId)"  data-title="批量反审批-取货计划主表" data-check-handler="jboltTableGetCheckedId" data-url="admin/paymentCheckManage/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 批量反审批</button>
-			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/paymentCheckManage/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 批量删除</button>		
+			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/paymentCheckManage/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 批量删除</button>
+
+            #include("/_view/_common/_batch_approval_btns.html",
+            formSn="SM_GoodsPaymentM",primaryKeyName="iAutoId",
+            className="cn.rjtech.admin.goodspaymentm.GoodsPaymentMService", permissionKeyPrefix="goodspaymentm")
         </div>
 
     </div>
