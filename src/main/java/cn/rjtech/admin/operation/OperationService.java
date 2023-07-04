@@ -326,6 +326,10 @@ public class OperationService extends BaseService<Operation> {
         return find("SELECT iautoid,coperationcode,coperationname,iworkclassid FROM Bd_Operation WHERE isDeleted = '0' ");
     }
 
+    public List<Operation> findAllIsDeletedFalse() {
+        return find("SELECT * FROM Bd_Operation WHERE isDeleted = '0' ");
+    }
+
     /*
      * 导出excel文件
      */

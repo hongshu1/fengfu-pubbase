@@ -75,13 +75,9 @@
         #end
         <th hidden data-column="iseq">次序</th>
         <th data-width="120" data-column="iType">参数录入方式</th>
-        #for(data:dataList??)
-        #if(data.itype==1)
         <th data-width="120" data-column="iStdVal">标准值</th>
         <th data-width="120" data-column="iMaxVal">最大设定值</th>
         <th data-width="120" data-column="iMinVal">最小设定值</th>
-        #end
-        #end
         <th data-width="200" data-column="cValue">结果</th>
     </tr>
     </thead>
@@ -122,17 +118,17 @@
                     data-text="=请选择=" data-value-attr="sn" data-select="#(data.itype??)"></select>
         </td>
 
-   #if(data.itype==1)
+
     <td>
-      <input type="text" autocomplete="off"  class="form-control" data-rule="number" data-notnull="false"  maxlength="10" name="istdval" value="#(data.istdval??)">
+      <input disabled type="text" autocomplete="off"  class="form-control" data-rule="number" data-notnull="false"  maxlength="10" name="istdval" value="#(data.istdval??)">
     </td>
     <td>
-      <input type="text" autocomplete="off"  class="form-control" data-rule="number" data-notnull="false"  maxlength="10" name="imaxval" value="#(data.imaxval??)">
+      <input disabled type="text" autocomplete="off"  class="form-control" data-rule="number" data-notnull="false"  maxlength="10" name="imaxval" value="#(data.imaxval??)">
     </td>
     <td>
-      <input type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="false"  maxlength="10" name="iminval" value="#(data.iminval??)">
+      <input disabled type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="false"  maxlength="10" name="iminval" value="#(data.iminval??)">
     </td>
-    #end
+
     #if(data.itype==2)
     <td>
       <input type="text" autocomplete="off"     class="form-control"  name="cvalue" value="#(data.cvalue??)">

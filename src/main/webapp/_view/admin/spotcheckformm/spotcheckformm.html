@@ -40,20 +40,13 @@
     <a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
     &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
-    &cspotcheckformname=${data.cspotcheckformname}&controls=0
+    &cspotcheckformname=${data.cspotcheckformname}&controls=1&readonly=readonly
     &edit=true"
     data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable"
     data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
     {@/if}
 {@if data.iauditstatus == '待审核' }
-<a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
-    &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
-    &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
-    &cspotcheckformname=${data.cspotcheckformname}
-    &edit=true"
-    data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable"
-    data-dialog-title="编辑" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
-    	<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=PL_SpotCheckFormM&primaryKeyName=iautoid&formAutoId=${data.spotcheckformmid}&permissionKey=spotcheckformm_withdraw&className=cn.rjtech.admin.spotcheckformm.SpotCheckFormMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
+    <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=PL_SpotCheckFormM&primaryKeyName=iautoid&formAutoId=${data.spotcheckformmid}&permissionKey=spotcheckformm_withdraw&className=cn.rjtech.admin.spotcheckformm.SpotCheckFormMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
 </td>
 {@/if}
 
