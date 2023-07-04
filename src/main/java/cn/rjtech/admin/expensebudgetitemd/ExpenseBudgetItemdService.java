@@ -10,6 +10,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.DictionaryTypeKeyEnum;
+import cn.rjtech.enums.EffectiveStatusEnum;
 import cn.rjtech.model.momdata.ExpenseBudgetItem;
 import cn.rjtech.model.momdata.ExpenseBudgetItemd;
 import cn.rjtech.util.ValidationUtils;
@@ -47,6 +48,7 @@ public class ExpenseBudgetItemdService extends BaseService<ExpenseBudgetItemd> {
 	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
+		para.set("ieffectivestatus",EffectiveStatusEnum.CANCLE.getValue());
 		Page<Record> paginate = dbTemplate("expensebudgetitemd.paginateAdminList", para).paginate(pageNumber, pageSize);
 		for (Record row : paginate.getList()) {
 			dataDispose(row);

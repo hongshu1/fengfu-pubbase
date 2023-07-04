@@ -95,6 +95,9 @@ WHERE
     #if(citemname)
   and  pi.citemname = #para(citemname)
     #end
+    #if(ieffectivestatus)
+  and pm.ieffectivestatus != #para(ieffectivestatus)
+    #end
 	#(getDataPermissionSql("pm", "cdepcode")) 
 GROUP BY
     pi.iautoid,

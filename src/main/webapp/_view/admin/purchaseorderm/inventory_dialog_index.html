@@ -10,6 +10,7 @@
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货名称" name="cInvName" value="#(cInvName)" />
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="#(cInvCode1)" />
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入供应商名称" name="cVenName" value="#(cVenName)" />
+                    <input type="hidden" name="itemHidden" value="#(itemHidden??)"/>
 					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 				</form>
 			</div>
@@ -31,9 +32,6 @@
 				<td>${data.purchaseuomname}</td>
 				<td>${data.ipkgqty}</td>
 				<td>${data.ispresent ==0?'否': '是'}</td>
-				<td>
-					<a tooltip href="javascript:void(0)" onclick="checkThis('${data.itemid}', '${data.cinvcode}', '${data.cinvname}', '${data.cinvname1}', '${data.cinvstd}', '${data.ipkgqty}', '${data.ispresent}', '${data.cinvcode1}', '${data.purchaseuomname}')"   class="jbolt_table_btn">选择</a>
-				</td>
 			</tr>
 		{@/each}
 		</textarea>
@@ -45,12 +43,13 @@
 			   data-ajax="true"
 			   data-url="admin/purchaseorderm/inventoryPage"
 			   data-column-resize="true"
-			   data-column-prepend="1:radio:true"
+			   data-column-prepend="1:checkbox:true"
 			   data-page="inventorydialogForm_page"
 			   data-conditions-form="inventorydialogForm_#(pageId)"
 			   data-rowtpl="inventorydialogRowtpl_#(pageId)"
 			   data-toolbar="inventorydialog_toolbar_#(pageId)"
 			   id="inventorydialogtableid_#(pageId)"
+               data-row-dblclick-handler="dbClickCheckData"
 		>
 			<thead class="fw-normal">
 			<tr>
@@ -63,7 +62,6 @@
 				<th data-width="200" data-column="purchaseUomName">采购单位</th>
 				<th data-width="150" data-column="ipkgqty">包装数量</th>
 				<th data-width="150" data-column="ispresent">是否赠品</th>
-				<th data-column="cOperationName">操作</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -72,43 +70,80 @@
 </div>
 </div>
 <script>
-	function submitThisForm(callback){
-		var data=getJboltTableCheckedData("inventorydialogtableid_#(pageId)");
-		console.log(JSON.stringify(data))
-		if(data){
-			var ispresentStr = data.ispresent == 1 ? '是': '否';
-			var repData = {
-				cinvname: data.cinvname,
-				cinvname1: data.cinvname1,
-				cinvstd: data.cinvstd,
-				ipkgqty: data.ipkgqty,
-				ispresent: ispresentStr,
-				cinvcode1: data.cinvcode1,
-				cuomname: data.purchaseuomname,
-				iinventoryid: data.itemid
-			};
-			parent.jboltTableProcessTdByDialogChooser(data.cinvcode,data.cinvcode,repData);
-			if(callback){
-				callback();
+
+	//点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+	function chooseAndInsert(){
+		var datas=getJboltTableCheckedDatas("inventorydialogtableid_#(pageId)");
+
+		if(datas){
+			var action=parent.DialogUtil.getCurrentTriggerEle();
+			if(isOk(action)){
+			    var repDatas = [];
+				for (var i=0; i<datas.length; i++){
+				    var data = datas[i];
+                    var ispresentStr = data.ispresent == 1 ? '是': '否';
+
+                    var repData = {
+                        cinvcode: data.cinvcode,
+                        cinvname: data.cinvname,
+                        cinvname1: data.cinvname1,
+                        cinvstd: data.cinvstd,
+                        ipkgqty: data.ipkgqty,
+                        ispresent: data.ispresent,
+                        ispresentstr: ispresentStr,
+                        cinvcode1: data.cinvcode1,
+                        cuomname: data.purchaseuomname,
+                        iinventoryid: data.itemid
+                    };
+                    repDatas.push(repData);
+                }
+				var success=parent.jboltTableInsertRowsByDialogChooser(action,repDatas,'prepend',false, false, true);
+				if(success){
+					parent.layer.closeAll();
+					parent.tableDataSuccess();
+				}
 			}
 		}
 	}
 
-	function checkThis(itemId,invCode,cinvname,cinvname1,cinvstd,ipkgqty,ispresent,cinvcode1,purchaseuomname){
-		if(itemId){
-			var ispresentStr = data.ispresent == 1 ? '是': '否';
-			var repData={
-				iinventoryid: itemId,
-				cuomname: purchaseuomname,
-				ispresent:ispresentStr,
-				cinvname,
-				cinvname1,
-				cinvstd,
-				ipkgqty,
-				cinvcode1,
-			};
-			parent.jboltTableProcessTdByDialogChooser(invCode,invCode,repData);
-			parent.LayerMsgBox.closeAll();
+	/**
+	 * 选中按钮
+	 */
+	$(function(){
+		hideParentLayerDialogBtn(0);
+		addParentLayerDialogBtn("选中","lay_primary text-white",function(){
+			chooseAndInsert();
+		});
+
+	});
+
+	/**
+	 * 双击选中方法
+	 * @param table
+	 * @param tempTr1
+	 * @param trId1
+	 * @param rowData
+	 */
+	function dbClickCheckData(table,tempTr1,trId1,rowData) {
+		var action=parent.DialogUtil.getCurrentTriggerEle();
+        var ispresentStr = rowData.ispresent == 1 ? '是': '否';
+
+        var repData = {
+            cinvcode: rowData.cinvcode,
+            cinvname: rowData.cinvname,
+            cinvname1: rowData.cinvname1,
+            cinvstd: rowData.cinvstd,
+            ipkgqty: rowData.ipkgqty,
+            ispresent: rowData.ispresent,
+            ispresentstr: ispresentStr,
+            cinvcode1: rowData.cinvcode1,
+            cuomname: rowData.purchaseuomname,
+            iinventoryid: rowData.itemid
+        };
+		var success=parent.jboltTableInsertRowsByDialogChooser(action,repData,'prepend',false, false, true);
+		if(success){
+			parent.layer.closeAll();
+			parent.tableDataSuccess();
 		}
 	}
 </script>

@@ -402,6 +402,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 				spotCheckFormM2.setCCreateName(user.getName());
 				spotCheckFormM2.setDCreateTime(date);
 				spotCheckFormM2.setCUpdateName(user.getName());
+				spotCheckFormM2.setIAuditWay(2);
 				spotCheckFormM2.setDUpdateTime(date);
 				spotCheckFormM2.setIUpdateBy(user.getId());
 				spotCheckFormM2.setIAuditStatus(0);
@@ -466,6 +467,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 				spotCheckFormM.setCUpdateName(user.getName());
 				spotCheckFormM.setDUpdateTime(date);
 				spotCheckFormM.setIUpdateBy(user.getId());
+				spotCheckFormM.setIAuditWay(2);
 				spotCheckFormM.setISpotCheckFormId(formJsonData.getLong("iprodformid"));
 				spotCheckFormM.setCDesc(formJsonData.getString("cdesc"));
 				spotCheckFormM.setCMethod(formJsonData.getString("cmethod"));
@@ -548,6 +550,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			prodFormM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
 			prodFormM.setIUpdateBy(JBoltUserKit.getUserId());
 			prodFormM.setCUpdateName(JBoltUserKit.getUserName());
+			prodFormM.setIAuditWay(2);
 			prodFormM.setCAuditName(JBoltUserKit.getUserName());
 			prodFormM.setDUpdateTime(new Date());
 			ValidationUtils.isTrue(prodFormM.update(), JBoltMsg.FAIL);
@@ -596,6 +599,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 		formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 		formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 		formUploadM.setDUpdateTime(new Date());
+		formUploadM.setIAuditWay(2);
 		formUploadM.setIAuditBy(JBoltUserKit.getUserId());
 		formUploadM.setCAuditName(JBoltUserKit.getUserName());
 		formUploadM.setDSubmitTime(new Date());
@@ -614,6 +618,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 		formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 		formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 		formUploadM.setDUpdateTime(new Date());
+		formUploadM.setIAuditWay(2);
 		formUploadM.setCAuditName(JBoltUserKit.getUserName());
 		formUploadM.setIAuditBy(JBoltUserKit.getUserId());
 		formUploadM.setDSubmitTime(new Date());
@@ -665,6 +670,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
 			formUploadM.setCUpdateName(JBoltUserKit.getUserName());
 			formUploadM.setDUpdateTime(new Date());
+			formUploadM.setIAuditWay(2);
 			formUploadM.setIAuditBy(JBoltUserKit.getUserId());
 			formUploadM.setCAuditName(JBoltUserKit.getUserName());
 			formUploadM.setDSubmitTime(new Date());
@@ -684,6 +690,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 			spotCheckFormM.setIUpdateBy(JBoltUserKit.getUserId());
 			spotCheckFormM.setCUpdateName(JBoltUserKit.getUserName());
 			spotCheckFormM.setDUpdateTime(new Date());
+			spotCheckFormM.setIAuditWay(2);
 			spotCheckFormM.setIAuditBy(JBoltUserKit.getUserId());
 			spotCheckFormM.setCAuditName(JBoltUserKit.getUserName());
 			spotCheckFormM.setDSubmitTime(new Date());

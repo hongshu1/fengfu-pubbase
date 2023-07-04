@@ -17,9 +17,12 @@ import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.rjtech.admin.department.DepartmentService;
+import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.enums.EffectiveStatusEnum;
 import cn.rjtech.enums.InvestmentBudgetTypeEnum;
+import cn.rjtech.model.momdata.ExpenseBudget;
 import cn.rjtech.model.momdata.ExpenseBudgetItemd;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
@@ -56,6 +59,8 @@ public class ExpenseBudgetItemdAdminController extends BaseAdminController {
     private DepartmentService departmentService;
     @Inject
     private PeriodService periodService;
+    @Inject
+    private ExpenseBudgetService expensebudgetService;
 
     /**
      * 首页
@@ -388,5 +393,36 @@ public class ExpenseBudgetItemdAdminController extends BaseAdminController {
             render("yearly_print.html");
         }
         }
-
+    /**
+     * 费用预算明细报表数据导出
+     * */
+    @UnCheck
+    public void exportTableExpenseBudgetItemdReportDatas(){
+    	Kv para = getKv();
+    	String cdepcode = para.getStr("cdepcode");
+    	Integer ibudgetyear = para.getInt("ibudgetyear");
+    	Integer ibudgettype = para.getInt("ibudgettype");
+    	String paraNullMsg = "请选择部门,预算年份,预算类型导出";
+    	ValidationUtils.notBlank(cdepcode, paraNullMsg);
+    	ValidationUtils.notNull(ibudgetyear, paraNullMsg);
+    	ValidationUtils.notNull(ibudgettype, paraNullMsg);
+    	ExpenseBudget expenseBudget = expensebudgetService.findModelByYearAndType(ibudgetyear, ibudgettype, cdepcode);
+    	ValidationUtils.notNull(expenseBudget, "费用预算不存在，导出失败");
+    	List<JBoltExcelPositionData> excelPositionDatas = new ArrayList<>();//定位数据集合
+    	List<JBoltExcelMerge> mergeList = new ArrayList<>(); //定位合并数据集合
+    	List<Record> list = expensebudgetService.findExpenseBudgetItemDatas(expenseBudget.getIAutoId());
+    	expensebudgetService.exportExpenseBudgetExcel(expenseBudget,excelPositionDatas,mergeList,list);
+    	//2、创建JBoltExcel
+        JBoltExcel jBoltExcel = JBoltExcel
+                .createByTpl("expenseBudgetFullYearTpl.xlsx")//创建JBoltExcel 从模板加载创建
+                .addSheet(//设置sheet
+                        JBoltExcelSheet.create("预算录入")//创建sheet name保持与模板中的sheet一致
+                                .setPositionDatas(excelPositionDatas)//设置定位数据
+                                .setMerges(mergeList)
+                )
+                .setFileName("费用预算导入模板");
+        
+		//3、导出
+		renderBytesToExcelXlsxFile(jBoltExcel);
+    }
 }

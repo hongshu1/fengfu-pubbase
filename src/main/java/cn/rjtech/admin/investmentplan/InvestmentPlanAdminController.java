@@ -1,11 +1,9 @@
 package cn.rjtech.admin.investmentplan;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.common.enums.BusObjectTypeEnum;
 import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.kit.JBoltModelKit;
@@ -25,12 +23,8 @@ import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.admin.investmentplanitem.InvestmentPlanItemService;
 import cn.rjtech.admin.period.PeriodService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.enums.DictionaryTypeKeyEnum;
-import cn.rjtech.enums.InvestmentBudgetTypeEnum;
-import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.ServiceTypeEnum;
 import cn.rjtech.model.momdata.InvestmentPlan;
-import cn.rjtech.util.ReadInventmentExcelUtil;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Before;
@@ -233,7 +227,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     	InvestmentPlan investmentPlan = service.findById(investmentPlanId);
     	List<Record> itemList = service.findInvestmentPlanItemDatas(investmentPlanId);
     	List<JBoltExcelPositionData> excelPositionDatas=new ArrayList<JBoltExcelPositionData>();//定位数据集合
-    	contrustExportExcelPositionDatas(excelPositionDatas,investmentPlan,itemList);
+    	service.contrustExportExcelPositionDatas(excelPositionDatas,investmentPlan,itemList);
     	//2、创建JBoltExcel
 		JBoltExcel jBoltExcel=JBoltExcel
 				.createByTpl("investmentplanTpl.xlsx")//创建JBoltExcel 从模板加载创建
@@ -256,7 +250,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
     	String tableDatas = para.getStr("tabledatas");
     	List<Record> itemList = JBoltModelKit.getFromRecords(JSON.parseArray(tableDatas));
     	List<JBoltExcelPositionData> excelPositionDatas=new ArrayList<JBoltExcelPositionData>();//定位数据集合
-    	contrustExportExcelPositionDatas(excelPositionDatas,investmentPlan,itemList);
+    	service.contrustExportExcelPositionDatas(excelPositionDatas,investmentPlan,itemList);
     	//2、创建JBoltExcel
 		JBoltExcel jBoltExcel=JBoltExcel
 				.createByTpl("investmentplanTpl.xlsx")//创建JBoltExcel 从模板加载创建
@@ -268,68 +262,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
 		//3、导出
 		renderBytesToExcelXlsxFile(jBoltExcel);
     }
-    private void contrustExportExcelPositionDatas(List<JBoltExcelPositionData> excelPositionDatas,InvestmentPlan investmentPlan,
-			List<Record> itemList) {
-    	excelPositionDatas.add(JBoltExcelPositionData.create(4, 3, investmentPlan.getIBudgetYear()+"年"));
-		excelPositionDatas.add(JBoltExcelPositionData.create(4, 5, InvestmentBudgetTypeEnum.toEnum(investmentPlan.getIBudgetType()).getText()));
-		excelPositionDatas.add(JBoltExcelPositionData.create(4, 7, departmentService.getCdepName(investmentPlan.getCDepCode())));
-    	if(CollUtil.isNotEmpty(itemList)){
-    		int startRow = ReadInventmentExcelUtil.START_ROW+1;
-    		int startColumn = ReadInventmentExcelUtil.START_COLUMN;
-    		for (int i=0;i<itemList.size();i++) {
-    			Record row = itemList.get(i);
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn, i+1));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+1, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_TYPE.getValue(), row.getStr("iinvestmenttype"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+2, row.getStr("cproductline")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+3, row.getStr("cmodelinvccode")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+4, row.getStr("cparts")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+5, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CAREER_TYPE.getValue(), row.getStr("icareertype"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+6, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.INVESTMENT_DISTINCTION.getValue(), row.getStr("iinvestmentdistinction"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+7, row.getStr("cplanno")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+8, row.getStr("citemname")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+9, row.getInt("isimport") == null?null:IsEnableEnum.toEnum(row.getInt("isimport")).getText()));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+10, row.getStr("iquantity")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+11, row.getStr("cunit")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+12, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.CASSETTYPE.getValue(), row.getStr("cassettype"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+13, row.getStr("cpurpose")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+14, row.getStr("ceffectamount")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+15, row.getStr("creclaimyear")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+16, row.getStr("clevel")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+17, row.getInt("ispriorreport") == null?null:IsEnableEnum.toEnum(row.getInt("ispriorreport")).getText()));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+18, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.PAYMENT_PROGRESS.getValue(), row.getStr("cpaymentprogress"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+19, row.getBigDecimal("itaxrate")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+20, row.getBigDecimal("itotalamountplan")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+21, row.getBigDecimal("itotalamountactual")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+22, row.getBigDecimal("itotalamountdiff")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+23, row.getStr("itotalamountdiffreason")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+24, row.getBigDecimal("iyeartotalamountplan")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+25, row.getBigDecimal("iyeartotalamountactual")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+26, row.getBigDecimal("iyeartotalamountdiff")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+27, row.getStr("iyeartotalamountdiffreason")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+28, JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKeyEnum.EDITTYPE.getValue(), row.getStr("cedittype"))));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+29, row.getStr("cmemo")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+30, row.getInt("iitemyear")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+31, row.getStr("cperiodprogress1")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+32, row.getStr("dperioddate1")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+33, row.getBigDecimal("iamount1")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+34, row.getStr("cperiodprogress2")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+35, row.getStr("dperioddate2")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+36, row.getBigDecimal("iamount2")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+37, row.getStr("cperiodprogress3")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+38, row.getStr("dperioddate3")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+39, row.getBigDecimal("iamount3")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+40, row.getStr("cperiodprogress4")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+41, row.getStr("dperioddate4")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+42, row.getBigDecimal("iamount4")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+43, row.getStr("cperiodprogress5")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+44, row.getStr("dperioddate5")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+45, row.getBigDecimal("iamount5")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+46, row.getStr("cperiodprogress6")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+47, row.getStr("dperioddate6")));
-    			excelPositionDatas.add(JBoltExcelPositionData.create(startRow+i, startColumn+48, row.getBigDecimal("iamount6")));
-			}
-    	}
-	}
+
 
     /**
      * 投资计划编制编辑界面查询投资计划项目数据
