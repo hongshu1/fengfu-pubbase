@@ -25,6 +25,7 @@ import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.cache.UserCache;
+import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.AuditTypeEnum;
@@ -40,6 +41,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
@@ -1826,6 +1828,9 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
             // 调用方法
             return (String) method.invoke(o, args);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return Constants.removeExceptionPrefix(e.getCause().getLocalizedMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return e.getLocalizedMessage();
