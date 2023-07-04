@@ -88,7 +88,14 @@
         });
     #else
     addParentLayerDialogBtn("保存","lay_primary",function () {
-        jboltTableSubmit();
+
+        var allDatas = jboltTableGetAllDatas("role_users_table_#(pageId)");
+        if (allDatas != null && allDatas.length > 0){
+            jboltTableSubmit();
+        } else {
+            LayerMsgBox.error("用户表不允许为空");
+        }
+
     });
     #end
 
