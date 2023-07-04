@@ -65,6 +65,7 @@
                 <a class="jbolt_table_delbtn" href="admin/cusfieldsmappingd/${data.isdeleted?'realDelete':'delete'}/${data.iautoid}" data-handler="refreshJBoltTable" >删除</a>
             </td>
             <td>${data.cruletypename}</td>
+            <td>${data.cformfieldcode}</td>
             <td>${data.cformfieldname}</td>
             <td>${data.ccusfieldname}</td>
             <td>
@@ -93,6 +94,7 @@
                data-width="auto"
                data-height="fill"
                data-ajax="true"
+               data-column-resize="true"
                data-conditions-form="CusFieldsMappingD_form_#(pageId)"
                data-url="admin/cusfieldsmappingd/datas"
                data-rowtpl="CusFieldsMappingD_tpl_#(pageId)"
@@ -104,8 +106,9 @@
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="160">操作</th>
                 <th data-width="120" data-column="iruletype">定制规则</th>
-                <th data-width="120" data-column="cformfieldname">系统字段名称</th>
-                <th data-width="150" data-column="ccusfieldname">导入字段名称</th>
+                <th data-width="200" data-column="cformfieldcode">系统字段名</th>
+                <th data-width="250" data-column="cformfieldname">系统字段中文名称</th>
+                <th data-width="200" data-column="ccusfieldname">导入字段名称</th>
                 <th data-width="120" data-column="isencoded">是否转换编码</th>
                 <th data-width="250" data-column="cdemo">编码示例</th>
                 <th data-width="100" data-column="isenabled">是否启用</th>
