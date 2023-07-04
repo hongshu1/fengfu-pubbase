@@ -142,8 +142,10 @@ AND bRdFlag = #(bRdFlag)
 SELECT
     t2.Qty,
     t2.Barcode,
-    t1.AutoID AS billid,
-    t1.SourceBillDid AS billdid,
+    t2.SourceBillID AS billid,
+    t2.SourceBillDid AS billdid,
+    t2.SourceBIllNoRow AS billnorow,
+    t2.SourceBillNo AS billno,
     t1.OrganizeCode,
     t1.BillNo,
     dt.cDepName,
@@ -161,52 +163,51 @@ WHERE t1.AutoID IN (#(autoid))
     #end
 
 #sql("getBarcodeDatas")
-SELECT
-    concat ( a.cBarcode, concat ( '-', a.cVersion ))  AS barcode,
-    b.cInvCode as invcode,
-    b.cInvName ,
-    b.cInvAddCode,
-    b.cInvCode1,
-    b.cInvName1,
-    a.dPlanDate AS plandate,
-    b.cInvStd AS cinvstd,
-    a.iQty AS qty,
-    a.iQty AS qtys,
-    m.cOrderNo AS SourceBillNo,
-    m.iBusType AS SourceBillType,
-    m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
-    tc.iseq AS RowNo,
-    m.iAutoId AS SourceBillID,
-    d.iAutoId AS SourceBillDid,
-    m.iVendorId,
-    v.cVenCode AS vencode,
-    v.cVenName AS venname,
-    t3.cInvCCode,
-    t3.cInvCName,
-    t4.cEquipmentModelName,
-    ( SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid ) AS InventorycUomName,
-    ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName,
-    ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
+select a.cCompleteBarcode AS barcode,
+       b.cInvCode AS invcode,
+       b.cInvCode1,
+       b.cInvName1,
+       b.cInvName,
+       b.cInvAddCode,
+       a.dPlanDate AS plandate,
+       b.cInvStd AS cinvstd,
+       a.iQty AS qty,
+       a.iQty AS qtys,
+       a.iAutoId AS autoid,
+       m.cOrderNo AS SourceBillNo,
+       m.iBusType AS SourceBillType,
+       m.cOrderNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+       m.cOrderNo AS SourceBillID,
+       d.iAutoId AS SourceBillDid,
+       m.iVendorId,
+       v.cVenCode AS vencode,
+       v.cVenName AS venname,
+       uom.cUomCode AS purchasecuomcode,
+       uom.cUomName AS purchasecuomname,
+       config.iWarehouseId,
+       eq.cEquipmentModelName
 FROM
     PS_PurchaseOrderDBatch a
         LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
         LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
         LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
         LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
-        LEFT JOIN Bd_InventoryClass t3 ON b.iInventoryClassId = t3.iautoid
-        LEFT JOIN Bd_EquipmentModel t4 ON b.iEquipmentModelId = t4.iautoid
+        LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cBarcode
+        AND pd.isDeleted = '0'
         LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
         AND tc.iAutoId = a.iPurchaseOrderdQtyId
-WHERE
-        1 = 1
+        LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+        LEFT JOIN Bd_EquipmentModel eq ON eq.iAutoId = b.iEquipmentModelId
+where 1=1
     #if(orgCode != null)
   AND b.cOrgCode = #(orgCode)
   #end
     #if(barcodes != null)
-        AND concat ( a.cBarcode, concat ( '-', a.cVersion )) not in ( #(barcodes) )
+        AND a.cCompleteBarcode not in ( #(barcodes) )
     #end
     #if(detailHidden != null)
-        AND concat ( a.cBarcode, concat ( '-', a.cVersion )) not in ( #(detailHidden) )
+        AND  a.cCompleteBarcode not in ( #(detailHidden) )
     #end
     #if(q)
 		and (concat ( a.cBarcode, concat ( '-', a.cVersion )) like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -217,4 +218,59 @@ WHERE
 	#if(vencode)
 		and m.iVendorId = #para(vencode)
 	#end
+#end
+
+#sql("materialsoutBarcodeDatas")
+select m.cOrderNo AS sourcebillno,
+       a.cCompleteBarcode AS barcode,
+       b.cInvCode AS invcode,
+       b.cInvCode1,
+       b.cInvName1,
+       b.cInvName,
+       b.cInvAddCode,
+       a.dPlanDate AS plandate,
+       b.cInvStd AS cinvstd,
+       a.iQty AS qty,
+       a.iQty AS qtys,
+       a.iAutoId AS autoid,
+       m.cOrderNo AS SourceBillNo,
+       m.iBusType AS SourceBillType,
+       m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+       m.cOrderNo AS SourceBillID,
+       d.iAutoId AS SourceBillDid,
+       m.iVendorId,
+       v.cVenCode AS vencode,
+       v.cVenName AS venname,
+       uom.cUomCode AS purchasecuomcode,
+       uom.cUomName AS purchasecuomname,
+       config.iWarehouseId
+FROM
+    PS_PurchaseOrderDBatch a
+        LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+        LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+        LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+        LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+        LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cBarcode
+        AND pd.isDeleted = '0'
+        LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
+        AND tc.iAutoId = a.iPurchaseOrderdQtyId
+        LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+where 1=1
+    #if(q)
+		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
+			or b.cinvname1 like concat('%',#para(q),'%') or a.cCompleteBarcode like concat('%',#para(q),'%')
+			or v.cVenCode like concat('%',#para(q),'%')
+		)
+	#end
+	 #if(barcodes != null)
+        AND a.cCompleteBarcode not in ( #(barcodes) )
+    #end
+    #if(detailHidden != null)
+    AND  a.cCompleteBarcode not in ( #(detailHidden) )
+    #end
+    #if(barcode != null)
+        AND a.cCompleteBarcode = #para(barcode)
+    #end
+		AND b.cOrgCode = #(orgCode)
 #end
