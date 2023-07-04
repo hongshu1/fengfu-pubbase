@@ -231,17 +231,13 @@
                         if (submit){
                             submit_#(pageId)(autoid,function () {
                                 LayerMsgBox.success("提交成功", 600, function () {
-                                    parent.refreshPjaxContainer();
-                                    // parent.refreshCurrentTabContent();//刷新当前页面
                                     self.location.href = "/admin/materialreturnlist/edit/"+autoid+"-_jb_rqtype_dialog"; //新增的刷新
-                                    // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                                    window.parent.refreshPjaxContainer();
                                 });
                             });
                         } else {
-                            parent.refreshPjaxContainer();
-                            // parent.refreshCurrentTabContent();//刷新当前页面
                             self.location.href = "/admin/materialreturnlist/edit/"+autoid+"-_jb_rqtype_dialog"; //新增的刷新
-                            // parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭弹窗
+                            window.parent.refreshPjaxContainer();
                         }
                     })
                 } else {

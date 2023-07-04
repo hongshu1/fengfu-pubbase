@@ -3,7 +3,6 @@ package cn.rjtech.common;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.api.JBoltApplyJWT;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.permission.UnCheck;
@@ -241,12 +240,7 @@ public class CommonController extends BaseRestController {
 
     @UnCheck
     public void vouchProcessDynamicSubmit(@Para("") JSONObject para) {
-        Kv result = commonService.vouchProcessDynamicSubmit(Kv.create().set(para));
-        if (ObjUtil.equals("200", result.getStr("code"))) {
-            renderJsonData(JBoltApiRet.API_SUCCESS_WITH_DATA(result));
-        } else {
-            renderJson(Kv.by("code", result.getStr("code")).set("data", result));
-        }
+        renderJson(commonService.vouchProcessDynamicSubmit(Kv.create().set(para)));
     }
 
 }

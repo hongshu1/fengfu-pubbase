@@ -154,7 +154,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
                 formUploadM.setDUpdateTime(date);
                 formUploadM.setIUpdateBy(user.getId());
                 formUploadM.setIAuditStatus(0);
-                formUploadM.setIAuditWay(1);
+                formUploadM.setIAuditWay(2);
                 ValidationUtils.isTrue(formUploadM.save(), "保存失败");
             } else {
                 formUploadM.setIUpdateBy(user.getId());
@@ -322,7 +322,6 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
                 formUploadM.setICategoryId(Long.parseLong(icategoryid));
                 formUploadM.setDDate(ddate);
                 formUploadM.setDUpdateTime(new Date());
-                formUploadM.setIAuditWay(1);
                 formUploadM.setIUpdateBy(JBoltUserKit.getUserId());
                 formUploadM.setCUpdateName(JBoltUserKit.getUserName());
                 ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
@@ -544,7 +543,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 
         ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
         ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
-
+        batchUpdate(notAuditList);
         return SUCCESS;
     }
 }

@@ -69,7 +69,7 @@ public class SpotCheckFormMApiService extends JBoltApiBaseService {
             kv.set("routingconfigid",routingconfigid);
             kv.set("spotcheckformid",spotCheckForm.getIAutoId());
             kv.set("itype",itype);
-            //生产表单项目标题
+            //项目标题
             List<Record> formItemLists = spotCheckFormItemService.formItemLists(Kv.by("iqcformid", ispotcheckformid));
             kv.set("lineRoll",formItemLists);
             List<Record> byIdGetDetail = spotCheckFormService.findByIdGetDetail(String.valueOf(ispotcheckformid));

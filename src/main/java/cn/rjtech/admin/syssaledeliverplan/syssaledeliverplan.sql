@@ -85,7 +85,19 @@ where a.IsDeleted = '0'
 
 
 #sql("syssaledeliverplanList")
-SELECT  a.*,sa.cSTCode,sa.cSTName,de.cDepCode,de.cDepName,cr.cCusName
+SELECT
+    a.*,
+    sa.cSTCode,
+    auditname =
+    CASE WHEN a.iAuditStatus=0 THEN '已保存'
+         WHEN a.iAuditStatus=1 THEN '待审核'
+         WHEN a.iAuditStatus=2 THEN '审核通过'
+         WHEN a.iAuditStatus=3 THEN '审核不通过' END,
+    sa.cSTName,
+    de.cDepCode,
+    de.cDepName,
+    cr.cCusName,
+	cr.cCusAbbName
 FROM T_Sys_SaleDeliverPlan a
 LEFT JOIN  Bd_SaleType sa on sa.cSTCode = a.RdCode
 LEFT JOIN Bd_Department de on de.cDepCode = a.DeptCode
@@ -101,6 +113,15 @@ where 1=1
 	#if(ccusname)
 		and cr.cCusName like concat('%',#para(ccusname),'%')
 	#end
+	#if(iauditstatus)
+	    and a.iauditstatus=#para(iauditstatus)
+	#end
+    #if(starttime)
+        and t1.dCreateTime >= #para(starttime)
+    #end
+    #if(endtime)
+        and t1.dCreateTime <= #para(endtime)
+    #end
 ORDER BY a.dupdatetime DESC
 #end
 
