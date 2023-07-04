@@ -89,7 +89,6 @@ public class ApiRoutes extends Routes {
 
 
         this.add("/web/common/print", PrintController.class);
-        this.add("/api/momaterialsreturnm", MoMaterialsreturnmApiController.class);
     }
 
 }

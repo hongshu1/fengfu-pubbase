@@ -10,7 +10,7 @@
                         #if(readonly != 'readonly')
                         <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
                         #end
-                        #if(annualOrderM.iAutoId??)
+                        #if(annualOrderM.iAutoId?? && annualOrderM.iorderstatus != 7)
                         #include("/_view/_common/_approval_btns.html", uri="/admin/annualorderm",
                         formSn="Co_AnnualOrderM", primaryKeyName="iAutoId", o=annualOrderM,
                         permissionKeyPrefix="annualorderm", className="cn.rjtech.admin.annualorderm.AnnualOrderMService")

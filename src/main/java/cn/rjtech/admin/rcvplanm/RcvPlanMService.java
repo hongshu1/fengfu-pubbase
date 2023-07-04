@@ -9,9 +9,9 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.rcvpland.RcvPlanDService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.RcvPlanD;
 import cn.rjtech.model.momdata.RcvPlanM;
@@ -23,6 +23,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,10 +53,11 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
 
 
     @Inject
-    private RcvPlanMService service;
-
+    private RcvPlanMService     service;
     @Inject
-    private RcvPlanDService planDService;
+    private RcvPlanDService     planDService;
+    @Inject
+    private FormApprovalService formApprovalService;
 
 
     /**
@@ -66,7 +68,10 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("rcvplanm.getAdminDatas", kv).paginate(pageNumber, pageSize);
-
+        for (Record record : paginate.getList()) {
+            List<String> names = formApprovalService.getNextApprovalUserNames(record.getLong("iautoid"), 5);
+            record.set("approveprogress", String.join("，", names));
+        }
         return paginate;
     }
 
@@ -241,7 +246,7 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return SUCCESS;
+        return successWithData(rcvplanm.keep("iautoid"));
     }
 
     //可编辑表格提交-新增数据
@@ -253,8 +258,8 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
         Date now = new Date();
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
-            row.keep("iAutoId","iRcvPlanMid","cCarNo","cPlanCode","cRcvDate", "cRcvTime","cBarcode","cVersion",
-                "cAddress","iInventoryId","iQty","IsDeleted","dCreateTime","dUpdateTime");
+            row.keep("iAutoId", "iRcvPlanMid", "cCarNo", "cPlanCode", "cRcvDate", "cRcvTime", "cBarcode", "cVersion",
+                "cAddress", "iInventoryId", "iQty", "IsDeleted", "dCreateTime", "dUpdateTime");
             row.set("iautoid", JBoltSnowflakeKit.me.nextId());
             row.set("isdeleted", "0");
             row.set("ircvplanmid", rcvplanm.getIAutoId());
@@ -262,6 +267,7 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
             row.set("dupdatetime", now);
         }
         planDService.batchSaveRecords(list);
+
     }
 
     //可编辑表格提交-修改数据
@@ -294,15 +300,29 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
         }
     }
 
+    public Ret importExcelDatas(List<UploadFile> fileList) {
+        for (UploadFile uploadFile : fileList) {
+
+        }
+        return null;
+    }
+
     /*处理审批通过的其他业务操作，如有异常返回错误信息*/
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        RcvPlanM planM = findById(formAutoId);
+        comonApproveMethods(planM, OrderStatusEnum.APPROVED.getValue(), new Date());
+
+        ValidationUtils.isTrue(planM.update(), "审批通过失败");
         return null;
     }
 
     /*处理审批不通过的其他业务操作，如有异常处理返回错误信息*/
     @Override
     public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        RcvPlanM planM = findById(formAutoId);
+        comonApproveMethods(planM, OrderStatusEnum.REJECTED.getValue(), new Date());
+        ValidationUtils.isTrue(planM.update(), "审批不通过失败");
         return null;
     }
 
@@ -315,6 +335,10 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
     /*实现反审之后的其他业务操作, 如有异常返回错误信息*/
     @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        RcvPlanM planM = findById(formAutoId);
+        comonApproveMethods(planM, OrderStatusEnum.NOT_AUDIT.getValue(), new Date());
+
+        ValidationUtils.isTrue(planM.update(), "反审批失败");
         return null;
     }
 
@@ -327,18 +351,25 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
     /*提审后业务处理，如有异常返回错误信息*/
     @Override
     public String postSubmitFunc(long formAutoId) {
+        RcvPlanM planM = findById(formAutoId);
+        planM.setIStatus(OrderStatusEnum.AWAIT_AUDIT.getValue());
+        ValidationUtils.isTrue(planM.update(), "提交审批失败");
         return null;
     }
 
     /*撤回审核业务处理，如有异常返回错误信息*/
     @Override
     public String postWithdrawFunc(long formAutoId) {
+        RcvPlanM planM = findById(formAutoId);
+        comonApproveMethods(planM, OrderStatusEnum.NOT_AUDIT.getValue(), new Date());
+        ValidationUtils.isTrue(planM.update(), "撤回失败！！");
         return null;
     }
 
-    /*从审批中，撤回到已保存，业务实现，如有异常返回错误信息*/
+    /*从待审批中，撤回到已保存，业务实现，如有异常返回错误信息*/
     @Override
     public String withdrawFromAuditting(long formAutoId) {
+        //comonWithDraw(formAutoId, OrderStatusEnum.NOT_AUDIT.getValue());
         return null;
     }
 
@@ -357,18 +388,52 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
     /*批量审核（审批）通过，后置业务实现*/
     @Override
     public String postBatchApprove(List<Long> formAutoIds) {
+        Date date = new Date();
+        ArrayList<RcvPlanM> rcvPlanMS = new ArrayList<>();
+        for (Long iautoid : formAutoIds) {
+            RcvPlanM planM = findById(iautoid);
+            comonApproveMethods(planM, OrderStatusEnum.APPROVED.getValue(), date);
+            rcvPlanMS.add(planM);
+        }
+        ValidationUtils.isTrue(batchUpdate(rcvPlanMS).length > 0, "批量审批通过失败");
         return null;
     }
 
     /*批量审批（审核）不通过，后置业务实现*/
     @Override
     public String postBatchReject(List<Long> formAutoIds) {
+        Date date = new Date();
+        List<RcvPlanM> planMList = new ArrayList<>();
+        for (Long iautoid : formAutoIds) {
+            RcvPlanM planM = findById(iautoid);
+            comonApproveMethods(planM, OrderStatusEnum.REJECTED.getValue(), date);
+            planMList.add(planM);
+        }
+        ValidationUtils.isTrue(batchUpdate(planMList).length > 0, "批量审批不通过失败");
         return null;
     }
 
     /*批量撤销审批，后置业务实现*/
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
+        Date date = new Date();
+        List<RcvPlanM> planMList = new ArrayList<>();
+        for (Long iautoid : formAutoIds) {
+            RcvPlanM planM = findById(iautoid);
+            comonApproveMethods(planM, OrderStatusEnum.NOT_AUDIT.getValue(), date);
+            planMList.add(planM);
+        }
+        ValidationUtils.isTrue(batchUpdate(planMList).length > 0, "批量撤销审批失败");
         return null;
+    }
+
+    /*
+     * 公共撤回方法
+     * */
+    public void comonApproveMethods(RcvPlanM planM, int status, Date date) {
+        planM.setIStatus(status);
+        planM.setIUpdateBy(JBoltUserKit.getUserId());
+        planM.setDUpdateTime(date);
+        planM.setCUpdateName(JBoltUserKit.getUserName());
     }
 }

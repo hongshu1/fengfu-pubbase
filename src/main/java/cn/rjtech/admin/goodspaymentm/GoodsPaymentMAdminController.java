@@ -4,16 +4,21 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Customer;
 import cn.rjtech.model.momdata.GoodsPaymentM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+
+import java.util.List;
 
 /**
  * 货款核对表
@@ -23,7 +28,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
  * @date: 2023-04-30 00:06
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.PAYMENT_CHECK_MANAGE)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/paymentCheckManage", viewPath = "/_view/admin/goodspaymentm")
 public class GoodsPaymentMAdminController extends BaseAdminController {
@@ -115,5 +120,24 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
 
+    /**
+     * 提审批
+     */
+    public void submit(@Para(value = "iautoid") Long iautoid) {
+        ValidationUtils.validateId(iautoid, "id");
+
+        renderJson(service.submit(iautoid));
+    }
+
+    /**
+     * 条码数据源
+     */
+    @UnCheck
+    public void barcodeDatas() {
+        String iCustomerId1 = get("iCustomerId1");
+        ValidationUtils.notNull(iCustomerId1, "请优先选择客户。");
+        List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()),iCustomerId1 );
+        renderJsonData(barcodeDatas);
+    }
 
 }

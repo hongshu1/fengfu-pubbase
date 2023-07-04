@@ -10,7 +10,7 @@ SELECT t1.*,
        t4.cVenName,
        t6.cEquipmentName,
        u.cUomCode,u.cUomName,
-       t7.cpics,t7.ctypeids,t7.ctypenames,
+       t7.cpics,t7.ctypeids,t7.ctypenames,t7.cmeasure,
        statusname =
        CASE WHEN t1.istatus=0 THEN '未有检查表'
             WHEN t1.istatus=1 THEN '待检'
@@ -56,6 +56,9 @@ where t1.IsDeleted = '0'
   #end
   #if(iscompleted)
   AND t1.iscompleted =#para(iscompleted)
+  #end
+  #if(switchiscompleted2)
+  AND t1.iscompleted =#para(switchiscompleted2)
   #end
   #if(istatus)
   AND t1.istatus =#para(istatus)
