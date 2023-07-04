@@ -167,9 +167,7 @@
         <tbody>
         </tbody>
     </table>
-    </div>
 #include("tockchekvouchForm.html")
-
 <div class="row">
     #if(stockchekvouch.iauditstatus ==0)
     <div class="form-group row">
@@ -183,45 +181,45 @@
     </div>
     #end
     #if(stockchekvouch.iauditstatus !=0)
-    <div class="input-group">
-    <div class="form-group row">
-        <label class="col-sm-3 col-form-label">盘点备注：</label>
-        <div class="col-sm-2 col-form-label">
-            #(stockchekvouch.memo??)
+    <div class="col-5">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">盘点备注：</label>
+            <div class="col-sm-2 col-form-label">
+                <input type="text" class="form-control border-none"  placeholder="" name="idqqty" value="#(stockchekvouch.memo??)"/>
+            </div>
+            <label class="col-sm-2 col-form-label">盘点人：</label>
+            <div class="col-sm-2 col-form-label">
+                <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(stockchekvouch.ccreatename??)"/>
+            </div>
+            <label class="col-sm-2 col-form-label">提交时间：</label>
+            <div class="col-sm-2 col-form-label">
+                <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" name="dupdatetime" value="#date((stockchekvouch.dcreatetime??),'yyyy-MM-dd')"/></div>
+
         </div>
-        <label class="col-sm-2 col-form-label">盘点人：</label>
-        <div class="col-sm-2 col-form-label">
-            #(stockchekvouch.ccreatename??)
-        </div>
-        <label class="col-sm-3 col-form-label">提交时间：</label>
-        <div class="col-10 col-form-label">
-            #(stockchekvouch.dcreatetime??)
-        </div>
-    </div>
-    </div>
-    <div class="input-group">
-    <div class="form-group row">
-        <label class="col-sm-3 col-form-label">审核操作：</label>
-        <div class="col-sm-2 col-form-label">
-            #if(stockchekvouch.iauditstatus ==2)
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">审核操作：</label>
+            <div class="col-sm-2 col-form-label">
+                <input type="text" class="form-control border-none"  placeholder="" name="idqqty" value=" #if(stockchekvouch.iauditstatus ==2)
             审核通过
             #end
             #if(stockchekvouch.iauditstatus ==3)
             审核不通过
-            #end
+            #end"/>
+            </div>
+            <label class="col-sm-2 col-form-label">审核人：</label>
+            <div class="col-sm-2 col-form-label">
+                <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(stockchekvouch.cauditname??)"/>
+            </div>
+            <label class="col-sm-2 col-form-label">审核时间：</label>
+            <div class="col-sm-2 col-form-label">
+                <input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" name="dupdatetime" value="#date((stockchekvouch.daudittime??),'yyyy-MM-dd')"/>                </div>
         </div>
-        <label class="col-sm-2 col-form-label">审核人：</label>
-        <div class="col-sm-2 col-form-label">
-            #(stockchekvouch.cauditname??)
-        </div>
-        <label class="col-sm-3 col-form-label">审核时间：</label>
-        <div class="col-10 col-form-label">
-            #(stockchekvouch.daudittime??)
-        </div>
-    </div>
     </div>
     #end
+
 </div>
+</div>
+
 
 
 
