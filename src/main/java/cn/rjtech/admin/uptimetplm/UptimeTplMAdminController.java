@@ -150,7 +150,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	@SuppressWarnings("unchecked")
 	public void downloadTpl() {
 		try {
-			renderJxls("uptimetplmtemplate.xlsx", Kv.by("rows", null), "嫁接时间模板.xlsx");
+			renderJxls("uptimetplmtemplate.xlsx", Kv.by("rows", null), "稼动时间模板.xlsx");
 		} catch (Exception e) {
 			ValidationUtils.error("模板下载失败");
 		}

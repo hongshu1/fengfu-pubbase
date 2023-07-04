@@ -179,9 +179,9 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 		}
 
 		UptimeParam saveUptimeParam = new UptimeParam();
-		uptimeParam.setCUptimeParamName(cuptimeparamname);
-		uptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
-		uptimeParam.setIsEnabled(true);
+		saveUptimeParam.setCUptimeParamName(cuptimeparamname);
+		saveUptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
+		saveUptimeParam.setIsEnabled(true);
 		// 保存数据
 		save(saveUptimeParam);
 		return saveUptimeParam.getIAutoId();
