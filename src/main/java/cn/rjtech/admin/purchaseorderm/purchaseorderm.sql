@@ -78,7 +78,8 @@ WHERE
 	0 iQuotedPrice,
 	iSeq irowno,
 	100 KL,
-	0 iNatDisCount
+	0 iNatDisCount,
+	'' cPayType
 FROM
  PS_PurchaseOrderD_Qty qty
  INNER JOIN PS_PurchaseOrderD orderd ON orderd.iAutoId = qty.iPurchaseOrderDid
