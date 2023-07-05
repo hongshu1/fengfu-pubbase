@@ -68,3 +68,17 @@ select ISNULL(COUNT(iAutoId), 0) FROM Bd_Warehouse_Shelves WHERE isDeleted=0
     AND iAutoId != #(iautoid)
 #end
 #end
+
+#sql("integrityCheck")
+SELECT
+	area.iWarehouseId,
+	area.iAutoId
+FROM
+	Bd_Warehouse_Area area
+	LEFT JOIN Bd_Warehouse war ON area.iWarehouseId = war.iAutoId
+WHERE
+	area.isDeleted = 0
+	AND war.isDeleted = 0
+	AND war.cWhName = #para(cwhname)
+	AND area.cAreaName =#para(careaname)
+#end
