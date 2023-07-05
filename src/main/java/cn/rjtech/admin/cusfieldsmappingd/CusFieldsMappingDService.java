@@ -416,11 +416,12 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
                 // 遍历行数据
                 for (Map.Entry<String, Object> entry : row.entrySet()) {
 
-                    if (ruleMap.containsKey(entry.getKey())) {
+                    if (ruleMap.containsKey(entry.getKey()) && entry.getValue() instanceof String) {
 
                         List<CusfieldsmappingdCodingrule> rules = ruleMap.get(entry.getKey());
 
                         String value = (String) entry.getValue();
+                        ValidationUtils.notBlank(value, String.format("编码字段“%s”不能为空", entry.getKey()));
 
                         int valueLength = value.length();
 
