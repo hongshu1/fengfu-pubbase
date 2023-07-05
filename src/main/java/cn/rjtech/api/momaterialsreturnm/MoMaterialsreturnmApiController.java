@@ -5,14 +5,12 @@ import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.momaterialsreturnm.MoMaterialsreturnmService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.momaterialsreturnm.MomaterialsreturnmVo;
 import cn.rjtech.model.momdata.MoMaterialsreturnm;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import io.github.yedaxia.apidocs.ApiDoc;
@@ -41,10 +39,13 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck
-    public void getomaterialscanusedlogBarcode(@Para(value = "barcode") String barcode) {
+    public void getomaterialscanusedlogBarcode(@Para(value = "barcode") String barcode,
+                                               @Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                                               @Para(value = "pageSize",defaultValue = "15") Integer pageSize
+                                               ) {
         ValidationUtils.notNull(barcode, "缺少现品票");
 
-        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeInfo(barcode));
+        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeInfo(barcode,pageNumber,pageSize));
     }
 
     /**
@@ -52,8 +53,10 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck
-    public void getmomaterialscanusedlogList() {
-        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeList());
+    public void getmomaterialscanusedlogList(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                                             @Para(value = "pageSize",defaultValue = "15") Integer pageSize
+                                             ) {
+        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeList(pageNumber,pageSize));
     }
 
     /**
@@ -83,9 +86,11 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck
-    public void getmomaterialscanuseMList(@Para(value = "iautoid") String iautoid) {
+    public void getmomaterialscanuseMList(@Para(value = "iautoid") String iautoid,
+                                          @Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                                          @Para(value = "pageSize",defaultValue = "15") Integer pageSize) {
         ValidationUtils.notNull(iautoid, "缺少退料表单ID");
-        renderJBoltApiRet(moMaterialsreturnmApiService.getModandMomlist(iautoid));
+        renderJBoltApiRet(moMaterialsreturnmApiService.getModandMomlist(iautoid,pageNumber,pageSize));
     }
 
 }

@@ -277,7 +277,9 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
                 "未审核" : formUploadM.getIAuditStatus() == 1 ?
                 "待审核" : formUploadM.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
         if (formUploadM.getIAuditStatus() != 0) {
-            return fail("该数据状态为：" + s + "不可删除！");
+            if (formUploadM.getIAuditStatus()!=3) {
+                return fail("该数据状态为：" + s + "不可删除！");
+            }
         }
         List<Record> service = formUploadDService.findByPid(id);
         if (service.size() > 0) {

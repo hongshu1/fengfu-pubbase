@@ -130,11 +130,11 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
      * 查询现品票
      */
     public void addBarcode() {
-        renderJsonData(service.getBycBarcodeInfo(get("barcode")));
+        renderJsonData(service.getBycBarcodeInfo(get("barcode"),getPageNumber(),getPageSize()));
     }
 
     public void getmomaterialscanusedlogList() {
-        renderJsonData(service.getBycBarcodeList());
+        renderJsonData(service.getBycBarcodeList(getPageNumber(),getPageSize()));
     }
 
     public void saveTableSubmit() {
@@ -142,7 +142,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     }
 
     public void getmomaterialscanuseMList() {
-        renderJsonData(service.getModandMomlist(get("iautoid")));
+        renderJsonData(service.getModandMomlist(get("iautoid"),getPageNumber(),getPageSize()));
     }
 
 }
