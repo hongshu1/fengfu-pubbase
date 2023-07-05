@@ -8,7 +8,6 @@ import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformitem.SpotCheckFormItemService;
 import cn.rjtech.admin.spotcheckformm.SpotCheckFormMService;
 import cn.rjtech.base.controller.BaseApiController;
-import cn.rjtech.entity.vo.prodformm.ProdFormMVo;
 import cn.rjtech.entity.vo.spotcheckformm.SpotCheckFormMEditVo;
 import cn.rjtech.entity.vo.spotcheckformm.SpotCheckFormMResVo;
 import com.jfinal.aop.Inject;
@@ -16,9 +15,9 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import io.github.yedaxia.apidocs.ApiDoc;
 
-
 /**
  * 点检管理
+ *
  * @author yjllzy
  */
 @CheckPermission(PermissionKey.API_SPOTCHECKFORMM)
@@ -35,14 +34,14 @@ public class SpotCheckFormMApiController extends BaseApiController {
     private InventorySpotCheckFormService inventorySpotCheckFormService;
     @Inject
     private SpotCheckFormMService spotCheckFormMService;
+
     /**
      * 页面数据
      * 传入数据：制作工单 的工单id,点检类型 itype：1.首末点检表 2.首中末点检表
      * 输出：iauditstatus 状态 ，cspotcheckformname 表格名称 可为空 ，coperationname ：工序名称
      * cequipmentnames 设备名称 ccreatename 生产人员    dcreatetime2 提交时间
      * iinventoryid 存货id modocid 工单id routingconfigid 存货工艺id  cequipmentnames 设备名称
-     *  ispotcheckformid 表格id
-     *
+     * ispotcheckformid 表格id
      */
     @ApiDoc(result = SpotCheckFormMResVo.class)
     public void datas(@Para(value = "pageNumber", defaultValue = "1") Integer pageNumber,
@@ -58,17 +57,15 @@ public class SpotCheckFormMApiController extends BaseApiController {
     /**
      * 生成页面数据
      *
-     * @param coperationname 工序名称
-     * @param iinventoryid 存货id
-     * @param modocid 工单id
-     * @param routingconfigid   存货工艺id
-     * @param cequipmentnames 设备名称
-     * @param spotcheckformmid 主表id
-     * @param ispotcheckformid 表格id
+     * @param coperationname     工序名称
+     * @param iinventoryid       存货id
+     * @param modocid            工单id
+     * @param routingconfigid    存货工艺id
+     * @param cequipmentnames    设备名称
+     * @param spotcheckformmid   主表id
+     * @param ispotcheckformid   表格id
      * @param cspotcheckformname 表格名称
-     * @param itype 类型 类型1.首末点检表 2.首中末点检表
-     *
-     *
+     * @param itype              类型 类型1.首末点检表 2.首中末点检表
      */
     @ApiDoc(result = SpotCheckFormMEditVo.class)
     public void edit(@Para(value = "coperationname") String coperationname,
@@ -79,40 +76,39 @@ public class SpotCheckFormMApiController extends BaseApiController {
                      @Para(value = "spotcheckformmid") Long spotcheckformmid,
                      @Para(value = "ispotcheckformid") Long ispotcheckformid,
                      @Para(value = "cspotcheckformname") String cspotcheckformname,
-                     @Para(value = "itype") int itype){
+                     @Para(value = "itype") int itype) {
 
-        renderJBoltApiRet(service.edit( coperationname,iinventoryid,modocid,routingconfigid,cequipmentnames,spotcheckformmid,ispotcheckformid,cspotcheckformname
-                ,itype));
+        renderJBoltApiRet(service.edit(coperationname, iinventoryid, modocid, routingconfigid, cequipmentnames, spotcheckformmid, ispotcheckformid, cspotcheckformname, itype));
     }
 
     /**
      * 保存
-     * @param formJsonDataStr {
-     * spotCheckFormM.iautoid：主表id
-     * routingconfigid:工序工艺ID
-     * modocid:生产订单ID
-     * coperationname：工序名称
-     * iprodformid：点检表格ID
-     * itype：类型1.首末点检表 2.首中末点检表
-     * cdesc：点检记录
-     * cmethod：处理方式
-     * }
-     * @param tableJsonDataStr{
-     *  spotcheckformtableparamid：检验项目ID
-     * iseq：项目次序
-     * spotcheckparamid：检验参数值ID
-     * itype：参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间
-     * istdval：标准值
-     * imaxval：最大设定值
-     * iminval：最小设定值
-     * coptions：列表可选值;多个“,”分隔
-     * cvalue：cvalue：填写值
-     * }
+     *
+     * @param formJsonData  {
+     *                         spotCheckFormM.iautoid：主表id
+     *                         routingconfigid:工序工艺ID
+     *                         modocid:生产订单ID
+     *                         coperationname：工序名称
+     *                         iprodformid：点检表格ID
+     *                         itype：类型1.首末点检表 2.首中末点检表
+     *                         cdesc：点检记录
+     *                         cmethod：处理方式
+     *                         }
+     * @param tableJsonData { spotcheckformtableparamid：检验项目ID
+     *                         iseq：项目次序
+     *                         spotcheckparamid：检验参数值ID
+     *                         itype：参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间
+     *                         istdval：标准值
+     *                         imaxval：最大设定值
+     *                         iminval：最小设定值
+     *                         coptions：列表可选值;多个“,”分隔
+     *                         cvalue：cvalue：填写值
+     *                         }
      */
     @UnCheck
-    public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
-                           @Para(value = "tableJsonData") String tableJsonDataStr){
-        renderJBoltApiRet(service.submitForm(formJsonDataStr, tableJsonDataStr));
+    public void submitForm(@Para(value = "formJsonData") String formJsonData,
+                           @Para(value = "tableJsonData") String tableJsonData) {
+        renderJBoltApiRet(service.submitForm(formJsonData, tableJsonData));
     }
 
 }

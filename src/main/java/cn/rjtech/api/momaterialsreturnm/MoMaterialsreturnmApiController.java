@@ -62,14 +62,12 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      *                      "cinvaddcode":"存货代码","cinvname":"存货名称","cinvstd":"规格型号","empty":"品牌",
      *                      "iuomclassid":"主计量单位","iqtys":"数量"}]
      * @param IMoDocId  生产工单ID
-     * @param cmome 备注
      *
      */
     @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.API_MOMATERIALSRETURNM)
     public void saveTableSubmit(@Para(value = "SaveTableData") String SaveTableData,
-                                @Para(value = "IMoDocId") Long IMoDocId,
-                                @Para(value = "cmome")  String cmome)
+                                @Para(value = "IMoDocId") Long IMoDocId)
                                                                         {
         ValidationUtils.notNull(SaveTableData, "缺少退料表单数据");
         ValidationUtils.notNull(IMoDocId, "缺少生产工单ID");

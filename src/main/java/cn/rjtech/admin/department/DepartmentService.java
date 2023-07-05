@@ -819,9 +819,9 @@ public class DepartmentService extends BaseService<Department> {
     	Department department = findByCdepcode(cdepcode);
     	ValidationUtils.notNull(department, "所属部门为空,请检查");
     	ValidationUtils.notNull(department.getIRefDepId(), department.getCDepName()+"U8推单部门未维护!");
-    	Record rc = dbTemplate(u8SourceConfigName(),"department.getU8DepByCode",Kv.by("cdepcode", department.getIRefDepId())).findFirst();
-    	ValidationUtils.notNull(rc, department.getCDepName()+"的U8推单部门在U8系统中不存在!");
-    	ValidationUtils.isTrue(rc.getInt("bdepend") == 1, "U8推单部门:"+rc.getStr("cdepname") + "非末级");
-    	return rc.getStr("cdepcode");
+    	Department refU8Dep = department.findById(department.getIRefDepId());
+    	ValidationUtils.notNull(refU8Dep, department.getCDepName()+"的U8推单部门在部门档案中不存在!");
+    	ValidationUtils.isTrue(refU8Dep.getBDepEnd(), "U8推单部门:"+refU8Dep.getCDepName() + "非末级");
+    	return refU8Dep.getCDepCode();
     }
 }
