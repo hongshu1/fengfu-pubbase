@@ -32,7 +32,8 @@
               data-text-attr="cwhcode,cwhname"
               data-value=""
               data-value-attr="iautoid"
-              data-select="#(warehouseShelves.iwarehouseid??)">
+              data-select="#(warehouseShelves.iwarehouseid??)"
+              data-handler="linkageBtn">
       </select>
       <!--			<input type="text" data-with-clearbtn="true" autocomplete="off"  class="form-control"   data-rule="required" placeholder="请输入所属仓库" maxlength="19" name="warehouseShelves.iwarehouseid" value="#(warehouseShelves.iwarehouseid??)"/>-->
     </div>
@@ -177,6 +178,10 @@
 </form>
 #define js()
 <script>
+  function linkageBtn(index) {
+    console.log(index.val())
+    $("#iwarehouseareaid").attr("data-url", "admin/warehousearea/list?iwarehouseid=" + index.val());
+  }
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="warehouseShelvesForm")
 #end
