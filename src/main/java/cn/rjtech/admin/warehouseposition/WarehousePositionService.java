@@ -339,16 +339,18 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
         warehousePosition.setIsenabled(true);
         warehousePosition.setIsource(1);
 
+        warehousePosition.setCpositioncode(data.get("cpositioncode") + "");
+        warehousePosition.setCpositionname(data.get("cpositionname") + "");
 
         warehousePosition.setIwarehouseid(record.getLong("iwarehouseid"));
         warehousePosition.setIwarehouseareaid(record.getLong("iwarehouseareaid"));
         warehousePosition.setIwarehouseshelvesid(record.getLong("iautoid"));
 
-//        warehousePosition.setILength(BigDecimal.valueOf(Integer.parseInt(data.get("ilength") + "")));
-//        warehousePosition.setIwidth(BigDecimal.valueOf(Integer.parseInt(data.get("iwidth") + "")));
-//        warehousePosition.setIheight(BigDecimal.valueOf(Integer.parseInt(data.get("iheight") + "")));
-//        warehousePosition.setImaxweight(BigDecimal.valueOf(Integer.parseInt(data.get("imaxweight") + "")));
-//        warehousePosition.setImaxbulk(BigDecimal.valueOf(Integer.parseInt(data.get("imaxbulk") + "")));
+        warehousePosition.setILength(BigDecimal.valueOf(Integer.parseInt(data.get("ilength") + "")));
+        warehousePosition.setIwidth(BigDecimal.valueOf(Integer.parseInt(data.get("iwidth") + "")));
+        warehousePosition.setIheight(BigDecimal.valueOf(Integer.parseInt(data.get("iheight") + "")));
+        warehousePosition.setImaxweight(BigDecimal.valueOf(Integer.parseInt(data.get("imaxweight") + "")));
+        warehousePosition.setImaxbulk(BigDecimal.valueOf(Integer.parseInt(data.get("imaxbulk") + "")));
 
         ValidationUtils.isTrue(warehousePosition.save(), "第" + iseq + "行保存数据失败");
 
