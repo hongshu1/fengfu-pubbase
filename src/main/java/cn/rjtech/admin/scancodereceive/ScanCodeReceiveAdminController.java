@@ -153,6 +153,7 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
     @UnCheck
     public void getResource(){
         String q = get("q");
+        String barcode = get("barcode");
         /*if (notOk(q)){
             renderJsonSuccess();
             return;
@@ -162,6 +163,7 @@ public class ScanCodeReceiveAdminController extends BaseAdminController {
         String sourceBillType = get("sourceBillType");
         Kv kv = new Kv();
         kv.setIfNotNull("keywords",q);
+        kv.setIfNotNull("barcode",barcode);
         kv.setIfNotNull("sourceBillType", sourceBillType);
         kv.setIfNotNull("combination", groupCode);
         kv.setIfNotNull("detailHidden", detailHidden);
