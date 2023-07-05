@@ -118,6 +118,7 @@ public class EnumTypeAdminController extends BaseAdminController {
 	/**
 	 * select数据源(编辑、新增)
 	 */
+	@UnCheck
 	public void ajaxPortalTable() {
 		set("users", service.findAll());
 		render("ajaxportal_table.html");
