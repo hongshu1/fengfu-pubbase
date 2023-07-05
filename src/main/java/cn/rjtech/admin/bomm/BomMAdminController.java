@@ -111,6 +111,11 @@ public class BomMAdminController extends BaseAdminController {
 	public void getVersionRecord() {
 		renderJsonData(service.getVersionRecord(getPageNumber(), getPageSize(), getKv()));
 	}
+	
+	@UnCheck
+	public void getFileRecord() {
+		renderJsonData(service.getFileRecord(getPageNumber(), getPageSize(), getKv()));
+	}
 
     @UnCheck
 	public void getBomComparePageData(){
@@ -130,9 +135,13 @@ public class BomMAdminController extends BaseAdminController {
 		renderJson(service.del(getLong(0)));
 	}
 	
+	public void delFile() {
+		renderJson(service.delFile(getLong(0)));
+	}
+	
 	// 拷贝
-	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "dDisableDate") String dDisableDate,  @Para(value = "oldId") Long oldId) {
-		renderJson(service.saveCopy(oldId, dDisableDate, cVersion));
+	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "dDisableDate") String dDisableDate, @Para(value = "dEnableDate") String dEnableDate,  @Para(value = "oldId") Long oldId) {
+		renderJson(service.saveCopy(oldId, dEnableDate, dDisableDate, cVersion));
 	}
 	
 	public void submitForm(@Para(value = "formJsonData") String formJsonData, @Para(value = "tableJsonData") String tableJsonData) {
@@ -152,5 +161,5 @@ public class BomMAdminController extends BaseAdminController {
     public void getTreeTableDatas(){
 		renderJsonData(bomDService.getTreeTableDatas(getKv()));
 	}
-    
+ 
 }

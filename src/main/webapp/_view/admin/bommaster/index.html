@@ -46,12 +46,11 @@
 		</div>
 		<!--2 版本记录 -->
 		<div class="tab-pane fade" id="tab-two_21" role="tabpanel" aria-labelledby="nav-base-tab_two_21">
-			#ajaxPortal("/admin/bommaster/versionIndex?iType=2","bomVersionPortal_#(pageId)",true)
+			#ajaxPortal("/admin/bommaster/versionIndex","bomVersionPortal_#(pageId)",true)
 		</div>
-
 		<!--3 导入查看 -->
 		<div class="tab-pane fade" id="tab-two_31" role="tabpanel" aria-labelledby="nav-base-tab_two_31">
-			#ajaxPortal("/admin/bommaster/versionIndex?iType=1","addBomVersionPortal_#(pageId)",true)
+			#ajaxPortal("/admin/bommaster/queryFileIndex","addBomVersionPortal_#(pageId)",true)
 		</div>
 	</div>
 </div>

@@ -1,8 +1,9 @@
 package cn.rjtech.entity.vo.spotcheckformm;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class SpotCheckFormMResVo {
+public class SpotCheckFormMResVo implements Serializable {
 
     /**
      * 工单id

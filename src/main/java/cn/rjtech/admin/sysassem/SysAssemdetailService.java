@@ -180,8 +180,14 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
                     record.set("whname", whcode.getStr("cwhname"));
                     Record poscode = findFirstRecord(
                         "select * from Bd_Warehouse_Area where cAreaCode = '" + record.getStr("poscodeh") + "'");
-                    record.set("poscode", poscode.getStr("careacode"));
-                    record.set("posname", poscode.getStr("careaname"));
+                    if(null != poscode && !"".equals(poscode)){
+                        record.set("poscode", poscode.getStr("careacode"));
+                        record.set("posname", poscode.getStr("careaname"));
+                    }else {
+                        record.set("poscode", "");
+                        record.set("posname", "");
+                    }
+
 
                     //查出转换的生成条码的数量
                     Record number = findFirstRecord("select count(1) as number  from PS_PurchaseOrderDBatch where iPurchaseOrderdQtyId = '"+ record.getStr("autoid")+"'");

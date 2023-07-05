@@ -1,6 +1,7 @@
 package cn.rjtech.admin.bomm;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -11,10 +12,12 @@ import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bomd.BomDService;
 import cn.rjtech.admin.bomdata.BomDataService;
+import cn.rjtech.admin.bommtrl.BommTrlService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.AuditStatusEnum;
@@ -25,6 +28,7 @@ import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.beust.ah.A;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -54,6 +58,8 @@ public class BomMService extends BaseService<BomM> {
 	private BomDataService bomDataService;
 	@Inject
 	private VendorService vendorService;
+	@Inject
+	private BommTrlService bommTrlService;
 	
 	@Override
 	protected BomM dao() {
@@ -284,9 +290,6 @@ public class BomMService extends BaseService<BomM> {
         for (Record record : recordList){
             AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(record.getInt(BomM.IAUDITSTATUS));
             record.set(BomM.AUDITSTATUSSTR, auditStatusEnum.getText());
-            
-            BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(record.getInt(BomM.ITYPE));
-            record.set(BomM.TYPENAME, bomSourceTypeEnum.getText());
         }
     }
     
@@ -446,6 +449,28 @@ public class BomMService extends BaseService<BomM> {
 		return SUCCESS;
 	}
 	
+	/**
+	 * 删除导入文件
+	 * @param id
+	 * @return
+	 */
+	public Ret delFile(Long id){
+		BommTrl bommTrl = bommTrlService.findById(id);
+		Long bomMid = bommTrl.getIBomMid();
+		BomData bomData = bomDataService.getBomData(bomMid);
+		tx(() -> {
+			bommTrlService.deleteById(id);
+			if (ObjectUtil.isNotNull(bomData)){
+				bomDataService.deleteById(bomData.getIAutoId());
+			}
+			return true;
+		});
+		bommTrlService.deleteById(id);
+		bomDataService.deleteById(bomData.getIAutoId());
+		
+		return SUCCESS;
+	}
+	
 	public boolean isOverlapping(BomM bomM, Record otherBom) {
 		
 		Date dEnableDate = otherBom.getDate(BomM.DENABLEDATE);
@@ -510,7 +535,7 @@ public class BomMService extends BaseService<BomM> {
 		return netPrefixStr.concat("/01");
 	}
 	
-	public Ret saveCopy(Long bomMasterId, String dDisableDate, String cVersion) {
+	public Ret saveCopy(Long bomMasterId, String dEnableDate, String dDisableDate, String cVersion) {
 		ValidationUtils.notBlank(dDisableDate, JBoltMsg.JBOLTTABLE_IS_BLANK);
 		ValidationUtils.notBlank(cVersion, JBoltMsg.JBOLTTABLE_IS_BLANK);
 		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
@@ -519,27 +544,31 @@ public class BomMService extends BaseService<BomM> {
 		ValidationUtils.isTrue(!cVersion.equals(bomMaster.getCVersion()), "版本号不能一致");
 		// 获取母件所有子件集合
 		tx(() -> {
-			saveCopyBomMaster(bomMasterId, cVersion, dDisableDate, bomMaster);
+			saveCopyBomMaster(bomMasterId, cVersion, dEnableDate, dDisableDate, bomMaster);
 			return true;
 		});
 		return SUCCESS;
 	}
 	
-	private void saveCopyBomMaster(Long bomMasterId, String cVersion, String dDisableDate, BomM bomMaster){
+	private void saveCopyBomMaster(Long bomMasterId, String cVersion, String dEnableDate, String dDisableDate, BomM bomMaster){
 		// 设置新的id
 		long newBomMasterId = JBoltSnowflakeKit.me.nextId();
 		DateTime now = DateUtil.date();
 		bomMaster.setIAutoId(newBomMasterId);
+		bomMaster.setDEnableDate(DateUtil.parseDate(dEnableDate));
 		bomMaster.setDDisableDate(DateUtil.parseDate(dDisableDate));
 		bomMaster.setDAuditTime(null);
 		// 设置copy前的ID
 		bomMaster.setICopyFromId(bomMasterId);
 		bomMaster.setDAuditTime(now);
-		
+		bomMaster.setCVersion(cVersion);
 		// 校验
 		checkBomDateOrVersion(cVersion, bomMaster);
 		List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
-		compareList.forEach(bomD -> bomD.setIBomMid(newBomMasterId));
+		compareList.forEach(bomD -> {
+			bomD.setIBomMid(newBomMasterId);
+			bomD.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		});
 		bomDService.batchSave(compareList);
 		save(bomMaster,JBoltUserKit.getUserId(),JBoltUserKit.getUserName(), now, AuditStatusEnum.AWAIT_AUDIT.getValue());
 		
@@ -573,34 +602,30 @@ public class BomMService extends BaseService<BomM> {
 	public Ret submitForm(String formJsonData, String tableJsonData) {
 		ValidationUtils.notBlank(formJsonData, JBoltMsg.PARAM_ERROR);
 		JSONObject formData = JSONObject.parseObject(formJsonData);
-		BomM bomMaster = JSONObject.parseObject(formJsonData, BomM.class);
+		BommTrl bommTrl = JSONObject.parseObject(formJsonData, BommTrl.class);
+		BomM bomM = JSONObject.parseObject(formJsonData, BomM.class);
 		Long userId = JBoltUserKit.getUserId();
 		String userName = JBoltUserKit.getUserName();
 		DateTime now = DateUtil.date();
 		// 主键id为空为 新增或者为修改
-		if (ObjUtil.isNull(bomMaster.getIAutoId())){
+		if (ObjUtil.isNull(bomM.getIAutoId())){
 			ValidationUtils.notBlank(tableJsonData, JBoltMsg.PARAM_ERROR);
 			JSONArray tableData = JSONObject.parseArray(tableJsonData);
 			// 校验数据
 			verification(formData, tableData);
-			return saveForm(bomMaster, tableData, userId, userName, now);
+			return saveForm(bommTrl, bomM, tableData, userId, userName, now);
 		}
-		return updateForm(bomMaster, userId, userName, now);
+		return SUCCESS;
 	}
 	
-	public Ret saveForm(BomM bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
+	public Ret saveForm(BommTrl bommTrl, BomM bomMaster, JSONArray tableData, Long userId, String userName, DateTime now){
 		// 设置主键id
 		long bomMasterId = JBoltSnowflakeKit.me.nextId();
 		bomMaster.setIAutoId(bomMasterId);
 		Map<BomM, List<BomD>> bomMListMap =getBomMasterMap(bomMaster, tableData);
 		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
-		
+		bommTrl.setIBomMid(bomMasterId);
 		tx(() -> {
-			bomMaster.setIType(BomSourceTypeEnum.IMPORT_TYPE_ADD.getValue());
-			
-			if(StrUtil.isBlank(bomMaster.getCVersion())){
-				bomMaster.setCVersion(getNextVersion(getOrgId(), bomMaster.getIInventoryId()));
-			}
 			
 			for (BomM bomM : bomMListMap.keySet()){
 				List<BomD> bomDList = bomMListMap.get(bomM);
@@ -608,10 +633,16 @@ public class BomMService extends BaseService<BomM> {
 				ValidationUtils.notNull(inventory, "产成品存货记录不存在");
 				bomM.setCInvName(inventory.getCInvName());
 				bomM.setCInvCode(inventory.getCInvCode());
+				if(StrUtil.isBlank(bomM.getCVersion())){
+					bomM.setCVersion(getNextVersion(getOrgId(), bomM.getIInventoryId()));
+				}
+				bomM.setDEnableDate(bomMaster.getDEnableDate());
+				bomM.setDDisableDate(bomMaster.getDDisableDate());
 				save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 				bomDService.batchSave(bomDList);
 			}
 			
+			bommTrlService.save(bommTrl);
 			BomData bomData = bomDataService.create(bomMaster.getIAutoId(), tableData.toJSONString());
 			bomDataService.save(bomData);
 			return true;
@@ -619,8 +650,9 @@ public class BomMService extends BaseService<BomM> {
 		return SUCCESS;
 	}
 	
-	public Ret updateForm(BomM bomMaster, Long userId, String userName, DateTime now){
-		BomM oldBomMaster = findById(bomMaster.getIAutoId());
+	public Ret updateForm(BommTrl bomMaster, Long userId, String userName, DateTime now){
+	
+	/*	BommTrl oldBomMaster = bommTrlService.findById(bomMaster.getIAutoId());
 		Integer iAuditStatus = oldBomMaster.getIAuditStatus();
 		AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
 		ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行修改");
@@ -629,7 +661,7 @@ public class BomMService extends BaseService<BomM> {
 		tx(() -> {
 			update(oldBomMaster, userId, userName, now);
 			return true;
-		});
+		});*/
 		return SUCCESS;
 	}
 	
@@ -806,15 +838,14 @@ public class BomMService extends BaseService<BomM> {
 		return code1;
 	}
 	
-	private void copyBomMaster(BomM bomMaster, BomM oldBomMaster){
+	private void copyBomMaster(BommTrl bomMaster, BommTrl oldBomMaster){
 		// 机型id
 		oldBomMaster.setIEquipmentModelId(bomMaster.getIEquipmentModelId());
 		// 文件编码
 		oldBomMaster.setCDocCode(bomMaster.getCDocCode());
 		// 文件名称
 		oldBomMaster.setCDocName(bomMaster.getCDocName());
-		// 版本
-		oldBomMaster.setCVersion(bomMaster.getCVersion());
+		
 		// 启用日期
 		oldBomMaster.setDEnableDate(bomMaster.getDEnableDate());
 		// 停用日期
@@ -831,8 +862,7 @@ public class BomMService extends BaseService<BomM> {
 		oldBomMaster.setDDcDate1(bomMaster.getDDcDate1());
 		// 设备日期2
 		oldBomMaster.setDDcDate2(bomMaster.getDDcDate2());
-		// 存货id
-		oldBomMaster.setIInventoryId(bomMaster.getIInventoryId());
+		
 		// 客户ID
 		oldBomMaster.setICustomerId(bomMaster.getICustomerId());
 		// 共用件备注
@@ -878,7 +908,6 @@ public class BomMService extends BaseService<BomM> {
 			if (parentInvMap.containsKey(inventoryId) && !bomMasterInvId.equals(inventoryId)){
 				BomM newBomM = new BomM();
 				long newBomMasterId = JBoltSnowflakeKit.me.nextId();
-				copyBomMaster(bomM, newBomM);
 				newBomM.setIInventoryId(inventoryId);
 				newBomM.setIType(2);
 				newBomM.setIAutoId(newBomMasterId);
@@ -892,12 +921,33 @@ public class BomMService extends BaseService<BomM> {
 		}
 		
 		List<BomD> bomCompareList = new ArrayList<>();
-		
+		List<BomM> removeBoms = new ArrayList<>();
 		for (BomM bom : bomMListMap.keySet()){
 			List<BomD> bomDList = bomMListMap.get(bom);
-			bomCompareList.addAll(bomDList);
+			List<BomD> bomDS = new ArrayList<>();
+			for (BomD bomD:bomDList){
+				if (ObjectUtil.isNull(bomD.getIInventoryId())){
+					continue;
+				}
+				bomDS.add(bomD);
+			}
+			if (CollectionUtil.isEmpty(bomDS)){
+//				Inventory inventory = inventoryService.findById(bom.getIInventoryId());
+//				ValidationUtils.notNull(inventory, "存货未找到【"+bom.getIInventoryId()+"】");
+//				ValidationUtils.notEmpty(bomDS, "存货编码【"+inventory.getCInvCode()+"】未找到子件数据");
+				// 删除key
+//				bomMListMap.remove(bom);
+				removeBoms.add(bom);
+				continue;
+			}
+			bomCompareList.addAll(bomDS);
+			bomMListMap.put(bom, bomDS);
 		}
-		
+		if (CollectionUtil.isNotEmpty(removeBoms)){
+			for (BomM bom : removeBoms){
+				bomMListMap.remove(bom);
+			}
+		}
 		// 存货id
 		List<Long> invIds = bomCompareList.stream().filter(bomD -> ObjUtil.isNotNull(bomD.getIInventoryId())).map(BomD::getIInventoryId).collect(Collectors.toList());
 		// 供应商id
@@ -917,10 +967,7 @@ public class BomMService extends BaseService<BomM> {
 			// 赋值
 			if (ObjectUtil.isNotNull(bom.getIInventoryId())){
 				for (BomD bomD : bomMListMap.get(bom)){
-					Inventory inventory = inventoryMap.get(bomD.getIInventoryId());
-					if (ObjectUtil.isNull(inventory)){
-						continue;
-					}
+					Inventory inventory = inventoryService.findById(bomD.getIInventoryId());
 					String cVendCode = null;
 					String cVenName = null;
 					if (ObjUtil.isNotNull(bomD.getIVendorId())){
@@ -1476,5 +1523,10 @@ public class BomMService extends BaseService<BomM> {
 			sql.eq(BomM.IORGID, orgId);
 		}
 		return find(sql);
+	}
+	
+	public Page<Record> getFileRecord(Integer pageNumber, Integer pageSize, Kv kv) {
+		Page<Record> page = dbTemplate("bomm.getFileRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
+		return page;
 	}
 }

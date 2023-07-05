@@ -6,6 +6,10 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.StockCheckVouch;
@@ -18,6 +22,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -206,5 +212,58 @@ public class CurrentStockController extends BaseAdminController {
 		StockCheckVouch mid = stockChekVouchService.findById(kv.get("mid"));
 		mid.setIsDeleted(false);
 		stockChekVouchService.update(mid);
+	}
+
+	/**
+	 * 批量删除
+	 */
+	public void deleteByIds() {
+		renderJson(service.deleteByBatchIds(get("ids")));
+	}
+
+	/***
+	 * 勾选导出
+	 */
+	public void downloadChecked(){
+		Kv kv = getKv();
+		String ids = kv.getStr("ids");
+		if (ids != null) {
+			String[] split = ids.split(",");
+			String sqlids = "";
+			for (String id : split) {
+				sqlids += "'" + id + "',";
+			}
+			ValidationUtils.isTrue(sqlids.length() > 0, "请至少选择一条数据!");
+			sqlids = sqlids.substring(0, sqlids.length() - 1);
+			kv.set("sqlids", sqlids);
+		}
+
+		String sqlTemplate = "currentstock.getStockCheckVouchBarcodeLines";
+		List<Record> list = service.download(kv, sqlTemplate);
+		JBoltCamelCaseUtil.keyToCamelCase(list);
+		//2、创建JBoltExcel
+		JBoltExcel jBoltExcel = JBoltExcel
+				.create()//创建JBoltExcel
+				.addSheet(//设置sheet
+						JBoltExcelSheet.create("盘点条码列表")
+								.setHeaders(1,//sheet里添加表头
+										JBoltExcelHeader.create("posname", "库位名称", 20),
+										JBoltExcelHeader.create("invcode", "存货编码", 20),
+										JBoltExcelHeader.create("cinvcode1", "客户部番", 20),
+										JBoltExcelHeader.create("cinvname1", "部品名称", 20),
+										JBoltExcelHeader.create("cinvstd", "规格", 40),
+										JBoltExcelHeader.create("cuomname", "主计量单位", 40),
+										JBoltExcelHeader.create("iqty", "数量", 40),
+										JBoltExcelHeader.create("qty", "实盘数量", 40),
+										JBoltExcelHeader.create("barcode", "现品票", 40),
+										JBoltExcelHeader.create("cversion", "批次号", 40),
+										JBoltExcelHeader.create("dplandate", "生产日期", 40)
+								).setDataChangeHandler((data, index) -> {
+						})
+								.setRecordDatas(2, list)//设置数据
+				).setFileName("盘点条码列表-" + new SimpleDateFormat("yyyyMMdd").format(new Date()));
+		//3、导出
+		renderBytesToExcelXlsFile(jBoltExcel);
+
 	}
 }
