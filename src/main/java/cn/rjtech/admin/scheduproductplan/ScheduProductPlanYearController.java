@@ -44,6 +44,12 @@ public class ScheduProductPlanYearController extends BaseAdminController {
         String cplanorderno = get("cplanorderno");
         Long icustomerid = getLong("icustomerid");
         String startyear = get("startyear");
+        String cinvcode = get("cinvcode");
+        String cinvcode1 = get("cinvcode1");
+        String cinvname1 = get("cinvname1");
+        set("cinvcode",cinvcode);
+        set("cinvcode1",cinvcode1);
+        set("cinvname1",cinvname1);
 
         set("cplanorderno",cplanorderno);
         set("icustomerid",icustomerid);
@@ -189,8 +195,8 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 保存计划
      */
-    public void saveScheduPlanYear(String yearDataArry) {
-        renderJsonData(service.saveScheduPlanYear(yearDataArry));
+    public void saveScheduPlanYear(String yearDataArry,Long mid) {
+        renderJsonData(service.saveScheduPlanYear(yearDataArry,mid));
     }
 
     /**
