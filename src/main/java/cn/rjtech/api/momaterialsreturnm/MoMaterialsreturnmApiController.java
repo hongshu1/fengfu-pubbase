@@ -61,7 +61,7 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      * 保存生产退料
      * @param SaveTableData 接收退料 JSON格式 [{"imodocid":"生产工单ID","cbarcode":"现品票",""cinvcode:"存货编码",
      *                      "cinvaddcode":"存货代码","cinvname":"存货名称","cinvstd":"规格型号","empty":"品牌",
-     *                      "iuomclassid":"主计量单位","iqtys":"数量"}]
+     *                      "iuomclassid":"主计量单位","iqtys":"数量","cmome":"备注"}]
      * @param IMoDocId  生产工单ID
      *
      */
