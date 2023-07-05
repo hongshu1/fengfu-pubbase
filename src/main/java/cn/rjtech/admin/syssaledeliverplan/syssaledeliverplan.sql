@@ -172,17 +172,85 @@ from
     SELECT iAutoId,cOrderNo,iCustomerId,iOrderStatus,cCusCode,cCusName,IsDeleted from  Co_MonthOrderM
 ) t1
 where 1=1
+#if(iautoid)
+and t1.iautoid = #para(icustomerid)
+#end
 #if(icustomerid)
-t1.icustomerid = #para(icustomerid)
+and t1.iCustomerId = #para(icustomerid)
 #end
 #if(corderno)
-t1.cOrderNo like concat('%',#para(corderno),'%')
+and t1.cOrderNo like concat('%',#para(corderno),'%')
 #end
 #if(ccusname)
-t1.cCusName like concat('%',#para(ccusname),'%')
+and t1.cCusName like concat('%',#para(ccusname),'%')
 #end
 #if(ccuscode)
-t1.cCusCode like concat('%',#para(ccuscode),'%')
+and t1.cCusCode like concat('%',#para(ccuscode),'%')
 #end
 #end
 
+#sql("scanBarcode")
+select
+    t1.*,
+    t2.cinvcode as invcode,
+    t2.cinvname,
+    t2.cInvCode ,
+    t2.cInvCode1,
+    t2.cInvName1,
+    t2.cinvstd,
+    t3.cuomcode,
+    t3.cuomname
+from
+(
+    SELECT iAutoId,iPurchaseOrderDid,iinventoryId,cBarcode,iQty as qty,cSourceld,cCompleteBarcode from PS_PurchaseOrderDBatch
+    UNION ALL
+    SELECT iAutoId,iSubcontractOrderDid,iinventoryId,cBarcode,iQty,cSourceld,cCompleteBarcode from PS_SubcontractOrderDBatch
+) t1
+LEFT JOIN Bd_Inventory t2 on t1.iinventoryId = t2.iautoid
+LEFT JOIN Bd_Uom t3 on t2.iSalesUomId = t3.iAutoId
+where 1=1
+#if(barcode)
+and t1.cCompleteBarcode = #para(barcode)
+#end
+#if(q)
+and (
+    t2.cinvcode like concat('%',#para(q),'%') or t2.cinvcode1 like concat('%',#para(q),'%')
+    or t2.cinvname1 like concat('%',#para(q),'%') or t1.cCompleteBarcode like concat('%',#para(q),'%')
+      )
+#end
+#if(cinvcodes)
+and t2.cinvcode in (#para(cinvcodes))
+#end
+#end
+
+#sql("scanInvcode")
+select t1.* from Bd_Inventory t1
+where 1=1
+#if(q)
+    and (
+      t1.cinvcode like concat('%',#para(q),'%') or t1.cinvcode1 like concat('%',#para(q),'%')
+    or t2.cinvname1 like concat('%',#para(q),'%')
+        )
+#end
+#if(invcode)
+and t1.cinvcode = #para(invcode)
+#end
+#if(cinvcodes)
+and t1.cinvcode in (#para(cinvcodes))
+#end
+#end
+
+#sql("selectInvocodeByMaskid")
+select t1.* from
+(
+    SELECT iAutoId,iManualOrderMid as maskid,cInvCode,iInventoryId from Co_ManualOrderD
+    UNION ALL
+    SELECT iAutoId,iWeekOrderMid as maskid,cInvCode,iInventoryId from Co_WeekOrderD
+    UNION ALL
+    SELECT iAutoId,iMonthOrderMid as maskid,cInvCode,iInventoryId from Co_MonthOrderD
+) t1
+where 1=1
+#if(sourcebillid)
+and t1.maskid = #para(sourcebillid)
+#end
+#end

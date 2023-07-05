@@ -10,13 +10,13 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**来源类型;MO生产工单*/
     public static final String SOURCEBILLTYPE = "SourceBillType";
-    /**来源单据Did*/
-    public static final String SOURCEBILLDID = "SourceBillDid";
+    /**来源单据id*/
+    public static final String SOURCEBILLID = "SourceBillID";
     /**收发类别(销售类型)*/
     public static final String RDCODE = "RdCode";
     /**组织代码*/
@@ -77,6 +77,8 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
     public static final String IAUDITBY = "iAuditby";
     /**审核名称*/
     public static final String CAUDITNAME = "cAuditname";
+    /**U8单据号*/
+    public static final String U8BILLNO = "U8BillNo";
 	/**
 	 * AutoID
 	 */
@@ -112,20 +114,20 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
 	}
 
 	/**
-	 * 来源单据Did
+	 * 来源单据id
 	 */
-	public M setSourceBillDid(java.lang.String SourceBillDid) {
-		set("SourceBillDid", SourceBillDid);
+	public M setSourceBillID(java.lang.String SourceBillID) {
+		set("SourceBillID", SourceBillID);
 		return (M)this;
 	}
 
 	/**
-	 * 来源单据Did
+	 * 来源单据id
 	 */
-	@JBoltField(name="sourcebilldid" ,columnName="SourceBillDid",type="String", remark="来源单据Did", required=false, maxLength=30, fixed=0, order=3)
-	@JSONField(name = "sourcebilldid")
-	public java.lang.String getSourceBillDid() {
-		return getStr("SourceBillDid");
+	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="来源单据id", required=false, maxLength=30, fixed=0, order=3)
+	@JSONField(name = "sourcebillid")
+	public java.lang.String getSourceBillID() {
+		return getStr("SourceBillID");
 	}
 
 	/**
@@ -636,6 +638,23 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
 	@JSONField(name = "cauditname")
 	public java.lang.String getCAuditname() {
 		return getStr("cAuditname");
+	}
+
+	/**
+	 * U8单据号
+	 */
+	public M setU8BillNo(java.lang.Boolean U8BillNo) {
+		set("U8BillNo", U8BillNo);
+		return (M)this;
+	}
+
+	/**
+	 * U8单据号
+	 */
+	@JBoltField(name="u8billno" ,columnName="U8BillNo",type="String", remark="U8单据号", required=false, maxLength=1, fixed=0, order=34)
+	@JSONField(name = "u8billno")
+	public java.lang.String getU8BillNo() {
+		return getStr("U8BillNo");
 	}
 
 }

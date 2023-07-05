@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syssaledeliverplan;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -80,7 +81,7 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         Long icustomerid =kv.getLong("icustomerid");
         ValidationUtils.isTrue(icustomerid != null,"请先选择客户");
         set("icustomerid", icustomerid);
-        render("saleDeliverBillnoDialog .html");
+        render("saleDeliverBillnoDialog.html");
     }
 
     /*
@@ -95,11 +96,15 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      */
     public void add() {
         Kv kv = getKv();
-        set("ccusabbname", "");//客户简称
-        set("ccusname", "");//客户名称称
-        set("ccuscode", "");//客户编码
-        set("starttime", kv.get("starttime"));
-        set("endtime", kv.get("endtime"));
+        Record record = new Record();
+        record.set("icustomerid", kv.get("icustomerid"));//客户id
+        record.set("customerccuscode", kv.get("customerccuscode"));//客户编码
+        record.set("starttime", kv.get("starttime"));
+        record.set("endtime", kv.get("endtime"));
+        record.set("ccusabbname", kv.get("ccusabbname"));//客户简称
+        record.set("sourcebillid", kv.get("sourcebillid"));//订单表主键id
+        record.set("corderno", kv.get("corderno"));//订单号
+        set("syssaledeliverplan",record);
         render("add.html");
     }
 
@@ -251,8 +256,22 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
-    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
+    }
+
+    /*
+     * 根据barcode加载数据
+     * */
+    public void getBarcodeDatas() {
+        List<Record> recordList = service.getBarcodeDatas(get("q"),getKv());
+        renderJsonData(recordList);
+    }
+    /*
+     * 根据invcode加载数据
+     * */
+    public void getDatasByInvcode() {
+        List<Record> recordList = service.getDatasByInvcode(get("q"),getKv());
+        renderJsonData(recordList);
     }
 }

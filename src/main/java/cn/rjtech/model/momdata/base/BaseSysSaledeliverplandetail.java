@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysSaledeliverplandetail<M extends BaseSysSaledeliverplandetail<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**MasID*/
@@ -59,6 +59,8 @@ public abstract class BaseSysSaledeliverplandetail<M extends BaseSysSaledeliverp
     public static final String CUPDATENAME = "cupdatename";
     /**修改时间*/
     public static final String DUPDATETIME = "dupdatetime";
+    /**预计发货日期*/
+    public static final String PREDICTDELIVERDATE = "predictDeliverDate";
 	/**
 	 * AutoID
 	 */
@@ -465,6 +467,23 @@ public abstract class BaseSysSaledeliverplandetail<M extends BaseSysSaledeliverp
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDupdatetime() {
 		return getDate("dupdatetime");
+	}
+
+	/**
+	 * 预计发货日期
+	 */
+	public M setPredictDeliverDate(java.util.Date predictDeliverDate) {
+		set("predictDeliverDate", predictDeliverDate);
+		return (M)this;
+	}
+
+	/**
+	 * 预计发货日期
+	 */
+	@JBoltField(name="predictdeliverdate" ,columnName="predictDeliverDate",type="Date", remark="预计发货日期", required=false, maxLength=23, fixed=3, order=25)
+	@JSONField(name = "predictdeliverdate")
+	public java.util.Date getPredictDeliverDate() {
+		return getDate("predictDeliverDate");
 	}
 
 }

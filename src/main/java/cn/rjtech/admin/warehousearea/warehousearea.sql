@@ -59,6 +59,9 @@ SELECT
 FROM
 	Bd_Warehouse_Area wa
 where wa.isEnabled = '1' and wa.isDeleted = '0'
+#if(iwarehouseid)
+and wa.iWarehouseId = #para(iwarehouseid)
+#end
 order by wa.dUpdateTime desc
 #end
 

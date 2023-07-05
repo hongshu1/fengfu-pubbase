@@ -5,7 +5,7 @@
     <div class="jbolt_page_title">
         <div class="row">
             <div class="col-12">
-                <form onsubmit="return false;" class="form-inline" id="chooseDataForm" method="post">
+                <form onsubmit="return false;" class="form-inline" id="saleDeliverBillChooseDataForm" method="post">
                     <input hidden="hidden" name="icustomerid" id="icustomerid" value="#(icustomerid??)"/>
                     <input style="width: 400px" type="text" autocomplete="off" class="form-control" placeholder="订单号"
                            name="corderno" value=""/>
@@ -36,10 +36,10 @@
                data-jbolttable
                data-ajax="true"
                data-width="fill"
-               data-url="admin/purchaseReceiptList/salesShipmentList?icustomerid=#(icustomerid??)"
+               data-url="admin/salesShipmentList/saleDeliverBillNoList?icustomerid=#(icustomerid??)"
                data-height="300"
                data-column-resize="true"
-               data-conditions-form="chooseDataForm"
+               data-conditions-form="saleDeliverBillChooseDataForm"
                data-page="jboltTablePage_ajax"
                data-column-prepend="1:radio:true"
                data-rowtpl="jboltTable_demotpl"
@@ -49,7 +49,7 @@
             <tr>
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="160" data-column="ccuscode">客户编码</th>
-                <th data-width="160" data-column="ccusname">客户名称</th>
+                <th data-width="220" data-column="ccusname">客户名称</th>
                 <th data-min-width="180" data-column="corderno">订单号</th>
             </tr>
             </thead>
@@ -65,12 +65,10 @@
     function submitThisForm(callback) {
         var data = getJboltTableCheckedData("chooseDataTable");
         if (data) {
-            // LayerMsgBox.confirm("确认选择此数据?",function(){
             parent.setChooseDialogSelectResultFromSupplier(data);
             if (callback) {
                 callback();
             }
-            // });
         }
     }
 
