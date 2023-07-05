@@ -1,7 +1,7 @@
 #set(pageId=RandomUtil.random(6))
 ### 默认为非只读,查看页有readonly=readonly标识
 ### 【readonly为false】, 或 【审核中或已通过】，设置只读
-#if(readonly != 'readonly' && (sysProductin.iAuditStatus??0 == 1 || sysProductin.iAuditStatus??0 == 2))
+#if(readonly != 'readonly' && (goodspaymentm.iAuditStatus??0 == 1 || goodspaymentm.iAuditStatus??0 == 2))
 #set(readonly = 'readonly')
 #end
 
@@ -15,10 +15,9 @@
 <!--                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i-->
 <!--                                class="fa fa-refresh"></i> 保存</button>-->
                         #if(readonly != 'readonly')
-                        <button class="btn btn-success btn-sm" onclick="submitThisForm_#(pageId)(false)" #if(sysProductin.iAuditStatus?? ==2  || sysProductin.iAuditStatus?? ==1) disabled #end ><i class="fa fa-refresh"></i> 保存</button>
+                        <button class="btn btn-success btn-sm" onclick="submitThisForm_#(pageId)(false)" #if(goodspaymentm.iAuditStatus?? ==2  || goodspaymentm.iAuditStatus?? ==1) disabled #end ><i class="fa fa-refresh"></i> 保存</button>
                         #end
-
-                        #include("/_view/_common/_approval_btns.html", formSn="SM_GoodsPaymentM", o=goodspaymentm,primaryKeyName="iAutoId",className="cn.rjtech.admin.goodspaymentm.GoodsPaymentMService",permissionKeyPrefix="goodspaymentm")
+                        #include("/_view/_common/_approval_btns.html", formSn="SM_GoodsPaymentM", o=goodspaymentm,primaryKeyName="iAutoID",className="cn.rjtech.admin.goodspaymentm.GoodsPaymentMService",permissionKeyPrefix="goodspaymentm")
 
                         <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
                                 class="fa fa-window-maximize"></i> 关闭
@@ -39,9 +38,9 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">货款核对单号</label>
                                     <div class="col-9">
-                                        <input type="text" data-rule="required" data-notnull="true"
-                                            data-tips="请输入货款核对单号" data-with-clearbtn="true" autocomplete="off"
-                                            class="form-control" placeholder="请输入订单号" maxlength="40"
+                                        <input type="text"  data-notnull="true"
+                                            data-tips="请输入货款核对单号" data-with-clearbtn="true" autocomplete="off" disabled
+                                            class="form-control" placeholder="请输入货款核对单号" maxlength="40"
                                             name="goodspaymentm.cGoodsPaymentNo"
                                             value="#(goodspaymentm.cGoodsPaymentNo??)" />
                                     </div>
@@ -57,7 +56,7 @@
                                            id="iCustomerId1" data-sync-attr="iautoid"/>
                                     <label class="col-sm-3 col-form-label">客户名称</label>
                                     <div class="col-9">
-                                        <input type="text" class="form-control" data-autocomplete
+                                        <input type="text" class="form-control" data-autocomplete #if(goodspaymentm.iAuditStatus?? ==2  || goodspaymentm.iAuditStatus?? ==1) disabled #end
                                             data-url="admin/customer/autocomplete" data-rule="required"
                                             data-hidden-input="iCustomerId" data-sync-ele="#iCustomerId,iCustomerId1"
                                                data-text-attr="ccusname"
@@ -72,25 +71,32 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div>i
     </div>
 </div>
+
+
+### 新增之后，并且为审核流
+#if(goodspaymentm.iAutoID?? && goodspaymentm.iauditway == 2 && goodspaymentm.iauditstatus != 0)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=goodspaymentm.iAutoID, formSn="SM_GoodsPaymentM", btnNeed=1, pId=pageId, primaryKeyName="iAutoID", className="cn.rjtech.admin.goodspaymentm.GoodsPaymentMService")
+#end
+
 <div class="jbolt_page_content">
     <script type="text/template" id="goodspaymentm_tpl_#(pageId)">
         {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a href="admin/goodspaymentd/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " 
+                <a href="admin/goodspaymentd/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 "  #if(goodspaymentm.iAuditStatus?? ==2  || goodspaymentm.iAuditStatus?? ==1) disabled #end
                 tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" 
                 class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
             <td>${data.cinvcode}</td>
-            <td>${data.cinvname1}</td>
+            <td>${data.cinvname}</td>
             <td>${data.cbarcode}</td>
             <td>${data.cversion}</td>
-            <td>${data.dupdatetime}</td>
-            <td>${data.dcreatetime}</td>
+            <td>${data.daccountingtime}</td>
+            <td>${data.dwarehousingtime}</td>
             <td>${data.iqty}</td>
 
 
@@ -99,12 +105,12 @@
     </script>
     <div class="jbolt_table_toolbar" id="goodspaymentm_toolbar_#(pageId)">
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm">添加行</button>
+            <button onclick="jboltTableAppendEmptyRow(this)" class="btn btn-primary btn-sm" #if(goodspaymentm.iAuditStatus?? ==2  || goodspaymentm.iAuditStatus?? ==1) disabled #end>添加行</button>
         </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
             <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/goodspaymentd/deleteByIds?ids="
-                data-confirm="确定删除选中数据？" class="btn btn-outline-danger"><i class="fa fa-trash"></i> 批量删除</button>
+                data-confirm="确定删除选中数据？" class="btn btn-outline-danger" #if(goodspaymentm.iAuditStatus?? ==2  || goodspaymentm.iAuditStatus?? ==1) disabled #end><i class="fa fa-trash" ></i> 批量删除</button>
         </div>
 
     </div>
@@ -120,11 +126,11 @@
                 <th data-width="60" data-column="index">序号</th>
                 <th data-width="150">操作</th>
                 <th data-width="100" data-column="cinvcode">存货编码</th>
-                <th data-width="100" data-column="cinvname1">存货名称</th>
+                <th data-width="100" data-column="cinvname">存货名称</th>
                 <th data-width="100" data-column="cbarcode">传票号</th>
                 <th data-width="100" data-column="cversion">传票版本号</th>
-                <th data-width="100" data-column="dupdatetime">记账日期</th>
-                <th data-width="100" data-column="dcreatetime">入库日期</th>
+                <th data-width="100" data-column="daccountingtime">记账日期</th>
+                <th data-width="100" data-column="dwarehousingtime">入库日期</th>
                 <th data-width="100" data-column="iqty">入库数量</th>
             </tr>
         </thead>
@@ -168,7 +174,8 @@
                                 LayerMsgBox.success("提交成功", 600, function () {
                                     // parent.refreshPjaxContainer();
                                     // parent.layer.closeAll();
-                                    self.location.href = "/admin/paymentCheckManage/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                                    console.log("autoid",autoid)
+                                    self.location.href = "/admin/paymentCheckManage/edit/"+autoid+"?_jb_rqtype_=dialog"; //新增的刷新
                                 });
 
                             });
@@ -176,7 +183,8 @@
                             LayerMsgBox.success("提交成功", 600, function () {
                                 // parent.refreshPjaxContainer();
                                 // parent.layer.closeAll();
-                                self.location.href = "/admin/paymentCheckManage/edit?autoid="+autoid+"&_jb_rqtype_=dialog"; //新增的刷新
+                                console.log("autoid",autoid)
+                                self.location.href = "/admin/paymentCheckManage/edit/"+autoid+"?_jb_rqtype_=dialog"; //新增的刷新
                             });
 
                         }
@@ -206,11 +214,11 @@
                     textAttr: "cinvcode",
                     width: 500,
                     valueAttr: "cinvcode",//选择赋值的字段
-                    columnAttr: "cinvcode,cinvcode1,cinvname1,cinvstd,cuomname",//下来看的时候显示哪些字段
-                    header: '存货编码,客户部番,部品名称,规格,库存主单位',
+                    columnAttr: "cinvcode,cinvname,cinvname1",//下来看的时候显示哪些字段
+                    header: '存货编码,存货名称,部品名称',
                     changeColumns: [{ column: "cinvcode", use: "cinvcode" }, { column: "cinvcode1", use: "cinvcode1" },
-                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },
-                    { column: "cuomname", use: "cuomname" }, { column: "iinventoryid", use: "iautoid" }]
+                    { column: "cinvname1", use: "cinvname1" }, { column: "cinvstd", use: "cinvstd" },{ column: "iinventoryid", use: "iinventoryid" },
+                    { column: "cinvname", use: "cinvname" },  { column: "cinvname1", use: "cinvname1" }]
                 },
                 cbarcode: {
                     type: "input",//类型
@@ -224,12 +232,12 @@
                     tooltip: "传票版本号",//输入提示，上方
                     required: true,//必填
                 },
-                dupdatetime: {
+                daccountingtime: {
                     type: "date",//类型
-                    placeholder: "修改日期", //输入提示，里面
-                    tooltip: "修改日期",//输入提示，上方
+                    placeholder: "记账日期", //输入提示，里面
+                    tooltip: "记账日期",//输入提示，上方
                 },
-                dcreatetime: {
+                dwarehousingtime: {
                     type: "date",//类型
                     placeholder: "入库日期", //输入提示，里面
                     tooltip: "入库日期",//输入提示，上方
@@ -248,7 +256,7 @@
                     //cssStyle:"font-size:20px",//字体大小
                     summary: [{
                         dir: "v",// v 纵向 ，h 横向
-                        tofixed: 2,//保留两位小数
+                        tofixed: 1,//保留两位小数
                         roundtag: "round",//四舍五入
                         removezero: true,//去0
                         formula: "sum"   //求和公式

@@ -67,3 +67,20 @@ WHERE
         #end
 	)
 #end
+
+#sql("getParentBomList")
+SELECT
+	master.iAutoId,
+	NULL AS iPid,
+	master.iInventoryId,
+	master.cInvCode,
+	master.cInvName
+FROM
+	Bd_BomM master
+WHERE
+	master.IsDeleted = '0'
+
+	#if(orgId)
+	AND master.iOrgId = #para(orgId)
+	#end
+#end

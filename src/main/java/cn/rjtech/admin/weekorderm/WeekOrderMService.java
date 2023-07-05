@@ -2,6 +2,7 @@ package cn.rjtech.admin.weekorderm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltModelKit;
@@ -13,15 +14,18 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.SaleType;
 import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.model.momdata.base.BaseWeekOrderD;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
@@ -61,6 +65,8 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     private FormApprovalService formApprovalService;
     @Inject
     private DictionaryService dictionaryService;
+    @Inject
+    private SaleTypeService saleTypeService;
 
     @Override
     protected WeekOrderM dao() {
@@ -84,16 +90,23 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
             jsonObject.put("DocNo", weekOrderM.getCOrderNo());
             jsonObject.put("ccuscode", weekOrderM.getCCusCode());
             jsonObject.put("cmaker", JBoltUserKit.getUserName());
-            jsonObject.put("dDate", weekOrderM.getDCreateTime());
-            jsonObject.put("cPersonCode", weekOrderM.getICreateBy());
-            jsonObject.put("cBusType", weekOrderM.getIBusType());
-            jsonObject.put("cSTCode", weekOrderM.getISaleTypeId());
+            jsonObject.put("dDate", DateUtils.formatDate(weekOrderM.getDCreateTime()));
+            jsonObject.put("cPersonCode", weekOrderM.getIBusPersonId());
+            Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), weekOrderM.getIBusType().toString())).findFirst().orElse(null);
+            String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
+            jsonObject.put("cBusType", busName);
+            String cSTCode = Optional.ofNullable(saleTypeService.findById(weekOrderM.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
+            jsonObject.put("cSTCode", cSTCode);
             jsonObject.put("cexch_name", weekOrderM.getIExchangeRate());
             jsonObject.put("iExchRate", weekOrderM.getIExchangeRate());
             jsonObject.put("iTaxRate", weekOrderM.getITaxRate());
             jsonObject.put("cInvCode", weekOrderD.getCInvCode());
             jsonObject.put("cInvName", weekOrderD.getCInvName1());
             jsonObject.put("iQuantity", weekOrderD.getIQty());
+            jsonObject.put("iQuotedPrice", 0);
+            jsonObject.put("KL", 100);
+            jsonObject.put("iNatDisCount", 0);
+
             jsonArray.add(jsonObject);
         }
         Map<String, Object> data = new HashMap<>();
@@ -104,12 +117,12 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
         header.put("Content-Type", "application/json");
         String url = "http://120.24.44.82:8099/api/cwapi/SODocAdd?dbname=U8Context";
         String post = HttpApiUtils.httpHutoolPost(url, data, header);
-        String s = jsonArray.toJSONString(); // 测试代码
         JSONObject jsonObject = JSON.parseObject(post);
         ValidationUtils.notNull(jsonObject, "推送U8失败");
-        ValidationUtils.equals("S", jsonObject.getString("status"), "审批通过推单" + jsonObject.getString("remark"));
+        ValidationUtils.equals("S", jsonObject.getString("status"), "失败推单:" + jsonObject.getString("remark"));
 
-        return null;
+        String remark = jsonObject.getString("remark");
+        return remark.substring(remark.indexOf("执行结果为") + 5);
     }
 
     /**
@@ -387,13 +400,13 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
         WeekOrderM weekOrderM = findById(formAutoId);
 //        ValidationUtils.equals(WeekOrderStatusEnum.AWAIT_AUDIT.getValue(), weekOrderM.getIOrderStatus(), "订单非待审核状态");
         // 推送U8订单
-//        List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(formAutoId);
-//        String cDocNo = pushOrder(weekOrderM, weekOrderDS);
-//        ValidationUtils.notNull(cDocNo, "推单失败");
+        List<WeekOrderD> weekOrderDS = weekOrderDService.findByMId(formAutoId);
+        String cDocNo = pushOrder(weekOrderM, weekOrderDS);
+        ValidationUtils.notNull(cDocNo, "推单失败");
 
         // 修改客户计划汇总
-//        ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
-       // ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
         cusOrderSumService.algorithmSum();
         return null;
