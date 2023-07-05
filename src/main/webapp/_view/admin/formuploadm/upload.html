@@ -6,7 +6,11 @@
         <div class="col">
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
                    readonly="readonly"
-                   id="fileSyncUploaderDemo" name="mouldsPost.filepath" value="#(mouldsPost.filepath??)"/>
+                   id="fileSyncUploaderDemo" name="cattachments" value="#(cattachments??)"/>
+            #if(iautoid??)
+            <input type="hidden" id="iautoid" name="iAutoId" value="#(iautoid??)" />
+            #end
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" hidden id="cattachments" value="#(cattachments??)" />
         </div>
     </div>
 </form>
@@ -33,15 +37,17 @@
 #define js()
 <script>
     hideParentLayerDialogBtn(0);
-    var data={}
     var previews=$("#fileSyncUploaderDemo").val();
     var ress=previews.split(',');
     var strs=[]
-    for (var i=0;i<ress.length;i++){
-        data.fileId="ASDASD.png"
-        data.filename="ASDASD.png"
-        data.url=ress[i]
-        strs.push(data)
+    if (ress.length>0) {
+        for (var i=0;i<ress.length;i++){
+            var data={}
+            data.fileId="ASDASD"+i+".png"
+            data.filename="ASDASD"+i+".png"
+            data.url=ress[i]
+            strs.push(data)
+        }
     }
     let a=$('#fileInput_123')
     var inputId=a.attr("id");
@@ -111,7 +117,6 @@
             }
         }
 
-        console.info(JSON.stringify(previewConfig))
         return {deleteUrl:'/admin/mouldspost/delete', initialPreviewAsData:true,initialPreview:str,initialPreviewShowDelete:true,initialPreviewConfig:previewConfig};
     }
 
@@ -120,8 +125,10 @@
         if (!previewConfig) {
             return;
         }
+        var val = $('#cattachments').val();
         // 将选中数据插入from表单
-        parent.insertDatas(strs);
+
+        parent.insertDatas(strs,val);
         // 关闭当前页面
         parent.layer.close(parent.layer.getFrameIndex(window.name));
     });
