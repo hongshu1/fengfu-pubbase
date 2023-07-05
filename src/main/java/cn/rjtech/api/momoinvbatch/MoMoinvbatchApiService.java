@@ -11,7 +11,6 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
-import cn.rjtech.entity.vo.moinvbatch.MoinvbatchApiResVo;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -24,6 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 import java.math.BigDecimal;
 
 public class MoMoinvbatchApiService extends JBoltApiBaseService {
+    
     @Inject
     private MoDocService moDocService;
     @Inject
@@ -113,25 +113,19 @@ public class MoMoinvbatchApiService extends JBoltApiBaseService {
             }
         }
 
-        MoinvbatchApiResVo moinvbatchApiResVo = new MoinvbatchApiResVo();
-        moinvbatchApiResVo.setMoDoc(moRecod);
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(moinvbatchApiResVo);
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(Okv.by("modoc", moRecod));
     }
 
     /**
      * 返回现品票数据
-     *
-     * @param imodocid
-     * @param iprintstatus
-     * @return
      */
     public Ret getMoMoinvbatchDatas(Long imodocid, Integer iprintstatus) {
         Page<Record> page = moMoinvbatchService.paginateAdminDatas(1, 10000, Kv.by("imodocid", imodocid).set("iprintstatus", iprintstatus));
         if (notOk(page)) {
             return SUCCESS;
         }
-        MoinvbatchApiResVo moinvbatchApiResVo = new MoinvbatchApiResVo();
-        moinvbatchApiResVo.setMoMoinvbatchs(page.getList());
-        return JBoltApiRet.API_SUCCESS_WITH_DATA(moinvbatchApiResVo);
+        
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(Okv.by("momoinvbatchs", page.getList()));
     }
+    
 }

@@ -3,6 +3,7 @@ package cn.rjtech.admin.department;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -22,6 +23,7 @@ import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 import java.util.List;
 
@@ -217,6 +219,25 @@ public class DepartmentAdminController extends BaseAdminController {
     }
 
 
+
+    /**
+     * 执行导入
+     */
+    public void importExcel() {
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+
+        UploadFile file = getFile("file", uploadPath);
+        if (notExcel(file)) {
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+
+        renderJson(service.importRecordsFromExcel(file.getFile()));
+    }
+
+
+
+
     /**
      * 下拉框选择人员数据源
      */
@@ -288,5 +309,5 @@ public class DepartmentAdminController extends BaseAdminController {
 
         renderJsonData(service.getCommonList(kv, "dCreateTime", "desc"));
     }
-
+    
 }

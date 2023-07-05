@@ -1,11 +1,10 @@
 package cn.rjtech.entity.vo.spotcheckformm;
 
-import com.jfinal.plugin.activerecord.Record;
 
-import java.util.Date;
+import java.io.Serializable;
 import java.util.List;
 
-public class SpotCheckFormMEditVo {
+public class SpotCheckFormMEditVo implements Serializable {
 
 
 
@@ -47,26 +46,26 @@ public class SpotCheckFormMEditVo {
     /**
      *表格项目标题
      */
-    private List<Record> lineRoll;
+    private List<SpotCheckFormItemMVo> lineRoll;
 
     /**
      * 表格项目内容
      */
-    private List<Record> lineRoll2;
+    private List<SpotCheckFormDetailVo> lineRoll2;
 
 
 
-    public  List<Record> getLineRoll(){
+    public  List<SpotCheckFormItemMVo> getLineRoll(){
         return  lineRoll;
     }
-    public void setLineRollt(List<Record> lineRoll){
+    public void setLineRollt(List<SpotCheckFormItemMVo> lineRoll){
         this.lineRoll=lineRoll;
     }
 
-    public  List<Record> getLineRoll2(){
-        return  lineRoll;
+    public  List<SpotCheckFormDetailVo> getLineRoll2(){
+        return  lineRoll2;
     }
-    public void setLineRollt2(List<Record> lineRoll2){
+    public void setLineRollt2(List<SpotCheckFormDetailVo> lineRoll2){
         this.lineRoll2=lineRoll2;
     }
 

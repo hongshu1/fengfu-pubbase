@@ -31,7 +31,7 @@ FROM
     #if(cwhcode)
         AND wh.cwhcode LIKE CONCAT('%', #para(cwhcode), '%')
     #end
-	ORDER BY wa.cAreaCode DESC
+	ORDER BY wa.dCreateTime DESC
 #end
 
 #sql("findByWareHouseId")
@@ -74,6 +74,9 @@ WHERE
 #end
 #if(careaname)
     AND careaname = #para(careaname)
+#end
+#if(iwarehouseid)
+    AND iWarehouseId = #para(iwarehouseid)
 #end
 #if(iautoid)
     AND iautoid != #para(iautoid)

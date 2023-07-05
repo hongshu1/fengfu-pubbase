@@ -49,3 +49,22 @@ AND ws.iAutoId IN #(str)
 ORDER BY
 ws.dCreateTime DESC
 #end
+
+#sql("verifyDuplication")
+select ISNULL(COUNT(iAutoId), 0) FROM Bd_Warehouse_Shelves WHERE isDeleted=0
+#if(cshelvescode)
+    AND cShelvesCode = #para(cshelvescode)
+#end
+#if(cshelvesname)
+    AND cShelvesName = #para(cshelvesname)
+#end
+#if(iwarehouseid)
+    AND iWarehouseId = #(iwarehouseid)
+#end
+#if(iwarehouseareaid)
+    AND iWarehouseAreaId = #(iwarehouseareaid)
+#end
+#if(iautoid)
+    AND iAutoId != #(iautoid)
+#end
+#end

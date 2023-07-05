@@ -5,6 +5,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.exception.CommonException;
 import cn.jbolt.core.kit.JBoltControllerKit;
 import cn.rjtech.base.exception.ParameterException;
+import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.util.ExceptionEventUtil;
 import com.alibaba.fastjson.JSONException;
@@ -23,8 +24,6 @@ import java.text.ParseException;
 public class GlobalExceptionInterceptor implements Interceptor {
 
     private static final Log LOG = Log.getLog(GlobalExceptionInterceptor.class);
-
-    private static final String EXCEPTION_PREFIX = "Exception:";
 
     @Override
     public void intercept(Invocation inv) {
@@ -63,24 +62,10 @@ public class GlobalExceptionInterceptor implements Interceptor {
     }
 
     /**
-     * 截取异常前缀
-     *
-     * @param msg 异常错误信息
-     * @return 错误信息
-     */
-    private String removeExceptionPrefix(String msg) {
-        int index = StrUtil.indexOf(msg, EXCEPTION_PREFIX, 0, true);
-        if (index < 0) {
-            return msg;
-        }
-        return msg.substring(index + EXCEPTION_PREFIX.length());
-    }
-
-    /**
      * 自定义异常处理, 日志级别为WARN
      */
     private void renderParameterException(ParameterException e, Controller controller) {
-        String msg = removeExceptionPrefix(e.getLocalizedMessage());
+        String msg = Constants.removeExceptionPrefix(e.getLocalizedMessage());
         LOG.warn(msg);
 
         e.printStackTrace();
@@ -94,7 +79,7 @@ public class GlobalExceptionInterceptor implements Interceptor {
      * 处理公共业务异常, 日志级别为WARN
      */
     private void renderCommonException(CommonException e, Controller controller) {
-        String msg = removeExceptionPrefix(e.getLocalizedMessage());
+        String msg = Constants.removeExceptionPrefix(e.getLocalizedMessage());
         LOG.warn(msg);
         
         e.printStackTrace();
@@ -108,7 +93,7 @@ public class GlobalExceptionInterceptor implements Interceptor {
      * 处理参数格式异常，日志级别为WARN
      */
     private void renderParseException(ParseException e, Controller controller) {
-        String msg = removeExceptionPrefix(e.getLocalizedMessage());
+        String msg = Constants.removeExceptionPrefix(e.getLocalizedMessage());
         LOG.warn(msg);
         
         // controller.render(new MyErrorRender("400", e.getLocalizedMessage(), null))
@@ -120,7 +105,7 @@ public class GlobalExceptionInterceptor implements Interceptor {
      * 处理参数格式异常，日志级别为WARN
      */
     private void renderIllegalArgumentException(IllegalArgumentException e, Controller controller) {
-        String msg = removeExceptionPrefix(e.getLocalizedMessage());
+        String msg = Constants.removeExceptionPrefix(e.getLocalizedMessage());
         LOG.warn(msg);
         
         e.printStackTrace();
@@ -134,7 +119,7 @@ public class GlobalExceptionInterceptor implements Interceptor {
      * 全局异常
      */
     private void renderException(Exception e, Controller controller) {
-        String msg = removeExceptionPrefix(e.getLocalizedMessage());
+        String msg = Constants.removeExceptionPrefix(e.getLocalizedMessage());
         LOG.error(msg);
         
         e.printStackTrace();
@@ -156,7 +141,7 @@ public class GlobalExceptionInterceptor implements Interceptor {
      * 运行时异常, 日志级别为WARN
      */
     private void renderRuntimeException(RuntimeException e, Controller controller) {
-        String msg = removeExceptionPrefix(e.getLocalizedMessage());
+        String msg = Constants.removeExceptionPrefix(e.getLocalizedMessage());
         LOG.warn(msg);
 
         e.printStackTrace();

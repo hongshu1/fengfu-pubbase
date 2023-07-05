@@ -1,6 +1,8 @@
 package cn.rjtech.entity.vo.spotcheckformm;
 
-public class SpotCheckFormMVo {
+import java.io.Serializable;
+
+public class SpotCheckFormMVo implements Serializable {
 
     /**
      * 主表id 没有保存时是没有数据的

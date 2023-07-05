@@ -12,9 +12,9 @@ import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
 import cn.rjtech.entity.vo.modoc.ModocApiPage;
-import cn.rjtech.entity.vo.modoc.ModocApiResVo;
 import cn.rjtech.model.momdata.*;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -40,7 +40,7 @@ public class ModocApiService extends JBoltApiBaseService {
   @Inject
   private WorkregionmService workregionmService; //产线
   @Inject
-  DepartmentService departmentService; //部门
+  private DepartmentService departmentService; //部门
 
   //特殊领料
   @Inject
@@ -72,20 +72,18 @@ public class ModocApiService extends JBoltApiBaseService {
         cinvcode1, cinvname1, cdepname, iworkregionmid, status, starttime, endtime));
   }
 
-  public JBoltApiRet getModocdetails(Long imodocid) {
-    ModocApiResVo modocResVo = new ModocApiResVo();
-    MoDoc moDoc = moDocService.findById(imodocid);
-    if (moDoc == null) {
-      return JBoltApiRet.fail(4000, "工单信息不存在");
-    }
-    Record record = getModoc(moDoc);
-    modocResVo.setDoc(record);
-    //拼上生产任务数据
-    List<Record> rows = moDocService.getMoJobData(imodocid);
-    modocResVo.setJob(rows);
-    return JBoltApiRet.API_SUCCESS_WITH_DATA(modocResVo);
+    public JBoltApiRet getModocdetails(Long imodocid) {
+        MoDoc moDoc = moDocService.findById(imodocid);
+        if (moDoc == null) {
+            return JBoltApiRet.fail(4000, "工单信息不存在");
+        }
+        
+        Record record = getModoc(moDoc);
 
-  }
+        Okv ret = Okv.by("doc", record)
+                .set("job", moDocService.getMoJobData(imodocid));
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(ret);
+    }
 
 
   public Record getModoc(MoDoc moDoc) {

@@ -13,6 +13,7 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Department;
@@ -25,6 +26,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -712,4 +714,114 @@ public class DepartmentService extends BaseService<Department> {
         return dao.findById(id);
     }
 
+
+
+    public Ret importRecordsFromExcel(File file) {
+        StringBuilder errorMsg = new StringBuilder();
+
+        JBoltExcel excel = JBoltExcel
+                // 从excel文件创建JBoltExcel实例
+                .from(file)
+                // 设置工作表信息
+                .setSheets(
+                        JBoltExcelSheet.create("Sheet")
+                                // 设置列映射 顺序 标题名称
+                                .setHeaders(2,
+                                        JBoltExcelHeader.create("cdepcode", "部门编码"),
+                                        JBoltExcelHeader.create("cdepname", "部门名称"),
+                                        JBoltExcelHeader.create("cdeptype", "部门类型"),
+                                        JBoltExcelHeader.create("cpersonname", "负责人"),
+                                        JBoltExcelHeader.create("isapsinvoled", "是否参与排产"),
+                                        JBoltExcelHeader.create("dcreatetime", "创建时间"),
+                                        JBoltExcelHeader.create("cdepmemo", "备注")
+
+
+
+                                )
+                                // 从第三行开始读取
+                                .setDataStartRow(2)
+                );
+
+        // 从指定的sheet工作表里读取数据
+        List<Record> rows = JBoltExcelUtil.readRecords(excel, 0, true, errorMsg);
+        if (notOk(rows)) {
+            if (errorMsg.length() > 0) {
+                return fail(errorMsg.toString());
+            } else {
+                return fail("数据为空!");
+            }
+        }
+
+        // 工序新增的记录
+        List<Record> routingAddRecordList = new ArrayList<>();
+        // 工价新增的记录
+        List<Record> priceAddRecordList = new ArrayList<>();
+
+        List<String> list = new ArrayList<>();
+        Date date = new Date();
+        /*
+        for (Record record : rows) {
+            Record recordByRoutingCode = findRecordByRoutingCode(record.getStr("croutingcode"));
+
+            String name = routerecordService.findrecord(record.getStr("cdeptcode"));
+            if (recordByRoutingCode != null) {
+                list.add(String.format("%s数据编码已存在<br/>", record.getStr("croutingcode")));
+            }
+
+            if (name == null) {
+                list.add(String.format("%s数据车间已存在<br/>", record.getStr("cdeptcode")));
+            }
+
+            int a = 0;
+            for (Record record1 : rows) {
+                if (record.getStr("croutingcode").equals(record1.getStr("croutingcode"))) {
+                    a += 1;
+                }
+                if (a == 2) {
+                    list.add(String.format("%sEXCEL编码重复<br/>", record.getStr("croutingcode")));
+                }
+            }
+
+        }
+
+        LinkedHashSet<String> hashSet = new LinkedHashSet<>(list);
+        ArrayList<String> listWithoutDuplicates = new ArrayList<>(hashSet);
+        ValidationUtils.assertEmpty(listWithoutDuplicates, CollUtil.join(listWithoutDuplicates, COMMA));
+
+        for (Record row : Objects.requireNonNull(rows)) {
+
+            // ValidationUtils.isTrue(row.getBigDecimal("iprice").compareTo(BigDecimal.ZERO) != 0 || row.getBigDecimal("iprice").compareTo(BigDecimal.ZERO) != 0.0, "工价不能为0");
+            // 工序
+            Record routingRecord = findRecordByRoutingCode(row.getStr("croutingcode"));
+
+            // 新增
+            if (null == routingRecord) {
+                routingAddRecordList.add(row.set("iautoid", JBoltSnowflakeKit.me.nextId())
+                        .set("icreateby", userId)
+                        .set("dcreatedate", date).set("cdeptname", routerecordService.findrecord(row.getStr("cdeptcode"))));
+
+            }
+
+
+        }
+        */
+        tx(() -> {
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+    /**
+     * 获取推单部门
+     * */
+    public String getRefDepId(String cdepcode){
+    	Department department = findByCdepcode(cdepcode);
+    	ValidationUtils.notNull(department, "所属部门为空,请检查");
+    	ValidationUtils.notNull(department.getIRefDepId(), department.getCDepName()+"U8推单部门未维护!");
+    	Department refU8Dep = department.findById(department.getIRefDepId());
+    	ValidationUtils.notNull(refU8Dep, department.getCDepName()+"的U8推单部门在部门档案中不存在!");
+    	ValidationUtils.isTrue(refU8Dep.getBDepEnd(), "U8推单部门:"+refU8Dep.getCDepName() + "非末级");
+    	return refU8Dep.getCDepCode();
+    }
 }

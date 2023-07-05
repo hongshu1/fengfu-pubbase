@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMoMoroutingconfigOperation<M extends BaseMoMoroutingconfigOperation<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**工单工艺路线ID*/
@@ -19,6 +19,8 @@ public abstract class BaseMoMoroutingconfigOperation<M extends BaseMoMoroutingco
     public static final String IINVENTORYROUTINGCONFIGID = "iInventoryRoutingConfigId";
     /**工序ID*/
     public static final String IOPERATIONID = "iOperationId";
+    /**工序名称*/
+    public static final String COPERATIONNAME = "cOperationName";
 	/**
 	 * 主键ID
 	 */
@@ -40,7 +42,7 @@ public abstract class BaseMoMoroutingconfigOperation<M extends BaseMoMoroutingco
 	 * 工单工艺路线ID
 	 */
 	public M setIMoInventoryRoutingId(java.lang.Long iMoInventoryRoutingId) {
-		set("iMoRoutingConfigId", iMoInventoryRoutingId);
+		set("iMoInventoryRoutingId", iMoInventoryRoutingId);
 		return (M)this;
 	}
 
@@ -85,6 +87,23 @@ public abstract class BaseMoMoroutingconfigOperation<M extends BaseMoMoroutingco
 	@JSONField(name = "ioperationid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIOperationId() {
 		return getLong("iOperationId");
+	}
+
+	/**
+	 * 工序名称
+	 */
+	public M setCOperationName(java.lang.String cOperationName) {
+		set("cOperationName", cOperationName);
+		return (M)this;
+	}
+
+	/**
+	 * 工序名称
+	 */
+	@JBoltField(name="coperationname" ,columnName="cOperationName",type="String", remark="工序名称", required=true, maxLength=200, fixed=0, order=5)
+	@JSONField(name = "coperationname")
+	public java.lang.String getCOperationName() {
+		return getStr("cOperationName");
 	}
 
 }
