@@ -127,22 +127,31 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     }
 
     /**
-     * 查询现品票
+     * 查询单条现品票（生产退料）
      */
     public void addBarcode() {
-        renderJsonData(service.getBycBarcodeInfo(get("barcode"),getPageNumber(),getPageSize()));
+        renderJsonData(service.getBycBarcodeInfo(get("barcode")));
     }
 
+    /**
+     *  查询全部现品票（生产退料）
+     */
     public void getmomaterialscanusedlogList() {
         renderJsonData(service.getBycBarcodeList(getPageNumber(),getPageSize()));
     }
 
+    /**
+     * 保存新增生产退料
+     */
     public void saveTableSubmit() {
         renderJson(service.saveTableSubmit(getJBoltTable()));
     }
 
+    /**
+     * 生产退料详情
+     */
     public void getmomaterialscanuseMList() {
-        renderJsonData(service.getModandMomlist(get("iautoid"),getPageNumber(),getPageSize()));
+        renderJsonData(service.getModandMomlist(get("iautoid")));
     }
 
 }

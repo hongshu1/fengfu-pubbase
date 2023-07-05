@@ -329,10 +329,10 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
     }
 
 
-    public Page<Record> getBycBarcodeInfo(String barcode,Integer pageNumber,Integer pageSize) {
+    public List<Record> getBycBarcodeInfo(String barcode) {
         Kv para = Kv.by("barcode", barcode);
-        Page<Record> paginate = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).paginate(pageNumber,pageSize);
-        for (Record record : paginate.getList()) {
+        List<Record> paginate = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).find();
+        for (Record record : paginate) {
             if (ObjUtil.isNull(record.getBigDecimal("iQty")) && ObjUtil.isNull(record.getBigDecimal("iScannedQty"))) {
                 ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
             }
@@ -519,8 +519,8 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
         return null;
     }
 
-    public Page<Record> getModandMomlist(String iautoid,Integer pageNumber,Integer pageSize) {
-        return dbTemplate("momaterialsreturnm.getModandMomlist", Kv.by("iautoid", iautoid)).paginate(pageNumber,pageSize);
+    public List<Record> getModandMomlist(String iautoid) {
+        return dbTemplate("momaterialsreturnm.getModandMomlist", Kv.by("iautoid", iautoid)).find();
     }
 
 }
