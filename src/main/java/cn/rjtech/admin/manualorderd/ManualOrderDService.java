@@ -116,4 +116,8 @@ public class ManualOrderDService extends BaseService<ManualOrderD> {
     public List<ManualOrderD> findByMid(ManualOrderM manualOrderM) {
         return find(selectSql().eq("iManualOrderMid", manualOrderM.getIAutoId()).eq("isDeleted", 0));
     }
+
+	public List<ManualOrderD> findByMId(long iManualOrderMid) {
+		return find(selectSql().eq("iManualOrderMid", iManualOrderMid).eq("isDeleted", 0));
+	}
 }
