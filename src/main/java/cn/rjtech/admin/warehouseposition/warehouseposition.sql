@@ -70,3 +70,25 @@ AND wp.iautoid IN #(str)
 ORDER BY wp.dCreateTime DESC
 #end
 
+#sql("verifyDuplication")
+SELECT ISNULL(COUNT(iAutoId), 0) FROM Bd_Warehouse_Position
+WHERE isDeleted=0
+#if(cpositioncode)
+    AND cPositionCode = #para(cpositioncode)
+#end
+#if(cpositionname)
+    AND cPositionName = #para(cpositionname)
+#end
+#if(iwarehouseid)
+    AND iWarehouseId = #(iwarehouseid)
+#end
+#if(iwarehouseareaid)
+    AND iWarehouseAreaId = #(iwarehouseareaid)
+#end
+#if(iwarehouseshelvesid)
+    AND iWarehouseShelvesId = #(iwarehouseshelvesid)
+#end
+#if(iautoid)
+    AND iAutoId != #(iautoid)
+#end
+#end

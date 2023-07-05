@@ -31,7 +31,7 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 10:01
  */
-@CheckPermission(PermissionKey.SALES_SHIPMENT_LIST)
+@CheckPermission(PermissionKey.SYSSALEDELIVERPLAN)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/salesShipmentList", viewPath = "/_view/admin/syssaledeliverplan")
@@ -55,9 +55,22 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
     }
 
     /**
+     * 新增-跳转到弹窗确认页面
+     */
+    public void addConfirm(){
+        render("addConfirm.html");
+    }
+
+    /**
      * 新增
      */
     public void add() {
+        Kv kv = getKv();
+        set("ccusabbname","");//客户简称
+        set("ccusname","");//客户名称称
+        set("ccuscode","");//客户编码
+        set("starttime",kv.get("starttime"));
+        set("endtime",kv.get("endtime"));
         render("add.html");
     }
 
