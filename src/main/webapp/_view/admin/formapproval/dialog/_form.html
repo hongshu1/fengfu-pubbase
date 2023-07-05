@@ -1,0 +1,72 @@
+#set(pageId=RandomUtil.random(6))
+<style>
+	.pi-zhu{
+		color: #BEBEBE;
+		font-weight: bold;
+	}
+</style>
+
+<form onsubmit="return false;" id="approvalMForm" action="#(action)" method="post">
+
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(approvalM.isSkippedOnDuplicate??)"
+    	data-name="approvalM.isSkippedOnDuplicate"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否自动去重:</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isskippedonduplicate_true" type="radio" name="approvalM.isSkippedOnDuplicate" value="true"/>
+					<label for="r_isskippedonduplicate_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isskippedonduplicate_false" type="radio" name="approvalM.isSkippedOnDuplicate" value="false"/>
+					<label for="r_isskippedonduplicate_false">否</label>
+				</div>
+				<span class="pi-zhu">审批流程中审批人重复出现时，只需审批一次其余自动通过</span>
+			</div>
+		</div>
+    <div class="form-group row"
+    	data-radio
+    	data-rule="radio"
+    	data-value="#(approvalM.isApprovedOnSame??)"
+    	data-name="approvalM.isApprovedOnSame"
+    	data-default="options_first"
+    	data-width="col-sm-2,col"
+		>
+			<label class="col-sm-2 col-form-label" >是否自动通过:</label>
+			<div class="col"  style="padding-top: 1px;">
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isapprovedonsame_true" type="radio" name="approvalM.isApprovedOnSame" value="true"/>
+					<label for="r_isapprovedonsame_true">是</label>
+				</div>
+
+				<div class="radio radio-primary  radio-inline">
+					<input  id="r_isapprovedonsame_false" type="radio" name="approvalM.isApprovedOnSame" value="false"/>
+					<label for="r_isapprovedonsame_false">否</label>
+				</div>
+				<span class="pi-zhu">审批人和发起人是同一人时，审批自动通过</span>
+			</div>
+		</div>
+</form>
+
+<div class="form-group row">
+	<label class="col-sm-2 col-form-label">流程配置:</label>
+	<div class="col">
+		<div class="jbolt_page_content">
+			#render("_table_line2.html")
+		</div>
+	</div>
+</div>
+
+#define js()
+<script>
+
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="approvalMForm")
+#end
+

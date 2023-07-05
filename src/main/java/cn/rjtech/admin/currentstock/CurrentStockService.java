@@ -1,14 +1,18 @@
 package cn.rjtech.admin.currentstock;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.otherdeliverylist.OtherOutDeliveryService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.stockcheckvouchbarcode.StockCheckVouchBarcodeService;
@@ -27,6 +31,8 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,6 +77,8 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
     private OtherOutDeliveryService       otherOutDeliveryService;//其它出库单
     @Inject
     private OtherOutDetailService         otherOutDetailService;//其它出库单-明细表
+    @Inject
+    private FormService formService;
 
 
 
@@ -191,6 +199,96 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         }
         return page;
     }
+
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file,Long autoid,String whcode,String poscodes) {
+        StringBuilder errorMsg = new StringBuilder();
+        JBoltExcel jBoltExcel = JBoltExcel
+                //从excel文件创建JBoltExcel实例
+                .from(file)
+                //设置工作表信息
+                .setSheets(
+                        JBoltExcelSheet.create("stockcheckvouch")
+                                //设置列映射 顺序 标题名称
+                                .setHeaders(2,
+                                        JBoltExcelHeader.create("Barcode", "现品票"),
+                                        JBoltExcelHeader.create("InvCode", "存货编码"),
+                                        JBoltExcelHeader.create("Qty", "数量")
+                                )
+                                //从第三行开始读取
+                                .setDataStartRow(3)
+                );
+
+        //从指定的sheet工作表里读取数据
+        List<Record> StockCheckVouchBarcode = JBoltExcelUtil.readRecords(jBoltExcel, "stockcheckvouch", true, errorMsg);
+        if (errorMsg.length() > 0) {
+            return fail(errorMsg.toString());
+        }
+        if (notOk(StockCheckVouchBarcode)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+        //存放对象的集合
+        List<StockCheckVouchBarcode> newList = new ArrayList<>();
+
+        //遍历导入的数据
+        int k = 2;
+        for (Record record : StockCheckVouchBarcode) {
+            String barcode = record.getStr("Barcode");
+            String invCode = record.getStr("InvCode");
+            String qty = record.getStr("Qty");
+            k++;
+            if (StrUtil.isBlank(barcode)) {
+                return fail("Excel文档中第" + k + "行,数据现品票不能为空");
+            }
+            if (StrUtil.isBlank(invCode)) {
+                return fail("Excel文档中第" + k + "行,存货编码不能为空");
+            }
+            if (StrUtil.isBlank(qty)) {
+                return fail("Excel文档中第" + k + "行,数量不能为空");
+            }
+            Kv kv = new Kv();
+            kv.setIfNotNull("whcode",whcode);//仓库
+            kv.setIfNotNull("poscode",poscodes);//库区
+            kv.setIfNotNull("invcode",invCode);
+            kv.setIfNotNull("barcode",barcode);
+            Record first = dbTemplate("currentstock.barcodeDatas",kv).findFirst();
+            System.out.println("first===="+ first);
+            if (isNull(first)) {
+                ValidationUtils.isTrue(false, "Excel文档中第" + k + "行格式错误！！");
+            }
+            String iQty = first.getStr("iQty");
+            if (qty.compareTo(iQty) == 1){
+                ValidationUtils.isTrue(false, "Excel文档中第" + k + "超出现品票数量！！");
+            }
+            Date now=new Date();
+
+            //存入数据
+            StockCheckVouchBarcode pojo = new StockCheckVouchBarcode();
+            pojo.setBarcode(barcode);
+            pojo.setInvCode(invCode);
+            pojo.setQty(new BigDecimal(qty));
+            pojo.setMasID(autoid);
+            pojo.setAutoID(JBoltSnowflakeKit.me.nextId());
+            pojo.setIcreateby(JBoltUserKit.getUserId());
+            pojo.setDcreatetime(now);
+            pojo.setCcreatename(JBoltUserKit.getUserName());
+            pojo.setIsDeleted(false);
+            pojo.setIupdateby(JBoltUserKit.getUserId());
+            pojo.setDupdatetime(now);
+            pojo.setCupdatename(JBoltUserKit.getUserName());
+            newList.add(pojo);
+        }
+        // 执行批量操作
+        tx(() -> {
+           stockCheckVouchBarcodeService.batchSave(newList);
+            return true;
+        });
+        return SUCCESS;
+    }
+
 
 
     /**
@@ -323,6 +421,19 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
      */
     public List<Record> autocompletePosition(Kv kv) {
         return dbTemplate("currentstock.autocompletePosition", kv).find();
+    }
+
+    /**
+     *  库区数据源
+     */
+    public List<Record> getposHouseDatas(Kv kv) {
+        return dbTemplate("currentstock.posHouse", kv).find();
+    }
+    /**
+     *  料品分类数据源
+     */
+    public List<Record> getInventoryClassDatas(Kv kv) {
+        return dbTemplate("currentstock.InventoryClass", kv).find();
     }
 
     /**
@@ -641,7 +752,6 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         final Long[] AutoIDs = {null};
         tx(() -> {
             Date now = new Date();
-            String userName = JBoltUserKit.getUserName();
             stockcheckvouch.setBillDate(JBoltDateUtil.format(now, "yyyy-MM-dd"));
             stockcheckvouch.setIAuditStatus(0);
             //创建人
@@ -707,9 +817,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
            /* BigDecimal qty = vouchDetail.getQty();//账面数量
             BigDecimal realQty = vouchDetail.getRealQty();//实际数量
             BigDecimal bigDecimal = qty.subtract(realQty);//剩余数量*/
-
             BigDecimal plqtyQty = vouchDetail.getPlqtyQty();//盈亏数量
-
             //判断剩余数量是否为正负数
             int resultQty = plqtyQty.compareTo(BigDecimal.ZERO);
             List<Record> recordList = findCheckVouchBarcodeByMasIdAndInvcode(stockCheckVouch.getAutoId(),
