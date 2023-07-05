@@ -68,6 +68,11 @@ public class WorkregionmService extends BaseService<Workregionm> {
      * 保存
      */
     public Ret save(Workregionm workregionm) {
+        Long iDepId = workregionm.getIDepId();
+        Department department = departmentService.findByid(iDepId);
+        workregionm.setCDepCode(department.getCDepCode());
+        workregionm.setCDepName(department.getCDepName());
+
         if (workregionm == null || isOk(workregionm.getIAutoId())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
