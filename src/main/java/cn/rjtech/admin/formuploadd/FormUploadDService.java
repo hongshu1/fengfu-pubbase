@@ -36,7 +36,11 @@ public class FormUploadDService extends BaseService<FormUploadD> {
 	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv para) {
-		return dbTemplate("formuploadd.getAdminDatas", para).paginate(pageNumber, pageSize);
+		Page<Record> paginate = dbTemplate("formuploadd.getAdminDatas", para).paginate(pageNumber, pageSize);
+		for (Record record : paginate.getList()) {
+			record.set("cattachments2",record.getStr("cattachments"));
+		}
+		return paginate;
 	}
 
 	/**
