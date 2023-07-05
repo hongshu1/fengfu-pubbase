@@ -257,7 +257,13 @@ public class WorkregionmService extends BaseService<Workregionm> {
 
             if (StrUtil.isBlank(record.getStr("cWorkCode"))) {
                 return fail("产线编码不能为空");
+            }else{
+                String cWorkCode = record.getStr("cWorkCode");
+                Workregionm dbModel = findByCworkcode(getOrgId(), cWorkCode);
+                ValidationUtils.isTrue(dbModel==null,cWorkCode+",已存在该条码!");
+
             }
+
             if (StrUtil.isBlank(record.getStr("cWorkName"))) {
                 return fail("产线名称不能为空");
             }
@@ -320,7 +326,8 @@ public class WorkregionmService extends BaseService<Workregionm> {
 
                 personMap.put(cpersonname, person);
             }
-            
+
+
             record.set("cDepCode", department.getCDepCode());
             record.set("iDepId", department.getIAutoId());
             record.set("iWarehouseId", warehouse.getIAutoId());
@@ -468,6 +475,12 @@ public class WorkregionmService extends BaseService<Workregionm> {
         return queryColumn(selectSql().select(Workregionm.IAUTOID).eq(Workregionm.CWORKCODE, cworkcode));
     }
 
+
+    public Workregionm findByCworkcode(Long orgId, String cworkcode) {
+        return findFirst(selectSql().eq(Workregionm.IORGID, orgId).eq(Workregionm.CWORKCODE, cworkcode).eq(Workregionm.ISDELETED, ZERO_STR).first());
+    }
+
+
     public void deleteCworkCode(String cworkcode) {
         delete("DELETE FROM Bd_WorkRegionM WHERE cWorkCode = ?", cworkcode);
     }
@@ -547,4 +560,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
     public Workregionm findFirstByWorkName(String cWorkName) {
         return  findFirst(selectSql().select().eq(Workregionm.CWORKNAME, cWorkName));
     }
+
+
+
 }
