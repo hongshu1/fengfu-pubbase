@@ -53,7 +53,6 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
    */
   public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
     return dbTemplate("warehouseshelves.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
-    //return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
   }
 
   public List<Record> list(Kv kv) {
@@ -79,8 +78,18 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
     if (warehouseShelves == null || isOk(warehouseShelves.getIautoid())) {
       return fail(JBoltMsg.PARAM_ERROR);
     }
-    //if(existsName(warehouseShelves.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
-    ValidationUtils.assertNull(findByCshelvesCode(warehouseShelves.getCshelvescode()), warehouseShelves.getCshelvescode() + " 编码重复");
+
+    Integer cshelvescode = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvescode", warehouseShelves.getCshelvescode())
+        .set("iwarehouseid", warehouseShelves.getIwarehouseid()).set("iwarehouseareaid", warehouseShelves.getIwarehouseareaid())).queryInt();
+    if (cshelvescode >= 1) {
+      ValidationUtils.error("【货架编码】" + warehouseShelves.getCshelvescode() + "已存在，请修改后保存");
+    }
+
+    Integer cshelvesname = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvesname", warehouseShelves.getCshelvesname())
+        .set("iwarehouseid", warehouseShelves.getIwarehouseid()).set("iwarehouseareaid", warehouseShelves.getIwarehouseareaid())).queryInt();
+    if (cshelvesname >= 1) {
+      ValidationUtils.error("【货架名称】" + warehouseShelves.getCshelvesname() + "已存在，请修改后保存");
+    }
 
     warehouseShelves.setIcreateby(JBoltUserKit.getUserId());
     warehouseShelves.setCcreatename(JBoltUserKit.getUserName());
@@ -117,12 +126,17 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
       return fail(JBoltMsg.DATA_NOT_EXIST);
     }
 
-    //查询编码是否存在
-    WarehouseShelves ware = findByCshelvesCode(warehouseShelves.getCshelvescode());
-
-    //编码重复判断
-    if (ware != null && !warehouseShelves.getIautoid().equals(ware.getIautoid())) {
-      ValidationUtils.assertNull(ware.getCshelvescode(), warehouseShelves.getCshelvescode() + " 编码重复！");
+    Integer cshelvescode = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvescode", warehouseShelves.getCshelvescode())
+        .set("iwarehouseid", warehouseShelves.getIwarehouseid()).set("iwarehouseareaid", warehouseShelves.getIwarehouseareaid()).
+            set("iautoid", warehouseShelves.getIautoid())).queryInt();
+    if (cshelvescode >= 1) {
+      ValidationUtils.error("【货架编码】" + warehouseShelves.getCshelvescode() + "已存在，请修改后保存");
+    }
+    Integer cshelvesname = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvesname", warehouseShelves.getCshelvesname())
+        .set("iwarehouseid", warehouseShelves.getIwarehouseid()).set("iwarehouseareaid", warehouseShelves.getIwarehouseareaid()).
+            set("iautoid", warehouseShelves.getIautoid())).queryInt();
+    if (cshelvesname >= 1) {
+      ValidationUtils.error("【货架名称】" + warehouseShelves.getCshelvescode() + "已存在，请修改后保存");
     }
 
     dbWarehouseShelves.setIupdateby(JBoltUserKit.getUserId());
@@ -253,31 +267,34 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
                 .setHeaders(
                     JBoltExcelHeader.create("cshelvescode", "货架编码"),
                     JBoltExcelHeader.create("cshelvesname", "货架名称"),
-                    JBoltExcelHeader.create("cwhcode", "所属仓库编码"),
-                    JBoltExcelHeader.create("careacode", "所属库区编码"),
+                    JBoltExcelHeader.create("cwhname", "所属仓库名称"),
+                    JBoltExcelHeader.create("careaname", "所属库区名称"),
                     JBoltExcelHeader.create("cmemo", "备注")
                 )
                 //特殊数据转换器
                 .setDataChangeHandler((data, index) -> {
-                  ValidationUtils.notNull(data.get("cshelvescode"), "货架编码为空！");
-                  ValidationUtils.notNull(data.get("cshelvesname"), "货架名称为空！");
-                  ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
+                  ValidationUtils.notNull(data.get("cshelvescode"), "第【" + (index + 1) + "】行的货架编码不能为空！");
+                  ValidationUtils.notNull(data.get("cshelvesname"), "第【" + (index + 1) + "】货架名称不能为空！");
+                  ValidationUtils.notNull(data.get("cwhname"), "第【" + (index + 1) + "】所属仓库名称不能为空！");
+                  ValidationUtils.isTrue(findByCshelvesCode(data.getStr("cshelvescode")) == null,
+                      data.getStr("cshelvescode") + "编码重复");
 
-                  ValidationUtils.isTrue(findByCshelvesCode(data.getStr("cshelvescode")) == null, data.getStr("cshelvescode") + "编码重复");
+                  Warehouse warehouse = warehouseService.findByWhName(data.getStr("cwhname"));
+                  ValidationUtils.notNull(warehouse, "第【" + (index + 1) + "】行【仓库名称-" + data.getStr("cwhname") + "】"
+                      + JBoltMsg.DATA_NOT_EXIST);
 
-                  Warehouse warehouse = warehouseService.findByWhCode(data.getStr("cwhcode"));
-                  ValidationUtils.notNull(warehouse, data.getStr("cwhcode") + JBoltMsg.DATA_NOT_EXIST);
+                  if (isOk(data.getStr("careaname"))) {
+                    WarehouseArea warehouseArea = warehouseAreaService.findByWhAreaName(data.getStr("careaname"));
+                    ValidationUtils.notNull(warehouse, "第【" + (index + 1) + "】行【所属库区名称-" + data.getStr("careaname") + "】"
+                        + JBoltMsg.DATA_NOT_EXIST);
 
-                  if (isOk(data.getStr("careacode"))) {
-                    WarehouseArea warehouseArea = warehouseAreaService.findByWhAreaCode(data.getStr("careacode"));
-                    ValidationUtils.notNull(warehouse, data.getStr("careacode") + JBoltMsg.DATA_NOT_EXIST);
                     data.change("iwarehouseareaid", warehouseArea.getIautoid());
                   }
 
                   data.change("iwarehouseid", warehouse.getIAutoId());
 
-                  data.remove("cwhcode");
-                  data.remove("careacode");
+                  data.remove("cwhname");
+                  data.remove("careaname");
 
                   data.change("icreateby", JBoltUserKit.getUserId());
                   data.change("ccreatename", JBoltUserKit.getUserName());
