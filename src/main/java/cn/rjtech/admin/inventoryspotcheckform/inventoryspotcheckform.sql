@@ -55,12 +55,12 @@ SELECT t1.*, t2.iautoid as spotcheckformiautoid, t2.cSpotCheckFormName,
 #end
 
 #sql("findByInventoryIdAndOperationName")
-select * from
+select a.iSpotCheckFormId,sf.cSpotCheckFormName from
 
-        Bd_InventorySpotCheckForm  a
-         left join Bd_InventorySpotCheckForm_Operation b on b.iInventorySpotCheckFormId=a.iAutoId
-         left join Bd_Operation c on  b.iOperationId=c.iAutoId
-
+    Bd_InventorySpotCheckForm  a
+        left join Bd_InventorySpotCheckForm_Operation b on b.iInventorySpotCheckFormId=a.iAutoId
+        left join Bd_Operation c on  b.iOperationId=c.iAutoId
+        left join Bd_SpotCheckForm sf on sf.iAutoId = a.iSpotCheckFormId
 where
       1=1
       #if(iinventoryid)

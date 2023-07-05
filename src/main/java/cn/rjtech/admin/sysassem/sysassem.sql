@@ -452,5 +452,5 @@ where a.isEffective = '1' and change.iAutoId is not null
 
 
 #sql("findU8RdRecord01Id")
-select r.* from UFDATA_001_2023.dbo.AssemVouch r where r.cCode = #para(cCode)
+select r.* from UFDATA_001_2023.dbo.AssemVouch r where r.cAVCode = #para(cCode)
 #end

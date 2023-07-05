@@ -47,31 +47,8 @@
                         <div class="row">
                             <div class="col" >
                                 <div class="form-group row" >
-                                    <label class="col-sm-2 col-form-label">类别名称</label>
-                                    <div class="col-2">
-                                        <select class="form-control"
-                                                data-height="30"
-                                                data-width="220"
-                                                data-autoload
-                                                data-url="admin/formUploadCategory/options"
-                                                data-select-type="select2"
-                                                name="formUploadM.iCategoryId"
-                                                data-refresh="true"
-                                                data-rule="select"
-                                                data-notnull="true"
-                                                data-tips="请选择目录名称"
-                                                data-text="=请选择="
-                                                data-value-attr="iautoid"
-                                                data-text-attr="ccategoryname"
-                                                data-select="#(formUploadM.icategoryid??)"
-                                                #if(readonly)
-                                                disabled
-                                                #end
-                                        ></select>
-                                    </div>
-<!--                                        <a data-dialogbtn href="admin/formUploadCategory/index" data-area="80%,80%" data-title="分类管理" data-handler="refreshJBoltTable" ><i class="jbicon jb-shezhi3"></i></a>-->
-                                    <label class="col-sm-2 col-form-label" >产线名称</label>
-                                    <div class="col-2">
+                                    <label class="col-sm-1 col-form-label" >产线名称</label>
+                                    <div class="col-1">
                                         <select class="form-control"
                                                 data-height="30"
                                                 data-width="220"
@@ -92,37 +69,56 @@
                                                 #end
                                         ></select>
                                     </div>
-                                </div>
-                                <div class="form-group row" >
+                                    <label class="col-sm-2 col-form-label">目录名称</label>
+                                    <div class="col-1">
+                                        <select class="form-control"
+                                                data-height="30"
+                                                data-width="220"
+                                                data-autoload
+                                                data-url="admin/formUploadCategory/options"
+                                                data-select-type="select2"
+                                                name="formUploadM.iCategoryId"
+                                                data-refresh="true"
+                                                data-rule="select"
+                                                data-notnull="true"
+                                                data-tips="请选择目录名称"
+                                                data-text="=请选择="
+                                                data-value-attr="iautoid"
+                                                data-text-attr="ccategoryname"
+                                                data-select="#(formUploadM.icategoryid??)"
+                                                #if(readonly)
+                                                disabled
+                                                #end
+                                        ></select>
+                                    </div>
                                     <label class="col-sm-2 col-form-label">日期</label>
                                     <div class="col-2">
                                         <input type="text" data-date data-type="date"    #if(readonly) disabled #end data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off" class="form-control"  data-rule="required" placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="formUploadM.ddate" value="#(formUploadM.ddate??)"/>
                                     </div>
-                                    #if(readonly == 'readonly')
-                                    <label class="col-sm-2 col-form-label">状态</label>
+<!--                                        <a data-dialogbtn href="admin/formUploadCategory/index" data-area="80%,80%" data-title="分类管理" data-handler="refreshJBoltTable" ><i class="jbicon jb-shezhi3"></i></a>-->
+                                </div>
+                                #if(readonly == 'readonly')
+                                <div class="form-group row" >
+                                    <label class="col-sm-1 col-form-label">状态</label>
                                     <div class="col-2">
                                         <input type="text"    autocomplete="off"  hidden   #if(readonly) disabled #end  class="form-control"    maxlength="10" name="formUploadM.iAuditStatus" value="#(formUploadM.iauditstatus??)"/>
                                         <input type="text"    autocomplete="off"     #if(readonly) disabled #end  class="form-control"    maxlength="10" name="status" value="#(status??)"/>
                                     </div>
-                                    #end
-                                </div>
-                                #if(readonly == 'readonly')
-                                <div class="form-group row" >
-                                    <label class="col-sm-2 col-form-label">创建人</label>
+                                    <label class="col-sm-1 col-form-label">创建人</label>
                                     <div class="col-2">
                                         <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="formUploadM.cCreateName" value="#(formUploadM.ccreatename??)"/>
                                     </div>
-                                    <label class="col-sm-2 col-form-label">创建时间</label>
+                                    <label class="col-sm-1 col-form-label">创建时间</label>
                                     <div class="col-2">
                                         <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" disabled autocomplete="off" class="form-control"  placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="formUploadM.dCreateTime" value="#(formUploadM.dcreatetime??)"/>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
-                                    <label class="col-sm-2 col-form-label">审核人</label>
+                                    <label class="col-sm-1 col-form-label">审核人</label>
                                     <div class="col-2">
                                         <input type="text"  disabled  autocomplete="off"  class="form-control"    maxlength="10" name="formUploadM.cAuditName" value="#(formUploadM.cauditname??)"/>
                                     </div>
-                                    <label class="col-sm-2 col-form-label">审核时间</label>
+                                    <label class="col-sm-1 col-form-label">审核时间</label>
                                     <div class="col-2">
                                         <input type="text" data-date data-type="date" data-fmt="yyyy-MM-dd" disabled autocomplete="off" class="form-control"  placeholder="请设置日期" data-tips="请设置日期" maxlength="10" name="formUploadM.dAuditTime" value="#(formUploadM.daudittime??)"/>
                                     </div>
@@ -132,7 +128,7 @@
                             </div>
                         </div>
                         <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
-                        <input id="cattachments" type="hidden" name="cattachments" value="#(cattachments??)">
+                        <input id="cattachments" type="hidden" name="cattachments2" value="#(cattachments??)">
                     </form>
                 </div>
             </div>
@@ -151,17 +147,18 @@
             #end
             <td >
                 {@if data.cattachments != null}
-                <div  class="float-right">
+                <div  class="float-right" id="${data.cattachments}">
+                    <a href="admin/formUploadM/attachment?iautoid=${data.iautoid}&cattachments=${data.cattachments}&edit=true" tooltip data-dialog-title="图片上传" data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst"><i class="fa fa-plus"></i></a>
                     {@each data.cattachments.split(",") as url}
-                    {@if url.
-                    indexOf('png') != -1 || url.indexOf('jpg')!=-1}
-                    <img  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
+                    {@if url.indexOf('png') != -1 || url.indexOf('jpg')!=-1}
+                    <img  id="${url}"  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
                     {@/if}
                     {@/each}
                 </div>
                 {@/if}
             </td>
             <td>${data.cmemo}</td>
+            <td hidden>${data.cattachments2}</td>
         </tr>
         {@/each}
     </script>
@@ -187,11 +184,11 @@
             <th data-width="60" data-column="index">序号</th>
 
             #if(readonly != 'readonly')
-            <th data-width="150" data-column="cattachments">操作</th>
+            <th data-width="20" data-column="cattachments">操作</th>
             #end
-
-            <th data-width="150"  data-column="cattachments">附件</th>
-            <th data-width="150" data-column="cmemo">备注</th>
+            <th data-width="550"  data-column="cattachments">附件</th>
+            <th data-width="480" data-column="cmemo">备注</th>
+            <th hidden data-width="1" data-column="cattachments2">附件2</th>
         </tr>
         </thead>
     </table>
@@ -231,10 +228,9 @@
     }
     function getJBoltTableEditableColsOpton() {
         var editableTableOptions = {
-
+            trigger: "click",
             submit: {
                 withForm: ["formUploadM_#(pageId)"],
-                name: 'formUploadM',
                 type: "all",
                 url: "admin/formUploadM/submitAll",
                 success: function (res) {
@@ -249,7 +245,6 @@
                             if (submit) {
                                 // 提审
                                 submit_#(pageId)(res.data.iautoid, function (data) {
-                                    console.log(3)
                                     successHandler('提审成功', res.data.iautoid);
                                 });
                             } else {
@@ -267,13 +262,12 @@
                     submitAttr: "iautoid"
                 },
                 cmemo: {
-                    placeholder: "请输入",
                     type: "input",
-                    submitAttr:"cmemo"
+                    submitAttr:"cmemo",
                 },
-                cattachments: {
-                    type: "img",
-                    submitAttr:"cattachments"
+                cattachments2: {
+                    type: "input",
+                    submitAttr:"cattachments2"
                 }
             }
         };
@@ -281,32 +275,68 @@
     }
 
     // 新增插入数据
-    function insertDatas(data) {
+    function insertDatas(data,url) {
         if (!data) {
             LayerMsgBox.alert("导入数据异常", 2);
             return;
         }
         var datas=[];
         var cattachments="";
+
         for (var i = 0; i < data.length; i++) {
-            if (i > 0) {
-                var datum = data[i];
+            var datum = data[i];
+            if (datum.url !== '') {
                 cattachments +=  datum.url + ",";
             }
         }
         if (cattachments.length > 0) {
-            cattachments = cattachments.substr(0,cattachments.length - 1);
+         cattachments = cattachments.substr(0,cattachments.length - 1);
         }
+
         datas.push({cattachments:cattachments})
-        // 插入数据
-        jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
-        var val = $("#cattachments").val();
-        if (cattachments.indexOf(",") === -1) {
-            if (val == null) {
-                $("#cattachments").val(cattachments);
-            }else {
-                $("#cattachments").val(val+','+cattachments);
+        if (url){
+            for (var i = 0; i < data.length; i++) {
+                let datum1 = data[i];
+                let element = document.getElementById(""+datum1.url);
+                if (!element){
+                    var elementById = document.getElementById(""+url);
+                    var bigImg = document.createElement("img");
+                    bigImg.id=""+datum1.url;  //200个像素 不用加px
+                    bigImg.src=""+real_image(datum1.url);
+                    bigImg.setAttribute("data-photobtn","");
+                    bigImg.setAttribute("tooltip","");
+                    bigImg.setAttribute("data-title","点击查看图片");
+                    bigImg.setAttribute("style","width: 60px;height: 60px;border-radius:50%;");
+                    bigImg.setAttribute("onerror","this.src='assets/img/avatar.jpg'");
+                    bigImg.setAttribute("data-original-title","");
+                    bigImg.setAttribute("title","");
+                    elementById.appendChild(bigImg);
+                }
             }
+            //修改数据
+            var $table = $('#jbolt_Table_#(pageId)');
+            var $td = $("table#jbolt_Table_#(pageId) td:contains('" + url + "')").first();
+            var cols = [
+                {column: "cattachments2", text: cattachments, value: cattachments}
+            ];
+            jboltTableSetCells($table, $td.parent(), cols);
+            var val2 = $("#cattachments").val();
+                if (val2 === "") {
+                    $("#cattachments").val(cattachments);
+                }else {
+                    $("#cattachments").val(val2+'-'+cattachments);
+            }
+        }else {
+            jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
+
+            var val = $("#cattachments").val();
+                if (val === "") {
+                    $("#cattachments").val(cattachments);
+                }else {
+                    console.log(val);
+                    $("#cattachments").val(val+'-'+cattachments);
+                }
+
         }
 
     }

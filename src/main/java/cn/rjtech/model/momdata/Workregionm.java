@@ -3,7 +3,7 @@ package cn.rjtech.model.momdata;
 import cn.jbolt.core.annotation.JBoltAutoCache;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
-import cn.rjtech.model.momdata.base.BaseWorkregionm;
+import cn.rjtech.model.momdata.base.BaseWorkRegionM;
 
 
 /**
@@ -13,6 +13,6 @@ import cn.rjtech.model.momdata.base.BaseWorkregionm;
 @SuppressWarnings("serial")
 @JBoltAutoCache(keyCache = true,column = "iAutoId")
 @TableBind(dataSource = "momdata" , table = "Bd_WorkRegionM" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
-public class Workregionm extends BaseWorkregionm<Workregionm> {
+public class Workregionm extends BaseWorkRegionM<Workregionm> {
 }
 

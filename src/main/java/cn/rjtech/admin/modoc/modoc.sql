@@ -378,3 +378,14 @@ WHERE iAutoId = (
     ORDER BY mrc.iSeq DESC
 )
 #end
+#sql("findByModecIdProcessDatas")
+select a.iMoDocId as modocid, a.iinventoryroutingid, a.iinventoryid, b.iAutoId as RoutingConfigid, b.cOperationName
+
+from Mo_MoRouting a
+         join Mo_MoRoutingConfig b on b.iMoRoutingId = a.iAutoId
+    where
+          1=1
+        #if(imodocid)
+        and a.iMoDocId=#para(imodocid)
+        #end
+#end
