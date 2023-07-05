@@ -9,7 +9,7 @@ SELECT  rm.iAutoId as iautoid, CASE rm.iStatus
         '已审批'
 				WHEN 4 THEN
         '审批不通过'
-        END AS iStatus,rm.iStatus as iStatusId,rm.cGoodsPaymentNo,rm.iCustomerId,u.cCusCode,u.cCusName,rm.cCreateName,rm.dUpdateTime,rm.dCreateTime
+        END AS iStatus,rm.iStatus as iStatusId,rm.iAuditStatus,rm.cGoodsPaymentNo,rm.iCustomerId,u.cCusCode,u.cCusName,rm.cCreateName,rm.dUpdateTime,rm.dCreateTime
 FROM SM_GoodsPaymentM rm
 LEFT JOIN Bd_Customer u on rm.iCustomerId = u.iautoid
 where rm.IsDeleted = '0'
