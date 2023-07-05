@@ -88,14 +88,16 @@
 
     <div class="jbolt_table_toolbar" id="SysSaledeliverplan_toolbar_#(pageId)">
       <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
-                id="toolbar_addBtn_#(pageId)" data-title="新增销售出货(计划)" data-url="admin/salesShipmentList/add"
+        <button data-dialogbtn data-area="80%,80%" data-handler="jboltTablePageToFirst"
+                id="toolbar_addBtn_#(pageId)" data-title="新增销售出货(计划)" data-url="admin/salesShipmentList/addConfirm"
                 class="btn btn-outline-secondary btn-sm">
           新增
         </button>
+
         #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_SaleDeliverPlan", uri="admin/salesShipmentList",
         primaryKeyName="AutoId", className="cn.rjtech.admin.syssaledeliverplan.SysSaledeliverplanService",
         permissionKeyPrefix="syssaledeliverplan")
+
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/salesShipmentList/deleteByIds?ids="
                 data-confirm="确定删除选中数据？" class="btn btn-outline-secondary btn-sm">
