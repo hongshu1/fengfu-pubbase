@@ -39,13 +39,11 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck
-    public void getomaterialscanusedlogBarcode(@Para(value = "barcode") String barcode,
-                                               @Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
-                                               @Para(value = "pageSize",defaultValue = "15") Integer pageSize
+    public void getomaterialscanusedlogBarcode(@Para(value = "barcode") String barcode
                                                ) {
         ValidationUtils.notNull(barcode, "缺少现品票");
 
-        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeInfo(barcode,pageNumber,pageSize));
+        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeInfo(barcode));
     }
 
     /**
@@ -86,11 +84,24 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck
-    public void getmomaterialscanuseMList(@Para(value = "iautoid") String iautoid,
-                                          @Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
-                                          @Para(value = "pageSize",defaultValue = "15") Integer pageSize) {
+    public void getmomaterialscanuseMList(@Para(value = "iautoid") String iautoid) {
         ValidationUtils.notNull(iautoid, "缺少退料表单ID");
-        renderJBoltApiRet(moMaterialsreturnmApiService.getModandMomlist(iautoid,pageNumber,pageSize));
+        renderJBoltApiRet(moMaterialsreturnmApiService.getModandMomlist(iautoid));
+    }
+
+    /**
+     * 生产退料主页
+     * @param IMoDocId  生产工单ID
+     * @param billno    调拨单号
+     */
+    @ApiDoc(result = MomaterialsreturnmVo.class)
+    @UnCheck
+    public void datas(@Para(value = "IMoDocId") Long IMoDocId,
+                      @Para(value = "billno") String billno,
+                      @Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                      @Para(value = "pageSize",defaultValue = "15") Integer pageSize){
+        renderJBoltApiRet(moMaterialsreturnmApiService.aginateAdminDatas(pageNumber,pageSize,IMoDocId,billno));
+
     }
 
 }
