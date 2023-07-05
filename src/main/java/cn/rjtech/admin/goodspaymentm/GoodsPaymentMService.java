@@ -1,6 +1,7 @@
 package cn.rjtech.admin.goodspaymentm;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -10,8 +11,15 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.weekorderd.WeekOrderDService;
+import cn.rjtech.admin.weekorderm.WeekOrderMService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.WeekOrderStatusEnum;
+import cn.rjtech.model.momdata.GoodsPaymentD;
 import cn.rjtech.model.momdata.GoodsPaymentM;
+import cn.rjtech.model.momdata.WeekOrderD;
+import cn.rjtech.model.momdata.WeekOrderM;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -19,8 +27,10 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 货款核对表
@@ -28,7 +38,7 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-30 00:06
  */
-public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
+public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements IApprovalService {
 
 	@Inject
 	private GoodsPaymentDService goodsPaymentDservice;
@@ -46,6 +56,15 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 
 	@Inject
 	private FormApprovalService formApprovalService;
+
+	@Inject
+	private GoodsPaymentDService goodspaymentdservice;
+
+	@Inject
+	private WeekOrderDService weekorderdservice;
+
+	@Inject
+	private WeekOrderMService weekordermservice;
 
 	/**
 	 * 后台管理数据查询
@@ -217,36 +236,55 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 		List<Record> list = jBoltTable.getSaveRecordList();
 		if(CollUtil.isEmpty(list)) return;
 		Date now = new Date();
+		User user = JBoltUserKit.getUser();
+		ArrayList<GoodsPaymentD> goodspaymentd = new ArrayList<>();
 		for (int i=0;i<list.size();i++) {
 			Record row = list.get(i);
-			row.set("isdeleted", "0");
-			row.set("iGoodsPaymentMid", rcvplanm.getIAutoId());
-			row.set("iautoid", JBoltSnowflakeKit.me.nextId());
-			row.set("dcreatetime", now);
-			row.set("dupdatetime", now);
-			row.remove("cinvcode1");
-			row.remove("cinvname1");
-			row.remove("cinvcode");
-			row.remove("cinvstd");
-			row.remove("cuomname");
+			GoodsPaymentD goodsPaymentD = new GoodsPaymentD();
+			goodsPaymentD.setIGoodsPaymentMid(rcvplanm.getIAutoId());
+			goodsPaymentD.setIInventoryId(row.getStr("iinventoryid"));
+			goodsPaymentD.setCBarcode(row.getStr("cbarcode"));
+			goodsPaymentD.setCVersion(row.getStr("cversion"));
+			goodsPaymentD.setIQty(row.getBigDecimal("iqty"));
+			goodsPaymentD.setDAccountingTime(row.getDate("daccountingtime"));
+			goodsPaymentD.setDWarehousingTime(row.getDate("dwarehousingtime"));
+			goodsPaymentD.setIsDeleted(false);
+			goodsPaymentD.setICreateBy(user.getId());
+			goodsPaymentD.setCCreateName(user.getName());
+			goodsPaymentD.setDCreateTime(now);
+			goodsPaymentD.setIUpdateBy(user.getId());
+			goodsPaymentD.setCUpdateName(user.getName());
+			goodsPaymentD.setDUpdateTime(now);
+
+			goodspaymentd.add(goodsPaymentD);
 		}
-		goodsPaymentDservice.batchSaveRecords(list);
+		goodsPaymentDservice.batchSave(goodspaymentd);
 	}
 	//可编辑表格提交-修改数据
 	private void updateTableSubmitDatas(JBoltTable jBoltTable,GoodsPaymentM rcvplanm){
 		List<Record> list = jBoltTable.getUpdateRecordList();
 		if(CollUtil.isEmpty(list)) return;
 		Date now = new Date();
+		User user = JBoltUserKit.getUser();
+		ArrayList<GoodsPaymentD> goodspaymentd = new ArrayList<>();
 		for(int i = 0;i < list.size(); i++){
 			Record row = list.get(i);
-			row.set("dupdatetime", now);
-			row.remove("cinvcode1");
-			row.remove("cinvname1");
-			row.remove("cinvcode");
-			row.remove("cinvstd");
-			row.remove("cuomname");
+			GoodsPaymentD goodsPaymentD = new GoodsPaymentD();
+			goodsPaymentD.setIGoodsPaymentMid(rcvplanm.getIAutoId());
+			goodsPaymentD.setIInventoryId(row.getStr("iinventoryid"));
+			goodsPaymentD.setCBarcode(row.getStr("cbarcode"));
+			goodsPaymentD.setCVersion(row.getStr("cversion"));
+			goodsPaymentD.setIQty(row.getBigDecimal("iqty"));
+			goodsPaymentD.setDAccountingTime(row.getDate("daccountingtime"));
+			goodsPaymentD.setDWarehousingTime(row.getDate("dwarehousingtime"));
+			goodsPaymentD.setIsDeleted(false);
+			goodsPaymentD.setIUpdateBy(user.getId());
+			goodsPaymentD.setCUpdateName(user.getName());
+			goodsPaymentD.setDUpdateTime(now);
+
+			goodspaymentd.add(goodsPaymentD);
 		}
-		goodsPaymentDservice.batchUpdateRecords(list);
+		goodsPaymentDservice.batchUpdate(goodspaymentd);
 	}
 	//可编辑表格提交-删除数据
 	private void deleteTableSubmitDatas(JBoltTable jBoltTable){
@@ -280,4 +318,199 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> {
 	public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String iCustomerId1) {
 		return dbTemplate("goodspaymentm.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("icustomerid", iCustomerId1)).find();
 	}
+
+	/**
+	 * todo  审核通过
+	 */
+	@Override
+	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		return this.passagetwo(formAutoId);
+	}
+
+	@Override
+	public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+		return null;
+	}
+
+	@Override
+	public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		return null;
+	}
+
+	/**
+	 * todo 实现反审之后的其他业务操作, 如有异常返回错误信息
+	 */
+	@Override
+	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		if(isLast){
+			this.delectbelowtwo(formAutoId);
+		}
+		return null;
+	}
+
+	@Override
+	public String preSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postSubmitFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String postWithdrawFunc(long formAutoId) {
+		return null;
+	}
+
+	@Override
+	public String withdrawFromAuditting(long formAutoId) {
+		return null;
+	}
+
+	/**
+	 *  todo 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+	 */
+	@Override
+	public String preWithdrawFromAuditted(long formAutoId) {
+		return null;
+	}
+
+	/**
+	 * todo 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+	 */
+	@Override
+	public String postWithdrawFromAuditted(long formAutoId) {
+		return this.delectbelowtwo(formAutoId);
+	}
+
+
+	/**
+	 * todo 批量审核（审批）通过，后置业务实现
+	 */
+	@Override
+	public String postBatchApprove(List<Long> formAutoIds) {
+		return this.passagetwo(formAutoIds);
+	}
+
+	@Override
+	public String postBatchReject(List<Long> formAutoIds) {
+		return null;
+	}
+
+	/**
+	 * todo 批量撤销审批，后置业务实现，需要做业务出来
+	 */
+	@Override
+	public String postBatchBackout(List<Long> formAutoIds) {
+		return this.delectbelowtwo(formAutoIds);
+	}
+
+	//审核通过后
+	public String passagetwo(long formAutoId){
+		//查出所有的从表数据，给遍历使用
+		List<GoodsPaymentD> getall = goodspaymentdservice.getall();
+		//根据主表id 查出从表所以数据
+		List<GoodsPaymentD> datas = goodspaymentdservice.findDatas(formAutoId);
+		if(CollectionUtil.isEmpty(datas))return "";
+		for (GoodsPaymentD s : datas){
+			//根据以上字段去查询周间客户从表;存货id,传票号,版本号
+			WeekOrderD weekOrderD = weekorderdservice.getWeekOrderD(s.getIInventoryId(), s.getCBarcode(), s.getCVersion());
+			if(Objects.nonNull(weekOrderD)){
+				//获取此单据的所有从表数据
+				List<WeekOrderD> weekOrderDdatas = weekorderdservice.getWeekOrderDdatas(weekOrderD.getIWeekOrderMid());
+				if(CollectionUtil.isNotEmpty(weekOrderDdatas)){
+					//todo 产品设计不合理，所以代码也就这样循环判断(数据量上来直接oom)；查出此条周间客户从表数据，判断货款核对从表是否全部包含周间客户从表数据，包含则修改周间客户主表 字段
+					for ( WeekOrderD d : weekOrderDdatas){
+						for (GoodsPaymentD gd : getall){
+							if(!d.getIInventoryId().equals(gd.getIInventoryId()) || !d.getCCode().equals(gd.getCBarcode()) || !d.getCVersion().equals(gd.getCVersion())){
+								break;
+							}
+						}
+						//查询周间客户主表
+						WeekOrderM byId = weekordermservice.findById(d.getIWeekOrderMid());
+						byId.setIOrderStatus(WeekOrderStatusEnum.OK.getValue());
+						weekordermservice.updateOneColumn(byId);
+					}
+				}
+			}
+		}
+
+		return "";
+	}
+
+	//反审后的操作
+	public String delectbelowtwo(long formAutoId){
+		//根据主表id 查出从表所以数据
+		List<GoodsPaymentD> datas = goodspaymentdservice.findDatas(formAutoId);
+		if(CollectionUtil.isEmpty(datas))return "";
+		for (GoodsPaymentD s : datas){
+			//根据以上字段去查询周间客户从表;存货id,传票号,版本号
+			WeekOrderD weekOrderD = weekorderdservice.getWeekOrderD(s.getIInventoryId(), s.getCBarcode(), s.getCVersion());
+			if(Objects.isNull(weekOrderD)) break;
+			WeekOrderD weekOrderDIOrderStatus = weekorderdservice.getWeekOrderDIOrderStatus(s.getIInventoryId(), s.getCBarcode(), s.getCVersion());
+			if(Objects.isNull(weekOrderDIOrderStatus)) break;
+			WeekOrderM byId = weekordermservice.findById(weekOrderDIOrderStatus.getIWeekOrderMid());
+			byId.setIOrderStatus(WeekOrderStatusEnum.DELIVERIED.getValue());
+			weekordermservice.updateOneColumn(byId);
+		}
+		return "";
+	}
+
+	//批量审核通过后
+	public String passagetwo(List<Long> formAutoId){
+		//查出所有的从表数据，给遍历使用
+		List<GoodsPaymentD> getall = goodspaymentdservice.getall();
+		//根据主表id 查出从表所以数据
+		for ( Long l :  formAutoId) {
+			List<GoodsPaymentD> datas = goodspaymentdservice.findDatas(l);
+			if (CollectionUtil.isEmpty(datas)) return "";
+			for (GoodsPaymentD s : datas) {
+				//根据以上字段去查询周间客户从表;存货id,传票号,版本号
+				WeekOrderD weekOrderD = weekorderdservice.getWeekOrderD(s.getIInventoryId(), s.getCBarcode(), s.getCVersion());
+				if (Objects.nonNull(weekOrderD)) {
+					//获取此单据的所有从表数据
+					List<WeekOrderD> weekOrderDdatas = weekorderdservice.getWeekOrderDdatas(weekOrderD.getIWeekOrderMid());
+					if (CollectionUtil.isNotEmpty(weekOrderDdatas)) {
+						//todo 产品设计不合理，所以代码也就这样循环判断(数据量上来直接oom)；查出此条周间客户从表数据，判断货款核对从表是否全部包含周间客户从表数据，包含则修改周间客户主表 字段
+						for (WeekOrderD d : weekOrderDdatas) {
+							for (GoodsPaymentD gd : getall) {
+								if (!d.getIInventoryId().equals(gd.getIInventoryId()) || !d.getCCode().equals(gd.getCBarcode()) || !d.getCVersion().equals(gd.getCVersion())) {
+									break;
+								}
+							}
+							//查询周间客户主表
+							WeekOrderM byId = weekordermservice.findById(d.getIWeekOrderMid());
+							byId.setIOrderStatus(WeekOrderStatusEnum.OK.getValue());
+							weekordermservice.updateOneColumn(byId);
+						}
+					}
+				}
+			}
+		}
+		return "";
+	}
+
+
+	//批量反审后的操作
+	public String delectbelowtwo(List<Long>  formAutoId){
+		for(Long l : formAutoId) {
+			//根据主表id 查出从表所以数据
+			List<GoodsPaymentD> datas = goodspaymentdservice.findDatas(l);
+			if (CollectionUtil.isEmpty(datas)) return "";
+			for (GoodsPaymentD s : datas) {
+				//根据以上字段去查询周间客户从表;存货id,传票号,版本号
+				WeekOrderD weekOrderD = weekorderdservice.getWeekOrderD(s.getIInventoryId(), s.getCBarcode(), s.getCVersion());
+				if (Objects.isNull(weekOrderD)) break;
+				WeekOrderD weekOrderDIOrderStatus = weekorderdservice.getWeekOrderDIOrderStatus(s.getIInventoryId(), s.getCBarcode(), s.getCVersion());
+				if (Objects.isNull(weekOrderDIOrderStatus)) break;
+				WeekOrderM byId = weekordermservice.findById(weekOrderDIOrderStatus.getIWeekOrderMid());
+				byId.setIOrderStatus(WeekOrderStatusEnum.DELIVERIED.getValue());
+				weekordermservice.updateOneColumn(byId);
+			}
+		}
+		return "";
+	}
+
+
 }
