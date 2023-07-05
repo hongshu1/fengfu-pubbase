@@ -1,6 +1,7 @@
 package cn.rjtech.admin.warehousearea;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -9,7 +10,9 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.model.momdata.WarehouseArea;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -17,6 +20,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -32,136 +36,130 @@ import java.util.List;
 @Path(value = "/admin/warehousearea", viewPath = "/_view/admin/warehousearea")
 public class WarehouseAreaAdminController extends JBoltBaseController {
 
-	@Inject
-	private WarehouseAreaService service;
+  @Inject
+  private WarehouseAreaService service;
 
-   /**
-	* 首页
-	*/
-	public void index() {
-		render("index.html");
-	}
+  /**
+   * 首页
+   */
+  public void index() {
+    render("index.html");
+  }
 
-  	/**
-	* 数据源
-	*/
-	public void datas() {
-		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(), getKv()));
-	}
+  /**
+   * 数据源
+   */
+  public void datas() {
+    renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
+  }
 
-    @UnCheck
-    public void list() {
-        renderJsonData(service.list(getKv()));
+  @UnCheck
+  public void list() {
+    renderJsonData(service.list(getKv()));
+  }
+
+  /**
+   * 新增
+   */
+  public void add() {
+    render("add.html");
+  }
+
+  /**
+   * 编辑
+   */
+  public void edit() {
+    WarehouseArea warehouseArea = service.findById(getLong(0));
+    if (warehouseArea == null) {
+      renderFail(JBoltMsg.DATA_NOT_EXIST);
+      return;
     }
-
-   /**
-	* 新增
-	*/
-	public void add() {
-		render("add.html");
-	}
-
-   /**
-	* 编辑
-	*/
-	public void edit() {
-		WarehouseArea warehouseArea=service.findById(getLong(0));
-		if(warehouseArea == null){
-			renderFail(JBoltMsg.DATA_NOT_EXIST);
-			return;
-		}
-		set("warehouseArea",warehouseArea);
-		render("edit.html");
-	}
+    set("warehouseArea", warehouseArea);
+    render("edit.html");
+  }
 
   /**
-	* 保存
-	*/
-	public void save() {
-		renderJson(service.save(getModel(WarehouseArea.class, "warehouseArea")));
-	}
-
-   /**
-	* 更新
-	*/
-	public void update() {
-		renderJson(service.update(getModel(WarehouseArea.class, "warehouseArea")));
-	}
-
-   /**
-	* 批量删除
-	*/
-	public void deleteByIds() {
-		renderJson(service.deleteByBatchIds(get("ids")));
-	}
+   * 保存
+   */
+  public void save() {
+    renderJson(service.save(getModel(WarehouseArea.class, "warehouseArea")));
+  }
 
   /**
-	* 切换toggleIsdeleted
-	*/
-	public void toggleIsdeleted() {
-		renderJson(service.toggleIsdeleted(getLong(0)));
-	}
+   * 更新
+   */
+  public void update() {
+    renderJson(service.update(getModel(WarehouseArea.class, "warehouseArea")));
+  }
 
   /**
-	* 切换toggleIsenabled
-	*/
-	public void toggleIsenabled() {
-		renderJson(service.toggleIsenabled(getLong(0)));
-	}
+   * 批量删除
+   */
+  public void deleteByIds() {
+    renderJson(service.deleteByBatchIds(get("ids")));
+  }
 
-	/**
-	 * 导出数据
-	 */
-	@SuppressWarnings("unchecked")
-	public void dataExport() throws Exception {
-		renderJxls("warehousearea.xlsx", Kv.by("rows", service.list(getKv())), "库区列表_" + DateUtil.today() + ".xlsx");
-	}
+  /**
+   * 切换toggleIsdeleted
+   */
+  public void toggleIsdeleted() {
+    renderJson(service.toggleIsdeleted(getLong(0)));
+  }
 
+  /**
+   * 切换toggleIsenabled
+   */
+  public void toggleIsenabled() {
+    renderJson(service.toggleIsenabled(getLong(0)));
+  }
 
+  /**
+   * 导出数据
+   */
+  @SuppressWarnings("unchecked")
+  public void dataExport() throws Exception {
+    renderJxls("warehousearea.xlsx", Kv.by("rows", service.list(getKv())), "库区列表_" + DateUtil.today() + ".xlsx");
+  }
 
+  /**
+   * Excel模板下载
+   */
+  @SuppressWarnings("unchecked")
+  public void downloadTpl() throws Exception {
+    renderJxls("warehousearea_import.xlsx", Kv.by("rows", null), "库区档案导入模板.xlsx");
+  }
 
-	/**
-	 * Excel模板下载
-	 */
-	@SuppressWarnings("unchecked")
-	public void downloadTpl() throws Exception {
-		renderJxls("warehousearea_import.xlsx", Kv.by("rows", null), "库区档案导入模板.xlsx");
-	}
+  /**
+   * 库区打印数据
+   */
+  public void printData() {
+    renderJsonData(service.getPrintDataCheck(getKv()));
+  }
 
-	/**
-	 * 生产班次Excel导入数据库
-	 */
-	public void importExcel(){
-		String uploadPath= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
-		UploadFile file=getFile("file",uploadPath);
-		if(notExcel(file)){
-			renderJsonFail("请上传excel文件");
-			return;
-		}
-		renderJson(service.importExcelData(file.getFile()));
-	}
+  @UnCheck
+  public void options() {
+    renderJsonData(service.options(getKv()));
+  }
 
-	/**
-	 * 库区打印数据
-	 *
-	 */
-	public void printData(){
-		renderJsonData(service.getPrintDataCheck(getKv()));
-	}
+  /**
+   * 库区档案excel导入
+   */
+  @SuppressWarnings("unchecked")
+  public void importExcelClass() {
+    UploadFile uploadFile = getFile("file");
+    ValidationUtils.notNull(uploadFile, "上传文件不能为空");
 
-    @UnCheck
-	public void options(){
-		renderJsonData(service.options(getKv()));
-	}
+    File file = uploadFile.getFile();
 
-	public void importExcelClass() {
-		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
-		UploadFile file = getFile("file", uploadPath);
-		if (notExcel(file)) {
-			renderJsonFail("请上传excel文件");
-			return;
-		}
-		renderJson(service.importExcelClass(file.getFile()));
-	}
+    List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+
+    // 截取最后一个“.”之前的文件名，作为导入格式名
+    String cformatName = list.get(0);
+
+    String extension = list.get(1);
+
+    ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+    renderJson(service.importExcelData(file, cformatName));
+  }
 
 }

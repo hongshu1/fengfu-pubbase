@@ -165,57 +165,38 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	 *制造工单入口数据
 	 */
 	public List<Record> getAdminDatas2( Kv kv) {
-		//根据工单id获取工艺路线每个工序
-		MoMorouting morouting = moMoroutingService.findByImdocId(kv.getLong("modocid"));
+		List<Record> records = moDocService.findByModecIdProcessDatas(kv.getLong("modocid"));
 		//根据工艺路线获取对应的工序
-		List<Record> records =null;
-		if (ObjUtil.isNotNull(morouting)) {
-			 records = inventoryRoutingConfigService.dataList(morouting.getIInventoryRoutingId());
+		if (ObjUtil.isNotNull(records)) {
 			//通过工序名称获取对应的点检数据
 			for (Record record : records) {
-				Long routingConfigId = record.getLong(InventoryRoutingConfig.IAUTOID);
-				List<Record> list = inventorySpotCheckFormService.findByInventoryIdAndOperationName(morouting.getIInventoryId(), record.getStr("coperationname"), kv.getInt("itype"));
-				List<Record> equipmentList = inventoryRoutingEquipmentService.findRoutingConfigId(routingConfigId);
-					StringBuilder cequipmentnames =new StringBuilder();
-					StringBuilder cequipmentids =new StringBuilder();
-				for (Record record1 : equipmentList) {
-					cequipmentnames.append(	record1.getStr("cequipmentname")).append(",");
-					cequipmentids.append(	record1.getStr("iequipmentid")).append(",");
+				Record operationName = inventorySpotCheckFormService.findByInventoryIdAndOperationName(record.getLong("iinventoryid"), record.getStr("coperationname"), kv.getInt("itype"));
+				if (ObjUtil.isNotNull(operationName)) {
+					record.set("ispotcheckformid",operationName.getStr("ispotcheckformid"));
+					record.set("cspotcheckformname",operationName.getStr("cspotcheckformname"));
 				}
-				String keywordStr="";
-				String keywordStr2="";
-				if (equipmentList.size()>0) {
-					 keywordStr = cequipmentnames.deleteCharAt(cequipmentnames.length() - 1).toString();
-					 keywordStr2 = cequipmentids.deleteCharAt(cequipmentids.length() - 1).toString();
-				}
-				//通过表格id工序id工单id获取已保存的数据
 
-				for (Record r : list) {
-					SpotCheckForm spotcheckform = spotCheckFormService.findById(r.getStr("ispotcheckformid"));
-					record.set("cspotcheckformname",spotcheckform.getCSpotCheckFormName());
-					SpotCheckFormM m = findBySpotCheckFormIdAndRoutingConfigIdAndModocId(r.getLong("ispotcheckformid"), kv.getLong("modocid"), routingConfigId, kv.getInt("itype"));
+				//通过表格id工序id工单id获取已保存的数据
+					SpotCheckFormM m = findBySpotCheckFormIdAndRoutingConfigIdAndModocId(record.getLong("ispotcheckformid"), kv.getLong("modocid"), record.getLong("routingconfigid"), kv.getInt("itype"));
 					if (ObjUtil.isNotNull(m)){
 					record.set("spotcheckformmid",m.getIAutoId());
-					record.set("cpersonname",m.getCPersonName());
+					record.set("cpersonname",m.getCCreateName());
 					record.set("dcreatetime2",m.getDCreateTime());
 						String s = m.getIAuditStatus() == 0 ? "未审核" : m.getIAuditStatus() == 1 ? "待审核" :
 								m.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
 					record.set("iauditstatus",s);
+						record.set("peoplename",m.getCPersonName());
+						record.set("peoplenameid",m.getIPersonId());
 					}else {
 						record.set("iauditstatus","未生成");
+						record.set("peoplename",JBoltUserKit.getUserName());
+						record.set("peoplenameid",JBoltUserKit.getUserId());
 					}
-					record.set("ispotcheckformid",r.getStr("ispotcheckformid"));
-					record.set("cequipmentnames",keywordStr);
-					record.set("cequipmentids",keywordStr2);
-					record.set("IInventoryId",morouting.getIInventoryId());
-					record.set("routingConfigId",routingConfigId);
-					record.set("modocid",kv.getLong("modocid"));
-				}
 				record.set("itype",kv.getStr("itype"));
-				if (list.size()<=0) {
+				if (ObjUtil.isNull(operationName)) {
 					record.set("iauditstatus","未有点检表");
 				}
-			}
+				}
 		}
 
 		return records;
@@ -230,7 +211,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	 * 获取设备名称并拼接
 	 */
 	public Record getEquipment(Long routingConfigId){
-		List<Record> equipmentList = inventoryRoutingEquipmentService.findRoutingConfigId(routingConfigId);
+		List<Record> equipmentList = moDocService.getMoDocEquipment(Kv.by("configid", routingConfigId));
 		StringBuilder cequipmentnames =new StringBuilder();
 		StringBuilder cequipmentids =new StringBuilder();
 		for (Record record1 : equipmentList) {
@@ -364,13 +345,13 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 
 		tx(()->{
 			SpotCheckFormM spotCheckFormM2=null;
-			if (StrUtil.isNotBlank(formJsonData.getString("spotCheckFormM.iautoid"))) {
-				String string = formJsonData.getString("spotCheckFormM.iautoid");
+			if (StrUtil.isNotBlank(formJsonData.getString("spotcheckformmid"))) {
+				String string = formJsonData.getString("spotcheckformmid");
 				spotCheckFormM2= findById(Long.valueOf(string));
 				id.set(string);
 			}
 			//主表数据
-			if (StrUtil.isBlank(formJsonData.getString("spotCheckFormM.iautoid"))) {
+			if (StrUtil.isBlank(formJsonData.getString("spotcheckformmid"))) {
 				if (ObjUtil.isNull(spotCheckFormM2)) {
 					spotCheckFormM2 = new SpotCheckFormM();
 				}
@@ -407,6 +388,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 				spotCheckFormM2.setIAuditStatus(0);
 				spotCheckFormM2.setIPersonId(user.getId());
 				spotCheckFormM2.setCPersonName(user.getName());
+				spotCheckFormM2.setIPersonId(user.getId());
 				ValidationUtils.isTrue(spotCheckFormM2.save(), "保存失败");
 				id.set(String.valueOf(spotCheckFormM2.getIAutoId()));
 
@@ -460,7 +442,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 				spotCheckFormDService.batchSave(prodFormDS);
 				spotcheckformdLineService.batchSave(prodformdLines);
 			}else {
-				SpotCheckFormM spotCheckFormM = findById(formJsonData.getString("spotCheckFormM.iautoid"));
+				SpotCheckFormM spotCheckFormM = findById(formJsonData.getString("spotcheckformmid"));
 				User user = JBoltUserKit.getUser();
 				Date date = new Date();
 				spotCheckFormM.setCUpdateName(user.getName());
@@ -521,8 +503,7 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 					if (StrUtil.isNotBlank(jsonObject.getString("cvalue"))){
 						prodformdLine.setCValue(jsonObject.getString("cvalue"));
 					}
-					prodformdLine.save();
-
+					prodformdLines.add(prodformdLine);
 				}
 
 				spotCheckFormDService.batchSave(prodFormDS);

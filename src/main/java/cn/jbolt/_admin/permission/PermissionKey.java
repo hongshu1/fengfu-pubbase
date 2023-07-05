@@ -916,7 +916,7 @@ public class PermissionKey {
 	/**
 	 * 销售发货单列表
 	 */
-	public static final String SALES_SHIPMENT_LIST = "sales_shipment_list";
+	public static final String SYSSALEDELIVERPLAN = "syssaledeliverplan";
 	/**
 	 * 条码报表
 	 */
@@ -1413,6 +1413,14 @@ public class PermissionKey {
 	 * 现品票
 	 */
 	public static final String API_MOMOINVBATCH = "api_momoinvbatch";
+	/**
+	 * 始业点检表管理
+	 */
+	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
+	/**
+	 * 始业点检表管理
+	 */
+	public static final String API_SPOTCHECKFORMM_SUBMITFORM = "api_spotcheckformm_submitform";
 	/**
 	 * 新增
 	 */
@@ -2896,5 +2904,89 @@ public class PermissionKey {
 	/**
 	 * 删除
 	 */
-	public static final String FITEMSS97_DELETED = "fitemss97_deleted";
+	public static final String FITEMSS97_DELETE = "fitemss97_delete";
+	/**
+	 * 提审
+	 */
+	public static final String GOODSPAYMENTM_SUBMIT = "goodspaymentm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String GOODSPAYMENTM_APPROVE = "goodspaymentm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String GOODSPAYMENTM_REJECT = "goodspaymentm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String GOODSPAYMENTM_BATCH_APPROVE = "goodspaymentm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String GOODSPAYMENTM_BATCH_REJECT = "goodspaymentm_batch_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String GOODSPAYMENTM_REVERSE_APPROVE = "goodspaymentm_reverse_approve";
+	/**
+	 * 提审
+	 */
+	public static final String SYSOTHEROUT_SUBMIT = "sysotherout_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String SYSOTHEROUT_APPROVE = "sysotherout_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String SYSOTHEROUT_REJECT = "sysotherout_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String SYSOTHEROUT_REVERSE_APPROVE = "sysotherout_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SYSOTHEROUT_BATCH_APPROVE = "sysotherout_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SYSOTHEROUT_BATCH_REJECT = "sysotherout_batch_reject";
+	/**
+	 * 撤回
+	 */
+	public static final String SYSOTHEROUT_WITHDRAW = "sysotherout_withdraw";
+	/**
+	 * 撤回
+	 */
+	public static final String SYSSALEDELIVERPLAN_WITHDRAW = "syssaledeliverplan_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SYSSALEDELIVERPLAN_SUBMIT = "syssaledeliverplan_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String SYSSALEDELIVERPLAN_APPROVE = "syssaledeliverplan_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SYSSALEDELIVERPLAN_BATCH_APPROVE = "syssaledeliverplan_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SYSSALEDELIVERPLAN_BATCH_REJECT = "syssaledeliverplan_batch_reject";
+	/**
+	 * 批量反审核
+	 */
+	public static final String SYSSALEDELIVERPLAN_BATCH_REVERSE_APPROVE = "syssaledeliverplan_batch_reverse_approve";
+	/**
+	 * 反审核
+	 */
+	public static final String SYSSALEDELIVERPLAN_REVERSE_APPROVE = "syssaledeliverplan_reverse_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String SYSSALEDELIVERPLAN_REJECT = "syssaledeliverplan_reject";
 }

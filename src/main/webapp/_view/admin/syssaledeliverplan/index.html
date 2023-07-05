@@ -67,6 +67,7 @@
         {@/if}
       </td>
       <td title="${data.auditname}">${data.auditname}</td>
+      <td title="${data.sourcebilltype}">${data.sourcebilltype}</td>
 			<td title="${data.sourcebilldid}">${data.sourcebilldid}</td>
 			<td title="${data.billno}">${data.billno}</td>
 			<td title="${data.u8billno}">${data.u8billno}</td>
@@ -81,21 +82,22 @@
 			<td title="${data.issue}">${data.issue}</td>
 			<td title="${data.createperson}">${data.createperson}</td>
 			<td title="${data.createdate}">${data.createdate}</td>
-
 		</tr>
 		{@/each}
 		</textarea>
 
     <div class="jbolt_table_toolbar" id="SysSaledeliverplan_toolbar_#(pageId)">
       <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
-                id="toolbar_addBtn_#(pageId)" data-title="新增销售出货(计划)" data-url="admin/salesShipmentList/add"
+        <button data-dialogbtn data-area="80%,80%" data-handler="jboltTablePageToFirst"
+                id="toolbar_addBtn_#(pageId)" data-title="新增销售出货(计划)" data-url="admin/salesShipmentList/addConfirm"
                 class="btn btn-outline-secondary btn-sm">
           新增
         </button>
+
         #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_SaleDeliverPlan", uri="admin/salesShipmentList",
         primaryKeyName="AutoId", className="cn.rjtech.admin.syssaledeliverplan.SysSaledeliverplanService",
         permissionKeyPrefix="syssaledeliverplan")
+
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/salesShipmentList/deleteByIds?ids="
                 data-confirm="确定删除选中数据？" class="btn btn-outline-secondary btn-sm">
@@ -117,7 +119,7 @@
       <thead class="fw-normal">
       <tr>
         <th data-width="60" data-column="index">序号</th>
-        <th data-width="150" data-column="AutoID">操作</th>
+        <th data-width="150">操作</th>
         <th data-width="150" data-column="auditname">状态</th>
         <th data-width="180" data-column="SourceBillType">来源类型</th>
         <th data-width="180" data-column="SourceBillDid">来源单号</th>
@@ -125,7 +127,7 @@
         <th data-width="180" data-column="U8BillNO">ERP单据号</th>
         <th data-width="150" data-column="PreDeliverDate">发货日期</th>
         <th data-width="150" data-column="BillType">业务类型</th>
-        <th data-width="150" data-column="RdCode">销售类型</th>
+        <th data-width="150" data-column="cSTName">销售类型</th>
         <th data-width="150" data-column="BillNo">订单号</th>
         <th data-width="150" data-column="cCusAbbName">客户简称</th>
         <th data-width="180" data-column="cDepName">销售部门</th>
@@ -136,7 +138,6 @@
         <th data-min-width="160" data-column="CreateDate">创建时间</th>
       </tr>
       </thead>
-      <tbody></tbody>
       <tbody></tbody>
     </table>
   </div>

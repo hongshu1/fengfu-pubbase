@@ -36,7 +36,7 @@
     data-dialog-title="生成" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>生成</a>
     {@/if}
 
-   {@if data.iauditstatus == '未审核' }
+   {@if data.iauditstatus == '未审核' ||data.iauditstatus == '审核不通过'}
     <a href="admin/spotCheckFormM/edit?iinventoryid=${data.iinventoryid}&coperationname=${data.coperationname}
     &modocid=${data.modocid}&routingconfigid=${data.routingconfigid}&cequipmentnames=${data.cequipmentnames}
     &spotcheckformmid=${data.spotcheckformmid}&controls=0&itype=${data.itype}&ispotcheckformid=${data.ispotcheckformid}
@@ -54,6 +54,7 @@
 <td>${data.cspotcheckformname}</td>
 <td>${data.coperationname}</td>
 <td>${data.cequipmentnames}</td>
+<td>${data.peoplename}</td>
 <td>${data.cpersonname}</td>
 <td>${data.dcreatetime2}</td>
 </tr>
@@ -82,6 +83,7 @@
                 <th  data-width="150" data-column="coperationname">工序名称</th>
                 <th  data-width="100" data-column="cequipmentmodelname">设备名称</th>
                 <th  data-width="100" data-column="iSpotCheckFormId">生成人员</th>
+                <th  data-width="100" data-column="iSpotCheckFormId">提交人</th>
                 <th  data-width="100" data-column="iMoDocId">提交时间</th>
             </tr>
             </thead>

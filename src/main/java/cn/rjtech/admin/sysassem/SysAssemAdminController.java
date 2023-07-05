@@ -76,6 +76,7 @@ public class SysAssemAdminController extends BaseAdminController {
 	* 编辑
 	*/
 	public void edit() {
+		Long aLong = getLong(0);
 		SysAssem sysAssem=service.findById(getLong(0));
 		if(sysAssem == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);

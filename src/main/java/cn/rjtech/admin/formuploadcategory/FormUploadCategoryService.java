@@ -251,8 +251,8 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	/**
 	 *获取类别档案
 	 */
-	public List<Record> list(String q) {
-		return dbTemplate("formuploadcategory.list", Kv.by("q",q).set("isEnabled",false)).find();
+	public List<Record> options(String q) {
+		return dbTemplate("formuploadcategory.options", Kv.by("q",q).set("isEnabled",false)).find();
 	}
 
 	/**

@@ -410,18 +410,27 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 		
 			String[] splitCOperationName = getSplitCOperationName(inventoryRoutingConfig.getCOperationName());
 			if (splitCOperationName.length == 1){
+				String cOperationName = queryColumn("SELECT cOperationName FROM Bd_InventoryRoutingConfig WHERE iAutoId = ?",inventoryRoutingConfig.getIAutoId());
+				if (!splitCOperationName[0].equals(cOperationName)){
+					List<Long> longList = new ArrayList<>();
+					InventoryroutingconfigOperation inventoryroutingconfigOperation = inventoryroutingconfigOperationService.create(inventoryRoutingConfig.getIAutoId(), null, splitCOperationName[0], userId, userName, null, date,longList);
+					inventoryroutingconfigOperation.save();
+					deleteMultiByIdsOper(inventoryRoutingConfig.getIAutoId(), longList.toArray());
+				}
 				continue;
 			}
 			inventoryRoutingConfig.setCOperationName(splitCOperationName[0]);
 			String operationIds = splitCOperationName[1];
 			String[] arry = operationIds.split("/");
-		
+
+
 			List<Long> longList = new ArrayList<>();
 			for (int i = 0; i < arry.length; i++) {
 				long operationId = Long.parseLong(arry[i]);
-				InventoryroutingconfigOperation inventoryroutingconfigOperation = inventoryroutingconfigOperationService.create(inventoryRoutingConfig.getIAutoId(), operationId, userId, userName, null, date);
+				String cOperationName = queryColumn("SELECT cOperationName FROM Bd_Operation WHERE iAutoId = ?",operationId);
+				InventoryroutingconfigOperation inventoryroutingconfigOperation = inventoryroutingconfigOperationService.create(inventoryRoutingConfig.getIAutoId(), operationId, cOperationName, userId, userName, null, date,longList);
 				inventoryroutingconfigOperation.save();
-				longList.add(operationId);
+				//longList.add(operationId);
 			}
 			deleteMultiByIdsOper(inventoryRoutingConfig.getIAutoId(), longList.toArray());
 		}

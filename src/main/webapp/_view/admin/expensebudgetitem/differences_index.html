@@ -106,6 +106,13 @@
 </tr>
 {@/each}
 </script>
+        <!-- 工具条 toolbar -->
+        <div class="jbolt_table_toolbar" id="jbolt_toolbar_#(pageId)">
+            <div class="btn-group" role="group" aria-label="btn-group">
+            	<a data-downloadbtn href="admin/expensebudgetitem/exportDifferencesManagementDatas" data-form="expenseBudgetDifferencesForm_#(pageId)" class="btn btn-outline-primary btn-sm"><i class="fa fa-file-excel-o"></i> 导出</a>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+            </div>
+        </div>
         <table class="jbolt_table jbolt_main_table thead_font_normal table-center"
                data-jbolttable
                data-autoload="false"
@@ -113,6 +120,7 @@
                data-height="fill"
                data-ajax="true"
                data-width="auto"
+               data-toolbar="jbolt_toolbar_#(pageId)"
                data-url="admin/expensebudgetitem/differencesManagementDatas"
                data-column-resize="true"
                data-column-prepend="1:checkbox:true"

@@ -448,3 +448,9 @@ where a.isEffective = '1' and change.iAutoId is not null
   and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
   and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.barcode = t.barcode)
 #end
+
+
+
+#sql("findU8RdRecord01Id")
+select r.* from UFDATA_001_2023.dbo.AssemVouch r where r.cCode = #para(cCode)
+#end

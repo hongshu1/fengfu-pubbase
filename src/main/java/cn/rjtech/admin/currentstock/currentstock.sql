@@ -345,8 +345,15 @@ FROM
 WHERE
  1 = 1
     AND t1.isDeleted = 0
+    #if(OrgCode)
     AND t1.OrganizeCode = #para(OrgCode)
+    #end
+    #if(autoid)
     AND t2.MasID = #para(autoid)
+    #end
+    #if(sqlids)
+    AND t2.AutoID in (#(sqlids))
+    #end
 
 #end
 
@@ -452,6 +459,7 @@ WHERE t3.isDeleted = 0
 #sql("findCheckVouchBarcodeByMasIdAndInvcode")
 select t1.* from T_Sys_StockCheckVouchBarcode t1
 where 1=1
+    and t1.isDeleted = '0'
     #if(masid)
     and t1.masid = #para(masid)
 #end

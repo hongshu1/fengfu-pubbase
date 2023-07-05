@@ -1272,4 +1272,29 @@ public class MoDocService extends BaseService<MoDoc> {
     }
     return null;
   }
+
+  /**
+   *获取对应的工艺数据
+   */
+    public List<Record> findByModecIdProcessDatas(Long modocid) {
+      List<Record> records = dbTemplate("modoc.findByModecIdProcessDatas", Kv.by("imodocid", modocid)).find();
+      for (Record record : records) {
+        List<Record> moDocEquipment = getMoDocEquipment(Kv.by("configid", record.getStr("routingconfigid")));
+        StringBuilder cequipmentnames =new StringBuilder();
+        StringBuilder cequipmentids =new StringBuilder();
+        for (Record record1 : moDocEquipment) {
+          cequipmentnames.append(	record1.getStr("cequipmentname")).append(",");
+          cequipmentids.append(	record1.getStr("iequipmentid")).append(",");
+        }
+        String keywordStr="";
+        String keywordStr2="";
+        if (moDocEquipment.size()>0) {
+          keywordStr = cequipmentnames.deleteCharAt(cequipmentnames.length() - 1).toString();
+          keywordStr2 = cequipmentids.deleteCharAt(cequipmentids.length() - 1).toString();
+        }
+        record.set("cequipmentnames",keywordStr);
+        record.set("cequipmentids",keywordStr2);
+      }
+      return records;
+    }
 }

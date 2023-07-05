@@ -8,12 +8,18 @@ import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ExpenseBudgetItem;
 import cn.rjtech.util.ValidationUtils;
+import java.util.ArrayList;
+import java.util.List;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.kit.Kv;
 
 /**
  * 费用预算项目 Controller
@@ -29,6 +35,7 @@ public class ExpenseBudgetItemAdminController extends BaseAdminController {
 
     @Inject
     private ExpenseBudgetItemService service;
+   
 
     /**
      * 首页
@@ -100,5 +107,23 @@ public class ExpenseBudgetItemAdminController extends BaseAdminController {
     public void differencesTplPage(){
         render("differencestpl_index.html");
     }
-    
+    /**
+     * 导出费用预实差异报表数据
+     * */
+    @UnCheck
+    public void exportDifferencesManagementDatas(){
+        Kv para = getKv();
+        List<JBoltExcelPositionData> excelPositionDatas = new ArrayList<>();//定位数据集合
+        service.constructExportDifferencesManagementDatas(para,excelPositionDatas);
+        //2、创建JBoltExcel
+        JBoltExcel jBoltExcel = JBoltExcel
+                .createByTpl("expensebudgetdiff.xlsx")//创建JBoltExcel 从模板加载创建
+                .addSheet(//设置sheet
+                        JBoltExcelSheet.create("费用预实差异")//创建sheet name保持与模板中的sheet一致
+                                .setPositionDatas(excelPositionDatas)//设置定位数据
+                )
+                .setFileName("费用预实差异数据");
+        //3、导出
+        renderBytesToExcelXlsxFile(jBoltExcel);
+    }    
 }

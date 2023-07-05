@@ -1,5 +1,6 @@
 package cn.rjtech.constants;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.model.JboltFile;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
@@ -25,6 +26,8 @@ public class Constants {
     }
 
     public static final BigDecimal RATIO = BigDecimal.valueOf(1000);
+
+    private static final String EXCEPTION_PREFIX = "Exception:";
 
     /**
      * 获取环境名称
@@ -138,5 +141,23 @@ public class Constants {
                 throw new ParameterException("未知审批类型");
         }
     }
+	public static BigDecimal kFormat(BigDecimal k){
+		if(k == null) return k;
+		return k.divide(new BigDecimal("1000")).setScale(2, RoundingMode.HALF_UP);
+	}
 
+    /**
+     * 获取替换异常前缀后的异常信息
+     *
+     * @param msg 错误信息
+     * @return 错误信息
+     */
+    public static String removeExceptionPrefix(String msg) {
+        int index = StrUtil.indexOf(msg, EXCEPTION_PREFIX, 0, true);
+        if (index < 0) {
+            return msg;
+        }
+        return msg.substring(index + EXCEPTION_PREFIX.length());
+    }
+    
 }

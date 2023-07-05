@@ -1,13 +1,15 @@
 package cn.rjtech.api.momaterialsreturnm;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.momaterialsreturnm.MoMaterialsreturnmService;
 import cn.rjtech.base.controller.BaseApiController;
+import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.momaterialsreturnm.MomaterialsreturnmVo;
+import cn.rjtech.model.momdata.MoMaterialsreturnm;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
@@ -32,13 +34,12 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
 
 
     /**
-     * 查询单条生产退料现品票
-     *
+     *搜索单条生产退料现品票
      * @param barcode 现品票
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck
-    public void addBarcode(@Para(value = "barcode") String barcode) {
+    public void getomaterialscanusedlogBarcode(@Para(value = "barcode") String barcode) {
         ValidationUtils.notNull(barcode, "缺少现品票");
 
         renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeInfo(barcode));
@@ -55,16 +56,28 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
 
     /**
      * 保存生产退料
+     * @param SaveTableData 接收退料 JSON格式 [{"imodocid":"生产工单ID","cbarcode":"现品票",""cinvcode:"存货编码",
+     *                      "cinvaddcode":"存货代码","cinvname":"存货名称","cinvstd":"规格型号","empty":"品牌",
+     *                      "iuomclassid":"主计量单位","iqtys":"数量"}]
+     * @param IMoDocId  生产工单ID
+     *
      */
-    @ApiDoc(result = MomaterialsreturnmVo.class)
+    @ApiDoc(result = NullDataResult.class)
     @CheckPermission(PermissionKey.API_MOMATERIALSRETURNM)
-    public void saveTableSubmit(@Para(value = "jboltTable") JBoltTable jBoltTable) {
-        ValidationUtils.isTrue(moMaterialsreturnmService.saveTableSubmit(jBoltTable).isOk(), "保存失败");
+    public void saveTableSubmit(@Para(value = "SaveTableData") String SaveTableData,
+                                @Para(value = "IMoDocId") Long IMoDocId)
+                                                                        {
+        ValidationUtils.notNull(SaveTableData, "缺少退料表单数据");
+        ValidationUtils.notNull(IMoDocId, "缺少生产工单ID");
+        MoMaterialsreturnm moMaterialsreturnm = new MoMaterialsreturnm();
+        moMaterialsreturnm.setIMoDocId(IMoDocId);
+        moMaterialsreturnmApiService.AddFromMoMaterialsreturnm(JBoltModelKit.getFromRecords(SaveTableData), moMaterialsreturnm);
         renderJBoltApiSuccess();
     }
 
     /**
      * 查看生产退料详情
+     * @param iautoid 生产退料主表ID
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck

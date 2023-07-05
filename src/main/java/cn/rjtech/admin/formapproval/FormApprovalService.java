@@ -25,6 +25,7 @@ import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.cache.UserCache;
+import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.AuditTypeEnum;
@@ -1827,9 +1828,12 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
             // 调用方法
             return (String) method.invoke(o, args);
-        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getLocalizedMessage());
+            return Constants.removeExceptionPrefix(e.getCause().getLocalizedMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "审批回调异常：" + e.getLocalizedMessage();
         }
     }
 

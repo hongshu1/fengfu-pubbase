@@ -20,6 +20,6 @@ public class FormUploadCategoryApiService extends JBoltApiBaseService {
      * @return
      */
     public JBoltApiRet options(String q) {
-        return  JBoltApiRet.successWithData(formUploadCategoryService.list(q));
+        return  JBoltApiRet.successWithData(formUploadCategoryService.options(q));
     }
 }

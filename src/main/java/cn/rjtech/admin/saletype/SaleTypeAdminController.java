@@ -45,8 +45,14 @@ public class SaleTypeAdminController extends BaseAdminController {
 
     @UnCheck
     public void selectData() {
-        renderJsonData(service.selectData(getPageNumber(), getPageSize(),getKv()));
+        renderJsonData(service.selectData(getKv()));
     }
+
+    @UnCheck
+    public void selectAll() {
+        renderJsonData(service.selectAll(getPageNumber(),getPageSize(),getKv()));
+    }
+
 
     /**
      * 新增
