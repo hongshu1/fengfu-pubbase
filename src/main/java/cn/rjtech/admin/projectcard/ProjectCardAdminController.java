@@ -82,12 +82,14 @@ public class ProjectCardAdminController extends BaseAdminController {
 	/**
 	 * 切换是否冻结
 	 * */
+	@UnCheck
 	public void toggleIsfreeze(){
 		renderJson(service.toggleIsfreeze(getLong(0)));
 	}
 	/**
 	 * 切换是否完成
 	 * */
+	@UnCheck
 	public void toggleIsFinish(){
 		String ccode = getKv().getStr("ccode");
 		Integer istatus = getKv().getInt("istatus");
