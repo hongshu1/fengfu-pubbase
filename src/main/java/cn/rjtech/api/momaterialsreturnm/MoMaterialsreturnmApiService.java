@@ -26,14 +26,12 @@ public class MoMaterialsreturnmApiService extends JBoltApiBaseService {
 
 
     public JBoltApiRet getBycBarcodeInfo(String barcode) {
-        moMaterialsreturnmService.getBycBarcodeInfo(barcode);
-        return JBoltApiRet.success();
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(  moMaterialsreturnmService.getBycBarcodeInfo(barcode));
     }
 
 
     public JBoltApiRet getBycBarcodeList() {
-        moMaterialsreturnmService.getBycBarcodeList();
-        return JBoltApiRet.success();
+        return JBoltApiRet.API_SUCCESS_WITH_DATA(moMaterialsreturnmService.getBycBarcodeList());
     }
 
 
