@@ -3,9 +3,10 @@ package cn.rjtech.entity.vo.prodformm;
 
 import com.jfinal.plugin.activerecord.Record;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ProdFormMResVo {
+public class ProdFormMResVo implements Serializable {
 
     /**
      * 动态表格标题

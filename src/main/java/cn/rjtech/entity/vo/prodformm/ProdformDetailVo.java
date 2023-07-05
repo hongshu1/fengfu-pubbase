@@ -1,10 +1,10 @@
 package cn.rjtech.entity.vo.prodformm;
 
-import cn.rjtech.model.momdata.SpotCheckForm;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ProdformDetailVo {
+public class ProdformDetailVo implements Serializable {
 
     /**
      * 生产表格参数录入配置id

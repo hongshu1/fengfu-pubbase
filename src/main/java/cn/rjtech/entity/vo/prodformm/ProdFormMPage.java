@@ -3,11 +3,12 @@ package cn.rjtech.entity.vo.prodformm;
 import cn.rjtech.entity.vo.formuploadm.FormUploadd;
 import com.github.javaparser.ast.expr.ThisExpr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ProdFormMPage {
+public class ProdFormMPage implements Serializable {
     /**主键ID*/
     private  Long  iAutoId;
     /**组织ID*/

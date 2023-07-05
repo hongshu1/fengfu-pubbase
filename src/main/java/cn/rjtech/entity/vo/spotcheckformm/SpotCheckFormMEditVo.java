@@ -1,11 +1,10 @@
 package cn.rjtech.entity.vo.spotcheckformm;
 
-import com.jfinal.plugin.activerecord.Record;
 
-import java.util.Date;
+import java.io.Serializable;
 import java.util.List;
 
-public class SpotCheckFormMEditVo {
+public class SpotCheckFormMEditVo implements Serializable {
 
 
 

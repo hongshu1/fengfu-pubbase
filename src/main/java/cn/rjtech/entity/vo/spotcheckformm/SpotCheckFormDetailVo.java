@@ -1,8 +1,9 @@
 package cn.rjtech.entity.vo.spotcheckformm;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class SpotCheckFormDetailVo {
+public class SpotCheckFormDetailVo implements Serializable {
     /**
      * 生产表格参数录入配置id
      */

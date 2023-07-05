@@ -1,6 +1,8 @@
 package cn.rjtech.entity.vo.spotcheckformm;
 
-public class SpotCheckFormItemMVo {
+import java.io.Serializable;
+
+public class SpotCheckFormItemMVo implements Serializable {
 
     /**
      * 标题名称

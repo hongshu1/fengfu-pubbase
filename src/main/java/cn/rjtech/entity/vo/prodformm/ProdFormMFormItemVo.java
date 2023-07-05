@@ -2,7 +2,9 @@ package cn.rjtech.entity.vo.prodformm;
 
 import cn.rjtech.entity.vo.spotcheckformm.SpotCheckFormMVo;
 
-public class ProdFormMFormItemVo {
+import java.io.Serializable;
+
+public class ProdFormMFormItemVo implements Serializable {
 
     /**
      * 标题名称
