@@ -2,6 +2,7 @@ package cn.rjtech.admin.currentstock;
 
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
@@ -19,8 +20,10 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.upload.UploadFile;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -148,6 +151,19 @@ public class CurrentStockController extends BaseAdminController {
 		renderJsonData(service.autocompletePosition(kv));
 	}
 
+	/**
+	 *  库区数据源
+	 */
+	public void posHouse() {
+		renderJsonData(service.getposHouseDatas(getKv()));
+	}
+
+	/**
+	 *  料品分类数据源
+	 */
+	public void InventoryClass() {
+		renderJsonData(service.getInventoryClassDatas(getKv()));
+	}
 
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
@@ -265,5 +281,20 @@ public class CurrentStockController extends BaseAdminController {
 		//3、导出
 		renderBytesToExcelXlsFile(jBoltExcel);
 
+	}
+
+	public void importExcelClass() {
+		Long autoid = getLong("autoid");
+		String whcode = get("whcode");
+		String poscodes = service.pos(get("poscodes"));
+		String uploadPath= JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+		System.out.println("===========>"+uploadPath);
+		UploadFile file=getFile("file",uploadPath);
+		if(notExcel(file)){
+			renderJsonFail("请上传excel文件");
+			return;
+		}
+		Ret ret = service.importExcelClass(file.getFile(),autoid,whcode,poscodes);
+		renderJson(ret);
 	}
 }

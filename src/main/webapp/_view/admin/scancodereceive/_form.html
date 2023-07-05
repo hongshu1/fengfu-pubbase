@@ -132,7 +132,7 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
 <div class="jbolt_page_content">
     <script type="text/template" id="sysPureceive_tpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.autoid}">
+        <tr data-id="${data.autoid}" data-barcode="${data.rowno}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <!--<td>
                 <a href="admin/scancodereceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
@@ -149,8 +149,9 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
             <td>${data.dplandate|date_ymd}</td>
             <td>${data.cuomname}</td>
             <td>${data.quantity}</td>
-            <td data-editable="${data.iseditqty??false}">${data.qty}</td>
-            <td data-editable="${data.iseditweight??true}">${data.weight??0}</td>
+            <td>${data.qty}</td>
+<!--            <td data-editable="${data.iseditqty??false}">${data.qty}</td>-->
+<!--            <td data-editable="${data.iseditweight??true}">${data.weight??0}</td>-->
             <td>${data.poscode}</td>
             <td><img data-switchbtn data-value="${data.isinitial}" data-handler="switchEditableTd"/></td>
             <td hidden>${data.sourcebilldid}</td>
@@ -216,7 +217,7 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
            data-editable-option="getJBoltTableEditableColsOpton_#(pageId)">
         <thead>
         <tr>
-            <th data-width="60">序号</th>
+            <th data-width="60" data-column="index">序号</th>
 <!--            <th data-width="150">操作</th>-->
             <th data-width="60" data-column="combination">组号</th>
             <th data-width="100" data-column="barcodetype">类型</th>
@@ -230,7 +231,7 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
             <th data-width="100" data-column="cuomname">主计量单位</th>
             <th data-width="100" data-column="quantity">数量</th>
             <th data-width="100" data-column="qty">收货数量</th>
-            <th data-width="100" data-column="weight">收货重量</th>
+<!--            <th data-width="100" data-column="weight">收货重量</th>-->
             <th data-width="100" data-column="poscode">入库库区</th>
             <th data-width="100" data-column="isinitial" data-editable="false">是否初物</th>
             <th data-width="100" data-column="sourcebilldid" hidden>来源行号</th>
@@ -264,17 +265,17 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
             }
             var detailHidden = $("#detailHidden").val();
             var groupCode = $("#groupCode").val();
-            Ajax.post("admin/scancodereceive/getResource", {"q": barcode,"detailHidden":detailHidden,"groupCode":groupCode},
+            Ajax.post("admin/scancodereceive/getResource", {"barcode": barcode,"detailHidden":detailHidden,"groupCode":groupCode},
                 function (res) {
                 if (res.state==='ok'){
-                    var trJsonData = res.data;
+                    var trJsonData = res.data[0];
                     console.log('res.data===>',res.data)
                     jboltTableInsertRow("jbolt_Table_#(pageId)", trJsonData, false, false, false);
                     $("#barcode").val('');
                     console.log('trJsonData====>',trJsonData)
-                    var cinvcode = trJsonData[0].invcode;
-                    var vencode = trJsonData[0].vencode;
-                    var sourcebilltype = trJsonData[0].sourcebilltype;
+                    var cinvcode = trJsonData.invcode;
+                    var vencode = trJsonData.vencode;
+                    var sourcebilltype = trJsonData.sourcebilltype;
                     Ajax.post("admin/scancodereceive/getBarCodeData",
                         {"itemCode": cinvcode,"supplier":vencode,"sourceBillType":sourcebilltype},
                         function(rres) {
@@ -283,8 +284,8 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                                 console.log('data',rres.data);
                                 if (rres.data!==undefined){
                                     rres.data.barcodetype = '转换后';
-                                    rres.data.combination = trJsonData[0].combination;
-                                    rres.data.venname = trJsonData[0].venname;
+                                    rres.data.combination = trJsonData.combination;
+                                    rres.data.venname = trJsonData.venname;
                                     jboltTableInsertRow("jbolt_Table_#(pageId)", rres.data, false, false, false);
                                     tableDataSuccess();
                                     LayerMsgBox.close(index);
@@ -335,7 +336,6 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
 
         var careacode = $("#careacode").val();
         var careaname = $("#careaname").val();
-        console.log(careacode + careaname);
 
         if (isCheckedNone) {
 
@@ -354,9 +354,11 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                 LayerMsgBox.confirm("所选数据中确定覆盖吗？", function () {
                     $.each(datas, function (index, row) {
 
+                        console.log('row===>',row);
+
                         row.careacode = careacode;
 
-                        var $tr = $('tr[data-barcode="' + row.barcode + '"]');
+                        var $tr = $('tr[data-barcode="' + row.rowno + '"]');
 
                         jboltTableSetCell($table, $tr, 'poscode', row.careacode, row.careacode);
                     })
@@ -412,6 +414,8 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
 
             let codes = array.length > 0 ?array.join(','):'';
             $("#detailHidden").val(codes);
+        } else {
+            $("#detailHidden").val('');
         }
         $("#groupCode").val(groupCode);
         console.log('detailHidden===',$("#detailHidden").val());

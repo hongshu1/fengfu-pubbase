@@ -45,10 +45,12 @@
                 <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
                     onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',false)" data-handler="refreshJBoltTable" data-title="查看年度计划">查看</a>
 
-                <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
-                    onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',true)" data-handler="refreshJBoltTable" data-title="编辑年度计划">编辑</a>
+                {@if data.iauditstatus == 0}
+                    <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
+                            onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',true)" data-handler="refreshJBoltTable" data-title="编辑年度计划">编辑</a>
 
-                <a class="jbolt_table_delbtn" href="admin/scheduproductplanyear/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
+                    <a class="jbolt_table_delbtn" href="admin/scheduproductplanyear/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
+                {@/if}
             </td>
             <td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
             <td>${data.cplanorderno}</td>

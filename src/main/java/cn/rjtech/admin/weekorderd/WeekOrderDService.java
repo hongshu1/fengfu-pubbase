@@ -130,4 +130,18 @@ public class WeekOrderDService extends BaseService<WeekOrderD> {
 	public Ret saveUpdateCplanTime(JBoltTable jBoltTable) {
 		return SUCCESS;
     }
+
+
+    public WeekOrderD getWeekOrderD(String iInventoryId,String cBarcode,String cVersion){
+		return findFirst("select * from Co_WeekOrderD where isDeleted = '0' and iInventoryId = ? and cCode = ? and cVersion = ? ", iInventoryId, cBarcode, cVersion);
+	}
+
+	//查找已发货的数据
+	public List<WeekOrderD> getWeekOrderDdatas(Long iWeekOrderMid){
+		return find("select d.* from Co_WeekOrderD d LEFT JOIN Co_WeekOrderM m on m.iAutoId = d.iWeekOrderMid where d.isDeleted = '0' and m.iOrderStatus = '5' and d.iWeekOrderMid = ? ", iWeekOrderMid);
+	}
+
+	public WeekOrderD getWeekOrderDIOrderStatus(String iInventoryId,String cBarcode,String cVersion){
+		return findFirst("select d.* from Co_WeekOrderD d LEFT JOIN Co_WeekOrderM m on m.iAutoId = d.iWeekOrderMid where d.isDeleted = '0' and m.iOrderStatus = '6' and d.iInventoryId = ? and d.cCode = ? and d.cVersion = ? ", iInventoryId, cBarcode, cVersion);
+	}
 }

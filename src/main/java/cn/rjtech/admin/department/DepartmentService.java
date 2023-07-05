@@ -7,6 +7,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
@@ -15,6 +16,7 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.util.ValidationUtils;
@@ -288,9 +290,9 @@ public class DepartmentService extends BaseService<Department> {
                 JBoltExcelHeader.create("cdepcode", "部门编码", 20),
                 JBoltExcelHeader.create("cdepname", "部门名称", 20),
                 JBoltExcelHeader.create("cdeptype", "部门类型", 20),
-                JBoltExcelHeader.create("cpersonname", "负责人", 20),
+                JBoltExcelHeader.create("cdepperson", "负责人编码", 20),
+                JBoltExcelHeader.create("cdeppersonname", "负责人名称", 20),
                 JBoltExcelHeader.create("isapsinvoled", "是否参与排产", 15),
-                JBoltExcelHeader.create("dcreatetime", "创建时间", 20),
                 JBoltExcelHeader.create("cdepmemo", "备注", 20)
         );
         return jBoltExcelSheet;
@@ -302,7 +304,8 @@ public class DepartmentService extends BaseService<Department> {
         return JBoltExcel.create()//创建JBoltExcel 从模板加载创建
                 .addSheet(createJboltExcelSheetTpl().setDataChangeHandler((data, index) -> {
                     // 设置数据转换处理器
-                    data.changeBooleanToStr("isapsinvoled", "是", "否");
+                    data.getStr("cdepperson");
+                    data.getStr("cdepcode");
                 }).setRecordDatas(2, datas)).setFileName("部门档案" + "_" + DateUtil.today());
     }
 
@@ -730,11 +733,10 @@ public class DepartmentService extends BaseService<Department> {
                                         JBoltExcelHeader.create("cdepcode", "部门编码"),
                                         JBoltExcelHeader.create("cdepname", "部门名称"),
                                         JBoltExcelHeader.create("cdeptype", "部门类型"),
-                                        JBoltExcelHeader.create("cpersonname", "负责人"),
+                                        JBoltExcelHeader.create("cdepperson", "负责人编码"),
+                                        JBoltExcelHeader.create("", "负责人名称"),
                                         JBoltExcelHeader.create("isapsinvoled", "是否参与排产"),
-                                        JBoltExcelHeader.create("dcreatetime", "创建时间"),
                                         JBoltExcelHeader.create("cdepmemo", "备注")
-
 
 
                                 )
@@ -753,62 +755,87 @@ public class DepartmentService extends BaseService<Department> {
         }
 
         // 工序新增的记录
-        List<Record> routingAddRecordList = new ArrayList<>();
-        // 工价新增的记录
-        List<Record> priceAddRecordList = new ArrayList<>();
+        List<Department>  departmentAddList = new ArrayList<>();
 
-        List<String> list = new ArrayList<>();
-        Date date = new Date();
-        /*
+        List<String> errList = new ArrayList<>();
+        DateTime date = DateUtil.date();
+
         for (Record record : rows) {
-            Record recordByRoutingCode = findRecordByRoutingCode(record.getStr("croutingcode"));
+            int i=0;
+            Department dbDepartment = findByCdepcode(record.getStr("cdepcode"));
 
-            String name = routerecordService.findrecord(record.getStr("cdeptcode"));
-            if (recordByRoutingCode != null) {
-                list.add(String.format("%s数据编码已存在<br/>", record.getStr("croutingcode")));
+            if (dbDepartment != null) {
+                errList.add(String.format("%s部门编码已存在<br/>", record.getStr("cdepcode")));
+                i++;
             }
 
-            if (name == null) {
-                list.add(String.format("%s数据车间已存在<br/>", record.getStr("cdeptcode")));
-            }
 
             int a = 0;
             for (Record record1 : rows) {
-                if (record.getStr("croutingcode").equals(record1.getStr("croutingcode"))) {
+                if (record.getStr("cdepcode").equals(record1.getStr("cdepcode"))) {
                     a += 1;
                 }
                 if (a == 2) {
-                    list.add(String.format("%sEXCEL编码重复<br/>", record.getStr("croutingcode")));
+                    errList.add(String.format("%sEXCEL部门编码重复<br/>", record.getStr("cdepcode")));
+                    i++;
                 }
             }
 
-        }
 
-        LinkedHashSet<String> hashSet = new LinkedHashSet<>(list);
-        ArrayList<String> listWithoutDuplicates = new ArrayList<>(hashSet);
-        ValidationUtils.assertEmpty(listWithoutDuplicates, CollUtil.join(listWithoutDuplicates, COMMA));
 
-        for (Record row : Objects.requireNonNull(rows)) {
+            String isapsinvoled = record.getStr("isapsinvoled");
+            if(StringUtils.isEmpty(isapsinvoled)){
+                errList.add(String.format("%s是否排产为空！<br/>", record.getStr("cdepcode")));
+                i++;
+            }
 
-            // ValidationUtils.isTrue(row.getBigDecimal("iprice").compareTo(BigDecimal.ZERO) != 0 || row.getBigDecimal("iprice").compareTo(BigDecimal.ZERO) != 0.0, "工价不能为0");
-            // 工序
-            Record routingRecord = findRecordByRoutingCode(row.getStr("croutingcode"));
 
-            // 新增
-            if (null == routingRecord) {
-                routingAddRecordList.add(row.set("iautoid", JBoltSnowflakeKit.me.nextId())
-                        .set("icreateby", userId)
-                        .set("dcreatedate", date).set("cdeptname", routerecordService.findrecord(row.getStr("cdeptcode"))));
+            if(i==0){
+                Department department=new Department();
 
+                record.setColumns(department);
+
+
+                department.put(record);
+                String cdepperson = record.getStr("cdepperson");
+                department.setCDepPerson(cdepperson);
+                department.setCCreateName(JBoltUserKit.getUserName());
+                department.setCUpdateName(JBoltUserKit.getUserName());
+                department.setDCreateTime(new Date());
+                department.setDUpdateTime(new Date());
+                department.setCType("1");
+                department.setIOrgId(getOrgId());
+                department.setCOrgCode(getOrgCode());
+                department.setICreateBy(JBoltUserKit.getUserId());
+                department.setIUpdateBy(JBoltUserKit.getUserId());
+                if(isapsinvoled.equals("是")){
+                    department.setIsApsInvoled(true);
+                }else {
+                    department.setIsApsInvoled(false);
+                }
+
+                departmentAddList.add(department);
             }
 
 
         }
-        */
-        tx(() -> {
 
+
+        tx(() -> {
+            for (Department department : departmentAddList) {
+                department.save();
+            }
             return true;
         });
+
+        String totalErr="";
+        for (String err : errList) {
+            totalErr+=err;
+        }
+        if(totalErr.length()>0){
+            ValidationUtils.isTrue(false,totalErr);
+        }
+
 
         return SUCCESS;
     }
@@ -824,4 +851,8 @@ public class DepartmentService extends BaseService<Department> {
     	ValidationUtils.isTrue(refU8Dep.getBDepEnd(), "U8推单部门:"+refU8Dep.getCDepName() + "非末级");
     	return refU8Dep.getCDepCode();
     }
+
+
+
+
 }

@@ -132,7 +132,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
         }
         int size = formUploadDService.findByPid(formRecord.getLong("formUploadM.iAutoId")).size();
 
-        if (jBoltTable.saveIsBlank() && jBoltTable.updateIsBlank() && StrUtil.isBlank(formRecord.getStr("cattachments"))
+        if (jBoltTable.saveIsBlank() && jBoltTable.updateIsBlank() && StrUtil.isBlank(formRecord.getStr("cattachments2"))
                 && size <= 0) {
             return fail("附件不可为空！");
         }
@@ -183,7 +183,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
             List<Record> updateRecordList = jBoltTable.getUpdateRecordList();
             for (Record updateRecord : updateRecordList) {
                 FormUploadD formUploadD = formUploadDService.findById(updateRecord.getStr("iautoid"));
-                formUploadD.setCAttachments(updateRecord.getStr("cattachments"));
+                formUploadD.setCAttachments(updateRecord.getStr("cattachments2"));
                 formUploadD.setCMemo(updateRecord.getStr("cmemo"));
                 formUploadDS.add(formUploadD);
             }
@@ -195,12 +195,12 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
         Record formRecord = jBoltTable.getFormRecord();
         //图片数据处理
         List<Record> saveRecords = jBoltTable.getSaveRecordList();
-        if (StrUtil.isNotBlank(formRecord.getStr("cattachments"))) {
+        if (StrUtil.isNotBlank(formRecord.getStr("cattachments2"))) {
             if (CollUtil.isNotEmpty(saveRecords)) {
                 for (Record saveRecord : saveRecords) {
-                    if (formRecord.getStr("cattachments").contains(saveRecord.getStr("cattachments"))) {
-                        String replace = formRecord.getStr("cattachments").replace("," + saveRecord.getStr("cattachments"), "");
-                        formRecord.set("cattachments", replace);
+                    if (formRecord.getStr("cattachments2").contains(saveRecord.getStr("cattachments"))) {
+                        String replace = formRecord.getStr("cattachments2").replace("-" + saveRecord.getStr("cattachments"), "");
+                        formRecord.set("cattachments2", replace);
                     }
                 }
             }
@@ -214,16 +214,16 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
                 formUploadD.setCMemo(saveRecord.getStr("cmemo"));
                 formUploadDS.add(formUploadD);
             }
-            for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments"), COMMA, true, true)) {
+            for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments2"), "-", true, true)) {
                 FormUploadD formUploadD = new FormUploadD();
                 formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
                 formUploadD.setCAttachments(cattachment);
                 formUploadDS.add(formUploadD);
             }
             formUploadDService.batchSave(formUploadDS);
-        } else {
+        } else if (jBoltTable.updateIsBlank()){
             ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
-            for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments"), COMMA, true, true)) {
+            for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments2"), "-", true, true)) {
                 FormUploadD formUploadD = new FormUploadD();
                 formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
                 formUploadD.setCAttachments(cattachment);
@@ -277,7 +277,9 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
                 "未审核" : formUploadM.getIAuditStatus() == 1 ?
                 "待审核" : formUploadM.getIAuditStatus() == 2 ? "审核通过" : "审核不通过";
         if (formUploadM.getIAuditStatus() != 0) {
-            return fail("该数据状态为：" + s + "不可删除！");
+            if (formUploadM.getIAuditStatus()!=3) {
+                return fail("该数据状态为：" + s + "不可删除！");
+            }
         }
         List<Record> service = formUploadDService.findByPid(id);
         if (service.size() > 0) {

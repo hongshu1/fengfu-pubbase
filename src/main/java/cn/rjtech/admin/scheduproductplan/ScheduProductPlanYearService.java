@@ -18,6 +18,7 @@ import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.ApsAnnualpland;
 import cn.rjtech.model.momdata.ApsAnnualplandQty;
 import cn.rjtech.model.momdata.ApsAnnualplanm;
+import cn.rjtech.model.momdata.ApsWeekscheduledQty;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
@@ -34,6 +35,9 @@ import com.jfinal.plugin.activerecord.Record;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -648,7 +652,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
     /**
      * 保存计划 列转行
      */
-    public Ret saveScheduPlan(String startYear,List<ScheduProductYearViewDTO> scheduProductPlanYearList) throws Exception {
+    public Ret saveScheduPlan(String startYear,List<ScheduProductYearViewDTO> scheduProductPlanYearList) {
 
         List<ScheduProductYearViewDTO> scheduList = scheduProductPlanYearList;
         if (scheduProductPlanYearList.size() < 1){
@@ -689,71 +693,75 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
         //数量明细子表集
         List<ApsAnnualplandQty> annualplandQtyList = new ArrayList<>();
 
-        for (ScheduProductYearViewDTO viewDTO : scheduList){
-            String planTypeCode = viewDTO.getPlanTypeCode();
-            if (planTypeCode.equals(CC)){
-                continue;
-            }
-            Long iEquipmentModelId = viewDTO.getiEquipmentModelId();
-            Long iInventoryId = viewDTO.getiInventoryId();
-            String nowyear = viewDTO.getNowyear();
-            String nextyear = viewDTO.getNextyear();
-            Integer nowMonthSum = viewDTO.getNowMonthSum().intValue();
-            Integer nextMonthSum = viewDTO.getNextMonthSum().intValue();
+        try {
+            for (ScheduProductYearViewDTO viewDTO : scheduList){
+                String planTypeCode = viewDTO.getPlanTypeCode();
+                if (planTypeCode.equals(CC)){
+                    continue;
+                }
+                Long iEquipmentModelId = viewDTO.getiEquipmentModelId();
+                Long iInventoryId = viewDTO.getiInventoryId();
+                String nowyear = viewDTO.getNowyear();
+                String nextyear = viewDTO.getNextyear();
+                Integer nowMonthSum = viewDTO.getNowMonthSum().intValue();
+                Integer nextMonthSum = viewDTO.getNextMonthSum().intValue();
 
-            String key = (iEquipmentModelId != null ? iEquipmentModelId : "") + iInventoryId.toString();
-            //机型物料子表
-            ApsAnnualpland annualpland = annualplandMap.containsKey(key)  ? annualplandMap.get(key) : new ApsAnnualpland();
-            Long dId;
-            if (annualplandMap.containsKey(key)){
-                dId = annualpland.getIAutoId();
-            }else {
-                dId = JBoltSnowflakeKit.me.nextId();
-            }
-            annualpland.setIAutoId(dId);
-            annualpland.setIAnnualPlanMid(mId);
-            annualpland.setIEquipmentModelId(iEquipmentModelId);
-            annualpland.setIInventoryId(iInventoryId);
-            Integer type = null;
-            if (planTypeCode.equals(PP)){
-                annualpland.setIYear11Qty(nowMonthSum);//计划使用 第一年
-                annualpland.setIYear21Qty(nextMonthSum);//计划使用 下一年
-                type = 1;
-            }
-            if (planTypeCode.equals(CP)){
-                annualpland.setIYear12Qty(nowMonthSum);//计划数量 第一年
-                annualpland.setIYear22Qty(nextMonthSum);//计划数量 下一年
-                type = 2;
-            }
-            if (planTypeCode.equals(ZK)){
-                annualpland.setIYear13Qty(nowMonthSum);//计划在库 第一年
-                annualpland.setIYear23Qty(nextMonthSum);//计划在库 下一年
-                type = 3;
-            }
-            annualplandMap.put(key,annualpland);
+                String key = (iEquipmentModelId != null ? iEquipmentModelId : "") + iInventoryId.toString();
+                //机型物料子表
+                ApsAnnualpland annualpland = annualplandMap.containsKey(key)  ? annualplandMap.get(key) : new ApsAnnualpland();
+                Long dId;
+                if (annualplandMap.containsKey(key)){
+                    dId = annualpland.getIAutoId();
+                }else {
+                    dId = JBoltSnowflakeKit.me.nextId();
+                }
+                annualpland.setIAutoId(dId);
+                annualpland.setIAnnualPlanMid(mId);
+                annualpland.setIEquipmentModelId(iEquipmentModelId);
+                annualpland.setIInventoryId(iInventoryId);
+                Integer type = null;
+                if (planTypeCode.equals(PP)){
+                    annualpland.setIYear11Qty(nowMonthSum);//计划使用 第一年
+                    annualpland.setIYear21Qty(nextMonthSum);//计划使用 下一年
+                    type = 1;
+                }
+                if (planTypeCode.equals(CP)){
+                    annualpland.setIYear12Qty(nowMonthSum);//计划数量 第一年
+                    annualpland.setIYear22Qty(nextMonthSum);//计划数量 下一年
+                    type = 2;
+                }
+                if (planTypeCode.equals(ZK)){
+                    annualpland.setIYear13Qty(nowMonthSum);//计划在库 第一年
+                    annualpland.setIYear23Qty(nextMonthSum);//计划在库 下一年
+                    type = 3;
+                }
+                annualplandMap.put(key,annualpland);
 
-            for (int i = 1; i <= 12; i++) {
-                BigDecimal ppNum = (BigDecimal) viewDTO.getClass().getMethod("getNowmonth"+(i), new Class[]{}).invoke(viewDTO, new Object[]{});
-                ApsAnnualplandQty annualplandQty = new ApsAnnualplandQty();
-                annualplandQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
-                annualplandQty.setIAnnualPlanDid(dId);
-                annualplandQty.setIType(type);
-                annualplandQty.setIYear(Integer.valueOf(nowyear));
-                annualplandQty.setIMonth(i);
-                annualplandQty.setIQty(ppNum.intValue());
-                annualplandQtyList.add(annualplandQty);
-                if (i <= 3){
-                    BigDecimal ppNum2 = (BigDecimal) viewDTO.getClass().getMethod("getNextmonth"+(i), new Class[]{}).invoke(viewDTO, new Object[]{});
-                    ApsAnnualplandQty annualplandQty2 = new ApsAnnualplandQty();
-                    annualplandQty2.setIAutoId(JBoltSnowflakeKit.me.nextId());
-                    annualplandQty2.setIAnnualPlanDid(dId);
-                    annualplandQty2.setIType(type);
-                    annualplandQty2.setIYear(Integer.valueOf(nextyear));
-                    annualplandQty2.setIMonth(i);
-                    annualplandQty2.setIQty(ppNum2.intValue());
-                    annualplandQtyList.add(annualplandQty2);
+                for (int i = 1; i <= 12; i++) {
+                    BigDecimal ppNum = (BigDecimal) viewDTO.getClass().getMethod("getNowmonth"+(i), new Class[]{}).invoke(viewDTO, new Object[]{});
+                    ApsAnnualplandQty annualplandQty = new ApsAnnualplandQty();
+                    annualplandQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                    annualplandQty.setIAnnualPlanDid(dId);
+                    annualplandQty.setIType(type);
+                    annualplandQty.setIYear(Integer.valueOf(nowyear));
+                    annualplandQty.setIMonth(i);
+                    annualplandQty.setIQty(ppNum.intValue());
+                    annualplandQtyList.add(annualplandQty);
+                    if (i <= 3){
+                        BigDecimal ppNum2 = (BigDecimal) viewDTO.getClass().getMethod("getNextmonth"+(i), new Class[]{}).invoke(viewDTO, new Object[]{});
+                        ApsAnnualplandQty annualplandQty2 = new ApsAnnualplandQty();
+                        annualplandQty2.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                        annualplandQty2.setIAnnualPlanDid(dId);
+                        annualplandQty2.setIType(type);
+                        annualplandQty2.setIYear(Integer.valueOf(nextyear));
+                        annualplandQty2.setIMonth(i);
+                        annualplandQty2.setIQty(ppNum2.intValue());
+                        annualplandQtyList.add(annualplandQty2);
+                    }
                 }
             }
+        }catch (Exception e){
+            throw new RuntimeException(e);
         }
         if (annualplandQtyList.size() > 0){
             ApsAnnualplandQty annualplandQty = annualplandQtyList.get(0);
@@ -764,12 +772,155 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
 
         tx(() -> {
             annualplanm.save();
-            List<ApsAnnualpland> annualplandList = new ArrayList<>();
-            for (ApsAnnualpland annualpland : annualplandMap.values()){
-                annualplandList.add(annualpland);
-            }
+            List<ApsAnnualpland> annualplandList = new ArrayList<>(annualplandMap.values());
             apsAnnualplandService.batchSave(annualplandList);
-            apsAnnualplandQtyService.batchSave(annualplandQtyList);
+            //apsAnnualplandQtyService.batchSave(annualplandQtyList);
+            if (annualplandQtyList.size() > 0) {
+                List<List<ApsAnnualplandQty>> groupList = CollectionUtils.partition(annualplandQtyList, 300);
+                CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
+                ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
+                for (List<ApsAnnualplandQty> dataList : groupList) {
+                    executorService.execute(() -> {
+                        apsAnnualplandQtyService.batchSave(dataList);
+                    });
+                    countDownLatch.countDown();
+                }
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                executorService.shutdown();
+            }
+            return true;
+        });
+        return SUCCESS;
+    }
+
+    /**
+     * 编辑计划 列转行
+     */
+    public Ret updateScheduPlan(List<ScheduProductYearViewDTO> scheduProductPlanYearList,Long iAnnualPlanMid) {
+
+        List<ScheduProductYearViewDTO> scheduList = scheduProductPlanYearList;
+        if (scheduProductPlanYearList.size() < 1){
+            return SUCCESS;
+        }
+        String CC = "CC";  //客户行事历
+        String PP = "PP";    //计划使用
+        String CP = "CP";    //计划数量
+        String ZK = "ZK";    //计划在库
+
+        Long mId = iAnnualPlanMid;
+
+
+        //机型物料子表集 key:机型+物料
+        Map<String,ApsAnnualpland> annualplandMap = new HashMap<>();
+        //数量明细子表集
+        List<ApsAnnualplandQty> annualplandQtyList = new ArrayList<>();
+
+        List<Long> invIdList = new ArrayList<>();
+        try {
+            for (ScheduProductYearViewDTO viewDTO : scheduList){
+                String planTypeCode = viewDTO.getPlanTypeCode();
+                if (planTypeCode.equals(CC)){
+                    continue;
+                }
+                Long iEquipmentModelId = viewDTO.getiEquipmentModelId();
+                Long iInventoryId = viewDTO.getiInventoryId();
+                String nowyear = viewDTO.getNowyear();
+                String nextyear = viewDTO.getNextyear();
+                Integer nowMonthSum = viewDTO.getNowMonthSum().intValue();
+                Integer nextMonthSum = viewDTO.getNextMonthSum().intValue();
+
+                String key = (iEquipmentModelId != null ? iEquipmentModelId : "") + iInventoryId.toString();
+                //机型物料子表
+                ApsAnnualpland annualpland = annualplandMap.containsKey(key)  ? annualplandMap.get(key) : new ApsAnnualpland();
+                Long dId;
+                if (annualplandMap.containsKey(key)){
+                    dId = annualpland.getIAutoId();
+                }else {
+                    dId = JBoltSnowflakeKit.me.nextId();
+                }
+                annualpland.setIAutoId(dId);
+                annualpland.setIAnnualPlanMid(mId);
+                annualpland.setIEquipmentModelId(iEquipmentModelId);
+                annualpland.setIInventoryId(iInventoryId);
+                Integer type = null;
+                if (planTypeCode.equals(PP)){
+                    annualpland.setIYear11Qty(nowMonthSum);//计划使用 第一年
+                    annualpland.setIYear21Qty(nextMonthSum);//计划使用 下一年
+                    type = 1;
+                }
+                if (planTypeCode.equals(CP)){
+                    annualpland.setIYear12Qty(nowMonthSum);//计划数量 第一年
+                    annualpland.setIYear22Qty(nextMonthSum);//计划数量 下一年
+                    type = 2;
+                }
+                if (planTypeCode.equals(ZK)){
+                    annualpland.setIYear13Qty(nowMonthSum);//计划在库 第一年
+                    annualpland.setIYear23Qty(nextMonthSum);//计划在库 下一年
+                    type = 3;
+                }
+                annualplandMap.put(key,annualpland);
+                invIdList.add(iInventoryId);
+
+                for (int i = 1; i <= 12; i++) {
+                    BigDecimal ppNum = (BigDecimal) viewDTO.getClass().getMethod("getNowmonth"+(i), new Class[]{}).invoke(viewDTO, new Object[]{});
+                    ApsAnnualplandQty annualplandQty = new ApsAnnualplandQty();
+                    annualplandQty.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                    annualplandQty.setIAnnualPlanDid(dId);
+                    annualplandQty.setIType(type);
+                    annualplandQty.setIYear(Integer.valueOf(nowyear));
+                    annualplandQty.setIMonth(i);
+                    annualplandQty.setIQty(ppNum.intValue());
+                    annualplandQtyList.add(annualplandQty);
+                    if (i <= 3){
+                        BigDecimal ppNum2 = (BigDecimal) viewDTO.getClass().getMethod("getNextmonth"+(i), new Class[]{}).invoke(viewDTO, new Object[]{});
+                        ApsAnnualplandQty annualplandQty2 = new ApsAnnualplandQty();
+                        annualplandQty2.setIAutoId(JBoltSnowflakeKit.me.nextId());
+                        annualplandQty2.setIAnnualPlanDid(dId);
+                        annualplandQty2.setIType(type);
+                        annualplandQty2.setIYear(Integer.valueOf(nextyear));
+                        annualplandQty2.setIMonth(i);
+                        annualplandQty2.setIQty(ppNum2.intValue());
+                        annualplandQtyList.add(annualplandQty2);
+                    }
+                }
+            }
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        if (annualplandQtyList.size() > 0){
+            ApsAnnualplandQty annualplandQty = annualplandQtyList.get(0);
+            if (annualplandQty.getIQty() == null){
+                annualplandQty.setIQty(0);
+            }
+        }
+
+        tx(() -> {
+            delete("DELETE FROM Aps_AnnualPlanD_Qty WHERE iAnnualPlanDid IN (SELECT iAutoId FROM Aps_AnnualPlanD WHERE iAnnualPlanMid = ? AND iInventoryId IN (" + ArrayUtil.join(invIdList.toArray(), COMMA) + "))", mId);
+            delete("DELETE FROM Aps_AnnualPlanD WHERE iAnnualPlanMid = ? AND iInventoryId IN (" + ArrayUtil.join(invIdList.toArray(), COMMA) + ") ", mId);
+            List<ApsAnnualpland> annualplandList = new ArrayList<>(annualplandMap.values());
+            apsAnnualplandService.batchSave(annualplandList);
+            //apsAnnualplandQtyService.batchSave(annualplandQtyList);
+            if (annualplandQtyList.size() > 0) {
+                List<List<ApsAnnualplandQty>> groupList = CollectionUtils.partition(annualplandQtyList, 300);
+                CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
+                ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
+                for (List<ApsAnnualplandQty> dataList : groupList) {
+                    executorService.execute(() -> {
+                        apsAnnualplandQtyService.batchSave(dataList);
+                    });
+                    countDownLatch.countDown();
+                }
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                executorService.shutdown();
+            }
             return true;
         });
         return SUCCESS;
@@ -970,16 +1121,16 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
         });
         return SUCCESS;
     }*/
-    public Ret saveScheduPlanYear(String yearDataArry) {
+    public Ret saveScheduPlanYear(String yearDataArry,Long mid) {
         if (StrUtil.isBlank(yearDataArry) || yearDataArry.equals("null")){
             ValidationUtils.error("无计划保存!");
         }
-        try {
+        if (isOk(mid)){
             List<ScheduProductYearViewDTO> list = JSONArray.parseArray(yearDataArry,ScheduProductYearViewDTO.class);
-            return saveScheduPlan(list.get(0).getNowyear(),list);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            return updateScheduPlan(list,mid);
         }
+        List<ScheduProductYearViewDTO> list = JSONArray.parseArray(yearDataArry,ScheduProductYearViewDTO.class);
+        return saveScheduPlan(list.get(0).getNowyear(),list);
     }
 
 

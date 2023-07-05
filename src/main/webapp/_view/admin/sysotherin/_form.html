@@ -185,7 +185,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(sysotherin.AutoID?? && sysotherin.iauditway == 2)
+#if(sysotherin.AutoID?? && sysotherin.iauditway == 2 && sysotherin.iauditstatus != 0)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysotherin.AutoID, formSn="T_Sys_OtherIn", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn.rjtech.admin.sysotherin.SysOtherinService")
 #end
 
@@ -197,7 +197,7 @@
             <td>
                 <a href="admin/sysotherindetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 "
                    tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
-                   class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
+                   class="jbolt_table_delbtn" #if(sysotherin.iAuditStatus?? ==2  || sysotherin.iAuditStatus?? ==1) disabled #end ><i class="fa fa-remove c-danger">删除</i></a>
 
             </td>
             <td>${data.venname}</td>

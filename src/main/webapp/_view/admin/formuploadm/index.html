@@ -55,18 +55,17 @@
 <td>
 <a class=jbolt_table_editbtn href="admin/formUploadM/edit?iautoid=${data.iautoid}&readonly=readonly" data-fs="true"  data-handler="refreshJBoltTable" tooltip data-title="记录上传详情"><i class="fa fa-eye"></i>查看</a>
 
- {@if  data.iauditstatus == '0' }
+ {@if  data.iauditstatus == '0' || data.iauditstatus == '3'}
 <a href="admin/formUploadM/edit?iautoid=${data.iautoid}&edit=true" data-area="100%,100%"  tooltip data-title="编辑记录上传"  data-handler="refreshJBoltTable" data-dialog-title="编辑记录上传" class="jbolt_table_editbtn"><i class="fa fa-edit"></i>编辑</a>
 <a href="admin/formUploadM/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除记录上传" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
  {@/if}
-
 </td>
 <td>$${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
 <td>${data.iworkregionmid}</td>
 <td>${data.icategoryid}</td>
 <td>${data.ddate|date_ymd}</td>
 <td>${data.ccreatename}</td>
-<td>${data.dcreatetime|date_ymd}</td>
+<td>${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
