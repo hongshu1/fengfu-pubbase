@@ -39,7 +39,8 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck
-    public void getomaterialscanusedlogBarcode(@Para(value = "barcode") String barcode) {
+    public void getomaterialscanusedlogBarcode(@Para(value = "barcode") String barcode
+                                               ) {
         ValidationUtils.notNull(barcode, "缺少现品票");
 
         renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeInfo(barcode));
@@ -50,15 +51,17 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
      */
     @ApiDoc(result = MomaterialsreturnmVo.class)
     @UnCheck
-    public void getmomaterialscanusedlogList() {
-        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeList());
+    public void getmomaterialscanusedlogList(@Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                                             @Para(value = "pageSize",defaultValue = "15") Integer pageSize
+                                             ) {
+        renderJBoltApiRet(moMaterialsreturnmApiService.getBycBarcodeList(pageNumber,pageSize));
     }
 
     /**
      * 保存生产退料
      * @param SaveTableData 接收退料 JSON格式 [{"imodocid":"生产工单ID","cbarcode":"现品票",""cinvcode:"存货编码",
      *                      "cinvaddcode":"存货代码","cinvname":"存货名称","cinvstd":"规格型号","empty":"品牌",
-     *                      "iuomclassid":"主计量单位","iqtys":"数量"}]
+     *                      "iuomclassid":"主计量单位","iqtys":"数量","cmome":"备注"}]
      * @param IMoDocId  生产工单ID
      *
      */
@@ -84,6 +87,21 @@ public class MoMaterialsreturnmApiController extends BaseApiController {
     public void getmomaterialscanuseMList(@Para(value = "iautoid") String iautoid) {
         ValidationUtils.notNull(iautoid, "缺少退料表单ID");
         renderJBoltApiRet(moMaterialsreturnmApiService.getModandMomlist(iautoid));
+    }
+
+    /**
+     * 生产退料主页
+     * @param IMoDocId  生产工单ID
+     * @param billno    调拨单号
+     */
+    @ApiDoc(result = MomaterialsreturnmVo.class)
+    @UnCheck
+    public void datas(@Para(value = "IMoDocId") Long IMoDocId,
+                      @Para(value = "billno") String billno,
+                      @Para(value = "pageNumber",defaultValue = "1") Integer pageNumber,
+                      @Para(value = "pageSize",defaultValue = "15") Integer pageSize){
+        renderJBoltApiRet(moMaterialsreturnmApiService.aginateAdminDatas(pageNumber,pageSize,IMoDocId,billno));
+
     }
 
 }

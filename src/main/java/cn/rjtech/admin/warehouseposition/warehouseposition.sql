@@ -92,3 +92,21 @@ WHERE isDeleted=0
     AND iAutoId != #(iautoid)
 #end
 #end
+
+#sql("integrityCheck")
+SELECT
+	she.iWarehouseId,
+	she.iWarehouseAreaId,
+	she.iAutoId
+FROM
+	Bd_Warehouse_Shelves she
+	LEFT JOIN Bd_Warehouse_Area area ON she.iWarehouseAreaId = area.iAutoId
+	LEFT JOIN Bd_Warehouse war ON she.iWarehouseId = war.iAutoId
+WHERE
+	she.isDeleted = 0
+	AND area.isDeleted = 0
+	AND war.isDeleted = 0
+	AND war.cWhName = #para(iwarehousename)
+	AND area.cAreaName = #para(iwarehouseareaname)
+	AND she.cShelvesName = #para(iwarehouseshelvesname)
+#end

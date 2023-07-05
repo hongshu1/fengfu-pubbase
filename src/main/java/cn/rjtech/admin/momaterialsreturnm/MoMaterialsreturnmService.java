@@ -331,28 +331,28 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 
     public List<Record> getBycBarcodeInfo(String barcode) {
         Kv para = Kv.by("barcode", barcode);
-        List<Record> records = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).find();
-        for (Record record : records) {
+        List<Record> paginate = dbTemplate("momaterialsreturnm.getMaterialScanLogBycBarcode", para).find();
+        for (Record record : paginate) {
             if (ObjUtil.isNull(record.getBigDecimal("iQty")) && ObjUtil.isNull(record.getBigDecimal("iScannedQty"))) {
                 ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
             }
             BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));
             record.set("iqtys", subtract);
         }
-        return records;
+        return paginate;
 
     }
 
-    public List<Record> getBycBarcodeList() {
-        List<Record> records = dbTemplate("momaterialsreturnm.getmomaterialscanusedlogList").find();
-        for (Record record : records) {
+    public Page<Record> getBycBarcodeList(Integer pageNumber,Integer pageSize) {
+        Page<Record> paginate = dbTemplate("momaterialsreturnm.getmomaterialscanusedlogList").paginate(pageNumber,pageSize);
+        for (Record record : paginate.getList()) {
             if (ObjUtil.isNull(record.getBigDecimal("iQty")) && ObjUtil.isNull(record.getBigDecimal("iScannedQty"))) {
                 ValidationUtils.error(record.getStr("cbarcode") + "中的现品票数量或耗用数量为空");
             }
             BigDecimal subtract = record.getBigDecimal("iQty").subtract(record.getBigDecimal("iScannedQty"));
             record.set("iqtys", subtract);
         }
-        return records;
+        return paginate;
     }
 
 //    public Ret saveTableSubmit(JBoltTable jBoltTable) {

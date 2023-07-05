@@ -9,6 +9,7 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.admin.warehouseshelves.WarehouseShelvesService;
@@ -26,8 +27,11 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -53,6 +57,9 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
   private WarehouseAreaService warehouseAreaService;
   @Inject
   private WarehouseShelvesService warehouseShelvesService;
+
+  @Inject
+  private CusFieldsMappingDService cusFieldsMappingdService;
 
   /**
    * 后台管理分页查询
@@ -267,96 +274,93 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
     return getCommonList(kv, "iAutoId", "asc");
   }
 
-  public Ret importExcelData(File file) {
-    StringBuilder errorMsg = new StringBuilder();
+  /**
+   * 数据导入
+   *
+   * @param file
+   * @param cformatName
+   * @return
+   */
+  public Ret importExcelData(File file, String cformatName) {
+    Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
+    ValidationUtils.isTrue(ret.isOk(), "导入失败");
+    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
+    StringBuilder msg = new StringBuilder();
 
-    Date now = new Date();
+    tx(() -> {
+      Integer iseq = 1;
+      // 封装数据
+      for (Map<String, Object> data : datas) {
+        // 基本信息校验
+        ValidationUtils.notNull(data.get("cpositioncode"), "第【" + iseq + "】行的【库位编码】不能为空！");
+        ValidationUtils.notNull(data.get("cpositionname"), "第【" + iseq + "】行的【库位名称】不能为空！");
+        ValidationUtils.notNull(data.get("iwarehousename"), "第【" + iseq + "】行的【所属仓库名称】不能为空！");
+        ValidationUtils.notNull(data.get("iwarehouseareaname"), "第【" + iseq + "】行的【所属库区名称】不能为空！");
+        ValidationUtils.notNull(data.get("iwarehouseshelvesname"), "第【" + iseq + "】行的【所属货架名称】不能为空！");
 
-    JBoltExcel jBoltExcel = JBoltExcel
-        //从excel文件创建JBoltExcel实例
-        .from(file)
-        //设置工作表信息
-        .setSheets(
-            JBoltExcelSheet.create("sheet1")
-                //设置列映射 顺序 标题名称
-                .setHeaders(
-                    JBoltExcelHeader.create("cpositioncode", "库位编码"),
-                    JBoltExcelHeader.create("cpositionname", "库位名称"),
-                    JBoltExcelHeader.create("cwhcode", "所属仓库编码"),
-                    JBoltExcelHeader.create("careacode", "所属库区编码"),
-                    JBoltExcelHeader.create("cshelvescode", "所属货架编码"),
+        //数据完整性校验
+        Record record = dbTemplate("warehouseposition.integrityCheck", Kv.by("iwarehousename", data.get("iwarehousename")).set("iwarehouseareaname", data.get("iwarehouseareaname")).
+            set("iwarehouseshelvesname", data.get("iwarehouseshelvesname"))).findFirst();
+        ValidationUtils.notNull(record, "第【" + iseq + "】行的【所属仓库名称】【所属库区名称】【所属货架名称】未找到对应的数据关联关系！");
 
-                    JBoltExcelHeader.create("ilength", "长"),
-                    JBoltExcelHeader.create("iwidth", "宽"),
-                    JBoltExcelHeader.create("iheight", "高"),
-                    JBoltExcelHeader.create("imaxweight", "最大重量"),
-                    JBoltExcelHeader.create("imaxbulk", "最大体积"),
+        Integer cpositioncode = dbTemplate("warehouseposition.verifyDuplication", Kv.by("cpositioncode", data.get("cpositioncode")).
+            set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iwarehouseareaid")).
+            set("iwarehouseshelvesid", record.getLong("iautoid"))).queryInt();
+        if (cpositioncode > 0) {
+          ValidationUtils.error("第【" + iseq + "】行的【库位编码】" + data.get("cpositioncode") + "已存在，请修改后保存");
+        }
 
-                    JBoltExcelHeader.create("cmemo", "备注")
-                )
-                //特殊数据转换器
-                .setDataChangeHandler((data, index) -> {
-                  ValidationUtils.notNull(data.get("cpositioncode"), "库位编码为空！");
-                  ValidationUtils.notNull(data.get("cpositionname"), "库位名称为空！");
-                  ValidationUtils.notNull(data.get("cwhcode"), "仓库编码为空！");
+        Integer cpositionname = dbTemplate("warehouseposition.verifyDuplication", Kv.by("cpositionname", data.get("cpositionname")).
+            set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iwarehouseareaid")).
+            set("iwarehouseshelvesid", record.getLong("iautoid"))).queryInt();
+        if (cpositionname > 0) {
+          ValidationUtils.error("第【" + iseq + "】行的【库位名称】" + data.get("cpositionname") + "已存在，请修改后保存");
+        }
 
-                  ValidationUtils.isTrue(findByCpositionCode(data.getStr("cpositioncode")) == null, data.getStr("cpositioncode") + "编码重复");
+        WarehousePosition warehousePosition = new WarehousePosition();
 
-                  Warehouse warehouse = warehouseService.findByWhCode(data.getStr("cwhcode"));
-                  ValidationUtils.notNull(warehouse, data.getStr("cwhcode") + JBoltMsg.DATA_NOT_EXIST);
-                  data.change("iwarehouseid", warehouse.getIAutoId());
+        //组织数据
+        warehousePosition.setIorgid(getOrgId());
+        warehousePosition.setCorgcode(getOrgCode());
+        warehousePosition.setCorgname(getOrgName());
 
-                  if (isOk(data.getStr("careacode"))) {
-                    WarehouseArea warehouseArea = warehouseAreaService.findByWhAreaCode(data.getStr("careacode"));
-                    ValidationUtils.notNull(warehouse, data.getStr("careacode") + JBoltMsg.DATA_NOT_EXIST);
-                    data.change("iwarehouseareaid", warehouseArea.getIautoid());
-                  }
+        //创建人
+        warehousePosition.setIcreateby(JBoltUserKit.getUserId());
+        warehousePosition.setCcreatename(JBoltUserKit.getUserName());
+        warehousePosition.setDcreatetime(new Date());
 
-                  if (isOk(data.getStr("cshelvescode"))) {
-                    WarehouseShelves warehouseShelves = warehouseShelvesService.findByCshelvesCode(data.getStr("cshelvescode"));
-                    ValidationUtils.notNull(warehouse, data.getStr("cshelvescode") + JBoltMsg.DATA_NOT_EXIST);
-                    data.change("iwarehouseshelvesid", warehouseShelves.getIautoid());
-                  }
+        //更新人
+        warehousePosition.setIupdateby(JBoltUserKit.getUserId());
+        warehousePosition.setCupdatename(JBoltUserKit.getUserName());
+        warehousePosition.setDupdatetime(new Date());
 
-                  data.remove("cwhcode");
-                  data.remove("careacode");
-                  data.remove("cshelvescode");
+        //是否删除，是否启用,数据来源
+        warehousePosition.setIsdeleted(false);
+        warehousePosition.setIsenabled(true);
+        warehousePosition.setIsource(1);
 
-                  data.change("icreateby", JBoltUserKit.getUserId());
-                  data.change("ccreatename", JBoltUserKit.getUserName());
-                  data.change("dcreatetime", now);
-                  //更新
-                  data.change("iupdateby", JBoltUserKit.getUserId());
-                  data.change("cupdatename", JBoltUserKit.getUserName());
-                  data.change("dupdatetime", now);
+        warehousePosition.setCpositioncode(data.get("cpositioncode") + "");
+        warehousePosition.setCpositionname(data.get("cpositionname") + "");
 
-                  data.change("corgcode", getOrgCode());
-                  data.change("corgname", getOrgName());
-                  data.change("iorgid", getOrgId());
+        warehousePosition.setIwarehouseid(record.getLong("iwarehouseid"));
+        warehousePosition.setIwarehouseareaid(record.getLong("iwarehouseareaid"));
+        warehousePosition.setIwarehouseshelvesid(record.getLong("iautoid"));
 
-                })
-                //从第三行开始读取
-                .setDataStartRow(3)
-        );
-    //从指定的sheet工作表里读取数据
-    List<WarehousePosition> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", WarehousePosition.class, errorMsg);
-    if (notOk(models)) {
-      if (errorMsg.length() > 0) {
-        return fail(errorMsg.toString());
-      } else {
-        return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        warehousePosition.setILength(BigDecimal.valueOf(Integer.parseInt(data.get("ilength") + "")));
+        warehousePosition.setIwidth(BigDecimal.valueOf(Integer.parseInt(data.get("iwidth") + "")));
+        warehousePosition.setIheight(BigDecimal.valueOf(Integer.parseInt(data.get("iheight") + "")));
+        warehousePosition.setImaxweight(BigDecimal.valueOf(Integer.parseInt(data.get("imaxweight") + "")));
+        warehousePosition.setImaxbulk(BigDecimal.valueOf(Integer.parseInt(data.get("imaxbulk") + "")));
+
+        ValidationUtils.isTrue(warehousePosition.save(), "第" + iseq + "行保存数据失败");
+
+        iseq++;
       }
-    }
 
-    //读取数据没有问题后判断必填字段
-    if (models.size() > 0) {
-      tx(() -> {
-        batchSave(models);
-        return true;
-      });
+      return true;
+    });
 
-    }
-
+    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
     return SUCCESS;
   }
 

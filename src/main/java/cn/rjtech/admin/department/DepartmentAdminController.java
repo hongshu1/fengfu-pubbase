@@ -223,6 +223,7 @@ public class DepartmentAdminController extends BaseAdminController {
     /**
      * 执行导入
      */
+    @UnCheck
     public void importExcel() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
 
@@ -282,6 +283,7 @@ public class DepartmentAdminController extends BaseAdminController {
         renderBytesToExcelXlsFile(service.exportExcelTpl(rows));
     }
 
+    @UnCheck
     public void downloadTpl() throws Exception {
         renderBytesToExcelXlsFile(service.exportExcelTpl(null));
     }

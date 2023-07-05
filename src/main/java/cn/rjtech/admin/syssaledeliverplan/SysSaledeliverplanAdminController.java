@@ -8,12 +8,13 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.customeraddr.CustomerAddrService;
 import cn.rjtech.admin.department.DepartmentService;
-import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.settlestyle.SettleStyleService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
+
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -39,6 +40,16 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
 
     @Inject
     private SysSaledeliverplanService service;
+    @Inject
+    private DepartmentService         departmentservice;
+    @Inject
+    private CustomerAddrService       customeraddrservice;
+    @Inject
+    private SaleTypeService           saletypeservice;
+    @Inject
+    private SettleStyleService        settlestyleservice;
+    @Inject
+    private RdStyleService            rdstyleservice;
 
     /**
      * 首页
@@ -57,8 +68,26 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
     /**
      * 新增-跳转到弹窗确认页面
      */
-    public void addConfirm(){
+    public void addConfirm() {
         render("addConfirm.html");
+    }
+
+    /**
+     * 跳转到订单页面
+     */
+    public void saleDeliverBillnoDialog() {
+        Kv kv = getKv();
+        Long icustomerid =kv.getLong("icustomerid");
+        ValidationUtils.isTrue(icustomerid != null,"请先选择客户");
+        set("icustomerid", icustomerid);
+        render("saleDeliverBillnoDialog .html");
+    }
+
+    /*
+     * 获取相关订单号
+     * */
+    public void saleDeliverBillNoList() {
+        renderJsonData(service.getSaleDeliverBillNoList(getPageNumber(), getPageSize(),getKv()));
     }
 
     /**
@@ -66,11 +95,11 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      */
     public void add() {
         Kv kv = getKv();
-        set("ccusabbname","");//客户简称
-        set("ccusname","");//客户名称称
-        set("ccuscode","");//客户编码
-        set("starttime",kv.get("starttime"));
-        set("endtime",kv.get("endtime"));
+        set("ccusabbname", "");//客户简称
+        set("ccusname", "");//客户名称称
+        set("ccuscode", "");//客户编码
+        set("starttime", kv.get("starttime"));
+        set("endtime", kv.get("endtime"));
         render("add.html");
     }
 
@@ -95,26 +124,37 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         //查询业务类型
         //销售类型
         SaleType first = saletypeservice.findFirst("select * from Bd_SaleType where cSTCode =?", sysSaledeliverplan.getRdCode());
-        if(null != first && null !=first.getCSTName()){     set("cstname",first.getCSTName());}
+        if (null != first && null != first.getCSTName()) {
+            set("cstname", first.getCSTName());
+        }
 
         //客户简称
         Kv kv = new Kv();
         List<Record> corderno = service.getorder(kv.set("corderno", sysSaledeliverplan.getBillNo()));
-        if(false==corderno.isEmpty() && null != corderno.get(0).getStr("cuname")){
-            set("cuname",corderno.get(0).getStr("cuname"));
+        if (false == corderno.isEmpty() && null != corderno.get(0).getStr("cuname")) {
+            set("cuname", corderno.get(0).getStr("cuname"));
         }
         //销售部门
-        Department first1 = departmentservice.findFirst("select * from Bd_Department where cDepCode =?", sysSaledeliverplan.getDeptCode());
-        set("cdepname",first1.getCDepName());
+        Department first1 = departmentservice.findFirst("select * from Bd_Department where cDepCode =?",
+            sysSaledeliverplan.getDeptCode());
+        set("cdepname", first1.getCDepName());
         //发货地址
-        CustomerAddr first2 = customeraddrservice.findFirst("select * from Bd_CustomerAddr where cDistrictCode=?", sysSaledeliverplan.getShipAddress());
-        if(null != first2 && null !=first2.getCContactName()){ set("cdistrictname",first2.getCContactName());}
+        CustomerAddr first2 = customeraddrservice.findFirst("select * from Bd_CustomerAddr where cDistrictCode=?",
+            sysSaledeliverplan.getShipAddress());
+        if (null != first2 && null != first2.getCContactName()) {
+            set("cdistrictname", first2.getCContactName());
+        }
         //发运方式
         RdStyle first3 = rdstyleservice.findFirst("select * from Bd_Rd_Style where cRdCode=?", sysSaledeliverplan.getIssue());
-        if(null != first3 && null !=first3.getCRdName()){ set("crdname",first3.getCRdName());}
+        if (null != first3 && null != first3.getCRdName()) {
+            set("crdname", first3.getCRdName());
+        }
         //付款方式
-        SettleStyle first4 = settlestyleservice.findFirst("select * from Bd_SettleStyle where cSSCode =?", sysSaledeliverplan.getCondition());
-        if(null != first4 && null !=first4.getCSSName()){ set("cssname",first4.getCSSName());}
+        SettleStyle first4 = settlestyleservice.findFirst("select * from Bd_SettleStyle where cSSCode =?",
+            sysSaledeliverplan.getCondition());
+        if (null != first4 && null != first4.getCSSName()) {
+            set("cssname", first4.getCSSName());
+        }
         render("edit.html");
     }
 
@@ -139,20 +179,12 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         renderJson(service.delete(getLong(0)));
     }
 
-
-    @Inject
-    private SaleTypeService saletypeservice;
-
     /**
      * 获取销售类型下拉  /admin/saletype/selectData
      */
     public void saletype() {
         renderJsonData(service.saletype(getKv()));
     }
-
-
-    @Inject
-    private DepartmentService departmentservice;
 
     /**
      * 获取销售部门下拉 Bd_Department   admin/productInList/getDepartment
@@ -162,57 +194,32 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
     }
 
 
-    @Inject
-    private CustomerAddrService customeraddrservice;
-
     /**
-     * /admin/customeraddr/list/{icustomermid}
      * 获取地址下拉 Bd_CustomerAddr
      */
     public void customeraddr() {
         renderJsonData(service.customeraddr(getKv()));
-//        String icustomerid = get("icustomerid");
-//        if (null == icustomerid || "".equals(icustomerid)) {
-//            renderJsonData(customeraddrservice.findAll());
-//        } else {
-//            renderJsonData(customeraddrservice.find("select * from Bd_CustomerAddr where iCustomerId=?", icustomerid));
-//        }
     }
-
-
-    @Inject
-    private RdStyleService rdstyleservice;
 
     /**
      * 获取发运方式下拉
      */
     public void rdstyle() {
         renderJsonData(service.rdstyle(getKv()));
-//        renderJsonData(rdstyleservice.find("select * from Bd_Rd_Style where bRdFlag = '0'"));
     }
-
-
-    @Inject
-    private SettleStyleService settlestyleservice;
 
     /**
      * 获取付款条件下拉
      */
     public void settlestyle() {
         renderJsonData(service.settlestyle(getKv()));
-//        renderJsonData(settlestyleservice.findAll());
     }
-
-
-    @Inject
-    private ForeignCurrencyService foreigncurrencyservice;
 
     /**
      * 获取币种下拉
      */
     public void foreigncurrency() {
         renderJsonData(service.foreigncurrency(getKv()));
-//        renderJsonData(foreigncurrencyservice.findAll());
     }
 
     @Inject
@@ -224,7 +231,6 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
     public void customer() {
         renderJsonData(customerservice.findAll());
     }
-
 
 
     /**
