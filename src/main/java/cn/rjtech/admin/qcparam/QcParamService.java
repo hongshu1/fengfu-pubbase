@@ -322,6 +322,7 @@ public class QcParamService extends BaseService<QcParam> {
 
             Date now=new Date();
 
+
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iOrgId", getOrgId());
             record.set("cOrgCode", getOrgCode());
