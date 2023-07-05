@@ -120,6 +120,30 @@ public class FormApprovalAdminController extends BaseAdminController {
     }
 
     /**
+     * 选择审批流
+     */
+    public void chooseApproval(){
+        render("dialog/select.html");
+    }
+
+    /**
+     * 发起人自选
+     */
+    public void optional(){
+        render("dialog/add.html");
+    }
+
+    /**
+     * 新增审批节点
+     */
+    public void addApprovalD(){
+        String iseq = get("iseq");
+        set("iseq", iseq);
+        set("tableId", get("tableId"));
+        render("approvald/add.html");
+    }
+
+    /**
      * 提交审核/提交审批
      *
      * @param formSn         表单编码
@@ -218,14 +242,14 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.validateIntGt0(status, "审批状态");
         ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
         ValidationUtils.notBlank(className, "处理审批的Service类名");
-        
+
         Ret ret = service.reject(formAutoId, formSn, status, primaryKeyName, className, remark, false);
         renderJson(ret);
-        
+
         // 异步通知:审批不通过，给制单人(提审人)发送待办和邮件
         if (ret.isOk()) {
             MsgEventUtil.postRejectMsgEvent(JBoltUserKit.getUserId(), formSn, primaryKeyName, formAutoId);
-        }        
+        }
     }
 
     /**

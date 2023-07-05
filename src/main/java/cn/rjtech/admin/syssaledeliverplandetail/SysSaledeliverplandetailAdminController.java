@@ -1,11 +1,8 @@
 package cn.rjtech.admin.syssaledeliverplandetail;
 
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.SysSaledeliverplandetail;
 import com.jfinal.aop.Before;
@@ -19,8 +16,7 @@ import com.jfinal.core.Path;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-09 10:13
  */
-@CheckPermission(PermissionKey.SALES_SHIPMENT_LIST)
-@UnCheckIfSystemAdmin
+@UnCheck
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/sysSaledeliverplandetail", viewPath = "/_view/admin/sysSaledeliverplandetail")
 public class SysSaledeliverplandetailAdminController extends BaseAdminController {
@@ -91,7 +87,7 @@ public class SysSaledeliverplandetailAdminController extends BaseAdminController
     }
 
     @UnCheck
-    public void findEditTableDatas(){
+    public void findEditTableDatas() {
         renderJsonData(service.findEditTableDatas(getKv()));
     }
 }

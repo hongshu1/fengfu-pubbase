@@ -79,8 +79,6 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
      * @param pageSize   每页几条数据
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-
-
         Page<Record> paginate = dbTemplate("manualorderm.list", kv).paginate(pageNumber, pageSize);
         weekOrderMService.change(paginate.getList());
         return paginate;

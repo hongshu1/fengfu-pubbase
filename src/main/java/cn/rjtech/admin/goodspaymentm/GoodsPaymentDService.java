@@ -129,4 +129,13 @@ public class GoodsPaymentDService extends BaseService<GoodsPaymentD> {
 		}
 		return SUCCESS;
 	}
+
+	public List<GoodsPaymentD> findDatas(Long mid){
+		List<GoodsPaymentD> goodsPaymentDS = find("select * from SM_GoodsPaymentD where isDeleted='0' and iGoodsPaymentMid = ?", mid);
+		return goodsPaymentDS;
+	}
+	public List<GoodsPaymentD> getall(){
+		List<GoodsPaymentD> goodsPaymentDS = find("select * from SM_GoodsPaymentD where isDeleted='0' ");
+		return goodsPaymentDS;
+	}
 }

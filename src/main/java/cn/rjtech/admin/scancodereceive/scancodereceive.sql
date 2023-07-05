@@ -173,6 +173,9 @@ where a.isEffective = '1'
     and (b.cInvCode like concat('%', '#(keywords)', '%') or b.cInvName like concat('%', '#(keywords)', '%')
     or a.cCompleteBarcode like concat('%', '#(keywords)', '%'))
   #end
+  #if(barcode)
+  and a.cCompleteBarcode = '#(barcode)'
+  #end
   #if(supplier)
     and (v.cVenCode like concat('%', '#(supplier)', '%') or v.cVenName like concat('%', '#(supplier)', '%'))
   #end
@@ -227,6 +230,9 @@ where a.isEffective = '1'
   #if(keywords)
   and (b.cInvCode like concat('%', '#(keywords)', '%') or b.cInvName like concat('%', '#(keywords)', '%')
     or a.cCompleteBarcode like concat('%', '#(keywords)', '%'))
+  #end
+  #if(barcode)
+  and a.cCompleteBarcode = '#(barcode)'
   #end
     #if(supplier)
     and (v.cVenCode like concat('%', '#(supplier)', '%') or v.cVenName like concat('%', '#(supplier)', '%'))
