@@ -1,6 +1,12 @@
 #set(pageId=RandomUtil.random(6))
 #set(iYear=DateUtil.getYear())
 <div class="jbolt_page" data-key="#(pmkey??)" style="margin-top: -16px">
+
+    ### 新增之后，并且为审核流
+    #if(apsAnnualplanm.iautoid?? && apsAnnualplanm.iauditway == 2)
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=apsAnnualplanm.iAutoId, primaryKeyName="iAutoId", formSn="Aps_AnnualPlanM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService")
+    #end
+
     <div class="jbolt_page_title">
         <div class="card">
             <div class="card-body">
@@ -15,17 +21,17 @@
                         <input type="text" class="form-control" placeholder="存货编码" name="cinvcode"  value="#(cinvcode)" id="cinvcode"/>
                         <input type="text" class="form-control" placeholder="客户部番" name="cinvcode1" value="#(cinvcode1)" id="cinvcode1"/>
                         <input type="text" class="form-control" placeholder="部品名称" name="cinvname1" value="#(cinvname1)" id="cinvname1"/>
-                       <!-- <select class="form-control"
-                                id=""
-                                name="iplanorderstatus"
-                                data-autoload
-                                data-url="admin/dictionary/options?key=annual_order_auditstatus"
-                                data-select-type="select"
-                                data-text="=机型="
-                                data-value=""
-                                data-with-clearbtn="true"
-                                data-value-attr="sn"
-                        ></select>-->
+                        <!-- <select class="form-control"
+                                 id=""
+                                 name="iplanorderstatus"
+                                 data-autoload
+                                 data-url="admin/dictionary/options?key=annual_order_auditstatus"
+                                 data-select-type="select"
+                                 data-text="=机型="
+                                 data-value=""
+                                 data-with-clearbtn="true"
+                                 data-value-attr="sn"
+                         ></select>-->
 
                         <button  type="submit" id="submitBtn" onclick="submitBtnSelect(this)" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
                         <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -34,12 +40,6 @@
             </div>
         </div>
     </div>
-
-    ### 新增之后，并且为审核流
-    #if(apsAnnualplanm.iautoid?? && apsAnnualplanm.iauditway == 2)
-    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=apsAnnualplanm.iAutoId, primaryKeyName="iAutoId", formSn="Aps_AnnualPlanM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService")
-    #end
-
     <div class="jbolt_page_content">
         <script type="text/template" id="jboltTable_demotpladd_#(pageId)">
             {@each datas as data,index}
