@@ -18,7 +18,9 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
+import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
@@ -71,6 +73,10 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     private DictionaryService dictionaryService;
     @Inject
     private SaleTypeService saleTypeService;
+    @Inject
+    private CustomerService customerService;
+    @Inject
+    private InventoryService inventoryService;
     @Override
     protected Subcontractsaleorderm dao() {
         return dao;
@@ -88,7 +94,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
             for (int i = 1; i <= 31; i++) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("DocNo", subcontractsaleorderm.getCOrderNo());
-                jsonObject.put("ccuscode", subcontractsaleorderm.getICustomerId());
+                jsonObject.put("ccuscode", Optional.ofNullable(customerService.findById(subcontractsaleorderm.getICustomerId())).map(Customer::getCCusCode).orElse(""));
                 jsonObject.put("cmaker", JBoltUserKit.getUserName());
                 jsonObject.put("dDate", DateUtils.formatDate(subcontractsaleorderm.getDCreateTime()));
                 jsonObject.put("cPersonCode", subcontractsaleorderm.getIBusPersonId());
@@ -100,8 +106,9 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 jsonObject.put("cexch_name", subcontractsaleorderm.getIExchangeRate());
                 jsonObject.put("iExchRate", subcontractsaleorderm.getIExchangeRate());
                 jsonObject.put("iTaxRate", subcontractsaleorderm.getITaxRate());
-                jsonObject.put("cInvCode", subcontractsaleorderd.getCInvCode());
-                jsonObject.put("cInvName", subcontractsaleorderd.getCInvName1());
+                Inventory inventory = inventoryService.findById(subcontractsaleorderd.getIInventoryId());
+                jsonObject.put("cInvCode", inventory.getCInvCode());
+                jsonObject.put("cInvName", inventory.getCInvName1());
                 jsonObject.put("iQuantity", subcontractsaleorderd.getInt("iqty" + i));
                 jsonObject.put("iQuotedPrice", 0);
                 jsonObject.put("KL", 100);
@@ -111,8 +118,6 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         }
         Map<String, Object> data = new HashMap<>();
         data.put("data", jsonArray);
-
-        String s = jsonArray.toJSONString();// 测试代码
 
         // 推送U8
         Map<String, String> header = new HashMap<>(5);
