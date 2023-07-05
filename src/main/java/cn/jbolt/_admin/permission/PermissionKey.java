@@ -1418,6 +1418,10 @@ public class PermissionKey {
 	 */
 	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
 	/**
+	 * 始业点检表管理
+	 */
+	public static final String API_SPOTCHECKFORMM_SUBMITFORM = "api_spotcheckformm_submitform";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";

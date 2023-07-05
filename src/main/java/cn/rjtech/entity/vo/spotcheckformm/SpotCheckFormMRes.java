@@ -3,7 +3,7 @@ package cn.rjtech.entity.vo.spotcheckformm;
 import java.io.Serializable;
 import java.util.Date;
 
-public class SpotCheckFormMResVo implements Serializable {
+public class SpotCheckFormMRes implements Serializable {
 
     /**
      * 工单id
@@ -13,12 +13,12 @@ public class SpotCheckFormMResVo implements Serializable {
     /**
      * 设备名称
      */
-    private String cequipmentname;
+    private String cequipmentnames;
 
     /**
      * 设备id
      */
-    private String iequipmentid;
+    private String cequipmentids;
 
     /**
      * 表格id
@@ -33,7 +33,7 @@ public class SpotCheckFormMResVo implements Serializable {
     /**
      * 审核状态
      */
-    private Integer iauditstatus;
+    private String iauditstatus;
 
     /**
      * 表格名称
@@ -49,6 +49,11 @@ public class SpotCheckFormMResVo implements Serializable {
      * 生产人员
      */
     private  String ccreatename;
+
+    /**
+     * 提交人员
+     */
+    private  String peoplename;
 
     /**
      * 提交时间
@@ -72,18 +77,18 @@ public class SpotCheckFormMResVo implements Serializable {
         this.modocid=modocid;
     }
 
-    public String getCequipmentname(){
-        return cequipmentname;
+    public String getcequipmentnames(){
+        return cequipmentnames;
     }
-    public void setCequipmentname(String cequipmentname){
-        this.cequipmentname=cequipmentname;
+    public void setcequipmentnames(String cequipmentnames){
+        this.cequipmentnames=cequipmentnames;
     }
 
-    public String getIequipmentid(){
-        return  iequipmentid;
+    public String getcequipmentids(){
+        return  cequipmentids;
     }
-    public  void setIequipmentid(String iequipmentid){
-        this.iequipmentid=iequipmentid;
+    public  void setcequipmentids(String cequipmentids){
+        this.cequipmentids=cequipmentids;
     }
 
     public Long getIspotcheckformid(){
@@ -100,10 +105,10 @@ public class SpotCheckFormMResVo implements Serializable {
         this.itype=itype;
     }
 
-    public Integer getIauditstatus(){
+    public String getIauditstatus(){
         return iauditstatus;
     }
-    public void setIauditstatus(Integer iauditstatus){
+    public void setIauditstatus(String iauditstatus){
         this.iauditstatus=iauditstatus;
     }
 
@@ -147,5 +152,11 @@ public class SpotCheckFormMResVo implements Serializable {
         this.routingconfigid=routingconfigid;
     }
 
+    public void setPeoplename(String peoplename){
+        this.peoplename=peoplename;
+    }
+    public String getPeoplename(){
+        return peoplename;
+    }
 }
 
