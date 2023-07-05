@@ -3,64 +3,117 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page_content">
 
-    <form onsubmit="return false;" id="syssaledeliveplan_form" action="#(action)" method="post">
-        <div class="form-group">
-            <label class="col-2 col-form-label">选择客户</label>
-            <div class="col-9">
-                <div class="input-group-append">
-                    <input type="hidden" id="customeriautoid" class="form-control border-none" readonly="readonly"
-                           name="customeriautoid" placeholder="" value="#(customeriautoid??)"/>
-                    <input type="text" data-notnull="true" data-tips="请选择客户" id="ccusname" data-with-clearbtn="true"
-                           autocomplete="off" class="form-control  border-none" disabled placeholder="请选择客户"
-                           maxlength="40" name="ccusname" value="#(ccusname??)"/>
-                    <button class="btn btn-primary" id="selectcustomerButton" data-dialogbtn data-link-para-ele=""
-                            data-area="70%,70%" data-title="选择数据（单选）" data-url="/admin/salesShipmentList/orderData"><i
-                            class="fa fa-search mr-1"></i></button>
-                </div>
+  <form onsubmit="return false;" id="syssaledeliveplan_form" action="#(action)" method="post">
+    <div class="row">
+      <div class="col" style="margin-top: 50px">
+        <div class="form-group row">
+          <label class="col-2 col-form-label">选择客户</label>
+          <div class="col-9">
+            <div class="input-group-append">
+              <input type="hidden" id="icustomerid" class="form-control border-none" readonly="readonly"
+                     name="icustomerid" placeholder="" value="#(icustomerid??)"/>
+              <input type="hidden" id="customerccuscode" class="form-control border-none" readonly="readonly"
+                     name="customerccuscode" placeholder="" value="#(customerccuscode??)"/>
+              <input type="text" data-notnull="true" data-tips="请选择客户" id="ccusname" data-with-clearbtn="true"
+                     autocomplete="off" class="form-control  border-none" disabled placeholder="请选择客户"
+                     maxlength="40" name="ccusname" value="#(ccusname??)" data-rule="required"/>
+              <button class="btn btn-primary" id="selectcustomerButton" data-dialogbtn data-link-para-ele=""
+                      data-area="90%,90%" data-title="选择数据（单选）" data-url="/admin/customer/index"><i
+                  class="fa fa-search mr-1"></i></button>
             </div>
-
-
-            <label class="col-2 col-form-label">订单号</label>
-            <div class="col-9">
-                <div class="input-group-append">
-                    <input type="hidden" id="billnoiautoid" class="form-control border-none" readonly="readonly"
-                           name="billnoiautoid" placeholder="" value="#(billnoiautoid??)"/>
-                    <input type="text" data-notnull="true" data-tips="请选择订单号" id="billno" data-with-clearbtn="true"
-                           autocomplete="off" class="form-control  border-none" disabled placeholder="请选择订单号"
-                           maxlength="40" name="billno" value="#(billno??)"/>
-                    <button class="btn btn-primary" id="selectBillnoButton" data-dialogbtn data-link-para-ele=""
-                            data-area="70%,70%" data-title="选择数据（单选）" data-url="/admin/salesShipmentList/orderData"><i
-                            class="fa fa-search mr-1"></i></button>
-                </div>
-            </div>
-
-            <label class="col-2 col-form-label">日期</label>
-            <input type="text" data-date class="form-control ml-2" placeholder="=开始日期=" maxlength="20" name="starttime" value=""/>
-            <span class="ml-1 mr-1">至</span>
-            <input type="text" data-date class="form-control" placeholder="=截止日期=" maxlength="20" name="endtime" value=""/>
+          </div>
         </div>
-    </form>
+
+        <div class="form-group row">
+          <label class="col-2 col-form-label">订单号</label>
+          <div class="col-9">
+            <div class="input-group-append">
+              <input type="hidden" id="billnoiautoid" class="form-control border-none" readonly="readonly" data-rule="required"
+                     name="billnoiautoid" placeholder="" value="#(billnoiautoid??)"/>
+              <input type="text" data-notnull="true" data-tips="请选择订单号" id="billno" data-with-clearbtn="true"
+                     autocomplete="off" class="form-control  border-none" disabled placeholder="请选择订单号"
+                     maxlength="40" name="billno" value="#(billno??)" data-rule="required"/>
+              <button class="btn btn-primary" id="selectBillnoButton" data-rule="required" data-dialogbtn
+                      data-area="90%,90%" data-title="选择数据（单选）" data-link-para-ele="#icustomerid"
+                      data-url="/admin/salesShipmentList/saleDeliverBillnoDialog">
+                <i class="fa fa-search mr-1"></i></button>
+              <!--onclick="openSaleDeliverBillnoDialog()"-->
+              <!--data-url="/admin/salesShipmentList/saleDeliverBillnoDialog?icustomerid=#(icustomerid??)"-->
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label class="col-2 col-form-label">日期</label>
+          <div class="col-9">
+            <div class="input-group-append">
+              <input type="text" data-date class="form-control" placeholder="=开始日期=" maxlength="20" name="starttime"
+                     value="" data-rule="required" style="width: 222px"/>
+              <span class="ml-2 mr-2">至</span>
+
+              <input type="text" data-date class="form-control" placeholder="=截止日期=" maxlength="20" name="endtime" value=""
+                     data-rule="required" style="width: 222px"/>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </form>
 </div>
 
 #end
 #define js()
 <script>
-    function submitThisForm() {
-        var $form = $('#syssaledeliveplan_form');
-        if (FormChecker.check($form)) {
-            var data = formToJson($form);
-            // console.log("=====" + data.ordertype);
-            parent.layer.close(parent.layer.getFrameIndex(window.name));
-            parent.DialogUtil.openNewDialog({
-                title: "切换页面",
-                width: "100%",
-                height: "100%",
-                offset: "auto",
-                zIndex: 20220610,
-                url: "admin/salesShipmentList/add?ordertype=" + data.ordertype
-            });
-        }
+
+  /**
+   * 获得选中的订单号数据
+   * @param data
+   */
+  function setChooseDialogSelectResultFromSupplier(data) {
+    console.log(JSON.stringify(data));
+    $("#icustomerid").val(data.iautoid);//客户档案id
+    $("#ccusname").val(data.ccusname);//客户名称
+    $("#customerccuscode").val(data.ccuscode);//客户编码
+    // $("#").val();
+    // $("#").val();
+    // $("#").val();
+
+  }
+
+  /**
+   * 选择客户
+   * @param icustomerid
+   */
+  function openSaleDeliverBillnoDialog(){
+    let icustomerid = $('#icustomerid').val();
+    if (icustomerid == null || icustomerid == undefined || icustomerid ==''){
+      LayerMsgBox.alert("请先选择客户")
+      return;
     }
+    Ajax.get("admin/salesShipmentList/saleDeliverBillnoDialog?icustomerid="+icustomerid,function(res){
+    });
+  }
+
+  function submitThisForm() {
+    var $form = $('#syssaledeliveplan_form');
+    if (FormChecker.check($form)) {
+      var data = formToJson($form);
+      // console.log("=====" + data.ordertype);
+      parent.layer.close(parent.layer.getFrameIndex(window.name));
+      parent.DialogUtil.openNewDialog({
+        title: "切换页面",
+        width: "100%",
+        height: "100%",
+        offset: "auto",
+        zIndex: 20220610,
+        url: "admin/salesShipmentList/add?ordertype=" + data.ordertype
+      });
+    }
+  }
 </script>
 #end
 

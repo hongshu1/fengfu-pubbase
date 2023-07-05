@@ -112,7 +112,9 @@
 
 
 
-		<table class="jbolt_table jbolt_main_table table-center"
+		<table
+				 id="chooseDataTable"
+				 class="jbolt_table jbolt_main_table table-center"
 			   data-jbolttable
 			   data-height="fill"
 			   data-ajax="true"
@@ -123,11 +125,12 @@
 			   data-rowtpl="customermRowtpl_#(pageId)"
 			   data-page="customermPage_#(pageId)"
 			   data-toolbar="customerm_toolbar_#(pageId)"
+				 data-row-dblclick-handler="dbClickCheckData"
 
 
 
 
-			   data-fixed-columns-left="1,2,3"
+				 data-fixed-columns-left="1,2,3"
 		>
 			<thead>
 			<tr>
@@ -151,5 +154,26 @@
 
 	</div>
 </div>
+#end
+#define js()
+<script>
+	//点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
+	function submitThisForm(callback) {
+		var data = getJboltTableCheckedData("chooseDataTable");
+		if (data) {
+			// LayerMsgBox.confirm("确认选择此数据?",function(){
+			parent.setChooseDialogSelectResultFromSupplier(data);
+			if (callback) {
+				callback();
+			}
+		}
+	}
+
+	function dbClickCheckData(table, tempTr1, trId1, rowData) {
+		parent.setChooseDialogSelectResultFromSupplier(rowData);
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+	}
+
+</script>
 #end
 

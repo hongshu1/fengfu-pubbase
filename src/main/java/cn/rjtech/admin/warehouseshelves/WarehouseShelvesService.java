@@ -273,29 +273,24 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
       // 封装数据
       for (Map<String, Object> data : datas) {
         // 基本信息校验
-        ValidationUtils.notNull(data.get("cshelvescode"), "第【" + iseq + "】行的货架编码不能为空！");
-        ValidationUtils.notNull(data.get("cshelvesname"), "第【" + iseq + "】行的货架名称不能为空！");
-        ValidationUtils.notNull(data.get("cwhname"), "第【" + iseq + "】行的所属仓库名称不能为空！");
+        ValidationUtils.notNull(data.get("cshelvescode"), "第【" + iseq + "】行的【货架编码】不能为空！");
+        ValidationUtils.notNull(data.get("cshelvesname"), "第【" + iseq + "】行的【货架名称】不能为空！");
+        ValidationUtils.notNull(data.get("cwhname"), "第【" + iseq + "】行的【所属仓库名称】不能为空！");
+        ValidationUtils.notNull(data.get("careaname"), "第【" + iseq + "】行的【所属货架名称】不能为空！");
 
-        Warehouse warehouse = warehouseService.findByWhName(data.get("cwhname") + "");
-        ValidationUtils.notNull(warehouse, "第【" + iseq + "】行【仓库名称-" + data.get("cwhname") + "】"
-            + JBoltMsg.DATA_NOT_EXIST);
-
-        WarehouseArea warehouseArea = warehouseAreaService.findByWhAreaName(data.get("careaname") + "");
-        if (isOk(data.get("careaname"))) {
-          ValidationUtils.notNull(warehouseArea, "第【" + iseq + "】行【所属库区名称-" + data.get("careaname") + "】"
-              + JBoltMsg.DATA_NOT_EXIST);
-        }
+        //数据完整性校验
+        Record record = dbTemplate("warehouseshelves.integrityCheck", Kv.by("careaname", data.get("careaname")).set("cwhname", data.get("cwhname"))).findFirst();
+        ValidationUtils.notNull(record, "第【" + iseq + "】行的【所属仓库名称】【所属货架名称】未找到对应的数据关联关系！");
 
 
         Integer cshelvescode = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvescode", data.get("cshelvescode"))
-            .set("iwarehouseid", warehouse.getIAutoId()).set("iwarehouseareaid", warehouseArea.getIautoid())).queryInt();
+            .set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iautoid"))).queryInt();
         if (cshelvescode >= 1) {
           ValidationUtils.error("第【" + iseq + "】行【货架编码】" + data.get("cshelvescode") + "已存在，请修改后保存");
         }
 
         Integer cshelvesname = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvesname", data.get("cshelvesname"))
-            .set("iwarehouseid", warehouse.getIAutoId()).set("iwarehouseareaid", warehouseArea.getIautoid())).queryInt();
+            .set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iautoid"))).queryInt();
         if (cshelvesname >= 1) {
           ValidationUtils.error("第【" + iseq + "】行【货架名称】" + data.get("cshelvesname") + "已存在，请修改后保存");
         }
@@ -324,8 +319,8 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 
         warehouseShelves.setCshelvescode(data.get("cshelvescode") + "");
         warehouseShelves.setCshelvesname(data.get("cshelvesname") + "");
-        warehouseShelves.setIwarehouseid(warehouse.getIAutoId());
-        warehouseShelves.setIwarehouseareaid(warehouseArea.getIautoid());
+        warehouseShelves.setIwarehouseid(record.getLong("iwarehouseid"));
+        warehouseShelves.setIwarehouseareaid(record.getLong("iautoid"));
         warehouseShelves.setCmemo(data.get("cmemo") + "");
 
         ValidationUtils.isTrue(warehouseShelves.save(), "第" + iseq + "行保存数据失败");

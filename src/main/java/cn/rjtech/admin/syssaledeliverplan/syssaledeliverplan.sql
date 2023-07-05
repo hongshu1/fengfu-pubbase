@@ -160,3 +160,29 @@ where 1=1
 ORDER BY a.dupdatetime DESC
 #end
 
+#sql("getSaleDeliverBillNoList")
+select
+t1.*
+from
+(
+    SELECT iAutoId,cOrderNo,iCustomerId,iOrderStatus,cCusCode,cCusName,IsDeleted from  Co_ManualOrderM  where IsDeleted='0'
+    UNION ALL
+    SELECT iAutoId,cOrderNo,iCustomerId,iOrderStatus,cCusCode,cCusName,IsDeleted from  Co_WeekOrderM where IsDeleted='0'
+    UNION ALL
+    SELECT iAutoId,cOrderNo,iCustomerId,iOrderStatus,cCusCode,cCusName,IsDeleted from  Co_MonthOrderM
+) t1
+where 1=1
+#if(icustomerid)
+t1.icustomerid = #para(icustomerid)
+#end
+#if(corderno)
+t1.cOrderNo like concat('%',#para(corderno),'%')
+#end
+#if(ccusname)
+t1.cCusName like concat('%',#para(ccusname),'%')
+#end
+#if(ccuscode)
+t1.cCusCode like concat('%',#para(ccuscode),'%')
+#end
+#end
+

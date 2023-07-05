@@ -30,7 +30,7 @@ ORDER BY rm.dUpdateTime DESC
 
 
 #sql("dList")
-SELECT  a.*,i.cInvCode,i.cinvcode1,i.cinvname1,i.cinvstd,u.cUomName
+SELECT  a.*,i.cInvCode,i.cinvcode1,i.cinvname1,i.cinvstd,u.cUomName,i.cinvname
 FROM SM_GoodsPaymentD a
 	left join Bd_Inventory i on a.iInventoryId = i.iautoid
 	left join Bd_Uom u on i.iInventoryUomId1 = u.iautoid
@@ -47,8 +47,9 @@ SELECT top #(limit)
 	cwm.iCustomerId,
 	bi.cInvAddCode,
 	bi.cinvcode,
+	bi.cinvname,
+	bi.cinvname1,
 	bi.cInvCode1,
-	bi.cInvName1,
 	bi.cinvStd,
 	bi.iSalesUomId,
 	cwd.*
