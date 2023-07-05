@@ -8,8 +8,9 @@ import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformitem.SpotCheckFormItemService;
 import cn.rjtech.admin.spotcheckformm.SpotCheckFormMService;
 import cn.rjtech.base.controller.BaseApiController;
+import cn.rjtech.entity.vo.spotcheckformm.SpotCheckFormMDatas;
 import cn.rjtech.entity.vo.spotcheckformm.SpotCheckFormMEditVo;
-import cn.rjtech.entity.vo.spotcheckformm.SpotCheckFormMResVo;
+import cn.rjtech.entity.vo.spotcheckformm.SubmitFormVo;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
@@ -38,19 +39,15 @@ public class SpotCheckFormMApiController extends BaseApiController {
     /**
      * 页面数据
      * 传入数据：制作工单 的工单id,点检类型 itype：1.首末点检表 2.首中末点检表
-     * 输出：iauditstatus 状态 ，cspotcheckformname 表格名称 可为空 ，coperationname ：工序名称
-     * cequipmentnames 设备名称 ccreatename 生产人员    dcreatetime2 提交时间
-     * iinventoryid 存货id modocid 工单id routingconfigid 存货工艺id  cequipmentnames 设备名称
-     * ispotcheckformid 表格id
      */
-    @ApiDoc(result = SpotCheckFormMResVo.class)
+    @ApiDoc(result = SpotCheckFormMDatas.class)
+    @UnCheck
     public void datas(@Para(value = "pageNumber", defaultValue = "1") Integer pageNumber,
                       @Para(value = "pageSize", defaultValue = "15") Integer pageSize,
                       @Para(value = "itype") String itype,
                       @Para(value = "modocid") String modocid) {
         Kv kv = Kv.by("itype", itype)
                 .set("modocid", modocid);
-
         renderJBoltApiRet(service.AdminDatas(pageNumber, pageSize, kv));
     }
 
@@ -68,6 +65,7 @@ public class SpotCheckFormMApiController extends BaseApiController {
      * @param itype              类型 类型1.首末点检表 2.首中末点检表
      */
     @ApiDoc(result = SpotCheckFormMEditVo.class)
+    @UnCheck
     public void edit(@Para(value = "coperationname") String coperationname,
                      @Para(value = "iinventoryid") String iinventoryid,
                      @Para(value = "modocid") String modocid,
@@ -84,8 +82,8 @@ public class SpotCheckFormMApiController extends BaseApiController {
     /**
      * 保存
      *
-     * @param formJsonData  {
-     *                         spotCheckFormM.iautoid：主表id
+     *  formJsonData  {
+     *                         spotcheckformmid：主表id
      *                         routingconfigid:工序工艺ID
      *                         modocid:生产订单ID
      *                         coperationname：工序名称
@@ -94,7 +92,7 @@ public class SpotCheckFormMApiController extends BaseApiController {
      *                         cdesc：点检记录
      *                         cmethod：处理方式
      *                         }
-     * @param tableJsonData { spotcheckformtableparamid：检验项目ID
+     *  tableJsonData { spotcheckformtableparamid：检验项目ID
      *                         iseq：项目次序
      *                         spotcheckparamid：检验参数值ID
      *                         itype：参数录入方式：1. CPK数值 2. 文本框 3. 选择（√，/，×，△，◎） 4. 单选 5. 复选 6. 下拉列表 7. 日期 8. 时间
@@ -102,10 +100,11 @@ public class SpotCheckFormMApiController extends BaseApiController {
      *                         imaxval：最大设定值
      *                         iminval：最小设定值
      *                         coptions：列表可选值;多个“,”分隔
-     *                         cvalue：cvalue：填写值
+     *                         cvalue：填写值
      *                         }
      */
-    @UnCheck
+    @ApiDoc(result = SubmitFormVo.class)
+    @CheckPermission(PermissionKey.API_SPOTCHECKFORMM_SUBMITFORM)
     public void submitForm(@Para(value = "formJsonData") String formJsonData,
                            @Para(value = "tableJsonData") String tableJsonData) {
         renderJBoltApiRet(service.submitForm(formJsonData, tableJsonData));

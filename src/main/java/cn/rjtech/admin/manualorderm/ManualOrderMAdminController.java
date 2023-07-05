@@ -53,12 +53,7 @@ public class ManualOrderMAdminController extends BaseAdminController {
      */
     @UnCheck
     public void datas() {
-        JBoltDateRange dateRange = getDateRange();
-        Date startTime = dateRange.getStartDate();
-        Date endTime = dateRange.getEndDate();
-        Kv kv = getKv();
-        kv.set("starttime", startTime);
-        kv.set("endtime", endTime);
+        Kv kv = getKv().set("starttime", getDateRange().getStartDate()).set("endtime", getDateRange().getEndDate());
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), kv));
     }
 

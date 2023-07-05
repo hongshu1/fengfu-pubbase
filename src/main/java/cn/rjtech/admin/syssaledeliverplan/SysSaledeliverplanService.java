@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     @Inject
     private SysSaledeliverplandetailService syssaledeliverplandetailservice;
     @Inject
-    private SysPuinstoreService puinstoreService;
+    private SysPuinstoreService             puinstoreService;
 
     @Override
     protected int systemLogTargetType() {
@@ -227,6 +228,9 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         return dbTemplate("syssaledeliverplan.foreigncurrency", kv).find();
     }
 
+    public Page<Record> getSaleDeliverBillNoList(int pageNumber, int pageSize, Kv kv) {
+        return dbTemplate("syssaledeliverplan.getSaleDeliverBillNoList", kv).paginate(pageNumber, pageSize);
+    }
 
     /**
      * 执行JBoltTable表格整体提交
@@ -367,7 +371,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     /*实现反审之后的其他业务操作, 如有异常返回错误信息*/
     @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
-        if(isLast){
+        if (isLast) {
             commonReverseApproveFunc(StrUtil.toString(formAutoId));
         }
         return null;
@@ -382,7 +386,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         List<SysSaledeliverplan> saledeliverplanList = new ArrayList<>();
         //打u8接口，通知u8删除单据，然后更新mom平台的数据
 //        String json = getSysPuinstoreDeleteDTO(saledeliverplan.getU8BillNo());
-        String json ="";
+        String json = "";
         try {
             String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
             LOG.info(post);
@@ -395,7 +399,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         saledeliverplan.setDAuditTime(date);
         saledeliverplan.setIAuditby(user.getId());
         saledeliverplan.setCAuditname(user.getUsername());
-        comonApproveMethods(saledeliverplan,date);
+        comonApproveMethods(saledeliverplan, date);
         saledeliverplanList.add(saledeliverplan);
         //更新
         batchUpdate(saledeliverplanList);

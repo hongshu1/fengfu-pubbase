@@ -1565,6 +1565,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         }
         lockPreDate = DateUtils.parseDate(DateUtils.formatDate(lockPreDate, "yyyy-MM-dd"));
 
+        //排产日历类型
+        String calendarType = "1";
+        // TODO: 根据日历类型字典查询工作日历集合
+        List<String> calendarList = getCalendarDateList(getOrgId(),calendarType,startDate,endDate);
+
 
         List<Map<String, Object>> dataList = new ArrayList<>();
         int seq = 1;
@@ -1597,7 +1602,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         qiChuThreeS = iCapacity;
                     }
                 }
-                int iInnerInStockDays = isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1;
+                int iInnerInStockDays = 2;//isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1;
                 //期初库存
                 int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 800;
 
@@ -1629,9 +1634,13 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     dataMap.put("tianshu", record.getBigDecimal("iQty6"));
                     dataMap.put("date", date);
                     dataMap.put("lock", false);//未锁定可编辑
+                    dataMap.put("iswork", false);//为休息日
 
                     if (DateUtils.parseDate(date).getTime() <= lockPreDate.getTime()) {
                         dataMap.put("lock", true);//已锁定不可编辑
+                    }
+                    if (calendarList.contains(date)){
+                        dataMap.put("iswork", true);//为工作日
                     }
                     planList.add(dataMap);
                 }

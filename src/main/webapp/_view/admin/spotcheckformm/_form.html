@@ -47,7 +47,7 @@
 <form onsubmit="return false;" id="spotCheckFormMForm" action="#(action)" method="post">
 
     <input type="hidden" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)" />
-    <input type="hidden" maxlength="255" id="spotCheckFormMiautoid" name="spotCheckFormM.iautoid" value="#(spotCheckFormM.iautoid??)"/>
+    <input type="hidden" maxlength="255" id="spotCheckFormMiautoid" name="spotcheckformmid" value="#(spotCheckFormM.iautoid??)"/>
 
     <div class="py-2" style="padding:.5rem 0rem;">
         <span class="py-1"><strong>工单信息</strong></span>
@@ -122,7 +122,6 @@
                 <input type="text"  hidden   autocomplete="off"  class="form-control"    maxlength="200" name="modocid" value="#(modocid??)"/>
                 <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="coperationname" value="#(spotCheckFormM.coperationname??)"/>
                 <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="controls" value="#(controls??)"/>
-                <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="croutingname" value="#(croutingname??)"/>
                 <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="iinventoryid" value="#(iinventoryid??)"/>
                 <input type="text"  hidden  autocomplete="off"  class="form-control"    maxlength="200" name="itype" value="#(itype??)"/>
 
@@ -280,16 +279,15 @@
         var coperationname = $("input[name='coperationname']").val();
         var modocid = $("input[name='modocid']").val();
         var routingconfigid = $("input[name='routingconfigid']").val();
-        var spotcheckformmid = $("input[name='spotCheckFormM.iautoid']").val();
+        var spotcheckformmid = $("input[name='spotcheckformmid']").val();
         var controls = $("input[name='controls']").val();
-        var croutingname = $("input[name='croutingname']").val();
         var cequipmentnames = $("input[name='spotCheckFormM.cequipmentmodelname']").val();
         console.log(spotcheckformmid);
         LayerMsgBox.success(msg, 600, function () {
             // 新增/修改，均跳转到详情页
             var url="admin/spotCheckFormM/edit?coperationname="+coperationname+'&iinventoryid='+iinventoryid
                 +'&modocid='+modocid+'&routingconfigid='+routingconfigid+'&cequipmentnames='+cequipmentnames
-                +'&spotcheckformmid='+spotcheckformmid +'&controls='+controls+'&croutingname='+croutingname
+                +'&spotcheckformmid='+spotcheckformmid +'&controls='+controls
                 + '&_jb_rqtype_=dialog';
             location.href = url;
             parent.refreshPjaxContainer();

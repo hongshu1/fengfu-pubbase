@@ -99,6 +99,10 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
     public static final String IUPDATEBY = "iUpdateBy";
     /**更新人名称*/
     public static final String CUPDATENAME = "cUpdateName";
+    /**记账日期*/
+    public static final String DACCOUNTINGTIME = "dAccountingTime";
+    /**入库日期*/
+    public static final String DWAREHOUSINGTIME = "dWarehousingTime";
 	/**
 	 * 主键ID
 	 */
@@ -845,6 +849,40 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCUpdateName() {
 		return getStr("cUpdateName");
+	}
+
+	/**
+	 * 记账日期
+	 */
+	public M setDAccountingTime(java.util.Date dAccountingTime) {
+		set("dAccountingTime", dAccountingTime);
+		return (M)this;
+	}
+
+	/**
+	 * 记账日期
+	 */
+	@JBoltField(name="daccountingtime" ,columnName="dAccountingTime",type="Date", remark="记账日期", required=false, maxLength=10, fixed=0, order=45)
+	@JSONField(name = "daccountingtime")
+	public java.util.Date getDAccountingTime() {
+		return getDate("dAccountingTime");
+	}
+
+	/**
+	 * 入库日期
+	 */
+	public M setDWarehousingTime(java.util.Date dWarehousingTime) {
+		set("dWarehousingTime", dWarehousingTime);
+		return (M)this;
+	}
+
+	/**
+	 * 入库日期
+	 */
+	@JBoltField(name="dwarehousingtime" ,columnName="dWarehousingTime",type="Date", remark="入库日期", required=false, maxLength=10, fixed=0, order=46)
+	@JSONField(name = "dwarehousingtime")
+	public java.util.Date getDWarehousingTime() {
+		return getDate("dWarehousingTime");
 	}
 
 }
