@@ -286,6 +286,21 @@ WHERE t3.isDeleted = 0
     #if(poscode)
     AND area.cAreaCode IN(#(poscode))
     #end
+    #if(posname)
+    AND area.cAreaName  like '%#(posname)%'
+    #end
+    #if(cinvcname)
+    AND class.cInvCName like '%#(cinvcname)%'
+    #end
+    #if(invcode)
+    AND t3.cInvCode = '#(invcode)'
+    #end
+     #if(cinvcode1)
+    AND t3.cInvCode1 = '#(cinvcode1)'
+    #end
+     #if(cinvname1)
+    AND t3.cInvName1 = '#(cinvname1)'
+    #end
     #end
 
 #sql("getStockCheckVouchBarcodeLines")
@@ -418,6 +433,9 @@ WHERE t3.isDeleted = 0
     #if(barcode)
 	    and t4.cCompleteBarcode = #para(barcode)
 	#end
+	 #if(invcode)
+	    and t3.cInvCode = #para(invcode)
+	#end
 #end
 
 
@@ -454,6 +472,21 @@ WHERE t3.isDeleted = 0
     #if(poscode)
     AND area.cAreaCode IN(#(poscode))
     #end
+    #if(posname)
+    AND area.cAreaName  like '%#(posname)%'
+    #end
+    #if(cinvcname)
+    AND class.cInvCName like '%#(cinvcname)%'
+    #end
+    #if(invcode)
+    AND t3.cInvCode = '#(invcode)'
+    #end
+     #if(cinvcode1)
+    AND t3.cInvCode1 = '#(cinvcode1)'
+    #end
+     #if(cinvname1)
+    AND t3.cInvName1 = '#(cinvname1)'
+    #end
     #end
 
 #sql("findCheckVouchBarcodeByMasIdAndInvcode")
@@ -466,5 +499,25 @@ where 1=1
 #if(invcode)
     and t1.invcode = #para(invcode)
 #end
+#end
+
+#sql("posHouse")
+SELECT  a.*,
+        a.cAreaCode AS poscode,
+        a.cAreaName AS posname
+FROM Bd_Warehouse_Area a
+where 1=1
+    #if(q)
+		and (a.cAreaCode like concat('%',#para(q),'%') OR a.cAreaName like concat('%',#para(q),'%'))
+	#end
+#end
+
+#sql("InventoryClass")
+SELECT  class.*
+FROM Bd_InventoryClass class
+where 1=1
+    #if(q)
+		and (class.cInvCCode like concat('%',#para(q),'%') OR class.cInvCName like concat('%',#para(q),'%'))
+	#end
 #end
 

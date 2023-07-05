@@ -63,7 +63,10 @@ public class FormUploadMAdminController extends BaseAdminController {
 	/**
 	 * 新增附件
 	 */
-	public void attachment() {
+	public void attachment(@Para(value = "iautoid") Long iautoid ,
+						   @Para(value = "cattachments")String cattachments) {
+		set("iautoid",iautoid);
+		set("cattachments",cattachments);
 		render("upload_add.html");
 	}
 
