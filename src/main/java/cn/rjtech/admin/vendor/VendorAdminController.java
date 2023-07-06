@@ -84,6 +84,7 @@ public class VendorAdminController extends BaseAdminController {
      * JBoltTable 可编辑表格整体提交
      */
     @Before(Tx.class)
+    @CheckPermission(PermissionKey.VENDOR_SUBMIT)
     public void submit() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
@@ -121,6 +122,7 @@ public class VendorAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.VENDOR_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByAutoids(get("ids")));
     }
@@ -177,6 +179,7 @@ public class VendorAdminController extends BaseAdminController {
     /**
      * 供应商分类Excel导入数据库
      */
+    @CheckPermission(PermissionKey.VENDOR_IMPORT)
     public void importExcel() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");

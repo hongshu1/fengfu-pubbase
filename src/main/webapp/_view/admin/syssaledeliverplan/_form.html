@@ -409,11 +409,11 @@
           if (state === 'ok') {
             if (submit) {
               let data = res.data;
-              submit_#(pageId)(data.iautoid, function () {
-                successHandler('提交审核成功', data.iautoid);
+              submit_#(pageId)(data.autoid, function () {
+                successHandler('提交审核成功', data.autoid);
               });
             } else {
-              successHandler(ret.msg, iautoid);
+              successHandler(ret.msg, autoid);
             }
           } else {
             LayerMsgBox.error(res.msg);

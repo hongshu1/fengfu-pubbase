@@ -100,6 +100,7 @@ public class WorkshiftmAdminController extends JBoltBaseController {
    /**
 	* 批量删除
 	*/
+   @CheckPermission(PermissionKey.WORKSHIFTM_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
@@ -119,6 +120,7 @@ public class WorkshiftmAdminController extends JBoltBaseController {
 	}
 
 
+	@CheckPermission(PermissionKey.WORKSHIFTM_SUBMIT)
 	public void updateEditTable() {
 		renderJson(service.updateEditTable(getJBoltTable(), JBoltUserKit.getUserId(), new Date()));
 	}
@@ -155,7 +157,7 @@ public class WorkshiftmAdminController extends JBoltBaseController {
 		ValidationUtils.notNull(uploadFile, "上传文件不能为空");
         
 		File file = uploadFile.getFile();
-        
+
 		List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
 		ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
         

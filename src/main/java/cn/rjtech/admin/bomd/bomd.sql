@@ -56,7 +56,6 @@ WHERE
 		AND a.iOrgId = #para(orgId)
 		AND a.dEnableDate <= CONVERT ( DATE, GETDATE( ) )
 		AND a.dDisableDate >= CONVERT ( DATE, GETDATE( ) )
-
 		AND a.iAutoId = iPid
 		#if(invIds)
             AND iInventoryId NOT IN (
@@ -79,8 +78,8 @@ FROM
 	Bd_BomM master
 WHERE
 	master.IsDeleted = '0'
-    AND master.iAuditStatus = 2
-    AND master.isEffective = 1
+    AND CONVERT(DATE, master.dEnableDate) <= CONVERT(DATE, GETDATE())
+	AND CONVERT(DATE, master.dDisableDate) >= CONVERT(DATE, GETDATE())
 	#if(orgId)
 	AND master.iOrgId = #para(orgId)
 	#end

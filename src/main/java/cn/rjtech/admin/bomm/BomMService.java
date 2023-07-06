@@ -329,7 +329,7 @@ public class BomMService extends BaseService<BomM> {
 	
 	public Page<Record> getVersionRecord(Integer pageNumber, Integer pageSize, Kv kv) {
 		Page<Record> page = dbTemplate("bomm.getVersionRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
-        changeRecord(page.getList());
+		changeRecord(page.getList());
 		return page;
 	}
 	
@@ -347,10 +347,18 @@ public class BomMService extends BaseService<BomM> {
         if (CollUtil.isEmpty(recordList)){
             return;
         }
-        for (Record record : recordList){
+		DateTime date = DateUtil.date();
+		for (Record record : recordList){
             AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(record.getInt(BomM.IAUDITSTATUS));
             record.set(BomM.AUDITSTATUSSTR, auditStatusEnum.getText());
-        }
+			Date dEnableDate = record.getDate(BomM.DENABLEDATE);
+			Date dDisableDate = record.getDate(BomM.DDISABLEDATE);
+			String isEffectiveStr = "0";
+			if (DateUtil.compare(date, dEnableDate, DatePattern.NORM_DATE_PATTERN) >=0 && DateUtil.compare(date, dDisableDate, DatePattern.NORM_DATE_PATTERN) <= 0){
+				isEffectiveStr = "1";
+			}
+			record.set(BomM.ISEFFECTIVE, isEffectiveStr);
+		}
     }
     
     public void setBomRecord(Long id, Boolean isChildren, Boolean isView, Kv kv){
@@ -700,7 +708,7 @@ public class BomMService extends BaseService<BomM> {
 		// 设置主键id
 		long bomMasterId = JBoltSnowflakeKit.me.nextId();
 		bomMaster.setIAutoId(bomMasterId);
-		Map<BomM, List<BomD>> bomMListMap =getBomMasterMap(bomMaster, tableData);
+		Map<BomM, List<BomD>> bomMListMap = getBomMasterMap(bomMaster, tableData);
 		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
 		bommTrl.setIBomMid(bomMasterId);
 		tx(() -> {
@@ -716,6 +724,8 @@ public class BomMService extends BaseService<BomM> {
 				}
 				bomM.setDEnableDate(bomMaster.getDEnableDate());
 				bomM.setDDisableDate(bomMaster.getDDisableDate());
+				// 校验生成的bom日期是否会出现重叠
+				checkBomDateOrVersion(bomMaster.getCVersion(), bomM);
 				save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 				bomDService.batchSave(bomDList);
 			}
@@ -752,9 +762,7 @@ public class BomMService extends BaseService<BomM> {
 		String inventoryId = formData.getString(BomMaster.IINVENTORYID);
 		String equipmentModelId = formData.getString(BomMaster.IEQUIPMENTMODELID);
 		// 普通校验
-		ValidationUtils.notBlank(inventoryId, "产品存货编码为空");
-//		ValidationUtils.notBlank(formData.getString(BomMaster.CBOMVERSION), "版本/版次为空");
-//		ValidationUtils.notBlank(equipmentModelId, "机型为空");
+		ValidationUtils.notBlank(inventoryId, "产品存货编码为空");;
 		ValidationUtils.notBlank(formData.getString(BomMaster.CDOCNAME), "文件名称为空");
 		ValidationUtils.notBlank(formData.getString(BomMaster.CDOCCODE), "文件编码为空");
 		ValidationUtils.notBlank(formData.getString(BomMaster.DENABLEDATE), "启用日期为空");

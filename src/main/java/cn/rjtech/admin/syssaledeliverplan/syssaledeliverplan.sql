@@ -1,3 +1,44 @@
+#sql("syssaledeliverplanList")
+SELECT
+    a.*,
+    sa.cSTCode,
+    auditname =
+    CASE WHEN a.iAuditStatus=0 THEN '已保存'
+         WHEN a.iAuditStatus=1 THEN '待审核'
+         WHEN a.iAuditStatus=2 THEN '审核通过'
+         WHEN a.iAuditStatus=3 THEN '审核不通过' END,
+    sa.cSTName,
+    de.cDepCode,
+    de.cDepName,
+    cr.cCusName,
+    cr.cCusAbbName
+FROM T_Sys_SaleDeliverPlan a
+         LEFT JOIN  Bd_SaleType sa on sa.cSTCode = a.RdCode
+         LEFT JOIN Bd_Department de on de.cDepCode = a.DeptCode
+         LEFT JOIN Bd_Customer cr on  a.iCustomerId = cr.iAutoId
+where 1=1 and a.isDeleted = '0'
+  #if(billno)
+  and a.BillNo like concat('%',#para(billno),'%')
+#end
+#if(cdepname)
+and de.cDepName like concat('%',#para(cdepname),'%')
+#end
+#if(ccusname)
+and cr.cCusName like concat('%',#para(ccusname),'%')
+#end
+#if(iauditstatus)
+and a.iauditstatus=#para(iauditstatus)
+#end
+#if(starttime)
+and t1.dCreateTime >= #para(starttime)
+#end
+#if(endtime)
+and t1.dCreateTime <= #para(endtime)
+#end
+ORDER BY a.dupdatetime DESC
+#end
+
+
 #sql("RdStyle")
 SELECT  a.*
 FROM Bd_Rd_Style a
@@ -84,48 +125,6 @@ where a.IsDeleted = '0'
 
 
 
-#sql("syssaledeliverplanList")
-SELECT
-    a.*,
-    sa.cSTCode,
-    auditname =
-    CASE WHEN a.iAuditStatus=0 THEN '已保存'
-         WHEN a.iAuditStatus=1 THEN '待审核'
-         WHEN a.iAuditStatus=2 THEN '审核通过'
-         WHEN a.iAuditStatus=3 THEN '审核不通过' END,
-    sa.cSTName,
-    de.cDepCode,
-    de.cDepName,
-    cr.cCusName,
-	cr.cCusAbbName
-FROM T_Sys_SaleDeliverPlan a
-LEFT JOIN  Bd_SaleType sa on sa.cSTCode = a.RdCode
-LEFT JOIN Bd_Department de on de.cDepCode = a.DeptCode
-LEFT JOIN Co_SubcontractSaleOrderM sm on sm.cOrderNo = a.BillNo
-LEFT JOIN Bd_Customer cr on  sm.iCustomerId = cr.iAutoId
-where 1=1 and a.isDeleted = '0'
-	#if(billno)
-		and a.BillNo like concat('%',#para(billno),'%')
-	#end
-	#if(cdepname)
-		and de.cDepName like concat('%',#para(cdepname),'%')
-	#end
-	#if(ccusname)
-		and cr.cCusName like concat('%',#para(ccusname),'%')
-	#end
-	#if(iauditstatus)
-	    and a.iauditstatus=#para(iauditstatus)
-	#end
-    #if(starttime)
-        and t1.dCreateTime >= #para(starttime)
-    #end
-    #if(endtime)
-        and t1.dCreateTime <= #para(endtime)
-    #end
-ORDER BY a.dupdatetime DESC
-#end
-
-
 
 #sql("dList")
 SELECT  a.*, t1.Barcode,
@@ -152,7 +151,6 @@ LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
 LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 LEFT JOIN Bd_EquipmentModel t4 ON i.iEquipmentModelId = t4.iautoid
 LEFT JOIN Bd_Warehouse wh on wh.cWhCode = a.WhCode
-
 where 1=1
 	#if(masid)
 		and a.MasID = #para(masid)
@@ -173,7 +171,7 @@ from
 ) t1
 where 1=1
 #if(iautoid)
-and t1.iautoid = #para(icustomerid)
+and t1.iautoid = #para(iautoid)
 #end
 #if(icustomerid)
 and t1.iCustomerId = #para(icustomerid)
@@ -252,5 +250,22 @@ select t1.* from
 where 1=1
 #if(sourcebillid)
 and t1.maskid = #para(sourcebillid)
+#end
+#end
+
+#sql("findCOrderNoBySourceBillId")
+select
+    t1.*
+from
+   (
+    SELECT iAutoId,cOrderNo,iCustomerId,iOrderStatus,cCusCode,cCusName,IsDeleted from  Co_ManualOrderM  where IsDeleted='0'
+    UNION ALL
+    SELECT iAutoId,cOrderNo,iCustomerId,iOrderStatus,cCusCode,cCusName,IsDeleted from  Co_WeekOrderM where IsDeleted='0'
+    UNION ALL
+    SELECT iAutoId,cOrderNo,iCustomerId,iOrderStatus,cCusCode,cCusName,IsDeleted from  Co_MonthOrderM
+    ) t1
+where 1=1
+#if(iautoid)
+    and t1.iautoid = #para(iautoid)
 #end
 #end

@@ -12,9 +12,10 @@
 					<select class="form-control"
 							data-autoload
 							data-select-type="select2"
-							data-url="admin/dictionary/options?key=fitem"
+							data-url="admin/fitem/selectFitem"
 							data-text="=项目大类="
-							data-value-attr="sn"
+							data-value-attr="citem_class"
+							data-text-attr="citem_name"
 							data-value=""
 							name="sn"
 							data-width="260"
@@ -42,8 +43,8 @@
 					<div class="card-header py-2">
 						<div>
 							<div class="" role="group" aria-label="btn-group">
-								<button data-area="900,600" data-openpage="dialog" data-title="新增分类" onclick="addfitemss97(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
-								<button onclick="deletefitemss97(this)" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>
+								<!--<button data-area="900,600" data-openpage="dialog" data-title="新增分类" onclick="addfitemss97(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+								<button onclick="deletefitemss97(this)" data-confirm="确定删除选中数据？" class="btn btn-outline-danger btn-sm" ><i class="fa fa-trash"></i> 删除</button>-->
 							</div>
 						</div>
 					</div>
@@ -123,18 +124,18 @@
 			autoid = data.id;
 			let url = "admin/fitemss97/selectFitemss97?iautoid="+autoid;
 			Ajax.get(url,function(res){
-				if (res.state === 'ok'&& res.data.isourceid!=0){
+				if (res.state === 'ok'&& res.data.citem_class==null){
 					let table = res.data;
 					console.log(res.data);
-					$("#citemcode").val(table.citemcode);
-					$("#citemname").val(table.citemname);
-					$("#coderule").val(table.citemccode+'-'+table.citemcode);
-				}else if(res.state === 'ok'&& res.data.isourceid==0){
+					$("#citemcode").val(table.citemccode);
+					$("#citemname").val(table.citemcname);
+					$("#coderule").val(table.sn+'-'+table.citemccode);
+				}else if(res.state === 'ok'&& res.data.citem_class!=null){
 					let table = res.data;
 					console.log(res.data);
 					$("#citemcode").val(null);
-					$("#citemname").val(table.citemname);
-					$("#coderule").val(table.citemccode);
+					$("#citemname").val(table.citem_name);
+					$("#coderule").val(table.citem_class);
 				}else {
 					LayerMsgBox.error("接口错误！");
 				}
