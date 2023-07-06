@@ -841,15 +841,17 @@
                                 if(parms['scheduplanmonth'][i].childList[j].day[k].iswork){
                                     //嵌入在库天数公式
                                     sheet.setFormula(AS,Z++,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
-                                    //控制小数位为1位
-                                    sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
                                 }else{
-                                    console.log(sheet.getValue('R[-5]C[1]'));
-                                    // let cell = sheet.getCell(4, 10); // 行索引和列索引从0开始计数
-                                    // let value = cell.value();
-                                    // console.log(value,'value')
-                                    // =IF(OR(RC[-4]=0,SUM(R[-5]C[1]:R[-5]C[2])=0),0,R[-1]C/(SUM(R[-5]C[1]:R[-5]C[2])/RC[-4]))
+                                    // console.log(sheet.getValue());
+                                    /**
+                                     * @param AS 当前在库天数所在行
+                                     * @param Z 当前在库天数所在列
+                                     * @param K 渲染下标
+                                     */
+                                    setFormula(AS,Z,K);
                                 }
+                                //控制小数位为1位
+                                sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
                                 //
                                 if(!parms['scheduplanmonth'][i].childList[j].day[k].lock){
                                     // 设置单元格是否可编辑
@@ -888,6 +890,10 @@
                 console.log('error')
             }
         })
+    }
+    //
+    function setFormula(){
+
     }
     // 订阅 valueChanged 事件
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
