@@ -264,75 +264,78 @@
             type:'get',
             dataType:'json',
             success:function (respons){
-                LayerMsgBox.closeLoading();
                 const jsonData = respons;
                 parms['pageData'] = jsonData.data;
-                console.log(jsonData)
                 spreadSuspend();//暂停绘制
-                let rowIndex = 4;
-                let colIndex=0;
-                let serialCol = 1;
-                let codeRow = 4;
-                for (let i = 0; i < respons.data.length; i++) {
-                    sheet.setColumnVisible(7, false);//隐藏第8列
-                    //设置第9列数据
-                    for (let s = 0; s < 2; s++) {
-                        sheet.setValue(codeRow+s, 7, respons.data[i].cinvcode);
-                        // //存储当前循环的最后一次length
-                        if(s==1){
-                            codeRow=codeRow+2;
+                if(respons.state=='ok'){
+                    LayerMsgBox.closeLoading();
+                    let rowIndex = 4;
+                    let colIndex=0;
+                    let serialCol = 1;
+                    let codeRow = 4;
+                    for (let i = 0; i < respons.data.length; i++) {
+                        sheet.setColumnVisible(7, false);//隐藏第8列
+                        //设置第9列数据
+                        for (let s = 0; s < 2; s++) {
+                            sheet.setValue(codeRow+s, 7, respons.data[i].cinvcode);
+                            // //存储当前循环的最后一次length
+                            if(s==1){
+                                codeRow=codeRow+2;
+                            }
                         }
-                    }
-                    //
-                    sheet.setValue(rowIndex, colIndex,i+1);
-                    sheet.addSpan(rowIndex,colIndex,2,1);
-                    //
-                    sheet.setValue(rowIndex, colIndex+1,respons.data[i].cworkname);
-                    sheet.addSpan(rowIndex,colIndex+1,2,1);
-                    parms.activeSheet.setColumnWidth(1, 150);//设置指定单元格的width
-                    //
-                    sheet.setValue(rowIndex, colIndex+2,respons.data[i].cinvcode);
-                    sheet.addSpan(rowIndex,colIndex+2,2,1);
-                    //
-                    sheet.setValue(rowIndex, colIndex+3,respons.data[i].cinvcode1);
-                    sheet.addSpan(rowIndex,colIndex+3,2,1);
-                    parms.activeSheet.setColumnWidth(3, 200);//设置指定单元格的width
-                    //
-                    sheet.setValue(rowIndex, colIndex+4,respons.data[i].cinvname1);
-                    sheet.addSpan(rowIndex,colIndex+4,2,1);
-                    parms.activeSheet.setColumnWidth(4, 200);//设置指定单元格的width
-                    //
-                    sheet.setValue(rowIndex, colIndex+5,"工单号");
-                    const style_1S = new GC.Spread.Sheets.Style();
-                    style_1S.backColor = "#F0F0F0";
-                    parms.activeSheet.setStyle(rowIndex, 5,style_1S);
-                    parms.activeSheet.addSpan(rowIndex,5,1,2);
-                    //
-                    sheet.setValue(rowIndex+1, colIndex+5,"生产计划量");
-                    const style_2S = new GC.Spread.Sheets.Style();
-                    style_2S.backColor = "#F0F0F0";
-                    parms.activeSheet.setStyle(rowIndex+1, 5,style_2S);
-                    parms.activeSheet.addSpan(rowIndex+1,5,1,2);
-                    //
-                    respons.data[i].rowdatas.forEach(function(item,index){
                         //
-                        sheet.setValue(rowIndex, colIndex+8+index,item.cmodocno);
-                        const style_3S = new GC.Spread.Sheets.Style();
-                        style_3S.backColor = "#F0F0F0";
-                        parms.activeSheet.setStyle(rowIndex,colIndex+8+index,style_3S);
-                        sheet.getCell(rowIndex, colIndex+7+index).locked(true);
+                        sheet.setValue(rowIndex, colIndex,i+1);
+                        sheet.addSpan(rowIndex,colIndex,2,1);
                         //
-                        sheet.setValue(rowIndex+1, colIndex+8+index,item.iqty);
-                        sheet.getCell(rowIndex+1, colIndex+8+index).locked(false);
-                        parms.activeSheet.setColumnWidth(colIndex+8+index, 140);//设置指定单元格的width
-                        if(item.ismodified==1){
-                            const style_1S = new GC.Spread.Sheets.Style();
-                            style_1S.backColor = "red";
-                            parms.activeSheet.setStyle(rowIndex+1, colIndex+8+index,style_1S);
+                        sheet.setValue(rowIndex, colIndex+1,respons.data[i].cworkname);
+                        sheet.addSpan(rowIndex,colIndex+1,2,1);
+                        parms.activeSheet.setColumnWidth(1, 150);//设置指定单元格的width
+                        //
+                        sheet.setValue(rowIndex, colIndex+2,respons.data[i].cinvcode);
+                        sheet.addSpan(rowIndex,colIndex+2,2,1);
+                        //
+                        sheet.setValue(rowIndex, colIndex+3,respons.data[i].cinvcode1);
+                        sheet.addSpan(rowIndex,colIndex+3,2,1);
+                        parms.activeSheet.setColumnWidth(3, 200);//设置指定单元格的width
+                        //
+                        sheet.setValue(rowIndex, colIndex+4,respons.data[i].cinvname1);
+                        sheet.addSpan(rowIndex,colIndex+4,2,1);
+                        parms.activeSheet.setColumnWidth(4, 200);//设置指定单元格的width
+                        //
+                        sheet.setValue(rowIndex, colIndex+5,"工单号");
+                        const style_1S = new GC.Spread.Sheets.Style();
+                        style_1S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(rowIndex, 5,style_1S);
+                        parms.activeSheet.addSpan(rowIndex,5,1,2);
+                        //
+                        sheet.setValue(rowIndex+1, colIndex+5,"生产计划量");
+                        const style_2S = new GC.Spread.Sheets.Style();
+                        style_2S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(rowIndex+1, 5,style_2S);
+                        parms.activeSheet.addSpan(rowIndex+1,5,1,2);
+                        //
+                        respons.data[i].rowdatas.forEach(function(item,index){
+                            //
+                            sheet.setValue(rowIndex, colIndex+8+index,item.cmodocno);
+                            const style_3S = new GC.Spread.Sheets.Style();
+                            style_3S.backColor = "#F0F0F0";
+                            parms.activeSheet.setStyle(rowIndex,colIndex+8+index,style_3S);
+                            sheet.getCell(rowIndex, colIndex+7+index).locked(true);
+                            //
+                            sheet.setValue(rowIndex+1, colIndex+8+index,item.iqty);
                             sheet.getCell(rowIndex+1, colIndex+8+index).locked(false);
-                        }
-                    })
-                    rowIndex = rowIndex+2;
+                            parms.activeSheet.setColumnWidth(colIndex+8+index, 140);//设置指定单元格的width
+                            if(item.ismodified==1){
+                                const style_1S = new GC.Spread.Sheets.Style();
+                                style_1S.backColor = "red";
+                                parms.activeSheet.setStyle(rowIndex+1, colIndex+8+index,style_1S);
+                                sheet.getCell(rowIndex+1, colIndex+8+index).locked(false);
+                            }
+                        })
+                        rowIndex = rowIndex+2;
+                    }
+                }else{
+                    LayerMsgBox.error(respons.msg,10000);
                 }
                 spreadResume();// 恢复绘制
             },error: function(error) {

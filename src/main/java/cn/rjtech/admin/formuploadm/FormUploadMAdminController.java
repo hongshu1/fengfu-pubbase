@@ -9,6 +9,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltFileService;
+import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.util.ValidationUtils;
@@ -39,6 +40,8 @@ public class FormUploadMAdminController extends BaseAdminController {
 
 	@Inject
 	private JBoltFileService jboltFileService;
+	@Inject
+	private FormUploadDService formUploadDService;
    /**
 	* 首页
 	*/

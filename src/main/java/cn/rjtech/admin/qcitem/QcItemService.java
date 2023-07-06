@@ -113,12 +113,20 @@ public class QcItemService extends BaseService<QcItem> {
     public Long findQcItemCode(String cqcItemCode) {
         return queryColumn(selectSql().select(QcItem.CQCITEMCODE).eq(QcItem.CQCITEMCODE, cqcItemCode));
     }
+    public QcItem findQcItemCode(String cqcItemCode,Long id) {
+        QcItem qcItem = findFirst("SELECT cQcItemCode FROM [Bd_QcItem] WHERE isDeleted = 0 AND cQcItemCode = ? AND iAutoId <> ? ",cqcItemCode,id);
+        return qcItem;
+    }
 
     /**
      * 检验项目名称
      */
     public List<QcItem> findQcItemName(String cqcItemName) {
         return query(selectSql().select(QcItem.CQCITEMNAME).eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
+    }
+    public QcItem findQcItemName(String cqcItemName,Long id) {
+        QcItem qcItem = findFirst("SELECT cQcItemCode FROM [Bd_QcItem] WHERE isDeleted = 0 AND cQcItemName = ? AND iAutoId <> ? ",cqcItemName,id);
+        return qcItem;
     }
 
 
@@ -143,9 +151,9 @@ public class QcItemService extends BaseService<QcItem> {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
         //项目编码不能重复
-        ValidationUtils.isTrue(findQcItemCode(qcItem.getCQcItemCode()) == null, qcItem.getCQcItemCode() + "：项目编码重复");
+        ValidationUtils.isTrue(findQcItemCode(qcItem.getCQcItemCode(),qcItem.getIAutoId()) == null, qcItem.getCQcItemCode() + "：项目编码重复");
         //项目名不能重复
-        ValidationUtils.isTrue(findQcItemName(qcItem.getCQcItemName()).isEmpty(), qcItem.getCQcItemName() + "：项目名重复");
+        ValidationUtils.isTrue(findQcItemName(qcItem.getCQcItemName(),qcItem.getIAutoId()) == null, qcItem.getCQcItemName() + "：项目名重复");
         boolean result = qcItem.update();
         if (!result){
             return fail(JBoltMsg.FAIL);
