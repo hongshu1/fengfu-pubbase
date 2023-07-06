@@ -129,6 +129,7 @@
                         data-confirm='确定要执行此操作？' data-url="admin/purchaseorderm/batchGenerateCash?ids="
                         class="btn btn-outline-primary"><i class="fa fa-plus"></i> 批量生成现品票
                 </button>
+                #include("/_view/_common/_batch_approval_btns.html", formSn="PS_PurchaseOrderM", primaryKeyName="iAutoId", className="cn.rjtech.admin.purchaseorderm.PurchaseOrderMService", permissionKeyPrefix="purchaseorderm")
 
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新
                 </button>

@@ -1074,8 +1074,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				jsonObject.put("cPersonCode", order.get("cPersonCode"));
 				jsonObject.put("cBusType", order.get("cBusType"));
 				jsonObject.put("cPTCode", order.get("cPTCode"));
-				jsonObject.put("iExchRate", order.get("iExchRate"));
-				jsonObject.put("iTaxRate", order.get("iTaxRate"));
+				jsonObject.put("iExchRate", order.getBigDecimal("iExchRate"));
+				jsonObject.put("iTaxRate", order.getBigDecimal("iTaxRate"));
 				jsonObject.put("cexch_name", order.get("cexch_name"));
 				jsonObject.put("cmemo", order.get("cmemo"));
 				jsonObject.put("inum", order.get("inum"));
@@ -1088,6 +1088,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				jsonObject.put("KL", order.get("KL"));
 				jsonObject.put("iNatDisCount", order.get("iNatDisCount"));
                 jsonObject.put("cPayType", order.get("cPayType"));
+                jsonObject.put("cdepcode",order.get("cdepcode"));
 				jsonArray.add(jsonObject);
 			}
 			JSONObject params = new JSONObject();
@@ -1327,5 +1328,113 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 
     public PurchaseOrderM findByCOrerNo(String corderno) {
         return findFirst("select * from PS_PurchaseOrderM where corderno=?", corderno);
+    }
+
+    /**
+     * 处理审批通过的其他业务操作，如有异常返回错误信息
+     */
+    public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    /**
+     * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+     */
+    public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+        return null;
+    }
+
+    /**
+     * 实现反审之前的其他业务操作，如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /**
+     * 实现反审之后的其他业务操作, 如有异常返回错误信息
+     *
+     * @param formAutoId 单据ID
+     * @param isFirst    是否为审批的第一个节点
+     * @param isLast     是否为审批的最后一个节点
+     */
+    public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+        return null;
+    }
+
+    /**
+     * 提审前业务，如有异常返回错误信息
+     */
+    public String preSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 提审后业务处理，如有异常返回错误信息
+     */
+    public String postSubmitFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 撤回审核业务处理，如有异常返回错误信息
+     */
+    public String postWithdrawFunc(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    public String withdrawFromAuditting(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     */
+    public String preWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+     */
+    public String postWithdrawFromAuditted(long formAutoId) {
+        return null;
+    }
+
+    /**
+     * 批量审批（审核）通过
+     *
+     * @param formAutoIds 单据IDs
+     * @return 错误信息
+     */
+    public String postBatchApprove(List<Long> formAutoIds) {
+        return null;
+    }
+
+    /**
+     * 批量审批（审核）不通过
+     *
+     * @param formAutoIds 单据IDs
+     * @return 错误信息
+     */
+    public String postBatchReject(List<Long> formAutoIds) {
+        return null;
+    }
+
+    /**
+     * 批量撤销审批
+     *
+     * @param formAutoIds 单据IDs
+     * @return 错误信息
+     */
+    public String postBatchBackout(List<Long> formAutoIds) {
+        return null;
     }
 }

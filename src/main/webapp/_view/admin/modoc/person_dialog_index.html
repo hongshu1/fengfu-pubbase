@@ -28,7 +28,7 @@
 		<textarea class="jb_tpl_box" id="itemroutingRowtpl_#(pageId)">
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
-<!--<td>${pageNumber,pageSize,index | rownum}</td>-->
+<td>${pageNumber,pageSize,index | rownum}</td>
 <td>${data.cpsn_num}</td>
 <td>${data.cpsn_name}</td>
 <td>${data.isex|iSex}</td>
@@ -71,7 +71,7 @@
 		>
 			<thead class="fw-normal">
 			<tr>
-				<!--<th data-width="60">序号</th>-->
+				<th data-width="60">序号</th>
 				<th data-width="150" data-column="cPsn_Num">编码</th>
 				<th data-width="150" data-column="cPsn_Name">姓名</th>
 				<th data-width="150" data-column="iSex">性别</th>

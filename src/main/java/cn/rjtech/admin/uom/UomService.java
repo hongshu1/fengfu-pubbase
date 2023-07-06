@@ -24,7 +24,9 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -351,7 +353,12 @@ public class UomService extends JBoltBaseService<Uom> {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
-
+        Map<String,Long> classMap = new HashMap<>();
+        List<Record> classList = findRecord("SELECT iAutoId,cUomClassCode FROM Bd_UomClass WHERE isDeleted = 0 ");
+        for (Record record : classList){
+            classMap.put(record.get("cUomClassCode"),record.getLong("iAutoId"));
+        }
+        Date now=new Date();
         for (Record record : records) {
 
             if (StrUtil.isBlank(record.getStr("iUomClassId"))) {
@@ -371,8 +378,11 @@ public class UomService extends JBoltBaseService<Uom> {
             }
 
 
-            Date now=new Date();
-
+            Long classID= classMap.get(record.getStr("iUomClassId"));
+            if (notOk(classID)){
+                return fail("该计量单位组【"+record.getStr("iUomClassId")+"】不存在！");
+            }
+            record.set("iUomClassId", classID);
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iSource", SourceEnum.MES.getValue());
             record.set("iCreateBy", JBoltUserKit.getUserId());

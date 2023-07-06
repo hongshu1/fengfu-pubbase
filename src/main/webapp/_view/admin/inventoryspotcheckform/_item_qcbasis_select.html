@@ -7,11 +7,11 @@
     <div class="row">
       <div class="col">
         <form class="form-inline" id="equipmentqcparamForm_#(pageId)" onsubmit="return false;" method="post" style="text-align: left;">
-          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cInvAddCode"
+          <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode"
                  value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cInvCode1"
+          <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cinvaddcode"
                  value=""/>
-          <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cInvName1"
+          <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cinvname1"
                  value=""/>
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -25,7 +25,7 @@
 {@each datas as data,index}
 	<tr data-id="${data.iautoid}">
 		<td>${pageNumber,pageSize,index | rownum}</td>
-		<td title="${data.cinvaddcode}">${data.cinvaddcode}</td>
+		<td title="${data.cinvcode}">${data.cinvcode}</td>
 		<td title="${data.cinvcode1}">${data.cinvcode1}</td>
 		<td title="${data.cinvname1}">${data.cinvname1}</td><!--部品名称-->
     <td title="${data.cinvstd}">${data.cinvstd}</td><!--规格-->
@@ -60,7 +60,7 @@
       <thead class="fw-normal">
         <tr>
           <th data-width="30">序号</th>
-          <th data-width="150" data-column="cInvAddCode">存货编码</th>
+          <th data-width="150" data-column="cinvcode">存货编码</th>
           <th data-width="180" data-cInvCode1="cinvcode1">客户部番</th>
           <th data-width="180" data-column="cinvname1">部品名称</th>
           <th data-width="180" data-column="cinvstd">规格</th>

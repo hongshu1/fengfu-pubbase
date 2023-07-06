@@ -47,7 +47,9 @@
                     data-select="#(posname??)"></select>
 
 
+            #if(stockchekvouch.autoid??)
             <select class="form-control" name="status" data-autoload data-url="admin/dictionary/options?key=currentstock_status" data-value-attr="sn" data-text="=盘点状态=" data-value=""></select>
+            #end
             <select class="form-control"
                     name="cinvcname"
                     data-autoload

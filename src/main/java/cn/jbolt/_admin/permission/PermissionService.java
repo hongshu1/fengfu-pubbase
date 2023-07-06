@@ -292,38 +292,11 @@ public class PermissionService extends JBoltPermissionService {
     }
 
     public List<Permission> getDatas() {
-        //父级
-        Sql sql = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eqOr(Permission.TITLE,"组织建模","排产建模","往来单位","物料建模","仓库建模","生产建模","设备管理","点检建模","禀议建模","容器管理","质量建模","基础档案");
-        List<Record> datas = findRecord(sql);
-        List<Permission> permissionList = find(sql);
-
-        if (CollUtil.isNotEmpty(datas)) {
-            for (Record data : datas) {
-                //子级
-                Sql sql1 = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eq(Permission.PID,data.getStr("id"));
-                permissionList.addAll(find(sql1));
-            }
-        }
-        return convertToModelTree(permissionList, "id", "pid", (p)->notOk(p.getPid()));
-        }
+        return convertToModelTree(daoTemplate("permission.findBasicForm").find(),"id", "pid", (p)->notOk(p.getPid()));
+    }
 
     public List<Permission> getFormDatas() {
-        //父级
-        Sql sql = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eqOr(Permission.TITLE,"质量管理","入库管理","出库管理","发货管理");
-        List<Record> datas = findRecord(sql);
-        List<Permission> allDatas = find(sql);
-
-        if (CollUtil.isNotEmpty(datas)) {
-            for (Record data : datas) {
-                //子级与排除
-                Sql sql1 = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eq(Permission.PID,data.getStr("id")).notEq(Permission.TITLE,"生产备料").notEq(Permission.TITLE,"扫码出货").notEq(Permission.TITLE,"双码扫码出货");
-                allDatas.addAll(find(sql1));
-            }
-        }
-        Sql sql2 = selectSql().select(Permission.TITLE,Permission.ID,Permission.PID).eqOr(Permission.TITLE,"采购订单管理","委外订单管理","制造工单批量编辑","制造工单管理");
-        allDatas.addAll(find(sql2));
-
-        return convertToModelTree(allDatas,"id", "pid", (p)->notOk(p.getPid()));
+        return convertToModelTree(daoTemplate("permission.findForm").find(),"id", "pid", (p)->notOk(p.getPid()));
     }
     public List<Permission> findProposalTopNabMenu(){
     	 return daoTemplate("permission.findProposalTopNabMenu").find();
