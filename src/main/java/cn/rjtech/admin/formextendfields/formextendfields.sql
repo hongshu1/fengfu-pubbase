@@ -2,4 +2,3 @@
 SELECT *
 FROM jb_permission
 #end
-
