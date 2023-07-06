@@ -1,5 +1,6 @@
 package cn.rjtech.admin.routing;
 
+import cn.hutool.core.date.DateUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -9,11 +10,17 @@ import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.base.controller.BaseAdminController;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+
 import com.jfinal.plugin.activerecord.Record;
+
+
+import java.util.List;
 
 /**
  * 物料建模-工艺路线
@@ -138,5 +145,15 @@ public class RoutingAdminController extends BaseAdminController {
     public void audit(@Para(value = "routingId") Long routingId,
                       @Para(value = "status") Integer status) {
         renderJsonData(service.audit(routingId, status));
+    }
+
+    public void exportExcel() throws Exception {
+        List<Record> rows = service.getRoutingDetails(getKv());
+        if (notOk(rows)) {
+            renderJsonFail("无有效数据导出");
+            return;
+        }
+
+        renderJxls("routing.xlsx", Kv.by("rows", rows), "计量单位_" + DateUtil.today() + ".xlsx");
     }
 }
