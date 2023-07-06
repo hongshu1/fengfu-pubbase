@@ -3069,4 +3069,8 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String WORKCALENDARM_IMPORT = "workcalendarm_import";
+	/**
+	 * 保存
+	 */
+	public static final String CUSTOMER_SUBMIT = "customer_submit";
 }
