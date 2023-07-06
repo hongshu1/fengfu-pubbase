@@ -2,6 +2,7 @@ package cn.rjtech.admin.momotask;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.JBoltDictionaryService;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,9 +10,11 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
+import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMotask;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
@@ -33,7 +36,7 @@ import java.util.*;
  * @author: chentao
  * @date: 2023-04-28 15:19
  */
-public class MoMotaskService extends BaseService<MoMotask> {
+public class MoMotaskService extends BaseService<MoMotask> implements IApprovalService {
 
   private final MoMotask dao = new MoMotask().dao();
   @Inject
@@ -198,18 +201,18 @@ public class MoMotaskService extends BaseService<MoMotask> {
    */
   public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv keywords) {
     Page<Record> moMotaskPage = dbTemplate("modocbatch.getPage", keywords).paginate(pageNumber, pageSize);
-    List<Dictionary> listByTypeKeayName = new JBoltDictionaryService().getListByTypeKey("motask_audit");
-    HashMap<String, String> map = new HashMap<>();
-    for (Dictionary dictionary : listByTypeKeayName) {
-      map.put(dictionary.getSn(), dictionary.getName());
-    }
-    for (Record record : moMotaskPage.getList()) {
-      String istatus = record.getStr("istatus");
-      if (istatus != null) {
-        String s = map.get(istatus);
-        record.set("istatusname", s);
-      }
-    }
+//    List<Dictionary> listByTypeKeayName = new JBoltDictionaryService().getListByTypeKey("motask_audit");
+//    HashMap<String, String> map = new HashMap<>();
+//    for (Dictionary dictionary : listByTypeKeayName) {
+//      map.put(dictionary.getSn(), dictionary.getName());
+//    }
+//    for (Record record : moMotaskPage.getList()) {
+//      String istatus = record.getStr("istatus");
+//      if (istatus != null) {
+//        String s = map.get(istatus);
+//        record.set("istatusname", s);
+//      }
+//    }
     return moMotaskPage;
   }
 
@@ -1090,5 +1093,130 @@ public class MoMotaskService extends BaseService<MoMotask> {
     }
 
     return records1;
+  }
+
+
+//  ------------------------------------------------------------------------审批流---------------------------------------------------------------------
+
+
+  @Override
+  public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+    MoMotask moMotask = findById(formAutoId);
+    // 审核状态修改
+    moMotask.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+    moMotask.setIUpdateBy(JBoltUserKit.getUserId());
+    moMotask.setCUpdateName(JBoltUserKit.getUserName());
+    moMotask.setDUpdateTime(new Date());
+//    moMotask.setIAuditBy(JBoltUserKit.getUserId());
+//    moMotask.setCAuditName(JBoltUserKit.getUserName());
+    moMotask.setDSubmitTime(new Date());
+    moMotask.update();
+    return null;
+  }
+
+  @Override
+  public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+    MoMotask moMotask = findById(formAutoId);
+    // 审核状态修改
+    moMotask.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+    moMotask.setIUpdateBy(JBoltUserKit.getUserId());
+    moMotask.setCUpdateName(JBoltUserKit.getUserName());
+    moMotask.setDUpdateTime(new Date());
+//    moMotask.setIAuditBy(JBoltUserKit.getUserId());
+//    moMotask.setCAuditName(JBoltUserKit.getUserName());
+    moMotask.setDSubmitTime(new Date());
+    moMotask.update();
+    return null;
+  }
+
+  @Override
+  public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+    return null;
+  }
+
+  @Override
+  public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+    return null;
+  }
+
+  @Override
+  public String preSubmitFunc(long formAutoId) {
+    MoMotask moMotask = findById(formAutoId);
+    switch (AuditStatusEnum.toEnum(moMotask.getIAuditStatus())) {
+      // 已保存
+      case NOT_AUDIT:
+        // 不通过
+      case REJECTED:
+
+        break;
+      default:
+        return "订单非已保存状态";
+    }
+    return null;
+  }
+
+  @Override
+  public String postSubmitFunc(long formAutoId) {
+    return null;
+  }
+
+  @Override
+  public String postWithdrawFunc(long formAutoId) {
+    return null;
+  }
+
+  @Override
+  public String withdrawFromAuditting(long formAutoId) {
+    ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", AuditStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
+    return null;
+  }
+
+  @Override
+  public String preWithdrawFromAuditted(long formAutoId) {
+    return null;
+  }
+
+  @Override
+  public String postWithdrawFromAuditted(long formAutoId) {
+    return null;
+  }
+
+  @Override
+  public String postBatchApprove(List<Long> formAutoIds) {
+    for (Long formAutoId : formAutoIds) {
+      MoMotask moMotask = findById(formAutoId);
+      // 审核状态修改
+      moMotask.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
+      moMotask.setIUpdateBy(JBoltUserKit.getUserId());
+      moMotask.setCUpdateName(JBoltUserKit.getUserName());
+      moMotask.setDUpdateTime(new Date());
+//      moMotask.setIAuditBy(JBoltUserKit.getUserId());
+//      moMotask.setCAuditName(JBoltUserKit.getUserName());
+      moMotask.setDSubmitTime(new Date());
+      moMotask.update();
+    }
+    return null;
+  }
+
+  @Override
+  public String postBatchReject(List<Long> formAutoIds) {
+    for (Long formAutoId : formAutoIds) {
+      MoMotask moMotask = findById(formAutoId);
+      // 审核状态修改
+      moMotask.setIAuditStatus(AuditStatusEnum.REJECTED.getValue());
+      moMotask.setIUpdateBy(JBoltUserKit.getUserId());
+      moMotask.setCUpdateName(JBoltUserKit.getUserName());
+      moMotask.setDUpdateTime(new Date());
+//      moMotask.setIAuditBy(JBoltUserKit.getUserId());
+//      moMotask.setCAuditName(JBoltUserKit.getUserName());
+      moMotask.setDSubmitTime(new Date());
+      moMotask.update();
+    }
+    return null;
+  }
+
+  @Override
+  public String postBatchBackout(List<Long> formAutoIds) {
+    return null;
   }
 }
