@@ -449,6 +449,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return findFirst("select *  from T_Sys_PUReceive where SourceBillNo = ? ", sourceBillNo);
     }
 
+    public SysPureceive findByBillNo(String billno) {
+        return findFirst("select *  from T_Sys_PUReceive where billno = ? ", billno);
+    }
+
     private void updateData(JBoltTable jBoltTable, SysPureceive sysPureceive, String operationType, User user,
                             HashMap<String, String> map) {
         List<Record> list = jBoltTable.getUpdateRecordList();
