@@ -184,7 +184,7 @@
             <th data-width="60" data-column="index">序号</th>
 
             #if(readonly != 'readonly')
-            <th data-width="20" data-column="cattachments">操作</th>
+            <th data-width="20" data-column="">操作</th>
             #end
             <th data-width="550"  data-column="cattachments">附件</th>
             <th data-width="480" data-column="cmemo">备注</th>
@@ -276,33 +276,47 @@
 
     // 新增插入数据
     function insertDatas(data,url) {
+        //data为新增图片，url为原来数据
         if (!data) {
             LayerMsgBox.alert("导入数据异常", 2);
             return;
         }
-        var datas=[];
-        var cattachments="";
-
-        for (var i = 0; i < data.length; i++) {
-            var datum = data[i];
-            if (datum.url !== '') {
-                cattachments +=  datum.url + ",";
+        const datas = [];
+        datas.push({cattachments:data})
+        const strs = [];
+        if (data.indexOf(",") != -1) {
+            var ress= data.split(',');
+            for (var i=0;i<ress.length;i++){
+                var data2={}
+                data2.url=ress[i]
+                strs.push(data2)
             }
         }
-        if (cattachments.length > 0) {
-         cattachments = cattachments.substr(0,cattachments.length - 1);
-        }
-
-        datas.push({cattachments:cattachments})
         if (url){
-            for (var i = 0; i < data.length; i++) {
-                let datum1 = data[i];
+            if (strs.length > 0) {
+            for (var i = 0; i < strs.length; i++) {
+                let datum1 = strs[i];
                 let element = document.getElementById(""+datum1.url);
                 if (!element){
+                    var elementById2 = document.getElementById(""+url);
+                    var bigImg2 = document.createElement("img");
+                    bigImg2.id=""+datum1.url;  //200个像素 不用加px
+                    bigImg2.src=""+real_image(datum1.url);
+                    bigImg2.setAttribute("data-photobtn","");
+                    bigImg2.setAttribute("tooltip","");
+                    bigImg2.setAttribute("data-title","点击查看图片");
+                    bigImg2.setAttribute("style","width: 60px;height: 60px;border-radius:50%;");
+                    bigImg2.setAttribute("onerror","this.src='assets/img/avatar.jpg'");
+                    bigImg2.setAttribute("data-original-title","");
+                    bigImg2.setAttribute("title","");
+                    elementById2.appendChild(bigImg2);
+                }
+            }
+            }else {
                     var elementById = document.getElementById(""+url);
                     var bigImg = document.createElement("img");
-                    bigImg.id=""+datum1.url;  //200个像素 不用加px
-                    bigImg.src=""+real_image(datum1.url);
+                    bigImg.id=""+data;  //200个像素 不用加px
+                    bigImg.src=""+real_image(data);
                     bigImg.setAttribute("data-photobtn","");
                     bigImg.setAttribute("tooltip","");
                     bigImg.setAttribute("data-title","点击查看图片");
@@ -311,31 +325,27 @@
                     bigImg.setAttribute("data-original-title","");
                     bigImg.setAttribute("title","");
                     elementById.appendChild(bigImg);
-                }
             }
-            //修改数据
+            // 修改数据
             var $table = $('#jbolt_Table_#(pageId)');
             var $td = $("table#jbolt_Table_#(pageId) td:contains('" + url + "')").first();
             var cols = [
-                {column: "cattachments2", text: cattachments, value: cattachments}
+                {column: "cattachments2", text: url+","+data, value:url+","+data}
             ];
             jboltTableSetCells($table, $td.parent(), cols);
-            var val2 = $("#cattachments").val();
-                if (val2 === "") {
-                    $("#cattachments").val(cattachments);
-                }else {
-                    $("#cattachments").val(val2+'-'+cattachments);
-            }
+
         }else {
             jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
-
             var val = $("#cattachments").val();
                 if (val === "") {
-                    $("#cattachments").val(cattachments);
+                    $("#cattachments").val(data);
+                    console.log(data);
                 }else {
-                    console.log(val);
-                    $("#cattachments").val(val+'-'+cattachments);
+                    $("#cattachments").val(val+'-'+data);
+                    console.log(val+'-'+data);
                 }
+
+
 
         }
 

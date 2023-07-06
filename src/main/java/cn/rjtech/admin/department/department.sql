@@ -80,3 +80,6 @@ select * from Bd_Department where ipid=#para(ipid)
 SELECT * FROM Person where cpersoncode in (#(sqlPersonCode))
 #end
 
+#sql("getDepartmentByName")
+select * from Bd_Department where cDepName = #para(name)
+#end

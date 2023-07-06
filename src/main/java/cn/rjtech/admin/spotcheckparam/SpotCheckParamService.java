@@ -21,6 +21,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 /**
@@ -164,7 +165,7 @@ public class SpotCheckParamService extends BaseService<SpotCheckParam> {
 			.setFileName("检验参数" + "_" + DateUtil.today());
 	}
 
-	/*
+	/**
 	 * 上传excel文件
 	 */
 	public Ret importExcelData(File file) {
@@ -177,14 +178,17 @@ public class SpotCheckParamService extends BaseService<SpotCheckParam> {
 				JBoltExcelSheet.create("sheet1")
 					//设置列映射 顺序 标题名称
 					.setHeaders(
-						JBoltExcelHeader.create("iqcitemid", "参数项目名称"),
+						JBoltExcelHeader.create("cqcitemname", "参数项目名称"),
 						JBoltExcelHeader.create("cqcparamname", "参数名称")
 					)
 					//从第几行开始读取
-					.setDataStartRow(2)
+					.setDataStartRow(3)
 			);
 		//从指定的sheet工作表里读取数据
-		List<SpotCheckParam> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", SpotCheckParam.class, errorMsg);
+		List<Record> models = JBoltExcelUtil.readRecords(jBoltExcel, "sheet1",true,  errorMsg);
+		List<SpotCheckParam> newList=new ArrayList<SpotCheckParam>();
+		Date now = new Date();
+		String orgName = getOrgName();
 		if (notOk(models)) {
 			if (errorMsg.length() > 0) {
 				return fail(errorMsg.toString());
@@ -197,36 +201,51 @@ public class SpotCheckParamService extends BaseService<SpotCheckParam> {
 		}
 		//读取数据没有问题后判断必填字段
 		if (models.size() > 0) {
-			for (SpotCheckParam param : models) {
-				if (notOk(param.getIQcItemId())) {
+			for (Record param : models) {
+				if (notOk(param.getStr("cqcitemname"))) {
 					return fail("参数项目名称不能为空");
 				}
-				if (notOk(param.getCQcParamName())) {
+				if (notOk(param.getStr("cqcparamname"))) {
 					return fail("参数名称不能为空");
 				}
 			}
 		}
 		//判断是否存在这个参数项目
-		for (SpotCheckParam each : models) {
-			List<QcItem> qcItemList = qcItemService.findQcItemName(each.getIQcItemId().toString());
-			if (notOk(qcItemList)) {
-				return fail(each.getIQcItemId() + "参数项目不存在，请去【检验项目】页面新增！");
+		for (Record record : models) {
+			String cqcitemname = record.getStr("cqcitemname");
+			QcItem qcItem = qcItemService.findFristQcItemName(cqcitemname);
+			if (notOk(qcItem)) {
+				return fail(cqcitemname + "参数项目不存在，请去【检验项目】页面新增！");
 			}
+
+			SpotCheckParam spotCheckParam=new SpotCheckParam();
+			spotCheckParam.setIQcItemId(qcItem.getIAutoId());
+			spotCheckParam.setCQcParamName(record.getStr("cqcparamname"));
+
+
+
+			spotCheckParam.setICreateBy(JBoltUserKit.getUserId());
+			spotCheckParam.setIUpdateBy(JBoltUserKit.getUserId());
+			spotCheckParam.setDCreateTime(now);
+			spotCheckParam.setDUpdateTime(now);
+			spotCheckParam.setIOrgId(getOrgId());
+			spotCheckParam.setCOrgCode(getOrgCode());
+
+			spotCheckParam.setCOrgName(orgName);
+			spotCheckParam.setCCreateName(JBoltUserKit.getUserName());
+			spotCheckParam.setCUpdateName(JBoltUserKit.getUserName());
+
+			newList.add(spotCheckParam);
 		}
 
-		savaModelHandle(models);
-		//执行批量操作
-		boolean success = tx(new IAtom() {
-			@Override
-			public boolean run() throws SQLException {
-				batchSave(models);
-				return true;
-			}
+
+		// 执行批量操作
+		tx(() -> {
+			batchSave(newList);
+			return true;
 		});
-		if (!success) {
-			return fail(JBoltMsg.DATA_IMPORT_FAIL);
-		}
 		return SUCCESS;
+
 	}
 
 

@@ -3,9 +3,11 @@ package cn.rjtech.admin.spotcheckform;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.base.JBoltPageSize;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
@@ -32,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 点检表格 Service
@@ -66,7 +70,7 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 	 * @return
 	 */
 	public Page<SpotCheckForm> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-		return paginateByKeywords("dcreatetime","desc", pageNumber, pageSize, keywords, "iAutoId");
+		return paginateByKeywords("dcreatetime","desc", pageNumber, pageSize, keywords, "iAutoId",Okv.by("isDeleted",0));
 	}
 
 	/**
@@ -123,7 +127,12 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
-		return deleteByIds(ids,true);
+		String[] idarry = ids.split(",");
+		int num = update("UPDATE Bd_SpotCheckForm SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
+		if (num > 0){
+			return SUCCESS;
+		}
+		return FAIL;
 	}
 
 	/**
@@ -132,7 +141,11 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 	 * @return
 	 */
 	public Ret delete(Long id) {
-		return deleteById(id,true);
+		int num = update("UPDATE Bd_SpotCheckForm SET isDeleted = 1 WHERE iAutoId = ? ",id);
+		if (num > 0){
+			return SUCCESS;
+		}
+		return FAIL;
 	}
 
 	/**
