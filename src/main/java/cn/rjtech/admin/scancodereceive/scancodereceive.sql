@@ -254,7 +254,7 @@ left join Bd_Department dep on t.idepartmentid = dep.iautoid
   #if(detailHidden)
   and t.barcode not in (#(detailHidden))
   #end
-  ###and not exists (select 1 from T_Sys_PUReceiveDetail detail where detail.SourceBillDid = t.SourceBillDid and detail.isDeleted = '0')
+  and not exists (select 1 from T_Sys_PUReceiveDetail detail where detail.Barcode = t.barcode and detail.isDeleted = '0')
 #end
 
 #sql("findWhArea")
