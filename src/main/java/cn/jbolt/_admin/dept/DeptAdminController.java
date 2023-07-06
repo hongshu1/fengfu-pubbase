@@ -1,13 +1,11 @@
 package cn.jbolt._admin.dept;
 
 
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltGlobalConfigCache;
 import cn.jbolt.core.common.enums.JBoltDeptMgrType;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.Dept;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.aop.Before;
@@ -20,7 +18,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
  * @author: JFinal学院-小木
  * @date: 2021-02-07 20:34
  */
-@CheckPermission(PermissionKey.DEPT)
+//@CheckPermission(PermissionKey.DEPT)
 @UnCheckIfSystemAdmin
 public class DeptAdminController extends JBoltBaseController {
 
