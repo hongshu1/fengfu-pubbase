@@ -3063,4 +3063,12 @@ public class PermissionKey {
 	 * 提交
 	 */
 	public static final String WORKSHIFTM_SUBMIT = "workshiftm_submit";
+	/**
+	 * 点检
+	 */
+	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
+	/**
+	 *销售出货(计划)
+	 */
+	public static final String SYSSALEDELIVERPLAN = "syssaledeliverplan";
 }
