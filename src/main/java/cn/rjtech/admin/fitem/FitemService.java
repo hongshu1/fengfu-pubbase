@@ -1,6 +1,7 @@
 package cn.rjtech.admin.fitem;
 
 import cn.jbolt.core.bean.JsTreeBean;
+import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -45,6 +46,12 @@ public class FitemService extends BaseService<Fitem> {
 				.like("citem_name",paras.getStr("citemname"))
 				.like("citem_class",paras.getStr("citemclass")).page(pageNumber,pageSize);
 		return paginate(sql);
+	}
+
+
+
+	public List<Record> selectFitem(){
+	     return dbTemplate("fitem.selectFitem").find();
 	}
 
 
@@ -133,8 +140,8 @@ public class FitemService extends BaseService<Fitem> {
 		return null;
 	}
 
-/*	public List<Fitem> getTreeDatas(){
-		List<Fitem> datas=find(selectSql());
+/*	public List<fitem.sql> getTreeDatas(){
+		List<fitem.sql> datas=find(selectSql());
 		return convertToModelTree(datas, "iAutoId", "pid", (p)->notOk(p.));
 	}*/
 

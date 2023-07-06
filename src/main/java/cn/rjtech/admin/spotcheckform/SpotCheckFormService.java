@@ -616,4 +616,13 @@ public class SpotCheckFormService extends BaseService<SpotCheckForm> {
 	public List<Record> findByIdGetDetail(String iprodformid){
 		return  dbTemplate("spotcheckform.findByIdGetDetail",Kv.by("iprodformid",iprodformid)).find();
 	}
+
+	/**
+	 * 根据检验表格名称获取点检表格数据
+	 * @param name
+	 * @return
+	 */
+	public SpotCheckForm getSpotCheckFormByname(String name){
+		return findFirst("SELECT * FROM Bd_SpotCheckForm WHERE isDeleted = '0' AND cSpotCheckFormName=?",name);
+	}
 }
