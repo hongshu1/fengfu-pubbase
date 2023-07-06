@@ -102,7 +102,7 @@ WHERE 1 = 1
 	    AND A.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
 	#end
     #if(isEffective)
-        AND A.isEffective = #para(isEffective59)
+        AND A.isEffective = #para(isEffective)
 	#end
 	#if(sonInvCode)
 	    AND EXISTS (
