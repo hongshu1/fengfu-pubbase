@@ -665,11 +665,11 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 				List<Record> resource = getResource(para);
 
 				SysPuinstore sysPuinstore = new SysPuinstore();
-                sysPuinstore.setBillNo(sysPureceive.getBillNo());
+                sysPuinstore.setBillNo(sysPureceive.getBillNo()+1);
                 sysPuinstore.setBillType(sysPureceive.getBillType());
                 sysPuinstore.setBillDate(DateUtil.formatDate(now));
                 sysPuinstore.setOrganizeCode(getOrgCode());
-                sysPuinstore.setSourceBillNo(sysPureceive.getSourceBillNo());
+                sysPuinstore.setSourceBillNo(sysPureceive.getBillNo());
                 sysPuinstore.setSourceBillID(sysPureceive.getAutoID());
                 sysPuinstore.setVenCode(sysPureceive.getVenCode());
                 sysPuinstore.setCCreateName(user.getName());
@@ -679,6 +679,10 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                 sysPuinstore.setWhCode(sysPureceive.getWhCode());
                 sysPuinstore.setWhName(sysPureceive.getWhName());
                 sysPuinstore.setIAuditStatus(0);
+                sysPuinstore.setICreateBy(sysPureceive.getIcreateby());
+                sysPuinstore.setDCreateTime(new Date());
+                sysPuinstore.setIUpdateBy(sysPureceive.getIupdateby());
+                sysPuinstore.setDUpdateTime(new Date());
                 sysPuinstore.setIsDeleted(false);
                 sysPuinstore.setDeptCode(sysPureceive.getDeptCode());
                 sysPuinstore.setIBusType(1);
@@ -697,6 +701,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                     //往采购订单入库表插入信息
                     SysPuinstoredetail sysPuinstoredetail = new SysPuinstoredetail();
                     sysPuinstoredetail.setMasID(autoID);
+                    sysPuinstoredetail.setWhcode(sysPureceive.getWhCode());
                     sysPuinstoredetail.setSourceBillType(record.getStr("sourcebilltype"));
                     sysPuinstoredetail.setSourceBillNo(record.getStr("sourcebillno"));
                     sysPuinstoredetail.setSourceBillNoRow(record.getStr("sourcebillno") + "-" + record.get("rowno"));
