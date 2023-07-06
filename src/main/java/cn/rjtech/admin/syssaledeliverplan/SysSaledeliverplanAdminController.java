@@ -1,6 +1,5 @@
 package cn.rjtech.admin.syssaledeliverplan;
 
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
@@ -16,6 +15,7 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
 
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -51,6 +51,8 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
     private SettleStyleService        settlestyleservice;
     @Inject
     private RdStyleService            rdstyleservice;
+    @Inject
+    private CustomerService           customerservice;
 
     /**
      * 首页
@@ -63,7 +65,7 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      * 数据源
      */
     public void datas() {
-        renderJsonData(service.getAdminDatas(getKv()));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
     /**
@@ -78,8 +80,8 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      */
     public void saleDeliverBillnoDialog() {
         Kv kv = getKv();
-        Long icustomerid =kv.getLong("icustomerid");
-        ValidationUtils.isTrue(icustomerid != null,"请先选择客户");
+        Long icustomerid = kv.getLong("icustomerid");
+        ValidationUtils.isTrue(icustomerid != null, "请先选择客户");
         set("icustomerid", icustomerid);
         render("saleDeliverBillnoDialog.html");
     }
@@ -88,7 +90,7 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
      * 获取相关订单号
      * */
     public void saleDeliverBillNoList() {
-        renderJsonData(service.getSaleDeliverBillNoList(getPageNumber(), getPageSize(),getKv()));
+        renderJsonData(service.getSaleDeliverBillNoList(getPageNumber(), getPageSize(), getKv()));
     }
 
     /**
@@ -104,7 +106,7 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         record.set("ccusabbname", kv.get("ccusabbname"));//客户简称
         record.set("sourcebillid", kv.get("sourcebillid"));//订单表主键id
         record.set("corderno", kv.get("corderno"));//订单号
-        set("syssaledeliverplan",record);
+        set("syssaledeliverplan", record);
         render("add.html");
     }
 
@@ -164,6 +166,13 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
     }
 
     /**
+     * 新增-可编辑表格-批量提交
+     */
+    public void submitAll() {
+        renderJson(service.submitByJBoltTable(getJBoltTable()));
+    }
+
+    /**
      * 更新
      */
     public void update() {
@@ -198,7 +207,6 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         renderJsonData(service.department(getKv()));
     }
 
-
     /**
      * 获取地址下拉 Bd_CustomerAddr
      */
@@ -227,16 +235,12 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         renderJsonData(service.foreigncurrency(getKv()));
     }
 
-    @Inject
-    private CustomerService customerservice;
-
     /**
      * 获取客户下拉 Bd_Customer
      */
     public void customer() {
         renderJsonData(customerservice.findAll());
     }
-
 
     /**
      * 获取订单号跟客户下拉  委派销售订单  Co_SubcontractSaleOrderM
@@ -246,32 +250,19 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         renderJsonData(service.getorder(getKv()));
     }
 
-    /**
-     * 生生产订单号
-     */
-    public void orderData() {
-        render("modetail.html");
-    }
-
-    /**
-     * 新增-可编辑表格-批量提交
-     */
-    public void submitAll() {
-        renderJson(service.submitByJBoltTable(getJBoltTable()));
-    }
-
     /*
      * 根据barcode加载数据
      * */
     public void getBarcodeDatas() {
-        List<Record> recordList = service.getBarcodeDatas(get("q"),getKv());
+        List<Record> recordList = service.getBarcodeDatas(get("q"), getKv());
         renderJsonData(recordList);
     }
+
     /*
      * 根据invcode加载数据
      * */
     public void getDatasByInvcode() {
-        List<Record> recordList = service.getDatasByInvcode(get("q"),getKv());
+        List<Record> recordList = service.getDatasByInvcode(get("q"), getKv());
         renderJsonData(recordList);
     }
 }
