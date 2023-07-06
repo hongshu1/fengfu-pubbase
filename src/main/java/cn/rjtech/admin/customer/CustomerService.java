@@ -43,7 +43,7 @@ import java.util.List;
  * @date: 2023-03-21 15:10
  */
 public class CustomerService extends BaseService<Customer> {
-    
+
     private final Customer dao = new Customer().dao();
 
     @Override
@@ -205,7 +205,7 @@ public class CustomerService extends BaseService<Customer> {
         if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
             return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
         }
-        
+
         //这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
 //		jboltTableMulti.entrySet().forEach(en->{
 //			JBoltTable jBoltTable = en.getValue();
@@ -238,7 +238,7 @@ public class CustomerService extends BaseService<Customer> {
                 customerm.setCOrgName(getOrgName());
                 customerm.setIOrgId(getOrgId());
                 customerm.setISource(SourceEnum.MES.getValue());
-                
+
                 ValidationUtils.isTrue(customerm.save(), JBoltMsg.FAIL);
             }
 
@@ -361,15 +361,21 @@ public class CustomerService extends BaseService<Customer> {
             JBoltExcelSheet jBoltExcelSheet1 = JBoltExcelSheet.create(sheetName1);
             //设置sheet表格参数
             List<JBoltExcelHeader> headers = new ArrayList<>();
-            headers.add(JBoltExcelHeader.create("ccustomerclasscode", "客户分类编码", 50));
-            headers.add(JBoltExcelHeader.create("ccustomercode", "客户编码", 50));
-            headers.add(JBoltExcelHeader.create("ccustomername", "客户名称", 50));
-            headers.add(JBoltExcelHeader.create("cshortname", "简称", 50));
-            headers.add(JBoltExcelHeader.create("cdeliveryadvance", "发货提前期", 50));
-            headers.add(JBoltExcelHeader.create("ccustomerlevelsn", "客户等级编码", 50));
-            headers.add(JBoltExcelHeader.create("cregion", "地区", 50));
-            headers.add(JBoltExcelHeader.create("idepid", "分管部门编码", 50));
-            headers.add(JBoltExcelHeader.create("ipersonid", "分管人员编码", 50));
+            headers.add(JBoltExcelHeader.create("ccccode", "客户分类编码", 50));
+            headers.add(JBoltExcelHeader.create("ccuscode", "客户编码", 50));
+            headers.add(JBoltExcelHeader.create("ccusname", "客户名称", 50));
+            headers.add(JBoltExcelHeader.create("ccusabbname", "简称", 50));
+            headers.add(JBoltExcelHeader.create("mnemonicCode", "助记码", 50));
+            headers.add(JBoltExcelHeader.create("carea", "地区", 50));
+            headers.add(JBoltExcelHeader.create("ccusdepart", "分管部门编码", 50));
+            headers.add(JBoltExcelHeader.create("idutyuserid", "分管人员", 50));
+            headers.add(JBoltExcelHeader.create("ccurrency", "币种", 50));
+            headers.add(JBoltExcelHeader.create("ccustype", "客户管理类型", 50));
+            headers.add(JBoltExcelHeader.create("cvencode", "对应供应商编码", 50));
+            headers.add(JBoltExcelHeader.create("ccustomerlevelsn", "客户级别", 50));
+            headers.add(JBoltExcelHeader.create("csettleway", "结算方式", 50));
+            headers.add(JBoltExcelHeader.create("cshipment", "出货单据类型", 50));
+            headers.add(JBoltExcelHeader.create("ccusattribute", "客户属性", 50));
 
             jBoltExcelSheet1.setHeaders(2, headers);
             jBoltExcelSheet1.setDataStartRow(3);
@@ -377,24 +383,26 @@ public class CustomerService extends BaseService<Customer> {
 
             List<Record> customerms = JBoltExcelUtil.readRecords(jBoltExcel, sheetName1, true, errorMsg);
 
-            //第二个sheet为客户档案详情
+            /*//第二个sheet为客户档案详情
             String sheetName2 = sheets.get(1).getSheetName();
             JBoltExcelSheet jBoltExcelSheet2 = JBoltExcelSheet.create(sheetName2);
             //设置sheet表格参数
             List<JBoltExcelHeader> headers2 = new ArrayList<>();
-            headers2.add(JBoltExcelHeader.create("ccustomercode", "客户编码", 50));
-            headers2.add(JBoltExcelHeader.create("csitescode", "位置编码", 50));
-            headers2.add(JBoltExcelHeader.create("csitesname", "位置名称", 50));
+            headers2.add(JBoltExcelHeader.create("cdistrictcode", "位置编码", 50));
+            headers2.add(JBoltExcelHeader.create("cdistrictname", "位置名称", 50));
             headers2.add(JBoltExcelHeader.create("csearchcode", "搜索码", 50));
+            headers2.add(JBoltExcelHeader.create("ideliveryadvance", "发货提前期", 50));
+            headers2.add(JBoltExcelHeader.create("cplancode", "计划代码", 50));
+            headers2.add(JBoltExcelHeader.create("iwarehouseid", "发货仓库", 50));
             headers2.add(JBoltExcelHeader.create("ccontactcode", "联系人编码", 50));
             headers2.add(JBoltExcelHeader.create("ccontactname", "联系人姓名", 50));
             headers2.add(JBoltExcelHeader.create("ccountry", "国家/地区", 50));
             headers2.add(JBoltExcelHeader.create("cprovince", "省／自治区", 50));
             headers2.add(JBoltExcelHeader.create("ccity", "城市", 50));
-            headers2.add(JBoltExcelHeader.create("carea", "区县", 50));
-            headers2.add(JBoltExcelHeader.create("caddress", "地址", 50));
+            headers2.add(JBoltExcelHeader.create("cdistrict", "区县", 50));
+            headers2.add(JBoltExcelHeader.create("cdistrictname", "地址", 50));
             headers2.add(JBoltExcelHeader.create("cpostcode", "邮政编码", 50));
-            headers2.add(JBoltExcelHeader.create("cphone", "移动电话", 50));
+            headers2.add(JBoltExcelHeader.create("cmobile", "移动电话", 50));
             headers2.add(JBoltExcelHeader.create("ctele", "固定电话", 50));
             headers2.add(JBoltExcelHeader.create("cfax", "传真", 50));
             headers2.add(JBoltExcelHeader.create("cemail", "电子邮件", 50));
@@ -403,6 +411,11 @@ public class CustomerService extends BaseService<Customer> {
             jBoltExcelSheet2.setDataStartRow(3);
             JBoltExcel jBoltExcel2 = JBoltExcel.from(file).setSheets(jBoltExcelSheet2);
             List<Record> customerds = JBoltExcelUtil.readRecords(jBoltExcel2, sheetName2, true, errorMsg);
+*/
+            List<Record> customerds = new ArrayList<>();
+
+            System.out.println("customerms===>"+customerms);
+            System.out.println("customerds===>"+customerds);
 
             excelSave(customerms, customerds, errorMsg);
         }
@@ -422,91 +435,36 @@ public class CustomerService extends BaseService<Customer> {
         //处理主表增加
         List<Customer> customermList = new ArrayList<>();
         for (Record recordm : customerms) {
-            ValidationUtils.notNull(recordm.getStr("ccustomerclasscode"), i + "分类编码为空！");
-            ValidationUtils.notNull(recordm.getStr("ccustomercode"), i + "客户编码为空！");
-            ValidationUtils.notNull(recordm.getStr("ccustomername"), i + "客户名称为空！");
-            ValidationUtils.notNull(recordm.getStr("cdeliveryadvance"), i + "发货提前期为空！");
-            ValidationUtils.notNull(recordm.getStr("ccustomerlevelsn"), i + "客户等级编码为空！");
 
-            ValidationUtils.isTrue(findByCustomermCode(recordm.getStr("ccustomercode")) == null, recordm.getStr("ccustomercode") + "编码重复");
-            CustomerClass customerclass = customerclassService.findFirst(Okv.by("cCode", recordm.getStr("ccustomerclasscode")), "iautoid", "desc");
-            
-            ValidationUtils.notNull(customerclass, recordm.getStr("ccustomerclasscode") + "客户编码不存在！");
-            ValidationUtils.isTrue(JBoltDictionaryCache.me.getBySn("customer_level", recordm.getStr("ccustomerlevelsn")) != null, recordm.getStr("ccustomerlevelsn") + "客户等级编码不存在！");
+            Customer customer = new Customer();
 
-            Customer customerm = new Customer();
-/*			customerm.setIAutoId(JBoltSnowflakeKit.me.nextId())
-					.setcusc(customerclass.getIautoid())
-					.setCcustomercode(recordm.getStr("ccustomercode"))
-					.setCcustomername(recordm.getStr("ccustomername"))
-					.setCshortname(recordm.getStr("cshortname"))
-					.setCdeliveryadvance(recordm.getStr("cdeliveryadvance"))
-					.setCcustomerlevelsn(recordm.getStr("ccustomerlevelsn"))
-					.setCregion(recordm.getStr("cregion"))
-					.setIcreateby(JBoltUserKit.getUserId())
-					.setCcreatename(JBoltUserKit.getUserName())
-					.setDcreatetime(now)
-					.setCorgcode(getOrgCode())
-					.setCorgname(getOrgName())
-					.setIorgid(getOrgId());*/
-
-			/*if(isOk(recordm.getStr("idepid"))){
-				Dept dept = deptService.findFirst(Okv.by("sn", recordm.getStr("idepid")));
-				if(dept!=null){
-					customerm.setIdepid(dept.getId());
-				}
-			}
-			if(isOk(recordm.getStr("ipersonid"))){
-				Person person = personService.findFirst(Okv.by("cPersonCode", recordm.getStr("ipersonid")), "iautoid", "desc");
-				if(person!=null){
-					customerm.setIpersonid(person.getIautoid());
-				}
-			}*/
-
-            customermList.add(customerm);
-            customerKv.set(recordm.getStr("ccustomercode"), customerm.getIAutoId());
-            i += 1;
+            customer.setCCCCode(recordm.getStr("ccccode"));
+            customer.setCCusCode(recordm.getStr("ccuscode"));
+            customer.setCCusName(recordm.getStr("ccusname"));
+            customer.setCCusAbbName(recordm.getStr("ccusabbname"));
+            customer.setMnemonicCode(recordm.getStr("mnemonicCode"));
+            customer.setCArea(recordm.getStr("carea"));
+            customer.setCCusDepart(recordm.getStr("ccusdepart"));
+//            customer.setIDutyUserId(recordm.getLong("idutyuserid"));
+            customer.setCCurrency(recordm.getStr("ccurrency"));
+            customer.setCCusType(recordm.getStr("ccustype"));
+            customer.setCVenCode(recordm.getStr("cvencode"));
+            customer.setCCustomerLevelSn(recordm.getStr("ccustomerlevelsn"));
+            customer.setCSettleWay(recordm.getStr("csettleway"));
+            customer.setCShipment(recordm.getStr("cshipment"));
+            customer.setCCusAttribute(recordm.getStr("ccusattribute"));
+            customer.setICreateBy(JBoltUserKit.getUserId());
+            customer.setIUpdateBy(JBoltUserKit.getUserId());
+            customer.setDCreateTime(new Date());
+            customer.setDUpdateTime(new Date());
+            customer.setCCreateName(JBoltUserKit.getUserName());
+            customer.setCUpdateName(JBoltUserKit.getUserName());
+            customer.setISource(1);
+            customermList.add(customer);
         }
 
-        //处理细表增加
-		/*List<Customerd> customerdList = new ArrayList<>();
-		for(Record recordd : customerds){
-			ValidationUtils.notNull(recordd.getStr("ccustomercode"), "位置地址表格 客户编码为空！");
-			ValidationUtils.notNull(recordd.getStr("csitescode"), "位置地址表格 位置编码为空！");
-
-			//不是同表导入编码情况，找历史数据
-			if(!isOk(customerKv.getStr(recordd.getStr("ccustomercode")))){
-				Customerm customerm = findByCustomermCode(recordd.getStr("ccustomercode"));
-				ValidationUtils.notNull(customerm, recordd.getStr("ccustomercode")+"位置地址表格 编码不存在！");
-				customerKv.set(recordd.getStr("ccustomercode"), customerm.getIautoid());
-			}
-
-			Customerd customerd = new Customerd();
-			customerd.setIcustomerid(Long.parseLong(customerKv.getStr(recordd.getStr("ccustomercode"))))
-					.setCsitescode(recordd.getStr("csitescode"))
-					.setCsitesname(recordd.getStr("csitesname"))
-					.setCsearchcode(recordd.getStr("csearchcode"))
-					.setCcontactcode(recordd.getStr("ccontactcode"))
-					.setCcontactname(recordd.getStr("ccontactname"))
-					.setCcountry(recordd.getStr("ccountry"))
-					.setCprovince(recordd.getStr("cprovince"))
-					.setCcity(recordd.getStr("ccity"))
-					.setCarea(recordd.getStr("carea"))
-					.setCaddress(recordd.getStr("caddress"))
-					.setCpostcode(recordd.getStr("cpostcode"))
-					.setCphone(recordd.getStr("cphone"))
-					.setCtele(recordd.getStr("ctele"))
-					.setCfax(recordd.getStr("cfax"))
-					.setCemail(recordd.getStr("cemail"))
-					.setIcreateby(JBoltUserKit.getUserId())
-					.setCcreatename(JBoltUserKit.getUserName())
-					.setDcreatetime(now);
-
-			customerdList.add(customerd);
-		}*/
-
         tx(() -> {
-//			batchSave(customermList);
+			batchSave(customermList);
 //			customerdService.batchSave(customerdList);
             return true;
         });
@@ -541,5 +499,5 @@ public class CustomerService extends BaseService<Customer> {
         }
         return vendorService.dbTemplate("customer.findVendor", kv).find();
     }
-    
+
 }
