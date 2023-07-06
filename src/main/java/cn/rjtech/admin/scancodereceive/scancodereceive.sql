@@ -305,7 +305,7 @@ FROM T_Sys_PUReceiveDetail t1
          left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
         ###left join Bd_InventoryMfgInfo info on t2.iInventoryId = info.iInventoryId
         left join Bd_InventoryQcForm qc on qc.iInventoryId = b.iAutoId
-where t1.MasID = '#(masId)'
+where t1.MasID = '#(masId)' and t1.Barcode is not null
 #end
 
 
@@ -320,7 +320,6 @@ select t2.cInvCode                          as beforeCode,
        t3.cInvCode1,
        t3.cInvName1,
        t3.cInvStd,
-       0                                    as qty,
        CONVERT(VARCHAR(10), GETDATE(), 120) as dPlanDate,
        uom.cUomCode,
        uom.cUomName,

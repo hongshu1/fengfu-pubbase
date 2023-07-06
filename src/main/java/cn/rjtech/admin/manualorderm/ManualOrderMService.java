@@ -84,10 +84,13 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
      * 成功则返回U8单号
      */
     private String pushOrder(ManualOrderM manualOrderM, List<ManualOrderD> manualOrderDS) {
+        String cSTCode = Optional.ofNullable(saleTypeService.findById(manualOrderM.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
+        Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), manualOrderM.getIBusType().toString())).findFirst().orElse(null);
+        String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
+
         // 封装JSON
         JSONArray jsonArray = new JSONArray();
         for (ManualOrderD manualOrderD : manualOrderDS) {
-
             for (int i = 1; i <= 31; i++) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("DocNo", manualOrderM.getCOrderNo());
@@ -95,10 +98,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
                 jsonObject.put("cmaker", JBoltUserKit.getUserName());
                 jsonObject.put("dDate", DateUtils.formatDate(manualOrderM.getDCreateTime()));
                 jsonObject.put("cPersonCode", manualOrderM.getIBusPersonId());
-                Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), manualOrderM.getIBusType().toString())).findFirst().orElse(null);
-                String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
                 jsonObject.put("cBusType", busName);
-                String cSTCode = Optional.ofNullable(saleTypeService.findById(manualOrderM.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
                 jsonObject.put("cSTCode", cSTCode);
                 jsonObject.put("cexch_name", manualOrderM.getIExchangeRate());
                 jsonObject.put("iExchRate", manualOrderM.getIExchangeRate());
