@@ -25,8 +25,8 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
     public static final String CVERSION = "cVersion";
     /**计划数量*/
     public static final String IQTY = "iQty";
-    /**自定义字段1*/
-    public static final String CDEFINE1 = "cDefine1";
+    /**存货编码*/
+    public static final String CINVCODE = "cInvCode";
     /**自定义字段2*/
     public static final String CDEFINE2 = "cDefine2";
     /**自定义字段3*/
@@ -223,20 +223,20 @@ public abstract class BaseGoodsPaymentD<M extends BaseGoodsPaymentD<M>> extends 
 	}
 
 	/**
-	 * 自定义字段1
+	 * 存货编码
 	 */
-	public M setCDefine1(java.lang.String cDefine1) {
-		set("cDefine1", cDefine1);
+	public M setCInvCode(java.lang.String cInvCode) {
+		set("cInvCode", cInvCode);
 		return (M)this;
 	}
 
 	/**
-	 * 自定义字段1
+	 * 存货编码
 	 */
-	@JBoltField(name="cdefine1" ,columnName="cDefine1",type="String", remark="自定义字段1", required=false, maxLength=60, fixed=0, order=8)
-	@JSONField(name = "cdefine1")
-	public java.lang.String getCDefine1() {
-		return getStr("cDefine1");
+	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="存货编码", required=false, maxLength=60, fixed=0, order=8)
+	@JSONField(name = "cinvcode")
+	public java.lang.String getCInvCode() {
+		return getStr("cInvCode");
 	}
 
 	/**
