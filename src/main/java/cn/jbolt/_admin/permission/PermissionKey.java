@@ -316,26 +316,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String VENDOR_ADD = "vendor_add";
-	/**
-	 * 编辑
-	 */
-	public static final String VENDOR_EDIT = "vendor_edit";
-	/**
-	 * 删除
-	 */
-	public static final String VENDOR_DELETE = "vendor_delete";
-	/**
-	 * 导出
-	 */
-	public static final String VENDOR_EXPORT = "vendor_export";
-	/**
-	 * 导入
-	 */
-	public static final String VENDOR_IMPORT = "vendor_import";
-	/**
-	 * 新增
-	 */
 	public static final String UOMCLASS_ADD = "uomclass_add";
 	/**
 	 * 编辑
@@ -3073,4 +3053,28 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String CUSTOMER_SUBMIT = "customer_submit";
+	/**
+	 * 新增
+	 */
+	public static final String VENDOR_ADD = "vendor_add";
+	/**
+	 * 修改
+	 */
+	public static final String VENDOR_EDIT = "vendor_edit";
+	/**
+	 * 删除
+	 */
+	public static final String VENDOR_DELETE = "vendor_delete";
+	/**
+	 * 导出
+	 */
+	public static final String VENDOR_EXPORT = "vendor_export";
+	/**
+	 * 导入
+	 */
+	public static final String VENDOR_IMPORT = "vendor_import";
+	/**
+	 * 保存
+	 */
+	public static final String VENDOR_SUBMIT = "vendor_submit";
 }
