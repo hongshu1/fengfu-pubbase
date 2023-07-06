@@ -116,7 +116,7 @@ WHERE m.isDeleted = '0'
 
 #sql("findByInvId")
 SELECT
-     master.cVersion,
+    master.cVersion,
 	master.dEnableDate,
 	master.dDisableDate
 FROM
