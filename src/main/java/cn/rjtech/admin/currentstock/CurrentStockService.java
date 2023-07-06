@@ -12,6 +12,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.form.FormService;
 import cn.rjtech.admin.otherdeliverylist.OtherOutDeliveryService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
@@ -29,11 +30,13 @@ import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,6 +82,8 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
     private OtherOutDetailService         otherOutDetailService;//其它出库单-明细表
     @Inject
     private FormService formService;
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingdService;
 
 
 
@@ -289,7 +294,96 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         return SUCCESS;
     }
 
+    /**
+     * 设置参数
+     * @param stockCheckVouchBarcodeModel
+     * @return
+     */
+    private StockCheckVouchBarcode setStockCheckVouchBarcode(StockCheckVouchBarcode stockCheckVouchBarcodeModel,Long autoid){
+        stockCheckVouchBarcodeModel.setMasID(autoid);
+        stockCheckVouchBarcodeModel.setAutoID(JBoltSnowflakeKit.me.nextId());
+        stockCheckVouchBarcodeModel.setIsDeleted(false);
+        Long userId = JBoltUserKit.getUserId();
 
+        stockCheckVouchBarcodeModel.setIcreateby(userId);
+        stockCheckVouchBarcodeModel.setIupdateby(userId);
+        String userName = JBoltUserKit.getUserName();
+        stockCheckVouchBarcodeModel.setCcreatename(userName);
+        stockCheckVouchBarcodeModel.setCupdatename(userName);
+        Date date = new Date();
+        stockCheckVouchBarcodeModel.setDcreatetime(date);
+        stockCheckVouchBarcodeModel.setDupdatetime(date);
+        return stockCheckVouchBarcodeModel;
+    }
+
+
+    /**
+     * 读取excel文件
+     * @param file
+     * @return
+     */
+    public Ret importExcel(File file, String cformatName,Long autoid,String whcode,String poscodes) {
+        StringBuilder errorMsg=new StringBuilder();
+        //使用字段配置维护
+        Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
+//		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
+        String docInfoRelaStrings= JSON.toJSONString(importData);
+        List<StockCheckVouchBarcode> stockCheckVouchBarcodes = JSON.parseArray(docInfoRelaStrings, StockCheckVouchBarcode.class);
+        //遍历导入的数据
+        int k = 2;
+        for (StockCheckVouchBarcode record : stockCheckVouchBarcodes) {
+            String barcode = record.getStr("Barcode");
+            String invCode = record.getStr("InvCode");
+            BigDecimal qty = record.getBigDecimal("Qty");
+            k++;
+            if (StrUtil.isBlank(barcode)) {
+                return fail("Excel文档中第" + k + "行,数据现品票不能为空");
+            }
+            if (StrUtil.isBlank(invCode)) {
+                return fail("Excel文档中第" + k + "行,存货编码不能为空");
+            }
+//            if (StrUtil.isBlank((CharSequence) qty)) {
+//                return fail("Excel文档中第" + k + "行,数量不能为空");
+//            }
+            Kv kv = new Kv();
+            kv.setIfNotNull("whcode",whcode);//仓库
+            kv.setIfNotNull("poscode",poscodes);//库区
+            kv.setIfNotNull("invcode",invCode);
+            kv.setIfNotNull("barcode",barcode);
+            Record first = dbTemplate("currentstock.barcodeDatas",kv).findFirst();
+            System.out.println("first===="+ first);
+            if (isNull(first)) {
+                ValidationUtils.isTrue(false, "Excel文档中第" + k + "行,格式错误！！");
+            }
+            BigDecimal iQty = first.getBigDecimal("iQty");
+            if (qty.compareTo(iQty) == 1){
+                ValidationUtils.isTrue(false, "Excel文档中第" + k + "行,超出现品票数量！！");
+            }
+        }
+        if(notOk(stockCheckVouchBarcodes)) {
+            if(errorMsg.length()>0) {
+                return fail(errorMsg.toString());
+            }else {
+                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+            }
+        }
+        for (StockCheckVouchBarcode stockCheckVouchBarcode : stockCheckVouchBarcodes) {
+            setStockCheckVouchBarcode(stockCheckVouchBarcode,autoid);
+        }
+        //执行批量操作
+        boolean success=tx(new IAtom() {
+            @Override
+            public boolean run() throws SQLException {
+                stockCheckVouchBarcodeService.batchSave(stockCheckVouchBarcodes);
+                return true;
+            }
+        });
+
+        if(!success) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL);
+        }
+        return SUCCESS;
+    }
 
     /**
      * 盘点单物料清单列表

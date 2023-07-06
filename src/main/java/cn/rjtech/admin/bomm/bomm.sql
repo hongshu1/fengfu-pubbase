@@ -109,6 +109,9 @@ WHERE 1 = 1
 	        SELECT 1 FROM Bd_BomD c WHERE c.iPid = a.iAutoId AND c.cInvCode LIKE CONCAT('%',#para(sonInvCode),'%') AND isDeleted = '0'
 	    )
 	#end
+	#if(ids)
+	    AND a.iAutoId in #(ids)
+	#end
 	ORDER BY a.dCreateTime DESC
 #end
 

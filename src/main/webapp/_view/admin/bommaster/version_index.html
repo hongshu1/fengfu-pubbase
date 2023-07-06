@@ -64,13 +64,20 @@
 <div class="jbolt_table_toolbar" id="BomCompare_version_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 <!--	<button data-dialogbtn data-area="100%,100%"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料清单" data-url="admin/bommaster/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>-->
-	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
+	<div class="btn-group dropdown">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+		<div class="dropdown-menu" aria-labelledby="exportMenuButton">
+			<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/bomM/exportExcelByIds"><i class="fa fa-download"></i> 导出选中</button>
+			<button class="btn dropdown-item" data-downloadbtn data-url="admin/bomM/exportExcelAll" data-form="BomCompare_version_form_#(pageId)"><i class="fa fa-download"></i> 导出全部</button>
+		</div>
+	</div>
 	<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 </div>
 
 </div>
 <table class="jbolt_table jbolt_main_table  table-center"
 	   data-jbolttable
+	   data-column-prepend="1:checkbox:true"
 	   data-width="fill"
 	   data-height="fill"
 	   data-ajax="true"

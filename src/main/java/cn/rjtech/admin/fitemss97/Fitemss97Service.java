@@ -1,5 +1,6 @@
 package cn.rjtech.admin.fitemss97;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -59,18 +60,20 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 		/**
 		 * 项目大类目录
 		 */
+		List<Record> records = dbTemplate("fitem.selectFitem",Kv.by("sn",sn)).find();
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
-
-		List<Record> subRecords = dbTemplate("fitemss97.findfitemss97List",Kv.by("citemccode",sn)).find();
-		for (Record subRecord : subRecords) {
-			Long id = subRecord.getLong("iAutoId");
-			Object pid = subRecord.getStr("iSourceId");
-			String text = "[" + subRecord.getStr("citemcode") + "]" + subRecord.getStr("citemname");
-			String type = subRecord.getStr("citemcode");
-			JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
-			jsTreeBeanList.add(jsTreeBean);
-		}
-
+		for (Record record:records){
+			JsTreeBean parent = new JsTreeBean(record.getLong("iautoid"), "#", record.getStr("citem_name"), null, "", false);
+			jsTreeBeanList.add(parent);}
+			List<Record> subRecords = dbTemplate("fitemss97.findsub",Kv.by("sn",sn)).find();
+			for (Record subRecord : subRecords) {
+				Long id = subRecord.getLong("iAutoId");
+				Object pid = subRecord.getStr("Ipid");
+				String text = "[" + subRecord.getStr("citemcCode") + "]" + subRecord.getStr("citemCname");
+				String type = subRecord.getStr("citemCcode");
+				JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
+				jsTreeBeanList.add(jsTreeBean);
+			}
 		return jsTreeBeanList;
 	}
 
@@ -102,6 +105,18 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 		return getCommonList( kv,"iAutoId", "asc");
 	}
 
+
+
+
+	public Record selectFitemss97(Kv kv) {
+		Record first = dbTemplate("fitemss97.findsub", Kv.by("iautoid", kv.getStr("iautoid"))).findFirst();
+        if(ObjectUtil.isNull(first)){
+			return dbTemplate("fitem.selectFitem", Kv.by("iautoid", kv.getStr("iautoid"))).findFirst();
+		}else{
+			return first;
+		}
+
+	}
 
 
 

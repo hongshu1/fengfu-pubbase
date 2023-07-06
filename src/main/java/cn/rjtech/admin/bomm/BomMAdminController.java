@@ -7,11 +7,16 @@ import cn.rjtech.admin.bomdata.BomDataService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.BomData;
 import cn.rjtech.model.momdata.BomM;
+import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.List;
 
 /**
  * 物料建模-BOM主表
@@ -162,4 +167,35 @@ public class BomMAdminController extends BaseAdminController {
 		renderJsonData(bomDService.getTreeTableDatas(getKv()));
 	}
  
+	public void exportExcelByIds() throws Exception {
+		String ids = get("ids");
+		if (notOk(ids)) {
+			renderJsonFail("未选择有效数据，无法导出");
+			return;
+		}
+		List<Record> data = service.getVersionRecordList(Kv.create().setIfNotBlank("ids", Util.getInSqlByIds(ids)));
+		if (notOk(data)) {
+			renderJsonFail("无有效数据导出");
+			return;
+		}
+		renderBytesToExcelXlsFile(service.exportExcelTpl(data));
+	}
+	
+	public void exportExcelAll() throws Exception {
+		List<Record> rows = service.getVersionRecordList(getKv());
+		if (notOk(rows)) {
+			renderJsonFail("无有效数据导出");
+			return;
+		}
+		renderBytesToExcelXlsFile(service.exportExcelTpl(rows));
+	}
+	
+	public void exportExcelByForm() throws Exception {
+		List<Record> tableDatas = bomDService.getTreeTableDatas(getKv());
+		if (notOk(tableDatas)) {
+			renderJsonFail("无有效数据导出");
+			return;
+		}
+		renderBytesToExcelXlsFile(service.exportExcelByForm(tableDatas));
+	}
 }
