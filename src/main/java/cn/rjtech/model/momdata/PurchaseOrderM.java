@@ -40,6 +40,8 @@ public class PurchaseOrderM extends BasePurchaseOrderM<PurchaseOrderM> {
     
     public static final String TYPESTR ="typeStr";
     
+    public static final String SUMSTR ="sumStr";
+    
     private boolean isAdd;
     
     public boolean isAdd() {
