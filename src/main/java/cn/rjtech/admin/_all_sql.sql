@@ -759,3 +759,7 @@
 #namespace("spotcheckformm")
 #include("spotcheckformm/spotcheckformm.sql")
 #end
+
+#namespace("fitem")
+#include("fitem/fitem.sql")
+#end

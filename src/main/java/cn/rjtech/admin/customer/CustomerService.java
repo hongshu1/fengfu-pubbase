@@ -26,6 +26,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -368,14 +369,14 @@ public class CustomerService extends BaseService<Customer> {
             headers.add(JBoltExcelHeader.create("mnemonicCode", "助记码", 50));
             headers.add(JBoltExcelHeader.create("carea", "地区", 50));
             headers.add(JBoltExcelHeader.create("ccusdepart", "分管部门编码", 50));
-            headers.add(JBoltExcelHeader.create("idutyuserid", "分管人员", 50));
-            headers.add(JBoltExcelHeader.create("ccurrency", "币种", 50));
-            headers.add(JBoltExcelHeader.create("ccustype", "客户管理类型", 50));
+            headers.add(JBoltExcelHeader.create("ccuspperson", "分管人员编码", 50));
+            headers.add(JBoltExcelHeader.create("ccurrency", "币种编码", 50));
+            headers.add(JBoltExcelHeader.create("ccustype", "客户管理类型编码", 50));
             headers.add(JBoltExcelHeader.create("cvencode", "对应供应商编码", 50));
-            headers.add(JBoltExcelHeader.create("ccustomerlevelsn", "客户级别", 50));
-            headers.add(JBoltExcelHeader.create("csettleway", "结算方式", 50));
-            headers.add(JBoltExcelHeader.create("cshipment", "出货单据类型", 50));
-            headers.add(JBoltExcelHeader.create("ccusattribute", "客户属性", 50));
+            headers.add(JBoltExcelHeader.create("ccustomerlevelsn", "客户级别编码", 50));
+            headers.add(JBoltExcelHeader.create("csettleway", "结算方式编码", 50));
+            headers.add(JBoltExcelHeader.create("cshipment", "出货单据类型编码", 50));
+            headers.add(JBoltExcelHeader.create("ccusattribute", "客户属性编码", 50));
 
             jBoltExcelSheet1.setHeaders(2, headers);
             jBoltExcelSheet1.setDataStartRow(3);
@@ -442,10 +443,15 @@ public class CustomerService extends BaseService<Customer> {
             customer.setCCusCode(recordm.getStr("ccuscode"));
             customer.setCCusName(recordm.getStr("ccusname"));
             customer.setCCusAbbName(recordm.getStr("ccusabbname"));
-            customer.setMnemonicCode(recordm.getStr("mnemonicCode"));
-            customer.setCArea(recordm.getStr("carea"));
+            customer.setMnemonicCode(recordm.getStr("mnemoniccode"));
+            customer.setCCounty(recordm.getStr("carea"));
             customer.setCCusDepart(recordm.getStr("ccusdepart"));
-//            customer.setIDutyUserId(recordm.getLong("idutyuserid"));
+            String ccuspperson = recordm.getStr("ccuspperson");
+            if (isOk(ccuspperson)) {
+                Record person = dbTemplate("customer.getPerson", Kv.create().set("code", ccuspperson)).findFirst();
+                customer.setIDutyUserId(person.getLong("iautoid"));
+            }
+//
             customer.setCCurrency(recordm.getStr("ccurrency"));
             customer.setCCusType(recordm.getStr("ccustype"));
             customer.setCVenCode(recordm.getStr("cvencode"));

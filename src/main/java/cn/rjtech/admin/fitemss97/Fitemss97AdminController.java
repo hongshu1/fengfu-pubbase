@@ -67,8 +67,7 @@ public class Fitemss97AdminController extends BaseAdminController {
 
     @UnCheck
     public void selectFitemss97() {
-        Fitemss97 fitemss97 = service.findById(getKv().getLong("iautoid"));
-        renderJsonData(fitemss97);
+        renderJsonData(service.selectFitemss97(getKv()));
     }
 
 

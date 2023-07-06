@@ -22,11 +22,41 @@ select t1.*,
 #end
 
 #sql("historyDatas")
+select ttt.* from (
+select d.*
+from (select top 1
+                 t.iFormApprovalId          as iAutoId,
+                 t.iStep                    as t_iStep,
+                 t.iAutoId                  as did,
+                 t.iStatus                  as t_iStatus,
+                 t.dAuditTime,
+                 t.iStep,
+                 '审批通过'                     as statusName,
+                 t2.name                    as iStepName,
+                 (select top 1 u.name
+                  from Bd_FormApprovalFlowD d
+                           left join Bd_FormApprovalFlowM m on d.iFormApprovalFlowMid = m.iAutoId
+                           left join #(getBaseDbName()).dbo.jb_user u on d.iUserId = u.id
+                  where m.iApprovalDid = t.iAutoId
+                    and d.iAuditStatus > 1) as username
+      from Bd_FormApprovalD t
+               left join #(getBaseDbName()).dbo.jb_dictionary t2
+                         on t2.type_key = 'approval_d_name' and t2.sn = t.iStep
+      where t.iFormApprovalId =
+            (select top 1 t1.iAutoId
+             from Bd_FormApproval t1
+             where t1.isDeleted = '0'
+               and not exists(
+                     select 1 from Bd_FormApprovalD t2 where t1.iAutoId = t2.iFormApprovalId and t2.iStatus <> 2
+                 )
+               and t1.iFormObjectId = '#(formId)')
+      order by t.iSeq desc) d
+union all
 select t.*,
        case
            when t.t_iStatus = 2 then '审批通过'
            when t.t_iStatus = 3 then '审批不通过'
-           else '待审批' end         as iStatus,
+           else '待审批' end         as statusName,
        t2.name                    as iStepName,
        (select top 1 u.name
         from Bd_FormApprovalFlowD d
@@ -63,6 +93,7 @@ from (select t1.iAutoId,
         and t1.isDeleted = '1') t
          left join #(getBaseDbName()).dbo.jb_dictionary t2
                    on t2.type_key = 'approval_d_name' and t2.sn = t.t_iStep
+                   ) ttt
 #end
 
 #sql("userDatas")
