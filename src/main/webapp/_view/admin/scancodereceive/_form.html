@@ -394,7 +394,7 @@ className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",o=sysPureceiv
      * 获取表格数据
      * */
     function tableDataSuccess() {
-        let result = jboltTableGetAllDatas("jbolt_Table_#(pageId)", ["sourcebilldid","sourcebilltype"]);
+        let result = jboltTableGetAllDatas("jbolt_Table_#(pageId)", ["barcode","sourcebilldid","sourcebilltype"]);
         console.log('result===>',result)
         let array = [];
         let groupCode = 1;
@@ -402,8 +402,8 @@ className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",o=sysPureceiv
             var length = result.length;
             let len = 0;
             for (let i = 0; i < length; i++) {
-                if (result[i].sourcebilldid != undefined){
-                    array.push("'" + result[i].sourcebilldid + "'");
+                if (result[i].barcode != undefined){
+                    array.push("'" + result[i].barcode + "'");
                     len = len + 1;
                     if (i===0){
                         console.log('sourcebilltype',result[0].sourcebilltype)
@@ -451,9 +451,11 @@ className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",o=sysPureceiv
                 type: "all",
                 url: "/admin/scancodereceive/submitAll",
                 success: function (res) {
+                    console.log('rererererere',res)
                     var state = res.state;
                     if (state==='ok'){
                         var autoid = res.autoid;
+                        console.log('autoiddd=',autoid);
                         if (submit){
                             submit_#(pageId)(autoid,function () {
                                 LayerMsgBox.success("提交成功", 600, function () {
