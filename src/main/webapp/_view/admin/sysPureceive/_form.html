@@ -123,8 +123,10 @@
 
 
 ### 新增之后，并且为审核流
-#if(sysPureceive.AutoID?? && sysPureceive.iauditway == 2 && sysPureceive.iauditstatus == 1)
-#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.syspureceive.SysPureceiveService")
+#if(sysPureceive.AutoID?? && sysPureceive.iauditway == 2 && sysPureceive.iauditstatus != 0)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive",
+btnNeed=1, pId=pageId, primaryKeyName="AutoID",
+className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",o=sysPureceive)
 #end
 
 

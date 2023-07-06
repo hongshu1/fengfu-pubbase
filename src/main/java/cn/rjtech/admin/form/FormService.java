@@ -335,4 +335,9 @@ public class FormService extends BaseService<Form> {
         }
         return find(sql);
     }
+
+    public Long getFormIdByCformSn(String cformsn) {
+        return queryColumn(selectSql().select(Form.IAUTOID).eq(Form.CFORMCODE, cformsn).eq(Form.ISDELETED, ZERO_STR).first());
+    }
+    
 }
