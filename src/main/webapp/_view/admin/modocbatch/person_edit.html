@@ -541,80 +541,82 @@
             type:'get',
             dataType:'json',
             success:function (respons){
-                LayerMsgBox.closeLoading();
                 const jsonData = respons;
                 parms['pageData'] = respons.data;
+                console.log(respons)
                 spreadSuspend();//暂停绘制
-                let rowIndex = 4;
-                let colIndex=0;
-                let serialCol = 1;
-                let a1 = 4;
-                let A = 5;
-                let W = 5;
-                parms.activeSheet.setColumnWidth(1, 150);//设置指定单元格的width
-                parms.activeSheet.setColumnWidth(2, 100);//设置指定单元格的width
-                parms.activeSheet.setColumnWidth(3, 150);//设置指定单元格的width
-                parms.activeSheet.setColumnWidth(4, 300);//设置指定单元格的width
-                let codeRow = 4;//隐藏的存货编码起始渲染列下标
-                let leg=4;//接收上一次数组的长度
-                let jsonDataLength = 0;
-                sheet.setColumnVisible(7, false);//隐藏第7列
-                sheet.setColumnVisible(8, false);//隐藏第8列
-                for (let i = 0; i <jsonData.data.length-3; i++) {
-                    //设置第9列数据
-                    for (let s = 0; s < jsonData.data[i].rowdatas.length; s++) {
-                        sheet.setValue(codeRow+s, 7, jsonData.data[i].cinvcode);
-                        // //存储当前循环的最后一次length
-                        if(s==jsonData.data[i].rowdatas.length-1){
-                            codeRow=codeRow+jsonData.data[i].rowdatas.length;
+                if(respons.state=='ok'){
+                    LayerMsgBox.closeLoading();
+                    let rowIndex = 4;
+                    let colIndex=0;
+                    let serialCol = 1;
+                    let a1 = 4;
+                    let A = 5;
+                    let W = 5;
+                    parms.activeSheet.setColumnWidth(1, 150);//设置指定单元格的width
+                    parms.activeSheet.setColumnWidth(2, 100);//设置指定单元格的width
+                    parms.activeSheet.setColumnWidth(3, 150);//设置指定单元格的width
+                    parms.activeSheet.setColumnWidth(4, 300);//设置指定单元格的width
+                    let codeRow = 4;//隐藏的存货编码起始渲染列下标
+                    let leg=4;//接收上一次数组的长度
+                    let jsonDataLength = 0;
+                    sheet.setColumnVisible(7, false);//隐藏第7列
+                    sheet.setColumnVisible(8, false);//隐藏第8列
+                    for (let i = 0; i <jsonData.data.length-3; i++) {
+                        //设置第9列数据
+                        for (let s = 0; s < jsonData.data[i].rowdatas.length; s++) {
+                            sheet.setValue(codeRow+s, 7, jsonData.data[i].cinvcode);
+                            // //存储当前循环的最后一次length
+                            if(s==jsonData.data[i].rowdatas.length-1){
+                                codeRow=codeRow+jsonData.data[i].rowdatas.length;
+                            }
                         }
-                    }
-                    if(i==0){
-                        //序号
-                        sheet.setValue(rowIndex, colIndex,i+1);
-                        sheet.addSpan(rowIndex,colIndex,jsonData.data[i].rowdatas.length,1);
-                        //产线名称
-                        sheet.setValue(rowIndex, serialCol,jsonData.data[i].cworkname);
-                        sheet.getCell(rowIndex, serialCol).locked(false);
-                        parms.activeSheet.addSpan(rowIndex,serialCol,jsonData.data[i].rowdatas.length,1);
-                        //存货编码
-                        sheet.setValue(rowIndex, serialCol+1,jsonData.data[i].cinvcode);
-                        sheet.getCell(rowIndex, serialCol+1).locked(false);
-                        parms.activeSheet.addSpan(rowIndex,serialCol+1,jsonData.data[i].rowdatas.length,1);
-                        //客户部番
-                        sheet.setValue(rowIndex, serialCol+2,jsonData.data[i].cinvcode1);
-                        sheet.getCell(rowIndex, serialCol+2).locked(false);
-                        parms.activeSheet.addSpan(rowIndex,serialCol+2,jsonData.data[i].rowdatas.length,1);
-                        //部品名称
-                        sheet.setValue(rowIndex, serialCol+3,jsonData.data[i].cinvname1);
-                        sheet.getCell(rowIndex, serialCol+3).locked(false);
-                        parms.activeSheet.addSpan(rowIndex,serialCol+3,jsonData.data[i].rowdatas.length,1);
-                        rowIndex = rowIndex+jsonData.data[i].rowdatas.length;
-                    }else{
-                        //序号
-                        sheet.setValue(rowIndex, colIndex,i+1);
-                        sheet.addSpan(rowIndex,colIndex,jsonData.data[i].rowdatas.length,1);
-                        //产线名称
-                        sheet.setValue(rowIndex, serialCol,jsonData.data[i].cworkname);
-                        sheet.getCell(rowIndex, serialCol).locked(false);
-                        parms.activeSheet.addSpan(rowIndex,serialCol,jsonData.data[i].rowdatas.length,1);
-                        //存货编码
-                        sheet.setValue(rowIndex, serialCol+1,jsonData.data[i].cinvcode);
-                        sheet.getCell(rowIndex, serialCol+1).locked(false);
-                        parms.activeSheet.addSpan(rowIndex,serialCol+1,jsonData.data[i].rowdatas.length,1);
-                        //客户部番
-                        sheet.setValue(rowIndex, serialCol+2,jsonData.data[i].cinvcode1);
-                        sheet.getCell(rowIndex, serialCol+2).locked(false);
-                        parms.activeSheet.addSpan(rowIndex,serialCol+2,jsonData.data[i].rowdatas.length,1);
-                        //部品名称
-                        sheet.setValue(rowIndex, serialCol+3,jsonData.data[i].cinvname1);
-                        sheet.getCell(rowIndex, serialCol+3).locked(false);
-                        parms.activeSheet.addSpan(rowIndex,serialCol+3,jsonData.data[i].rowdatas.length,1);
-                        rowIndex = rowIndex+jsonData.data[i].rowdatas.length+4;
-                    }
-                    jsonDataLength = jsonDataLength+jsonData.data[i].rowdatas.length;//接收rowdatas长度用于计算表格数据一共渲染多少行
-                    //
-                    jsonData.data[i].rowdatas.slice(0,jsonData.data[i].rowdatas.length-4).forEach((item,k)=>{
+                        if(i==0){
+                            //序号
+                            sheet.setValue(rowIndex, colIndex,i+1);
+                            sheet.addSpan(rowIndex,colIndex,jsonData.data[i].rowdatas.length,1);
+                            //产线名称
+                            sheet.setValue(rowIndex, serialCol,jsonData.data[i].cworkname);
+                            sheet.getCell(rowIndex, serialCol).locked(false);
+                            parms.activeSheet.addSpan(rowIndex,serialCol,jsonData.data[i].rowdatas.length,1);
+                            //存货编码
+                            sheet.setValue(rowIndex, serialCol+1,jsonData.data[i].cinvcode);
+                            sheet.getCell(rowIndex, serialCol+1).locked(false);
+                            parms.activeSheet.addSpan(rowIndex,serialCol+1,jsonData.data[i].rowdatas.length,1);
+                            //客户部番
+                            sheet.setValue(rowIndex, serialCol+2,jsonData.data[i].cinvcode1);
+                            sheet.getCell(rowIndex, serialCol+2).locked(false);
+                            parms.activeSheet.addSpan(rowIndex,serialCol+2,jsonData.data[i].rowdatas.length,1);
+                            //部品名称
+                            sheet.setValue(rowIndex, serialCol+3,jsonData.data[i].cinvname1);
+                            sheet.getCell(rowIndex, serialCol+3).locked(false);
+                            parms.activeSheet.addSpan(rowIndex,serialCol+3,jsonData.data[i].rowdatas.length,1);
+                            rowIndex = rowIndex+jsonData.data[i].rowdatas.length;
+                        }else{
+                            //序号
+                            sheet.setValue(rowIndex, colIndex,i+1);
+                            sheet.addSpan(rowIndex,colIndex,jsonData.data[i].rowdatas.length,1);
+                            //产线名称
+                            sheet.setValue(rowIndex, serialCol,jsonData.data[i].cworkname);
+                            sheet.getCell(rowIndex, serialCol).locked(false);
+                            parms.activeSheet.addSpan(rowIndex,serialCol,jsonData.data[i].rowdatas.length,1);
+                            //存货编码
+                            sheet.setValue(rowIndex, serialCol+1,jsonData.data[i].cinvcode);
+                            sheet.getCell(rowIndex, serialCol+1).locked(false);
+                            parms.activeSheet.addSpan(rowIndex,serialCol+1,jsonData.data[i].rowdatas.length,1);
+                            //客户部番
+                            sheet.setValue(rowIndex, serialCol+2,jsonData.data[i].cinvcode1);
+                            sheet.getCell(rowIndex, serialCol+2).locked(false);
+                            parms.activeSheet.addSpan(rowIndex,serialCol+2,jsonData.data[i].rowdatas.length,1);
+                            //部品名称
+                            sheet.setValue(rowIndex, serialCol+3,jsonData.data[i].cinvname1);
+                            sheet.getCell(rowIndex, serialCol+3).locked(false);
+                            parms.activeSheet.addSpan(rowIndex,serialCol+3,jsonData.data[i].rowdatas.length,1);
+                            rowIndex = rowIndex+jsonData.data[i].rowdatas.length+4;
+                        }
+                        jsonDataLength = jsonDataLength+jsonData.data[i].rowdatas.length;//接收rowdatas长度用于计算表格数据一共渲染多少行
+                        //
+                        jsonData.data[i].rowdatas.slice(0,jsonData.data[i].rowdatas.length-4).forEach((item,k)=>{
                             sheet.setValue(leg+k, W,item.cequipment.cequipmentname);
                             sheet.setValue(leg+k, W+1,item.coperation.coperationname);
                             parms.activeSheet.setColumnWidth(W, 200);//设置指定单元格的width
@@ -687,79 +689,82 @@
                             if(k==jsonData.data[i].rowdatas.length-5){
                                 leg=leg+jsonData.data[i].rowdatas.length;
                             }
-                    })
-                    for (let j = 0; j < jsonData.data[i].rowdatas.slice(-4).length; j++) {
-                        for (let l = 0; l < jsonData.data[i].rowdatas.slice(-4)[j].user.length; l++) {
-                            sheet.setValue(leg-4, 9+l,jsonData.data[i].rowdatas.slice(-4)[0].user[l].personne.cmodocno);
-                            sheet.setValue(leg-3, 9+l,jsonData.data[i].rowdatas.slice(-4)[1].user[l].personne.iqty);
-                            sheet.setValue(leg-2, 9+l,jsonData.data[i].rowdatas.slice(-4)[2].user[l].personne.ipersonnum);
-                            sheet.setValue(leg-1, 9+l,jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.cpsn_name);
-                            //工单--生产--小计--产线组长类型
-                            sheet.setValue(leg-4, 8,1);
-                            sheet.setValue(leg-3, 8,1);
-                            sheet.setValue(leg-2, 8,1);
-                            sheet.setValue(leg-1, 8,2);
-                            if(!jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock){
-                                //设置产线组长锁定样式
-                                sheet.getCell(leg-1, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.lock);
-                            }else{
-                                // 设定锁定单元格样式
-                                const style_1S = new GC.Spread.Sheets.Style();
-                                style_1S.backColor = "#F0F0F0";
-                                sheet.getCell(leg-4, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
-                                parms.activeSheet.setStyle(leg-4, 9+l,style_1S);
-                                //
-                                const style_2S = new GC.Spread.Sheets.Style();
-                                style_2S.backColor = "#F0F0F0";
-                                sheet.getCell(leg-3, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
-                                parms.activeSheet.setStyle(leg-3, 9+l,style_2S);
-                                //
-                                const style_3S = new GC.Spread.Sheets.Style();
-                                style_3S.backColor = "#F0F0F0";
-                                sheet.getCell(leg-2, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
-                                parms.activeSheet.setStyle(leg-2, 9+l,style_3S);
+                        })
+                        for (let j = 0; j < jsonData.data[i].rowdatas.slice(-4).length; j++) {
+                            for (let l = 0; l < jsonData.data[i].rowdatas.slice(-4)[j].user.length; l++) {
+                                sheet.setValue(leg-4, 9+l,jsonData.data[i].rowdatas.slice(-4)[0].user[l].personne.cmodocno);
+                                sheet.setValue(leg-3, 9+l,jsonData.data[i].rowdatas.slice(-4)[1].user[l].personne.iqty);
+                                sheet.setValue(leg-2, 9+l,jsonData.data[i].rowdatas.slice(-4)[2].user[l].personne.ipersonnum);
+                                sheet.setValue(leg-1, 9+l,jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.cpsn_name);
+                                //工单--生产--小计--产线组长类型
+                                sheet.setValue(leg-4, 8,1);
+                                sheet.setValue(leg-3, 8,1);
+                                sheet.setValue(leg-2, 8,1);
+                                sheet.setValue(leg-1, 8,2);
+                                if(!jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock){
+                                    //设置产线组长锁定样式
+                                    sheet.getCell(leg-1, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[3].user[l].personne.lock);
+                                }else{
+                                    // 设定锁定单元格样式
+                                    const style_1S = new GC.Spread.Sheets.Style();
+                                    style_1S.backColor = "#F0F0F0";
+                                    sheet.getCell(leg-4, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
+                                    parms.activeSheet.setStyle(leg-4, 9+l,style_1S);
+                                    //
+                                    const style_2S = new GC.Spread.Sheets.Style();
+                                    style_2S.backColor = "#F0F0F0";
+                                    sheet.getCell(leg-3, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
+                                    parms.activeSheet.setStyle(leg-3, 9+l,style_2S);
+                                    //
+                                    const style_3S = new GC.Spread.Sheets.Style();
+                                    style_3S.backColor = "#F0F0F0";
+                                    sheet.getCell(leg-2, 9+l).locked(jsonData.data[i].rowdatas.slice(-4)[j].user[l].personne.lock);
+                                    parms.activeSheet.setStyle(leg-2, 9+l,style_3S);
+                                }
                             }
                         }
                     }
-                }
-                //渲染底部班长其他人员数据
-                for (let i = 0; i < jsonData.data.slice(-3).length; i++) {
-                    sheet.setValue(jsonDataLength+4, A,"班长");
-                    const style_1S = new GC.Spread.Sheets.Style();
-                    style_1S.backColor = "#F0F0F0";
-                    parms.activeSheet.setStyle(jsonDataLength+4, A,style_1S);
-                    parms.activeSheet.addSpan(jsonDataLength+4,A,1,2);
-                    //
-                    sheet.setValue(jsonDataLength+4+1, A,"其余人员1");
-                    const style_2S = new GC.Spread.Sheets.Style();
-                    style_2S.backColor = "#F0F0F0";
-                    parms.activeSheet.setStyle(jsonDataLength+4+1, A,style_2S);
-                    parms.activeSheet.addSpan(jsonDataLength+4+1,A,1,2);
-                    //
-                    sheet.setValue(jsonDataLength+4+2, A,"其余人员2");
-                    const style_3S = new GC.Spread.Sheets.Style();
-                    style_3S.backColor = "#F0F0F0";
-                    parms.activeSheet.setStyle(jsonDataLength+4+2, A,style_3S);
-                    parms.activeSheet.addSpan(jsonDataLength+4+2,A,1,2);
-                    //
-                    sheet.setValue(jsonDataLength+4, 8,3);
-                    sheet.setValue(jsonDataLength+4+1, 8,4);
-                    sheet.setValue(jsonDataLength+4+2, 8,5);
-                    //
-                    for (let j = 0; j < jsonData.data.slice(-3)[i].rowdatas[0].user.length; j++) {
-                        sheet.setValue(jsonDataLength+4, 9+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
-                        sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.cpsn_name);
-                        sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.cpsn_name);
-                        if(!jsonData.data.slice(-3)[i].rowdatas[0].user[j].personne.lock){
-                            //设置班长其他人员锁定样式
-                            sheet.getCell(jsonDataLength+4, 9+j).locked(jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.lock);
-                            sheet.getCell(jsonDataLength+4+1, 9+j).locked(jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.lock);
-                            sheet.getCell(jsonDataLength+4+2, 9+j).locked(jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.lock);
+                    //渲染底部班长其他人员数据
+                    for (let i = 0; i < jsonData.data.slice(-3).length; i++) {
+                        sheet.setValue(jsonDataLength+4, A,"班长");
+                        const style_1S = new GC.Spread.Sheets.Style();
+                        style_1S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(jsonDataLength+4, A,style_1S);
+                        parms.activeSheet.addSpan(jsonDataLength+4,A,1,2);
+                        //
+                        sheet.setValue(jsonDataLength+4+1, A,"其余人员1");
+                        const style_2S = new GC.Spread.Sheets.Style();
+                        style_2S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(jsonDataLength+4+1, A,style_2S);
+                        parms.activeSheet.addSpan(jsonDataLength+4+1,A,1,2);
+                        //
+                        sheet.setValue(jsonDataLength+4+2, A,"其余人员2");
+                        const style_3S = new GC.Spread.Sheets.Style();
+                        style_3S.backColor = "#F0F0F0";
+                        parms.activeSheet.setStyle(jsonDataLength+4+2, A,style_3S);
+                        parms.activeSheet.addSpan(jsonDataLength+4+2,A,1,2);
+                        //
+                        sheet.setValue(jsonDataLength+4, 8,3);
+                        sheet.setValue(jsonDataLength+4+1, 8,4);
+                        sheet.setValue(jsonDataLength+4+2, 8,5);
+                        //
+                        for (let j = 0; j < jsonData.data.slice(-3)[i].rowdatas[0].user.length; j++) {
+                            sheet.setValue(jsonDataLength+4, 9+j,jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.cpsn_name);
+                            sheet.setValue(jsonDataLength+4+1, 9+j,jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.cpsn_name);
+                            sheet.setValue(jsonDataLength+4+2, 9+j,jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.cpsn_name);
+                            if(!jsonData.data.slice(-3)[i].rowdatas[0].user[j].personne.lock){
+                                //设置班长其他人员锁定样式
+                                sheet.getCell(jsonDataLength+4, 9+j).locked(jsonData.data.slice(-3)[0].rowdatas[0].user[j].personne.lock);
+                                sheet.getCell(jsonDataLength+4+1, 9+j).locked(jsonData.data.slice(-3)[1].rowdatas[0].user[j].personne.lock);
+                                sheet.getCell(jsonDataLength+4+2, 9+j).locked(jsonData.data.slice(-3)[2].rowdatas[0].user[j].personne.lock);
+                            }
                         }
+                        parms.activeSheet.addSpan(jsonDataLength+4,0,5,1);
+                        parms.activeSheet.addSpan(jsonDataLength+4+1,0,5,1);
+                        parms.activeSheet.addSpan(jsonDataLength+4+2,0,5,1);
                     }
-                    parms.activeSheet.addSpan(jsonDataLength+4,0,5,1);
-                    parms.activeSheet.addSpan(jsonDataLength+4+1,0,5,1);
-                    parms.activeSheet.addSpan(jsonDataLength+4+2,0,5,1);
+                }else{
+                    LayerMsgBox.error(respons.msg,10000);
                 }
                 spreadResume();// 恢复绘制
             },error: function(error) {
