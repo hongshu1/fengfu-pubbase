@@ -252,10 +252,11 @@
                            data-autocomplete
                            data-url="admin/salesShipmentList/settlestyle"
                            data-hidden-input="csscode"
+                           data-value-attr="csscode"
                            data-text-attr="cssname"
                            data-column-attr="csscode,cssname"
-                           placeholder="请选择付款方式"
-                           data-tips="请选择付款方式"
+                           placeholder="请选择付款条件"
+                           data-tips="请选择付款条件"
                            data-header="付款编码,付款名称"
                            maxlength="40"
                            value="#(condition??)">
@@ -491,20 +492,16 @@
           // linkPara:"#cunameiautoid",
           linkPara:"input[name='sourcebillid']",
           valueAttr: "barcode",
-          columnAttr: "ccompletebarcode,cinvcode,cinvdddcode,cinvname,cinvstd,inventorycuomname,qty,cequipmentmodelname",
-          header: '现品票,存货编码,存货代码,存货名称,规格型号,主计量单位,数量,所属机型',
+          columnAttr: "ccompletebarcode,cinvcode,cinvcode1,cinvname1,qty,cinvstd,cuomcode,cuomname",
+          header: '现品票,存货编码,客户部番,部品名称,数量,规格型号,主计量单位编码,主计量单位名称',
           changeColumns: [{column: "barcode", use: "ccompletebarcode"},
-            {column: "cinvcode", use: "cinvcode"},
+            {column: "invcode", use: "cinvcode"},
             {column: "cinvcode1", use: "cinvcode1"},
-            {column: "cinvname1", use: "cinvname1"}, {column: "cinvstd", use: "cinvstd"},
-            {column: "cinvccode", use: "cinvccode"}, {column: "cinvcname", use: "cinvcname"},
-            {column: "cuomclassname", use: "cuomclassname"}, {column: "iinventoryid", use: "iautoid"},
-            {column: "sourcebilltype", use: "sourcebilltype"},
-            {column: "sourcebillno", use: "sourcebillno"}, {column: "sourcebilldid", use: "sourcebilldid"},
-            {column: "sourcebillnorow", use: "sourcebillnorow"}, {column: "sourcebillid", use: "sourcebillid"},
-            {column: "cinvdddcode", use: "cinvdddcode"},
-            {column: "cinvname", use: "cinvname"}, {column: "inventorycuomname", use: "inventorycuomname"},
-            {column: "sourcebillid", use: "sourcebillid"}, {column: "qty", use: "qty"}]
+            {column: "cinvname1", use: "cinvname1"},
+            {column: "qty", use: "qty"},
+            {column: "cinvstd", use: "cinvstd"},
+            {column: "cuomcode", use: "cuomcode"},
+            {column: "cuomname", use: "cuomname"}]
         },
         invcode: {
           type: "autocomplete",

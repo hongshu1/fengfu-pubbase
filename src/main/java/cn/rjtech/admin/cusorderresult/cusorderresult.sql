@@ -180,7 +180,7 @@ AND    wm.iCustomerId = #para(icustomerid)
 AND  wd.iInventoryId = #para(iinventoryid)
 #end
 #if(iinventoryids)
-AND  wd.iInventoryId IN (#para(iinventoryids))
+AND  wd.iInventoryId IN ( #for (x : iinventoryids.split(',')) #(x) #(for.last?'':',') #end)
 #end
 GROUP BY wm.iCustomerId, wd.iInventoryId, wd.dPlanAogDate
 #end
@@ -211,7 +211,7 @@ FROM (
     AND ssod ON.iInventoryId = #para(iinventoryid)
     #end
     #if(iinventoryids)
-    AND ssod.iInventoryId IN (#para(iinventoryids))
+    AND ssod.iInventoryId IN ( #for (x : iinventoryids.split(',')) #(x) #(for.last?'':',') #end)
     #end
 GROUP BY ssom.iCustomerId, ssom.iYear, ssom.iMonth, ssod.iInventoryId
 UNION
@@ -236,7 +236,7 @@ UNION
     AND mod.iInventoryId = #para(iinventoryid)
     #end
     #if(iinventoryids)
-    AND mod.iInventoryId IN (#para(iinventoryids))
+    AND mod.iInventoryId IN ( #for (x : iinventoryids.split(',')) #(x) #(for.last?'':',') #end)
     #end
     GROUP BY mom.iCustomerId, mom.iYear, mom.iMonth, mod.iInventoryId
     ) x
@@ -263,7 +263,7 @@ AND rpm.iCustomerId = #para(icustomerid)
 AND rpd.iInventoryId = #para(iinventoryid)
 #end
 #if(iinventoryids)
-AND rpd.iInventoryId IN (#para(iinventoryids))
+AND rpd.iInventoryId IN ( #for (x : iinventoryids.split(',')) #(x) #(for.last?'':',') #end)
 #end
 GROUP BY rpm.iCustomerId, rpd.iInventoryId, rpd.cRcvDate
 #end

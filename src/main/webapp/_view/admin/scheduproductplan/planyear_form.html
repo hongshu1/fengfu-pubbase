@@ -1,6 +1,26 @@
 #set(pageId=RandomUtil.random(6))
 #set(iYear=DateUtil.getYear())
 <div class="jbolt_page" data-key="#(pmkey??)" style="margin-top: -16px">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        #if(isedit)
+                        <button onclick="submitThisFormPlan()" class="btn btn-outline-secondary btn-xs">保存</button>
+                        #end
+                        #if(apsAnnualplanm.iAutoId??)
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/scheduproductplanyear",
+                        formSn="Aps_AnnualPlanM", o=apsAnnualplanm, primaryKeyName="iAutoId",
+                        className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService", permissionKeyPrefix="scheduplanyear")
+                        #end
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     ### 新增之后，并且为审核流
     #if(apsAnnualplanm.iautoid?? && apsAnnualplanm.iauditway == 2)
@@ -111,16 +131,6 @@
                 <button data-downloadbtn data-form="apsAnnualplanmFormadd_#(pageId)"
                         data-url="admin/scheduproductplanyear/dataExportYear" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
                 #end
-
-                #if(isedit)
-                <button onclick="submitThisFormPlan()" class="btn btn-outline-secondary btn-xs">保存</button>
-                #end
-                #if(apsAnnualplanm.iAutoId??)
-                #include("/_view/_common/_approval_btns.html", uri="/admin/scheduproductplanyear",
-                formSn="Aps_AnnualPlanM", o=apsAnnualplanm, primaryKeyName="iAutoId",
-                className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService", permissionKeyPrefix="scheduplanyear")
-                #end
-                <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
 
             </div>
         </div>
