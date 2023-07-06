@@ -16,9 +16,11 @@ import cn.rjtech.admin.cusfieldsmappingdcodingrule.CusfieldsmappingdCodingruleSe
 import cn.rjtech.admin.cusfieldsmappingform.CusfieldsmappingFormService;
 import cn.rjtech.admin.cusfieldsmappingm.CusFieldsMappingMService;
 import cn.rjtech.admin.form.FormService;
+import cn.rjtech.admin.formfield.FormFieldService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.CusFieldsMappingRuleEnum;
 import cn.rjtech.enums.CusfieldsMappingCharEnum;
+import cn.rjtech.enums.FormFieldEnum;
 import cn.rjtech.enums.SeparatorCharEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.AutoExcelUtil;
@@ -53,6 +55,8 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
 
     @Inject
     private FormService formService;
+    @Inject
+    private FormFieldService formFieldService;
     @Inject
     private CusFieldsMappingMService cusFieldsMappingMService;
     @Inject
@@ -121,6 +125,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             int iseq = getMaxIseq(cusFieldsMappingD.getICusFieldsMappingMid());
             cusFieldsMappingD.setISeq(iseq);
 
+            String msg = validateIsEncoded(cusFieldsMappingD);
+            ValidationUtils.assertBlank(msg, msg);
+
             ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
 
             return true;
@@ -154,6 +161,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             cusFieldsMappingD.setIsEncoded(false);
             cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
         }
+
+        String msg = validateIsEncoded(cusFieldsMappingD);
+        ValidationUtils.assertBlank(msg, msg);
 
         tx(() -> {
             ValidationUtils.isTrue(cusFieldsMappingD.update(), ErrorMsg.UPDATE_FAILED);
@@ -189,6 +199,28 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
     @Override
     public String checkInUse(CusFieldsMappingD cusFieldsMappingD, Kv kv) {
         //这里用来覆盖 检测是否被其它表引用
+        return null;
+    }
+
+    private String validateIsEncoded(CusFieldsMappingD cusFieldsMappingD) {
+        if (ObjUtil.isNotNull(cusFieldsMappingD.getIFormFieldId()) && cusFieldsMappingD.getIsEncoded()) {
+            FormField formField = formFieldService.findById(cusFieldsMappingD.getIFormFieldId());
+            if (ObjUtil.notEqual(formField.getCFieldTypeSn(), FormFieldEnum.STRING.getValue())) {
+                return "编码字段必须为字符串类型";
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected String beforeToggleBoolean(CusFieldsMappingD cusFieldsMappingD, String column, Kv kv) {
+        switch (column) {
+            case "isEncoded":
+                return validateIsEncoded(cusFieldsMappingD);
+            case "isEnabled":
+            default:
+                break;
+        }
         return null;
     }
 
@@ -242,6 +274,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
         int iseq = getMaxIseq(cusFieldsMappingD.getICusFieldsMappingMid());
         cusFieldsMappingD.setISeq(iseq);
 
+        String msg = validateIsEncoded(cusFieldsMappingD);
+        ValidationUtils.assertBlank(msg, msg);
+
         ValidationUtils.isTrue(cusFieldsMappingD.save(), ErrorMsg.SAVE_FAILED);
 
         List<Record> save = jBoltTable.getSaveRecordList();
@@ -292,6 +327,9 @@ public class CusFieldsMappingDService extends BaseService<CusFieldsMappingD> {
             cusFieldsMappingD.setIsEncoded(false);
             cusFieldsMappingD.setCDemo(StrUtil.EMPTY);
         }
+
+        String msg = validateIsEncoded(cusFieldsMappingD);
+        ValidationUtils.assertBlank(msg, msg);
 
         ValidationUtils.isTrue(cusFieldsMappingD.update(), ErrorMsg.UPDATE_FAILED);
 
