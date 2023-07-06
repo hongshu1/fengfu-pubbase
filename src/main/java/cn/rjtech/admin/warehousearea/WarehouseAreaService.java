@@ -267,6 +267,13 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
   }
 
   public List<Record> options(Kv kv) {
+      Object whcode = kv.get("whcode");
+      if (whcode != null){
+      Warehouse warehouse = warehouseService.findByCwhcode(whcode.toString());
+      if (warehouse!=null){
+        kv.set("iwarehouseid",warehouse.getIAutoId());
+      }
+    }
     return dbTemplate("warehousearea.options", kv).find();
   }
 

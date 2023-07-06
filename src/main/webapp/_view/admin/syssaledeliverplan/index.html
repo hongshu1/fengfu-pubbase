@@ -68,13 +68,13 @@
       </td>
       <td title="${data.auditname}">${data.auditname}</td>
       <td title="${data.sourcebilltype}">${data.sourcebilltype}</td>
-			<td title="${data.sourcebilldid}">${data.sourcebilldid}</td>
+			<td title="${data.sourcebillno}">${data.sourcebillno}</td>
 			<td title="${data.billno}">${data.billno}</td>
 			<td title="${data.u8billno}">${data.u8billno}</td>
 			<td title="${data.predeliverdate}">${data.predeliverdate}</td>
 			<td title="${data.billtype}">${data.billtype}</td>
 			<td title="${data.cstname}">${data.cstname}</td>
-			<td title="${data.billno}">${data.billno}</td>
+			<td title="${data.corderno}">${data.corderno}</td>
 			<td title="${data.ccusabbname}">${data.ccusabbname}</td>
 			<td title="${data.cdepname}">${data.cdepname}</td>
 			<td title="${data.createperson}">${data.createperson}</td>
@@ -90,7 +90,7 @@
       <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <button data-dialogbtn data-area="95%,95%" data-handler="jboltTablePageToFirst"
                 id="toolbar_addBtn_#(pageId)" data-title="新增销售出货(计划)" data-url="admin/salesShipmentList/addConfirm"
-                class="btn btn-outline-secondary btn-sm">
+                class="btn btn-outline-secondary btn-sm"><!--addConfirm-->
           新增
         </button>
 
@@ -122,13 +122,13 @@
         <th data-width="150">操作</th>
         <th data-width="150" data-column="auditname">状态</th>
         <th data-width="180" data-column="SourceBillType">来源类型</th>
-        <th data-width="180" data-column="SourceBillDid">来源单号</th>
+        <th data-width="180" data-column="sourcebillno">来源单号</th>
         <th data-width="180" data-column="BillNo">发货单号</th>
         <th data-width="180" data-column="U8BillNO">ERP单据号</th>
         <th data-width="150" data-column="PreDeliverDate">发货日期</th>
         <th data-width="150" data-column="BillType">业务类型</th>
         <th data-width="150" data-column="cSTName">销售类型</th>
-        <th data-width="150" data-column="BillNo">订单号</th>
+        <th data-width="150" data-column="corderno">订单号</th>
         <th data-width="150" data-column="cCusAbbName">客户简称</th>
         <th data-width="180" data-column="cDepName">销售部门</th>
         <th data-width="100" data-column="CreatePerson">业务员</th>

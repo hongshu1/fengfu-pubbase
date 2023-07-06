@@ -2,131 +2,143 @@
 
 #sql("getSourceYearOrderList")
 ###根据客户id集查询年度订单 并进行行转列
-SELECT a.iCustomerId,d.cCusCode,d.cCusName,
-       e.iEquipmentModelId,f.cEquipmentModelCode,f.cEquipmentModelName,
-       b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
-       b.iYear1 AS nowyear,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 1
-       ) AS nowmonth1,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 2
-       ) AS nowmonth2,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 3
-       ) AS nowmonth3,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 4
-       ) AS nowmonth4,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 5
-       ) AS nowmonth5,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 6
-       ) AS nowmonth6,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 7
-       ) AS nowmonth7,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 8
-       ) AS nowmonth8,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 9
-       ) AS nowmonth9,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 10
-       ) AS nowmonth10,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 11
-       ) AS nowmonth11,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear
-             AND imonth = 12
-       ) AS nowmonth12, b.iYear1Sum AS nowMonthSum,
-       b.iYear2 AS nextyear,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear + 1
-             AND imonth = 1
-       ) AS nextmonth1,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear + 1
-             AND imonth = 2
-       ) AS nextmonth2,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear + 1
-             AND imonth = 3
-       ) AS nextmonth3,
-       (
-           SELECT iQty
-           FROM Co_AnnualOrderD_Qty
-           WHERE iAnnualOrderDid = b.iautoid
-             AND iyear = a.iyear + 1
-             AND imonth = 4
-       ) AS nextmonth4,
-       'PP' AS planTypeCode
-FROM Co_AnnualOrderM AS a
-         LEFT JOIN Co_AnnualOrderD AS b ON a.iAutoId = b.iAnnualOrderMid
-         LEFT JOIN Bd_Customer AS d ON a.iCustomerId = d.iAutoId
-         LEFT JOIN Bd_Inventory AS e ON b.iInventoryId = e.iAutoId
-         LEFT JOIN Bd_EquipmentModel AS f ON e.iEquipmentModelId = f.iAutoId
-WHERE a.isDeleted = '0'
-  AND a.iYear = #para(startyear) AND a.iCustomerId IN (#(customerids))
+SELECT iCustomerId,cCusCode,cCusName,iEquipmentModelId,cEquipmentModelCode,cEquipmentModelName,
+       iInventoryId,cInvCode,cInvCode1,cInvName1,nowyear,nextyear,planTypeCode,
+       SUM(nowmonth1) AS nowmonth1,SUM(nowmonth2) AS nowmonth2,SUM(nowmonth3) AS nowmonth3,SUM(nowmonth4) AS nowmonth4,
+       SUM(nowmonth5) AS nowmonth5,SUM(nowmonth6) AS nowmonth6,SUM(nowmonth7) AS nowmonth7,SUM(nowmonth8) AS nowmonth8,
+       SUM(nowmonth9) AS nowmonth9,SUM(nowmonth10) AS nowmonth10,SUM(nowmonth11) AS nowmonth11,SUM(nowmonth12) AS nowmonth12,
+       SUM(nowMonthSum) AS nowMonthSum,SUM(nextmonth1) AS nextmonth1,SUM(nextmonth2) AS nextmonth2,SUM(nextmonth3) AS nextmonth3,
+       SUM(nextmonth4) AS nextmonth4
+FROM (
+         SELECT a.iCustomerId,d.cCusCode,d.cCusName,
+                e.iEquipmentModelId,f.cEquipmentModelCode,f.cEquipmentModelName,
+                b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
+                b.iYear1 AS nowyear,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 1
+                ) AS nowmonth1,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 2
+                ) AS nowmonth2,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 3
+                ) AS nowmonth3,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 4
+                ) AS nowmonth4,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 5
+                ) AS nowmonth5,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 6
+                ) AS nowmonth6,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 7
+                ) AS nowmonth7,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 8
+                ) AS nowmonth8,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 9
+                ) AS nowmonth9,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 10
+                ) AS nowmonth10,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 11
+                ) AS nowmonth11,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear
+                      AND imonth = 12
+                ) AS nowmonth12, b.iYear1Sum AS nowMonthSum,
+                b.iYear2 AS nextyear,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear + 1
+                      AND imonth = 1
+                ) AS nextmonth1,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear + 1
+                      AND imonth = 2
+                ) AS nextmonth2,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear + 1
+                      AND imonth = 3
+                ) AS nextmonth3,
+                (
+                    SELECT iQty
+                    FROM Co_AnnualOrderD_Qty
+                    WHERE iAnnualOrderDid = b.iautoid
+                      AND iyear = a.iyear + 1
+                      AND imonth = 4
+                ) AS nextmonth4,
+                'PP' AS planTypeCode
+         FROM Co_AnnualOrderM AS a
+                  LEFT JOIN Co_AnnualOrderD AS b ON a.iAutoId = b.iAnnualOrderMid
+                  LEFT JOIN Bd_Customer AS d ON a.iCustomerId = d.iAutoId
+                  LEFT JOIN Bd_Inventory AS e ON b.iInventoryId = e.iAutoId
+                  LEFT JOIN Bd_EquipmentModel AS f ON e.iEquipmentModelId = f.iAutoId
+         WHERE a.isDeleted = '0' AND a.iAuditStatus = 2
+           AND a.iYear = #para(startyear) AND a.iCustomerId IN (#(customerids))
+     ) AS t
+GROUP BY
+    iCustomerId,cCusCode,cCusName,iEquipmentModelId,cEquipmentModelCode,cEquipmentModelName,
+    iInventoryId,cInvCode,cInvCode1,cInvName1,nowyear,nextyear,planTypeCode
 #end
 
 #sql("getInvInfoList")
@@ -266,7 +278,7 @@ FROM Aps_AnnualPlanD AS a
          LEFT JOIN Bd_InventoryWorkRegion AS d ON a.iAutoId = d.iInventoryId AND d.isDefault = '1' AND d.isDeleted = '0'
          LEFT JOIN Bd_WorkRegionM AS e ON d.iWorkRegionMid = e.iAutoId
          LEFT JOIN Aps_AnnualPlanM AS f ON a.iAnnualPlanMid = f.iAutoId
-WHERE b.iType = 2 AND f.isDeleted = '0'
+WHERE b.iType = 2 AND f.isDeleted = '0' AND f.iAuditStatus = 2
   AND CONVERT(VARCHAR(4),b.iYear,120) >= #para(startyear)
   AND CONVERT(VARCHAR(4),b.iYear,120) <= #para(endyear)
     #if(cworkname)
