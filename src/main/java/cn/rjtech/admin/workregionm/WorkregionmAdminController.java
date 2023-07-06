@@ -9,6 +9,9 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.warehouse.WarehouseService;
@@ -27,6 +30,7 @@ import com.jfinal.upload.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * 工段档案 Controller
@@ -156,7 +160,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
             return;
         }
 
-        renderBytesToExcelXlsFile(service.exportExcelTpl(data));
+        renderJxls("work.xlsx", Kv.by("rows", data), "产线档案_" + DateUtil.today() + ".xlsx");
     }
 
     public void exportExcelAll() throws Exception {
@@ -166,7 +170,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
             return;
         }
 
-        renderBytesToExcelXlsxFile(service.exportExcelTpl(rows));
+        renderJxls("work.xlsx", Kv.by("rows", rows), "产线档案_" + DateUtil.today() + ".xlsx");
     }
 
     public void downloadTpl() throws Exception {
