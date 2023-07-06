@@ -206,18 +206,6 @@ public class PermissionKey {
 	 */
 	public static final String CALENDAR = "calendar";
 	/**
-	 * 新增班次
-	 */
-	public static final String WORKSHIFTM_ADD = "workshiftm_add";
-	/**
-	 * 修改班次
-	 */
-	public static final String WORKSHIFTM_EDIT = "workshiftm_edit";
-	/**
-	 * 删除班次
-	 */
-	public static final String WORKSHIFTM_DELETE = "workshiftm_delete";
-	/**
 	 * 新增日历
 	 */
 	public static final String WORKCALENDARM_ADD = "workcalendarm_add";
@@ -229,22 +217,6 @@ public class PermissionKey {
 	 * 删除日历
 	 */
 	public static final String WORKCALENDARM_DELETE = "workcalendarm_delete";
-	/**
-	 * 导出
-	 */
-	public static final String WORKCALENDARM_EXPORT = "workcalendarm_export";
-	/**
-	 * 导入
-	 */
-	public static final String WORKCALENDARM_IMPORT = "workcalendarm_import";
-	/**
-	 * 导出
-	 */
-	public static final String WORKSHIFTM_EXPORT = "workshiftm_export";
-	/**
-	 * 导入
-	 */
-	public static final String WORKSHIFTM_IMPORT = "workshiftm_import";
 	/**
 	 * 应用管理
 	 */
@@ -3045,22 +3017,7 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String WORKREGIONM_ADD = "workregionm_add";
-	/**
-	 * 修改
-	 */
-	public static final String WORKREGIONM_EDIT = "workregionm_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WORKREGIONM_DELETE = "workregionm_delete";
-	/**
-	 * 导出
-	 */
-	public static final String WORKREGIONM_EXPORT = "workregionm_export";
-	/**
-	 * 导入
-	 */
-	public static final String WORKREGIONM_IMPORT = "workregionm_import";
+
 	/**
 	 * 新增
 	 */
@@ -3082,4 +3039,36 @@ public class PermissionKey {
 	 * 提审
 	 */
 	public static  final  String  modoc_submit = "modoc_submit";
+	/**
+	 * 新增
+	 */
+	public static final String WORKSHIFTM_ADD = "workshiftm_add";
+	/**
+	 * 修改
+	 */
+	public static final String WORKSHIFTM_EDIT = "workshiftm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WORKSHIFTM_DELETE = "workshiftm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String WORKSHIFTM_EXPORT = "workshiftm_export";
+	/**
+	 * 导入
+	 */
+	public static final String WORKSHIFTM_IMPORT = "workshiftm_import";
+	/**
+	 * 提交
+	 */
+	public static final String WORKSHIFTM_SUBMIT = "workshiftm_submit";
+	/**
+	 * 点检
+	 */
+	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
+	/**
+	 *销售出货(计划)
+	 */
+	public static final String SYSSALEDELIVERPLAN = "syssaledeliverplan";
 }
