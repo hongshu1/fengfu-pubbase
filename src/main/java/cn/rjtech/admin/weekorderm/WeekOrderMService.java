@@ -83,6 +83,10 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
      * 成功则返回U8单号
      */
     private String pushOrder(WeekOrderM weekOrderM, List<WeekOrderD> weekOrderDS) {
+        Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), weekOrderM.getIBusType().toString())).findFirst().orElse(null);
+        String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
+        String cSTCode = Optional.ofNullable(saleTypeService.findById(weekOrderM.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
+
         // 封装JSON
         JSONArray jsonArray = new JSONArray();
         for (WeekOrderD weekOrderD : weekOrderDS) {
@@ -92,10 +96,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
             jsonObject.put("cmaker", JBoltUserKit.getUserName());
             jsonObject.put("dDate", DateUtils.formatDate(weekOrderM.getDCreateTime()));
             jsonObject.put("cPersonCode", weekOrderM.getIBusPersonId());
-            Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), weekOrderM.getIBusType().toString())).findFirst().orElse(null);
-            String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
             jsonObject.put("cBusType", busName);
-            String cSTCode = Optional.ofNullable(saleTypeService.findById(weekOrderM.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
             jsonObject.put("cSTCode", cSTCode);
             jsonObject.put("cexch_name", weekOrderM.getIExchangeRate());
             jsonObject.put("iExchRate", weekOrderM.getIExchangeRate());
@@ -106,7 +107,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
             jsonObject.put("iQuotedPrice", 0);
             jsonObject.put("KL", 100);
             jsonObject.put("iNatDisCount", 0);
-
             jsonArray.add(jsonObject);
         }
         Map<String, Object> data = new HashMap<>();

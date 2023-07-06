@@ -88,6 +88,10 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * 成功则返回U8单号
      */
     private String pushOrder(Subcontractsaleorderm subcontractsaleorderm, List<Subcontractsaleorderd> subcontractsaleorderds) {
+        Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), subcontractsaleorderm.getIBusType().toString())).findFirst().orElse(null);
+        String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
+        String cSTCode = Optional.ofNullable(saleTypeService.findById(subcontractsaleorderm.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
+
         // 封装JSON
         JSONArray jsonArray = new JSONArray();
         for (Subcontractsaleorderd subcontractsaleorderd : subcontractsaleorderds) {
@@ -98,10 +102,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 jsonObject.put("cmaker", JBoltUserKit.getUserName());
                 jsonObject.put("dDate", DateUtils.formatDate(subcontractsaleorderm.getDCreateTime()));
                 jsonObject.put("cPersonCode", subcontractsaleorderm.getIBusPersonId());
-                cn.jbolt.core.model.Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), subcontractsaleorderm.getIBusType().toString())).findFirst().orElse(null);
-                String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
                 jsonObject.put("cBusType", busName);
-                String cSTCode = Optional.ofNullable(saleTypeService.findById(subcontractsaleorderm.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
                 jsonObject.put("cSTCode", cSTCode);
                 jsonObject.put("cexch_name", subcontractsaleorderm.getIExchangeRate());
                 jsonObject.put("iExchRate", subcontractsaleorderm.getIExchangeRate());
