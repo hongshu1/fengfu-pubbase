@@ -343,7 +343,7 @@ public class ContainerService extends BaseService<Container> {
         container.setIsEnabled(true);
 
         if (data.get("icustomerid") != null) {
-          Record record = dbTemplate("customer.getCustomerByName", Kv.by("name", data.get("icustomerid"))).findFirst();
+          Record record = dbTemplate("customer.getCustomerByName", Kv.by("icustomername", data.get("icustomerid") + "")).findFirst();
           ValidationUtils.notNull(record, "第" + iseq + "行【客户名称】未找到对应的客户档案数据！");
           container.setICustomerId(record.getLong("iautoid"));
         }
