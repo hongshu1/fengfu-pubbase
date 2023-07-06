@@ -98,8 +98,8 @@
                             data-url="admin/purchaseorderm/findForeignCurrencyAll"
                             data-select-type="select"
                             data-text="==请选择=="
+                            data-sync-ele="#iExchangeRate"
                             data-select="#(purchaseOrderM.ccurrency??)"
-                            data-value=""
                             data-value-attr="cexch_name"
                             data-text-attr="cexch_name">
                     </select>
@@ -133,7 +133,7 @@
                 <label class="col-sm-3 col-form-label">汇率</label>
                 <div class="col-6">
                     <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="money_4"
-                           placeholder="请输入汇率" maxlength="40" name="iExchangeRate"
+                           placeholder="请输入汇率" maxlength="40" name="iExchangeRate" id="iExchangeRate" data-sync-attr="nflat"
                            value="#(purchaseOrderM.iExchangeRate??)"/>
                 </div>
             </div>
@@ -378,6 +378,19 @@
                             formula: "sum"
                         }]
                     },
+
+                    #else
+                     '#(day.dateStr)': {
+                            summary: [
+                                {
+                                    dir: "h",//纵向统计  v or h
+                                    tofixed: 2,//保留两位
+                                    roundtag: "round",//四舍五入
+                                    removezero: true,//去0
+                                    formula: "#(day.sumStr)"
+                                }
+                            ]
+                        }
                     #end
                 #end
             }

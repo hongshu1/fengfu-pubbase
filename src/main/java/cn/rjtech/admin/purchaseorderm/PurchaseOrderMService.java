@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
@@ -367,6 +368,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
             List<Integer> list = dateMap.get(dateKey);
             record.set(PurchaseOrderM.SIZE, list.size() + 1);
             record.set(PurchaseOrderM.DATESTR, dateKey);
+            Record sumRecord = new Record();
+            String sumStr = "";
             for (Integer date : list) {
                 String dateStr = String.format("%02d", date).concat("日");
                 Record dateRecord = new Record();
@@ -377,14 +380,18 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
                 dateRecord.set(PurchaseOrderM.INDEX, index);
                 dateHeadList.add(dateRecord);
                 index += 1;
+                sumStr+=dateKey.concat(dateStr).concat("+");
             }
-            Record sum = new Record();
-            sum.set(PurchaseOrderM.FIELDNAME, "合计");
+            sumRecord.set(PurchaseOrderM.FIELDNAME, "合计");
             // 需要统计的月份
-            sum.set(PurchaseOrderM.DATESTR, dateKey);
-            sum.set(PurchaseOrderM.INDEX, index);
+            sumRecord.set(PurchaseOrderM.DATESTR, dateKey);
+            sumRecord.set(PurchaseOrderM.INDEX, index);
+            if (StrUtil.isNotBlank(sumStr)){
+                sumRecord.set(PurchaseOrderM.SUMSTR, sumStr.substring(0, sumStr.length()-1));
+            }
+           
             index += 1;
-            dateHeadList.add(sum);
+            dateHeadList.add(sumRecord);
             dateMonthHeadList.add(record);
         }
         ValidationUtils.notEmpty(dateHeadList, "未获取到日期范围数据");

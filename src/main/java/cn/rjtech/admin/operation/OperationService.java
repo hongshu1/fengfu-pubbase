@@ -322,6 +322,15 @@ public class OperationService extends BaseService<Operation> {
         return find("SELECT iAutoId,cOperationName FROM Bd_Operation WHERE isDeleted = '0' ");
     }
 
+    /**
+     * 根据工序名称获取工序数据
+     * @param name
+     * @return
+     */
+    public Operation getOperationByName(String name){
+        return findFirst("SELECT * FROM Bd_Operation WHERE isDeleted = '0' AND cOperationName=?",name);
+    }
+
     public List<Operation> getIdAndNameListToInventoryCheckForm() {
         return find("SELECT iautoid,coperationcode,coperationname,iworkclassid FROM Bd_Operation WHERE isDeleted = '0' ");
     }
