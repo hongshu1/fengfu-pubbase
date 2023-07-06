@@ -10,8 +10,10 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Container;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -19,6 +21,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -132,14 +135,22 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 容器档案Excel导入数据库
      */
-    public void importExcel() {
-        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
-        UploadFile file = getFile("file", uploadPath);
-        if (notExcel(file)) {
-            renderJsonFail("请上传excel文件");
-            return;
-        }
-        renderJson(service.importExcelData(file.getFile()));
+    @SuppressWarnings("unchecked")
+    public void importExcelData() {
+        UploadFile uploadFile = getFile("file");
+        ValidationUtils.notNull(uploadFile, "上传文件不能为空");
+
+        File file = uploadFile.getFile();
+
+        List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+
+        // 截取最后一个“.”之前的文件名，作为导入格式名
+        String cformatName = list.get(0);
+
+        String extension = list.get(1);
+
+        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        renderJson(service.importExcelData(file, cformatName));
     }
 
     /**
