@@ -46,13 +46,13 @@
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-    {@if data.istatus != 0}
+    {@if data.istatus != 0 || data.iauditstatus!=0}
         <a href="admin/modoc/details/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn" data-btn="no">查看</a>
     {@/if}
-    {@if data.istatus == 0 && data.itype == 2}
+    {@if data.istatus == 0 && data.itype == 2 && data.iauditstatus == 0}
         <a href="admin/modoc/updatas/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
     {@/if}
-    {@if data.istatus == 0 || data.istatus == 11}
+    {@if data.istatus == 0 && data.iauditstatus == 0 || data.iauditstatus == 3}
         <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
     {@/if}
     {@if data.istatus == 4 || data.istatus == 5 }
@@ -65,7 +65,11 @@
     {@/if}
 </td>
             <td hidden>${data.iautoid}</td>
+             {@if data.iauditstatus == 1  || data.iauditstatus== 2 || data.iauditstatus== 3 }
+             <td >${data.iauditstatus | cOrderStatusDescByAuditStatus}</td>
+            {@else}
             <td style="color: red">${data.istatus | moDocType}</td>
+             {@/if}
             <td >${data.itype | moDociType}</td>
             <td>${data.dplandate|date_ymd}</td>
             <td>${data.cmodocno}</td>
@@ -93,6 +97,8 @@
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i
                         class="fa fa-refresh"></i> 刷新
                 </button>
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Mo_MoDoc", uri="admin/modoc",
+                primaryKeyName="iAutoId", className="cn.rjtech.admin.modoc.MoDocService", permissionKeyPrefix="modoc")
             </div>
 
             <div class="clearfix"></div>

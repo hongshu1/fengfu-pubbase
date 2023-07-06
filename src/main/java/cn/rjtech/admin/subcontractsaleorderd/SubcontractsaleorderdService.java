@@ -176,4 +176,8 @@ public class SubcontractsaleorderdService extends BaseService<Subcontractsaleord
 	public List<Subcontractsaleorderd> findByMid(Subcontractsaleorderm subcontractsaleorderm) {
 		return find(selectSql().eq("iSubcontractSaleOrderMid", subcontractsaleorderm.getIAutoId()).eq("IsDeleted", 0));
 	}
+
+	public List<Subcontractsaleorderd> findByMId(long iSubcontractSaleOrderMid) {
+		return find(selectSql().eq("iSubcontractSaleOrderMid", iSubcontractSaleOrderMid).eq("IsDeleted", 0));
+	}
 }

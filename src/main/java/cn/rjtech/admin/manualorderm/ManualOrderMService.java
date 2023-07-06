@@ -2,8 +2,11 @@ package cn.rjtech.admin.manualorderm;
 
 import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -12,14 +15,20 @@ import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
+import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.javaparser.utils.Log;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -30,9 +39,7 @@ import com.jfinal.plugin.activerecord.Record;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static cn.jbolt.core.util.JBoltArrayUtil.COMMA;
@@ -62,9 +69,63 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     private StockoutQcFormMService stockoutQcFormMService;
     @Inject
     private WeekOrderMService weekOrderMService;
+    @Inject
+    private DictionaryService dictionaryService;
+    @Inject
+    private SaleTypeService saleTypeService;
+
     @Override
     protected ManualOrderM dao() {
         return dao;
+    }
+
+    /**
+     * U8推单
+     * 成功则返回U8单号
+     */
+    private String pushOrder(ManualOrderM manualOrderM, List<ManualOrderD> manualOrderDS) {
+        String cSTCode = Optional.ofNullable(saleTypeService.findById(manualOrderM.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
+        Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), manualOrderM.getIBusType().toString())).findFirst().orElse(null);
+        String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
+
+        // 封装JSON
+        JSONArray jsonArray = new JSONArray();
+        for (ManualOrderD manualOrderD : manualOrderDS) {
+            for (int i = 1; i <= 31; i++) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("DocNo", manualOrderM.getCOrderNo());
+                jsonObject.put("ccuscode", manualOrderM.getCCusCode());
+                jsonObject.put("cmaker", JBoltUserKit.getUserName());
+                jsonObject.put("dDate", DateUtils.formatDate(manualOrderM.getDCreateTime()));
+                jsonObject.put("cPersonCode", manualOrderM.getIBusPersonId());
+                jsonObject.put("cBusType", busName);
+                jsonObject.put("cSTCode", cSTCode);
+                jsonObject.put("cexch_name", manualOrderM.getIExchangeRate());
+                jsonObject.put("iExchRate", manualOrderM.getIExchangeRate());
+                jsonObject.put("iTaxRate", manualOrderM.getITaxRate());
+                jsonObject.put("cInvCode", manualOrderD.getCInvCode());
+                jsonObject.put("cInvName", manualOrderD.getCInvName1());
+                jsonObject.put("iQuantity", manualOrderD.getInt("iqty" + i));
+                jsonObject.put("iQuotedPrice", 0);
+                jsonObject.put("KL", 100);
+                jsonObject.put("iNatDisCount", 0);
+                jsonArray.add(jsonObject);
+            }
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("data", jsonArray);
+
+        // 推送U8
+        Map<String, String> header = new HashMap<>(5);
+        header.put("Content-Type", "application/json");
+        String url = "http://120.24.44.82:8099/api/cwapi/SODocAdd?dbname=U8Context";
+        String post = HttpApiUtils.httpHutoolPost(url, data, header);
+        JSONObject jsonObject = JSON.parseObject(post);
+        ValidationUtils.notNull(jsonObject, "推送U8失败");
+        ValidationUtils.equals("S", jsonObject.getString("status"), "失败推单:" + jsonObject.getString("remark"));
+
+        String remark = jsonObject.getString("remark");
+        return remark.substring(remark.indexOf("执行结果为") + 5);
     }
 
     @Override
@@ -372,11 +433,18 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
         // 订单状态校验
 //        ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
+        // 推送U8订单
+        List<ManualOrderD> manualOrderDS = manualOrderDService.findByMId(formAutoId);
+        String cDocNo = pushOrder(manualOrderM, manualOrderDS);
+        ValidationUtils.notNull(cDocNo, "推单失败");
+
         // 订单状态修改
         manualOrderM.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
         manualOrderM.setIUpdateBy(JBoltUserKit.getUserId());
         manualOrderM.setCUpdateName(JBoltUserKit.getUserName());
         manualOrderM.setDUpdateTime(new Date());
+        manualOrderM.setIPushTo(1);
+        manualOrderM.setCDocNo(cDocNo);
         manualOrderM.update();
         // 审批通过生成客户计划汇总
         cusOrderSumService.algorithmSum();
@@ -415,8 +483,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 只有一个审批人
         if (isFirst && isLast) {
-            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isFail())
-            {
+            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isFail()) {
                 Log.info("更新失败");
                 return "更新失败";
             }
@@ -426,8 +493,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
         }
         // 反审回第一个节点，回退状态为“已保存”
         else if (isFirst) {
-            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isFail())
-            {
+            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isFail()) {
                 Log.info("更新失败");
                 return "更新失败";
             }
@@ -435,8 +501,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
         }
         // 最后一步通过的，反审，回退状态为“待审核”
         else if (isLast) {
-            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isFail())
-            {
+            if (updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.AWAIT_AUDITED.getValue()).isFail()) {
                 Log.info("更新失败");
                 return "更新失败";
             }
@@ -517,8 +582,9 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
 
     /**
      * 批量审批（审核）通过
+     *
      * @param formAutoIds 单据IDs
-     * @return  错误信息
+     * @return 错误信息
      */
     @Override
     public String postBatchApprove(List<Long> formAutoIds) {
@@ -529,12 +595,13 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
 
     /**
      * 批量审批（审核）不通过
+     *
      * @param formAutoIds 单据IDs
-     * @return  错误信息
+     * @return 错误信息
      */
     @Override
     public String postBatchReject(List<Long> formAutoIds) {
-        for (Long formAutoId:formAutoIds) {
+        for (Long formAutoId : formAutoIds) {
             ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
         }
         return null;
@@ -542,8 +609,9 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
 
     /**
      * 批量撤销审批
+     *
      * @param formAutoIds 单据IDs
-     * @return  错误信息
+     * @return 错误信息
      */
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
@@ -561,5 +629,5 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
         }
         return null;
     }
-    
+
 }

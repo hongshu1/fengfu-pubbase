@@ -11,7 +11,6 @@ import cn.rjtech.admin.bommtrl.BommTrlService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.enums.BomSourceTypeEnum;
 import cn.rjtech.model.momdata.BomCompare;
 import cn.rjtech.model.momdata.BomM;
 import cn.rjtech.model.momdata.BommTrl;
@@ -84,18 +83,12 @@ public class BomCompareAdminController extends BaseAdminController {
 	public void edit() {
 		BomM bomM = bomMService.findById(getLong(0));
 		ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
-		BomSourceTypeEnum bomSourceTypeEnum = BomSourceTypeEnum.toEnum(bomM.getIType());
-		ValidationUtils.notNull(bomSourceTypeEnum, "未知新增类型");
-		BomSourceTypeEnum manualTypeAdd = BomSourceTypeEnum.MANUAL_TYPE_ADD;
-		if (manualTypeAdd.getValue() == bomSourceTypeEnum.getValue()){
-			Kv kv = getKv();
-			bomMService.setBomRecord(getLong(0), false, true, kv);
-			setAttrs(kv);
-			render("manual_form.html");
-			return;
-		}
-		getBomMaster(bomM);
-		render("/_view/admin/bommaster/edit.html");
+		Kv kv = getKv();
+		bomMService.setBomRecord(getLong(0), false, true, kv);
+		setAttrs(kv);
+		render("manual_form.html");
+//		getBomMaster(bomM);
+//		render("/_view/admin/bommaster/edit.html");
 	}
 	
 	public void info(){

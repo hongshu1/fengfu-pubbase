@@ -1,3 +1,4 @@
+#define css()
 <style>
     .buttonDiv.disabled button {
         background-color: #bfd8f2;
@@ -8,6 +9,7 @@
         pointer-events: auto;
     }
 </style>
+#end
 
 #set(pageId=RandomUtil.random(6))
 ### 默认为非只读,查看页有readonly=readonly标识
@@ -127,7 +129,8 @@
 ### 新增之后，并且为审核流
 #if(sysPureceive.AutoID?? && sysPureceive.iauditway == 2 && sysPureceive.iauditstatus != 0)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysPureceive.AutoID, formSn="T_Sys_PUReceive",
-btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService")
+btnNeed=1, pId=pageId, primaryKeyName="AutoID",
+className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",o=sysPureceive)
 #end
 <div class="jbolt_page_content">
     <script type="text/template" id="sysPureceive_tpl_#(pageId)">
@@ -233,7 +236,7 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
             <th data-width="100" data-column="qty">收货数量</th>
 <!--            <th data-width="100" data-column="weight">收货重量</th>-->
             <th data-width="100" data-column="poscode">入库库区</th>
-            <th data-width="100" data-column="isinitial" data-editable="false">是否初物</th>
+            <th data-width="100" data-column="isinitial">是否初物</th>
             <th data-width="100" data-column="sourcebilldid" hidden>来源行号</th>
             <th data-width="100" data-column="sourcebilltype" hidden>单据类型</th>
             <th data-column="rowno">行号</th>
@@ -506,7 +509,6 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
                 },
                 poscode: {
                     linkPara: "#whcode",
-                    placeholder: "库区", //输入提示，里面
                     tooltip: "库区",//输入提示，上方
                     type: "autocomplete",
                     //根据仓库过滤
@@ -638,6 +640,20 @@ btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.scanc
 
                         })
                     }
+                },
+                isinitial: {
+                    type: 'switchbtn',
+                    editable: false,
+                    handler: function (table, td, rowData, ele) {
+                        switch (rowData.barcodetype) {
+                            case '转换前':
+                                $('tr[data-index="' + (td.parent().index() + 1) + '"] td[data-col-index="15"]').find('img').trigger('click');
+                                break;
+                            case '转换后':
+                                $('tr[data-index="' + (td.parent().index() - 1) + '"] td[data-col-index="15"]').find('img').trigger('click');
+                                break;
+                        }
+                    },
                 }
             }
         };

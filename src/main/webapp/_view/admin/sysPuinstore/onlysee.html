@@ -7,20 +7,12 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 关闭
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary"">关闭
                         </button>
-                        <button onclick="printSysPuinstore()" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 打印
+                        <button onclick="printSysPuinstore()" class="btn btn-outline-secondary""> 打印
                         </button>
-                        <!--<button onclick="submitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 审核
-                        </button>
-                        <button onclick="resetSubmitApprove('#(sysPuinstore.autoid??)')" class="btn btn-info btn-sm"><i
-                                class="fa fa-window-maximize"></i> 反审核
-                        </button>-->
                         #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUInStore", o=sysPuinstore, primaryKeyName="AutoID",
-                        className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="sysPuinstore")
+                        className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="syspuinstore")
                     </div>
                 </div>
             </div>
@@ -154,6 +146,7 @@
   {@each datas as data,index}
   <tr data-id="${data.autoid}">
     <td>${pageNumber,pageSize,index | rownum}</td>
+    <td>${data.poscode}</td><td>${data.posname}</td>
     <td title="${data.barcode}">${data.barcode}</td>
     <td title="${data.invcode}">${data.invcode}</td>
     <td title="${data.cinvname}">${data.cinvname}</td>
@@ -187,6 +180,8 @@
                     <thead>
                     <tr>
                         <th data-width="30px">序号</th>
+                        <th data-width="150" data-column="poscode">库区编码</th>
+                        <th data-width="150" data-column="posname">库区名称</th>
                         <th data-width="180" data-column="barcode">现品票</th>
                         <th data-width="180" data-column="invcode">存货编码</th>
                         <th data-width="180" data-column="cinvname">存货名称</th>

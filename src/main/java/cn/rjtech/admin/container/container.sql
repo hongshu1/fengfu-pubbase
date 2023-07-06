@@ -48,3 +48,17 @@ WHERE  c.isDeleted = 0
 ORDER BY
 c.dCreateTime DESC
 #end
+
+#sql("uniqueCheck")
+SELECT ISNULL(COUNT(iAutoId), 0) from Bd_Container WHERE IsDeleted=0
+#if(ccontainercode)
+ AND cContainerCode = #para(ccontainercode)
+#end
+#if(ccontainername)
+ AND cContainerName = #para(ccontainername)
+#end
+#end
+
+#sql("getContainerClassByName")
+SELECT * FROM Bd_ContainerClass WHERE IsDeleted=0 AND cContainerClassName = #para(name)
+#end

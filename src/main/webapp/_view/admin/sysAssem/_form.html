@@ -15,7 +15,7 @@
                         <!-- <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i
                                 class="fa fa-refresh"></i> 保存</button> -->
                         #if(readonly != 'readonly')
-                        <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-success btn-sm"  #if(sysPureceive.iAuditStatus?? ==2  || sysPureceive.iAuditStatus?? ==1) disabled #end  ><i
+                        <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-success btn-sm"  #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end  ><i
                                 class=" fa fa-refresh"></i> 保存</button>
                         #end
                 
@@ -70,8 +70,8 @@
                                         id="idcode" data-value-attr="id" />
                                     <label class="col-sm-3 col-form-label">转换方式</label>
                                     <div class="col-9">
-                                        <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/formConversionList/dictionary" data-rule="required"
+                                        <input type="text" class="form-control" data-autocomplete #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end
+                                               data-url="admin/formConversionList/dictionary" data-rule="required"
                                             data-hidden-input="idcode" data-text-attr="name"
                                             data-column-attr="id,name" placeholder="请选择转换方式"
                                             data-tips="请选择转换方式" data-header="转换方式编码,转换方式" maxlength="40"
@@ -105,8 +105,8 @@
                                         id="crdcode" data-value-attr="crdcode" />
                                     <label class="col-sm-3 col-form-label">入库类别</label>
                                     <div class="col-9">
-                                        <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/formConversionList/style?brdflag=1" data-rule="required"
+                                        <input type="text" class="form-control" data-autocomplete #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end
+                                               data-url="admin/formConversionList/style?brdflag=1" data-rule="required"
                                             data-hidden-input="crdcode" data-text-attr="crdname"
                                             data-column-attr="crdcode,crdname" placeholder="请选择入库类别"
                                             data-tips="请选择入库类别" data-header="入库类别编码,入库类别" maxlength="40"
@@ -123,8 +123,8 @@
                                         id="cdepcode" data-value-attr="cdepcode" />
                                     <label class="col-sm-3 col-form-label">生产部门</label>
                                     <div class="col-9">
-                                        <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/productInList/getDepartment" data-rule="required"
+                                        <input type="text" class="form-control" data-autocomplete #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end
+                                               data-url="admin/productInList/getDepartment" data-rule="required"
                                             data-hidden-input="cdepcode" data-text-attr="cdepname"
                                             data-column-attr="cdepcode,cdepname" placeholder="请选择生产部门"
                                             data-tips="请选择生产部门" data-header="生产部门编码,生产部门" maxlength="40"
@@ -140,8 +140,8 @@
                                         id="crdcode1" data-value-attr="crdcode" />
                                     <label class="col-sm-3 col-form-label">出库类别</label>
                                     <div class="col-9">
-                                        <input type="text" class="form-control" data-autocomplete
-                                            data-url="admin/formConversionList/style?brdflag=0" data-rule="required"
+                                        <input type="text" class="form-control" data-autocomplete #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end
+                                               data-url="admin/formConversionList/style?brdflag=0" data-rule="required"
                                             data-hidden-input="crdcode1" data-text-attr="crdname"
                                             data-column-attr="crdcode,crdname" placeholder="请选择出库类别"
                                             data-tips="请选择出库类别" data-header="出库类别编码,出库类别" maxlength="40"
@@ -166,8 +166,8 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">备注</label>
                                     <div class="col-9">
-                                        <input type="text" data-notnull="true" data-tips="请输入备注"
-                                            data-with-clearbtn="true" autocomplete="off" class="form-control"
+                                        <input type="text" data-notnull="true" data-tips="请输入备注" #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end
+                                               data-with-clearbtn="true" autocomplete="off" class="form-control"
                                             placeholder="请输入备注" maxlength="40" name="sysAssem.Memo"
                                             value="#(sysAssem.Memo??)" />
                                     </div>
@@ -209,7 +209,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(sysAssem.AutoID?? && sysAssem.iauditway == 2 && sysAssem.iauditstatus == 1)
+#if(sysAssem.AutoID?? && sysAssem.iauditway == 2 && sysAssem.iauditstatus != 0)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysAssem.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId, primaryKeyName="AutoID", className="cn.rjtech.admin.sysassem.SysAssemService")
 #end
 
@@ -228,9 +228,9 @@
             <td>${data.cinvname1}</td>
             <td>${data.dplandate|date_ymd}</td>
             <td>${data.cuomname}</td>
-            <td>${data.qty}</td>
-            <td>${data.weight}</td>
-            <td>${data.memo}</td>
+            <td #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) data-editable="false" #end >${data.qty}</td>
+<!--            <td #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) data-editable="false" #end >${data.weight}</td>-->
+            <td #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) data-editable="false" #end >${data.memo}</td>
             <td hidden>${data.whcode}</td>
             <td hidden>${data.poscode}</td>
             <td hidden>${data.sourcebilldid}</td>
@@ -245,9 +245,9 @@
  disabled
  #end" id="sysAssem_toolbar_#(pageId)" style="display: flex">
         <div style="padding-right: 15px;">
-            <button onclick="insertEmpty(this)" class="btn btn-outline-secondary">添加行
+            <button onclick="insertEmpty(this)" class="btn btn-outline-secondary" #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end  >添加行
             </button>
-            <button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-outline-secondary"><i class="fa fa-trash"></i> 删除</button>
+            <button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-outline-secondary" #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end  ><i class="fa fa-trash"></i> 删除</button>
         </div>
         <div class="clearfix">
             <form class="form-inline" id="sysscandeliver_detail_#(pageId)" onsubmit="return false;">
@@ -257,7 +257,7 @@
                 <input type="text" autocomplete="off" class="form-control"  placeholder="现品票扫码" name="barcode"
                        id="barcode"
                        value="" />
-                <button type="button" onclick="searchBarcode()" class="btn btn-outline-secondary"><i
+                <button type="button" onclick="searchBarcode()" class="btn btn-outline-secondary" #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end  ><i
                         class="fa fa-search"></i> 搜索</button>
 <!--                <span style="padding-left: 15px">-->
 <!--                <input type="hidden" name="careacode" value="#(careacode??)"-->
@@ -310,7 +310,7 @@
             <th data-width="120" data-column="dplandate">计划到货日期</th>
             <th data-width="100" data-column="cuomname">主计量单位</th>
             <th data-width="100" data-column="qty">数量</th>
-            <th data-width="100" data-column="weight">重量</th>
+<!--            <th data-width="100" data-column="weight">重量</th>-->
             <th data-width="100" data-column="memo">备注</th>
             <th data-width="150" data-column="whcode" hidden>仓库</th>
             <th data-width="100" data-column="poscode" hidden>入库库区</th>
@@ -607,8 +607,9 @@
                         var cinvcode = trJsonData.cinvcode;
                         var vencode = trJsonData.vencode;
                         var sourcebilltype = trJsonData.sourcebilltype;
+                        var qty = trJsonData.qty;
                         Ajax.post("admin/formConversionList/getBarCodeData",
-                            {"itemCode": cinvcode,"supplier":vencode,"sourceBillType":sourcebilltype},
+                            {"itemCode": cinvcode,"supplier":vencode,"sourceBillType":sourcebilltype,"qty":qty},
                             function(res) {
                                 console.log('res', res)
                                 if (res.state==='ok'){
@@ -632,7 +633,7 @@
                 barcode: { //条码
                     linkPara: "input[name='detailHidden'],input[name='groupCode']",
                     maxLength: 100,
-                    // required: true,
+                    required: true,
                     placeholder: "=请选择=",
                     type: "autocomplete",
                     url: "admin/formConversionList/getResource",
@@ -657,7 +658,7 @@
                         , {column: "ibeforeinventoryid", use: "ibeforeinventoryid"}],
                     handler:function(table,td,text,value,trJsonData){
                         Ajax.post("admin/formConversionList/getBarCodeData", {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
-                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid},
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty},
                             function(res) {
                                 console.log('res', res)
                                 if (res.state==='ok'){

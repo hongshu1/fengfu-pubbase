@@ -1,0 +1,174 @@
+
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="PheDeliveryLines_tpl_#(pageId)">
+    {@each datas as data,index}
+        <tr data-id="${data.iautoid}">
+            <td>${pageNumber,pageSize,index | rownum}</td>
+<!--            <td>${data.iseq}</td>-->
+             <td data-editable="false">${data.username}</td>
+            <td data-editable="false">${data.cpsnname}</td>
+            <td data-editable="false">${data.cdeptname}</td>
+            <td style="display: none">${data.ipersonid}</td>
+            <td style="display: none">${data.iuserid}</td>
+            <td>
+                <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true, 'iseq');"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+                <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+            </td>
+            <td hidden>${data.iseq}</td>
+        </tr>
+    {@/each}
+</textarea>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- 工具条 toolbar -->
+                <div class="jbolt_table_toolbar" id="PheDeliveryLines_toolbar_#(pageId)" style="display: flex">
+                    <div class="" role="group" aria-label="btn-group">
+                        <button onclick="choosePerson(this)"
+                                data-url="/admin/approvald/choosePerson"
+                                data-dialogbtn
+                                data-link-para-ele="#itemHidden" id="buttonDialog_#(pageId)"
+                                data-area="90%,90%" data-btn="选中,取消" data-title="选择人员"
+                                class="btn btn-success btn-sm"><i
+                                class="fa fa-folder-open-o"></i> 选择人员
+                        </button>
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)"
+                                class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+                        <input type="hidden" id="itemHidden" name="itemHidden" value="#(itemHidden??)"/>
+
+                    </div>
+                </div>
+
+                <table class="jbolt_table jbolt_main_table  table-center"
+                       id="jbolt_table_pheDeliveryLines_#(pageId)"
+                       data-jbolttable
+                       data-ajax-success-handler="tableDataSuccess_line()"
+                       data-width="auto"
+                       data-height="fill"
+                       data-ajax="true"
+                       data-page="PheDeliveryLines_page_#(pageId)"
+                       data-column-prepend="1:checkbox:true"
+                       data-toolbar="PheDeliveryLines_toolbar_#(pageId)"
+                       data-url="admin/approvald/lineDatas"
+                       data-conditions-form="approvalDForm"
+                       data-rowtpl="PheDeliveryLines_tpl_#(pageId)"
+                       data-column-resize="true"
+                       data-editable="true"
+                       data-editable-option="getEditableTableOptions_#(pageId)"
+                >
+                    <thead>
+                    <tr>
+                        <th data-width="60" data-column="index">序号</th>
+<!--                        <th data-min-width="100" data-column="iseq">审批顺序</th>-->
+                        <th data-min-width="100" data-column="username">用户名</th>
+                        <th data-min-width="200" data-column="cpsnname">姓名</th>
+                        <th data-min-width="200" data-column="cdeptname">所属部门</th>
+                        <th data-width="140" data-column="optcol">操作</th>
+                        <th hidden data-column="iseq"></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    /**
+     * 打开选择人员dialog
+     * */
+    function choosePerson(ele) {
+        tableDataSuccess_line();
+        jboltTableChooseAndInsert(ele);
+    }
+
+
+    /**
+     * 返回 jbolttable的id
+     * */
+    function getJboltId(){
+        var id = "jbolt_table_pheDeliveryLines_#(pageId)";
+        console.log('jbolt==>',id);
+        return id;
+    }
+
+    /**
+     * 刷新jbolttable
+     * */
+    function RefreshJboltTable() {
+        jboltTableRefresh(getJboltId());
+    }
+
+    /**
+     * 获取已选数据函数
+     * */
+    function tableDataSuccess_line() {
+        let result = jboltTableGetAllDatas(getJboltId(), ["ipersonid"]);
+        console.log('result==>',result);
+        let array = new Array();
+        if (result != null) {
+            for (let i = 0; i < result.length; i++) {
+                array.push("'" + result[i].ipersonid + "'");
+            }
+            let codes = array.join(',');
+            $("#itemHidden").val(codes);
+        }
+        console.log('ipersonid===',$("#itemHidden").val());
+    }
+
+</script>
+
+<script>
+    function getEditableTableOptions_#(pageId)() {
+        var editableTableOptions1 = {
+            trigger: "click",
+            insertDefaultValues: {username:'#(JBoltUserKit.getUserName())'},
+            afterInsertRowHandler: function (table, tr) {
+                var trIndex = tr.data("index");
+
+                var rank = trIndex + 1;
+                jboltTableSetCell(table, tr, 'iseq', rank, rank, true);
+            },
+            submit: {
+                withForm: ["approvalDForm"],
+                type:"multi",//cell|all|multi
+                name:"table1"
+            },
+            cols: {
+                iautoid: {
+                    submitAttr: "iAutoId"
+                },
+                iseq:{
+                    submitAttr: "iSeq"
+                },
+                username:{
+                    type:"input",
+                    submitAttr:"username"
+                },
+                cpsnname:{
+                    type:"input",
+                    submitAttr:"cPsnName"
+                },
+                cdeptname:{
+                    type:"input",
+                    submitAttr:"cDeptName"
+                },
+                iuserid: {
+                    submitAttr: "iUserId"
+                },
+                ipersonid: {
+                    submitAttr: "iPersonId"
+                }
+            }
+        };
+        return editableTableOptions1;
+    }
+
+</script>
+
+

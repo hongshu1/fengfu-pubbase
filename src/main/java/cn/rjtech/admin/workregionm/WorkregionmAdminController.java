@@ -9,6 +9,9 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.warehouse.WarehouseService;
@@ -27,6 +30,7 @@ import com.jfinal.upload.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * 工段档案 Controller
@@ -91,12 +95,12 @@ public class WorkregionmAdminController extends JBoltBaseController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        if (isOk(workregionm) && isOk(workregionm.getIPersonId())) {
-            Person person = personService.findById(workregionm.getIPersonId());
-            if (person != null) {
-                set("personname", person.getCpsnName());
-            }
-        }
+//        if (isOk(workregionm) && isOk(workregionm.getIPersonId())) {
+//            Person person = personService.findById(workregionm.getIPersonId());
+//            if (person != null) {
+//                set("personname", person.getCpsnName());
+//            }
+//        }
 
         set("workregionm", workregionm);
         render("edit.html");
@@ -105,6 +109,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.WORKREGIONM_ADD)
     public void save() {
         renderJson(service.save(getModel(Workregionm.class, "workregionm")));
     }
@@ -112,6 +117,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.WORKREGIONM_EDIT)
     public void update() {
         renderJson(service.update(getModel(Workregionm.class, "workregionm")));
     }
@@ -119,6 +125,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.WORKREGIONM_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -144,6 +151,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
         render("person_table.html");
     }
 
+    @CheckPermission(PermissionKey.WORKREGIONM_EXPORT)
     public void exportExcelByIds() throws Exception {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -156,9 +164,9 @@ public class WorkregionmAdminController extends JBoltBaseController {
             return;
         }
 
-        renderBytesToExcelXlsFile(service.exportExcelTpl(data));
+        renderJxls("work.xlsx", Kv.by("rows", data), "产线档案_" + DateUtil.today() + ".xlsx");
     }
-
+    @CheckPermission(PermissionKey.WORKREGIONM_EXPORT)
     public void exportExcelAll() throws Exception {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {
@@ -166,13 +174,14 @@ public class WorkregionmAdminController extends JBoltBaseController {
             return;
         }
 
-        renderBytesToExcelXlsxFile(service.exportExcelTpl(rows));
+        renderJxls("work.xlsx", Kv.by("rows", rows), "产线档案_" + DateUtil.today() + ".xlsx");
     }
 
     public void downloadTpl() throws Exception {
         renderBytesToExcelXlsxFile(service.exportExcelTpl(null));
     }
 
+    @CheckPermission(PermissionKey.WORKREGIONM_IMPORT)
     public void importExcel() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

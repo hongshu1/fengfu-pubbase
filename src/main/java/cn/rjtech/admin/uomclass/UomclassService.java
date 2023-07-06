@@ -311,7 +311,8 @@ public class UomclassService extends BaseService<Uomclass> {
             ValidationUtils.notBlank(row.get("CUomClassName"), "计量单位组名称不能为空");
             ValidationUtils.notBlank(row.getStr("CUomClassSn"), "计量单位组类型不能为空");
 
-            if (row.getBoolean("isdefault")) {
+            int bool = row.getBigDecimal("isdefault") != null ? row.getBigDecimal("isdefault").intValue() : 0;
+            if (bool == 1) {
                 finalDefaultCode = row.getStr("cuomclasscode");
             }
 
@@ -322,6 +323,10 @@ public class UomclassService extends BaseService<Uomclass> {
             row.set("iorgid", getOrgId());
             row.set("corgcode", getOrgCode());
             row.set("COrgName", getOrgName());
+            row.set("iupdateby", userId);
+            row.set("dupdatetime", now);
+            row.set("cupdatename", userName);
+            row.set("iautoid", JBoltSnowflakeKit.me.nextId());
         }
 
         if (StrUtil.isNotBlank(finalDefaultCode)) {

@@ -23,9 +23,10 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -179,7 +180,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 	}
 
 	/**
-	 * 设置返回二开业务所属的关键systemLog的targetType 
+	 * 设置返回二开业务所属的关键systemLog的targetType
 	 * @return
 	 */
 	@Override
@@ -343,7 +344,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 		return dbTemplate("otherdeliverylist.getItemCodeLines",kv).find();
 	}
 
-	public Ret pushU8(String ids) {
+	public Ret pushU8(Long ids) {
 		List<Record> list = dbTemplate("otherdeliverylist.pushU8List", Kv.by("autoid", ids)).find();
 
 		if (list.size() > 0) {
@@ -364,7 +365,8 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 			preAllocate.set("tag",type);
 			preAllocate.set("type",type);
 
-			JSONArray mainData = new JSONArray();
+//			JSONArray mainData = new JSONArray();
+			ArrayList<Object> mainData = new ArrayList<>();
 			list.forEach(record -> {
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.set("invstd","");
@@ -388,7 +390,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 				jsonObject.set("ODeptCode",record.get("cdepcode"));
 				jsonObject.set("ODeptName",record.get("cdepname"));
 				jsonObject.set("ORdType",record.get("type"));
-				mainData.put(jsonObject);
+				mainData.add(jsonObject);
 
 			});
 
@@ -416,7 +418,6 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 			systemLog.setTargetId(1L);
 			systemLog.setTargetType(1);
 			Ret ret = new Ret();
-
 			try {
 				String post = HttpApiUtils.httpHutoolPost(url, data, header);
 				if (isOk(post)) {
@@ -431,9 +432,12 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 						String bill = s[0];
 						LOG.info("s===>" + bill);
 						LOG.info("data====" + data);
-//						int update = update("update T_Sys_OtherOut set IAuditStatus ='2' where AutoID IN("+ids+")" );
-//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-//								"推送数据失败," + "失败原因" + msg);
+						int update = update("update T_Sys_OtherOut set U8BillNo = '" + this.extractU8Billno(bill) + "' where" +
+								" AutoID " +
+								"= " +
+								"'" + ids + "'");
+						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+								"推送数据失败," + "失败原因" + msg);
 					}
 					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
 				} else {
@@ -455,6 +459,16 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 		return SUCCESS;
 	}
 
+	/**
+	 * 提取字符串里面的数字
+	 */
+	public String extractU8Billno(String message) {
+		String regEx = "[^0-9]";
+		Pattern p = Pattern.compile(regEx);
+		Matcher m = p.matcher(message);
+		return m.replaceAll("").trim();
+	}
+
 	//通过当前登录人名称获取部门id
 	public String getdeptid(){
 		String dept = "001";
@@ -468,16 +482,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		OtherOut otherOut = findById(formAutoId);
-		otherOut.setIAuditBy(userId);
-		otherOut.setCAuditName(userName);
-		otherOut.setDAuditTime(nowDate);
-		String ids = String.valueOf(otherOut.getAutoID());
-		this.pushU8(ids);
-		otherOut.update();
+		this.pushU8(formAutoId);
 		return null;
 	}
 
@@ -533,30 +538,8 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 
 	@Override
 	public String postBatchApprove(List<Long> formAutoIds) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		/**
-		 *List转换String类型
-		 */
-		if (formAutoIds.size()>0) {
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < formAutoIds.size(); i++) {
-
-				buffer.append("" + formAutoIds.get(i) + ",");
-			}
-			String ids = buffer.substring(0, buffer.length() - 1);
-			List<OtherOut> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (OtherOut otherOut : listByIds) {
-					//审核人
-					otherOut.setIAuditBy(userId);
-					otherOut.setCAuditName(userName);
-					otherOut.setDAuditTime(nowDate);
-//					this.pushU8(ids);
-					otherOut.update();
-				}
-			}
+		for (Long ids : formAutoIds) {
+			Ret u8 = this.pushU8(ids);
 		}
 		return null;
 	}

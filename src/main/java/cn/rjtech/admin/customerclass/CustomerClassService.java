@@ -3,6 +3,10 @@ package cn.rjtech.admin.customerclass;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
@@ -242,6 +246,84 @@ public class CustomerClassService extends BaseService<CustomerClass> {
     }
 
     public Ret importExcelData(File file) {
+        StringBuilder errorMsg=new StringBuilder();
+        JBoltExcel jBoltExcel=JBoltExcel
+                //从excel文件创建JBoltExcel实例
+                .from(file)
+                //设置工作表信息
+                .setSheets(
+                        JBoltExcelSheet.create("sheet1")
+                                //设置列映射 顺序 标题名称
+                                .setHeaders(
+                                        JBoltExcelHeader.create("ccccode","编码"),
+                                        JBoltExcelHeader.create("cccname","名称"),
+                                        JBoltExcelHeader.create("ipid","上级分类")
+                                )
+                                //特殊数据转换器
+                                .setDataChangeHandler((data,index) ->{
+                                    CustomerClass customerclass = findFirst(Okv.by("cCCCode", data.get("ipid")),
+                                            "iautoid",
+                                            "desc");
+                                    if(customerclass!=null){
+                                        data.change("ipid", customerclass.getIAutoId());
+                                    }else{
+                                        data.change("ipid", 0);
+                                    }
+
+                                    data.change("icreateby", JBoltUserKit.getUserId());
+                                    data.change("ccreatename",JBoltUserKit.getUserName());
+
+                                    data.change("iorgid",1);
+                                    data.change("corgcode",1);
+                                    data.change("corgname", 1L);
+                                })
+                                //从第三行开始读取
+                                .setDataStartRow(3)
+                );
+        //从指定的sheet工作表里读取数据
+        List<CustomerClass> models = JBoltExcelUtil.readModels(jBoltExcel, "sheet1", CustomerClass.class, errorMsg);
+        if(notOk(models)) {
+            if(errorMsg.length()>0) {
+                return fail(errorMsg.toString());
+            }else {
+                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+            }
+        }
+        //读取数据没有问题后判断必填字段
+        if(models.size()>0){
+            Date now = new Date();
+            for(CustomerClass p:models){
+                p.setDCreateTime(now);
+                if(notOk(p.getCCCCode())){
+                    return fail("编码不能为空");
+                }
+                if(notOk(p.getCCCName())){
+                    return fail("名称不能为空");
+                }
+                ValidationUtils.isTrue(findFirst(Okv.by("cCCCode", p.getCCCCode()), "iautoid", "asc")==null,
+                        p.getCCCCode()+
+                        "编码重复");
+
+                p.setIUpdateBy(JBoltUserKit.getUserId());
+                p.setCUpdateName(JBoltUserKit.getUserName());
+                p.setDUpdateTime(new Date());
+
+            }
+        }
+
+        //执行批量操作
+        boolean success=tx(() -> {
+            batchSave(models);
+            return true;
+        });
+
+        if(!success) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL);
+        }
+        return SUCCESS;
+    }
+
+    public Ret importExcelData_bak(File file) {
         // 使用字段配置维护
         List<Record> datas = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
         ValidationUtils.notEmpty(datas, "导入数据局不能为空");
@@ -250,7 +332,7 @@ public class CustomerClassService extends BaseService<CustomerClass> {
         Date now = new Date();
 
         for (Record p : datas) {
-            
+
             ValidationUtils.notBlank(p.getStr("CCCCode"), "编码不能为空");
             ValidationUtils.notBlank(p.getStr("CCCName"), "名称不能为空");
 
@@ -262,7 +344,7 @@ public class CustomerClassService extends BaseService<CustomerClass> {
             } else {
                 p.set("ipid", 0L);
             }
-            
+
             p.set("ICreateBy", JBoltUserKit.getUserId());
             p.set("CCreateName", JBoltUserKit.getUserName());
             p.set("iorgid", getOrgId());

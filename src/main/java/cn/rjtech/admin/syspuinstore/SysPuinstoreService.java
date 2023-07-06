@@ -23,10 +23,13 @@ import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.subcontractorderm.SubcontractOrderMService;
 import cn.rjtech.admin.sysassem.SysAssemService;
 import cn.rjtech.admin.sysassem.SysAssemdetailService;
+import cn.rjtech.admin.syspureceive.SysPureceiveService;
+import cn.rjtech.admin.syspureceive.SysPureceivedetailService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.base.BaseSysPureceivedetail;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.Main;
@@ -93,6 +96,10 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     private PurchaseOrderMService     purchaseOrderMService;//采购订单主表
     @Inject
     private InventoryChangeService    inventoryChangeService;//物料形态对照表
+    @Inject
+    private SysPureceiveService       pureceiveService;
+    @Inject
+    private SysPureceivedetailService pureceivedetailService;
 
     @Override
     protected int systemLogTargetType() {
@@ -524,26 +531,78 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     }
 
     /*
+     * 是否为双单位扫码
+     * */
+    public boolean checkPUReceiveSpecial(SysPureceive pureceive) {
+        //双单位
+        if (pureceive != null && ObjUtil.equal(pureceive.getType(), "PUReceiveSpecial")) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
      * 组推送u8的json
      * */
     public String getSysPuinstoreDto(SysPuinstore puinstore) {
-        SysPuinstoreDTO dto = new SysPuinstoreDTO();
-        //主数据
-        ArrayList<Main> MainData = new ArrayList<>();
-        Kv kv = new Kv();
-        kv.set("billno", puinstore.getBillNo());
-        kv.set("sourcebillno", puinstore.getSourceBillNo());
-        kv.set("sourcebilldid", puinstore.getSourceBillID());
-        kv.set("deptcode", puinstore.getDeptCode());
 
-        User user = JBoltUserKit.getUser();
-        Vendor vendor = vendorService.findByCode(puinstore.getVenCode());
-        List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
+        //主数据
         int i = 1;
+        ArrayList<Main> MainData = new ArrayList<>();
+        User user = JBoltUserKit.getUser();
+        List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
+        //双单位的收料单
+        List<SysPuinstoredetail> receiveSpecialList = new ArrayList<>();
+        //双单位扫码，只需要推送转换前的数据
+        SysPureceive pureceive = pureceiveService.findByBillNo(puinstore.getSourceBillNo());
+        boolean special = checkPUReceiveSpecial(pureceive);
+        if (special){
+            List<SysPureceivedetail> pureceivedetails = pureceivedetailService.findFirstBy(pureceive.getAutoID());
+            List<String> invcodes = pureceivedetails.stream()
+                .filter(e -> ObjUtil.equal(e.getBarcodeType(), "转换前"))
+                .map(BaseSysPureceivedetail::getInvcode)
+                .collect(Collectors.toList());
+            for (SysPuinstoredetail detail : detailList) {
+                if (invcodes.contains(detail.getInvcode())){
+                    receiveSpecialList.add(detail);
+                }
+            }
+        }
+        //双单位
+        if (!receiveSpecialList.isEmpty()) {
+            commonMakeUpMainData(receiveSpecialList, puinstore, MainData);
+        } else {
+            //来料收获
+            commonMakeUpMainData(detailList, puinstore, MainData);
+        }
+
+        //其它数据
+        SysPuinstoreDTO dto = new SysPuinstoreDTO();
+        PreAllocate preAllocate = new PreAllocate();
+        preAllocate.setCreatePerson(user.getUsername());
+        preAllocate.setCreatePersonName(puinstore.getCCreateName());
+        preAllocate.setLoginDate(DateUtil.formatDate(puinstore.getDCreateTime()));
+        preAllocate.setOrganizeCode(puinstore.getOrganizeCode());
+        preAllocate.setTag("PUInStore");
+        preAllocate.setType("PUInStore");
+        preAllocate.setUserCode(user.getUsername());
+        //放入dto
+        dto.setMainData(MainData);
+        dto.setPreAllocate(preAllocate);
+        dto.setUserCode(user.getUsername());
+        dto.setOrganizeCode(puinstore.getOrganizeCode());
+        dto.setToken("");
+        //返回
+        return JSON.toJSONString(dto);
+    }
+
+    public void commonMakeUpMainData(List<SysPuinstoredetail> detailList, SysPuinstore puinstore,
+                                     ArrayList<Main> MainData) {
+        int i = 1;
+        Vendor vendor = vendorService.findByCode(puinstore.getVenCode());
         for (SysPuinstoredetail detail : detailList) {
             Main main = new Main();
             if (StrUtil.isNotBlank(detail.getBarCode())) {
-//                Record record = getBarcodeVersion(puinstore.getSourceBillNo(), detail.getSpotTicket());
                 main.setBarCode(detail.getBarCode()); //现品票+版本号
             } else {
                 main.setBarCode(detail.getInvcode());//传invcode
@@ -581,23 +640,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             i = i + 1;
         }
 
-        //其它数据
-        PreAllocate preAllocate = new PreAllocate();
-        preAllocate.setCreatePerson(user.getUsername());
-        preAllocate.setCreatePersonName(puinstore.getCCreateName());
-        preAllocate.setLoginDate(DateUtil.formatDate(puinstore.getDCreateTime()));
-        preAllocate.setOrganizeCode(puinstore.getOrganizeCode());
-        preAllocate.setTag("PUInStore");
-        preAllocate.setType("PUInStore");
-        preAllocate.setUserCode(user.getUsername());
-        //放入dto
-        dto.setMainData(MainData);
-        dto.setPreAllocate(preAllocate);
-        dto.setUserCode(user.getUsername());
-        dto.setOrganizeCode(puinstore.getOrganizeCode());
-        dto.setToken("");
-        //返回
-        return JSON.toJSONString(dto);
     }
 
     public Record getBarcodeVersion(String corderno, String barcode) {
@@ -625,7 +667,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
                 //同步U8
                 String json = getSysPuinstoreDto(puinstore);
                 setSysPuinstoreU8Billno(json, puinstore);
-                // 状态改为已审核
                 puinstore.setCAuditName(JBoltUserKit.getUserName());
                 puinstore.setAuditDate(date);
                 puinstore.setCUpdateName(JBoltUserKit.getUserName());
@@ -634,21 +675,15 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
                 puinstoreList.add(puinstore);
 
                 //2、采购订单，如果是双单位收货，需要生成形态转换单
-                PurchaseOrderM purchaseOrderM = purchaseOrderMService.findByCOrerNo(puinstore.getSourceBillNo());
-                //2.1 采购订单
-                if (purchaseOrderM != null) {
+                SysPureceive pureceive = pureceiveService.findByBillNo(puinstore.getSourceBillNo());
+                boolean special = checkPUReceiveSpecial(pureceive);
+                if (special){
                     List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
-                    String invcode = detailList.get(0).getInvcode();
-                    Inventory inventory = inventoryService.findBycInvCode(invcode);
-                    InventoryChange inventoryChange = inventoryChangeService.findByBeforeInventoryId(inventory.getIAutoId());
-                    //inventoryChange != null，代表是双单位，需要生成形态转换单
-                    if (inventoryChange != null) {
-                        SysAssem sysAssem = new SysAssem();
-                        List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
-                        createSysAssem(sysAssem, detailList, puinstore, sysAssemdetailList);
-                        ValidationUtils.isTrue(sysAssem.save(), "生成形态转换单失败！！！");
-                        sysAssemdetailService.batchSave(sysAssemdetailList);
-                    }
+                    SysAssem sysAssem = new SysAssem();
+                    List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
+                    createSysAssem(sysAssem, detailList, puinstore, sysAssemdetailList);
+                    ValidationUtils.isTrue(sysAssem.save(), "生成形态转换单失败！！！");
+                    sysAssemdetailService.batchSave(sysAssemdetailList);
                 }
                 //2.2 委外订单
                 Integer corderno = subcontractOrderMService.findOderNoIsNotExists(puinstore.getSourceBillNo());

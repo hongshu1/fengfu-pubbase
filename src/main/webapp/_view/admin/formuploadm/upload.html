@@ -6,7 +6,11 @@
         <div class="col">
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
                    readonly="readonly"
-                   id="fileSyncUploaderDemo" name="mouldsPost.filepath" value="#(mouldsPost.filepath??)"/>
+                   id="fileSyncUploaderDemo" name="cattachments" value="#(cattachments??)"/>
+            #if(iautoid??)
+            <input type="hidden" id="iautoid" name="iAutoId" value="#(iautoid??)" />
+            #end
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" hidden id="cattachments" value="#(cattachments??)" />
         </div>
     </div>
 </form>
@@ -26,102 +30,24 @@
                data-uploadurl="/admin/formUploadM/upload" data-choosebtntext="选择文件"
                data-theme="explorer-fa" multiple="multiple" data-multiplefileinput name="file" accept="*"
                data-max-filesize="20971520" data-sync="true"
-               data-handler="set1ValueTo1" data-setvalueto="fileSyncUploaderDemo" data-options="getFileInputOptions" />
+               data-handler="setValueTo" data-delete-url="/admin/formUploadM/upload" data-setvalueto="fileSyncUploaderDemo"/>
     </div>
 
 </fieldset>
 #define js()
 <script>
     hideParentLayerDialogBtn(0);
-    var data={}
-    var previews=$("#fileSyncUploaderDemo").val();
-    var ress=previews.split(',');
-    var strs=[]
-    for (var i=0;i<ress.length;i++){
-        data.fileId="ASDASD.png"
-        data.filename="ASDASD.png"
-        data.url=ress[i]
-        strs.push(data)
-    }
-    let a=$('#fileInput_123')
-    var inputId=a.attr("id");
-    MultipleFileInputUtil.changeSyncInputFiles(inputId,strs)
-    function set1ValueTo1(input,res){
-        var that=this;
-        var setvalueto=input.data("setvalueto");
-        if(!setvalueto){
-            return false;
-        }
-        var inputId=input.attr("id");
-        var sync=input.data("sync");
-        var multipleFiles=null;
-        if(sync){
-            multipleFiles=MultipleFileInputUtil.changeSyncInputFiles(inputId,res.data);
-        }else{
-            multipleFiles=that.findInputFiles(inputId);
-            multipleFiles.push(res.data);
-        }
-
-        if(multipleFiles&&multipleFiles.length>0){
-            var urls=new Array();
-            for(var i in multipleFiles){
-                urls.push(multipleFiles[i].url);
-            }
-            var value=urls.join(",");
-            $("#"+setvalueto).val(value).change();
-        }
-
-
-    }
-    $('#fileInput_123').on('filepredelete', function(event, key,data) {
-        var index = multipleUploadFiles[0].value.findIndex(item => item.url == ress[key])
-        multipleUploadFiles[0].value.splice(index,1)
-        let strval = multipleUploadFiles[0].value.map(item => item.url).toString()
-        $("#fileSyncUploaderDemo").val(strval);
-    });
-    var previewConfig =[];
-    function getFileInputOptions(){
-        //分割字符串存入str数组
-        var previewJson=$("#fileSyncUploaderDemo").val();
-        var res=previewJson.split(',');
-        var str=[]
-        for (var i=0;i<res.length;i++){
-            str.push(res[i])
-        }
-
-
-
-
-        for (var j=0;j<str.length;j++) {
-            var aaa = JSON.stringify(str[j])
-            var index= aaa.lastIndexOf(".");
-            var  ext= str[j].substr(index);
-            if(ext==('mp4')){
-                let datas={}
-                datas.caption=str[j];
-                datas.key=j;
-                datas.type="video";
-                datas.filetype="video/mp4";
-                previewConfig.push(datas);
-            }else {
-                let datas = {}
-                datas.caption = str[j];
-                datas.key = j;
-                previewConfig.push(datas);
-            }
-        }
-
-        console.info(JSON.stringify(previewConfig))
-        return {deleteUrl:'/admin/mouldspost/delete', initialPreviewAsData:true,initialPreview:str,initialPreviewShowDelete:true,initialPreviewConfig:previewConfig};
-    }
-
     // 增加一个按钮-保存role
     addParentLayerDialogBtn("保存", "lay_success savebtn", function () {
-        if (!previewConfig) {
+        var val = $('#fileSyncUploaderDemo').val();
+        if (val==="") {
+             LayerMsgBox.alert('请上传图片', 2);
             return;
         }
         // 将选中数据插入from表单
-        parent.insertDatas(strs);
+        var val2 = $('#cattachments').val();
+        var iautoid = $('#iautoid').val();
+        parent.insertDatas(iautoid,val,val2);
         // 关闭当前页面
         parent.layer.close(parent.layer.getFrameIndex(window.name));
     });

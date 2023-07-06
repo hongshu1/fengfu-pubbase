@@ -262,7 +262,7 @@ SELECT
     t3.cInvName1,
     t3.cInvStd,
     uom.cUomName,
-    area.iMaxCapacity AS Qty,
+    t2.Qty,
     t1.CheckType,
     t2.StockQty,
     t2.PlqtyQty,
@@ -285,6 +285,41 @@ WHERE t3.isDeleted = 0
     AND wh.cWhCode = #para(whcode)
     #if(poscode)
     AND area.cAreaCode IN(#(poscode))
+    #end
+    #if(posname)
+    AND area.cAreaName  like '%#(posname)%'
+    #end
+    #if(cinvcname)
+    AND class.cInvCName like '%#(cinvcname)%'
+    #end
+    #if(invcode)
+    AND t3.cInvCode = '#(invcode)'
+    #end
+     #if(cinvcode1)
+    AND t3.cInvCode1 = '#(cinvcode1)'
+    #end
+     #if(cinvname1)
+    AND t3.cInvName1 = '#(cinvname1)'
+    #end
+    #if(status == '0')
+    AND t2.StockStatus is NOT NULL
+    AND t2.StockQty = t2.Qty
+    #end
+    # if(status == '1')
+    AND t2.StockStatus is NOT NULL
+    AND t2.StockQty != t2.Qty
+    #end
+    #if(status == '2')
+    AND t2.StockStatus is NULL
+    AND area.iMaxCapacity > 0
+    #end
+    #if(status == '3')
+    AND t2.StockStatus is NULL
+    AND area.iMaxCapacity = 0
+    #end
+    #if(status == '4')
+    AND t2.StockStatus is NULL
+    AND area.iMaxCapacity < 0
     #end
     #end
 
@@ -354,7 +389,6 @@ WHERE
     #if(sqlids)
     AND t2.AutoID in (#(sqlids))
     #end
-
 #end
 
     #sql("barcodeDatas")
@@ -418,6 +452,9 @@ WHERE t3.isDeleted = 0
     #if(barcode)
 	    and t4.cCompleteBarcode = #para(barcode)
 	#end
+	 #if(invcode)
+	    and t3.cInvCode = #para(invcode)
+	#end
 #end
 
 
@@ -454,6 +491,21 @@ WHERE t3.isDeleted = 0
     #if(poscode)
     AND area.cAreaCode IN(#(poscode))
     #end
+    #if(posname)
+    AND area.cAreaName  like '%#(posname)%'
+    #end
+    #if(cinvcname)
+    AND class.cInvCName like '%#(cinvcname)%'
+    #end
+    #if(invcode)
+    AND t3.cInvCode = '#(invcode)'
+    #end
+     #if(cinvcode1)
+    AND t3.cInvCode1 = '#(cinvcode1)'
+    #end
+     #if(cinvname1)
+    AND t3.cInvName1 = '#(cinvname1)'
+    #end
     #end
 
 #sql("findCheckVouchBarcodeByMasIdAndInvcode")
@@ -466,5 +518,25 @@ where 1=1
 #if(invcode)
     and t1.invcode = #para(invcode)
 #end
+#end
+
+#sql("posHouse")
+SELECT  a.*,
+        a.cAreaCode AS poscode,
+        a.cAreaName AS posname
+FROM Bd_Warehouse_Area a
+where 1=1
+    #if(q)
+		and (a.cAreaCode like concat('%',#para(q),'%') OR a.cAreaName like concat('%',#para(q),'%'))
+	#end
+#end
+
+#sql("InventoryClass")
+SELECT  class.*
+FROM Bd_InventoryClass class
+where 1=1
+    #if(q)
+		and (class.cInvCCode like concat('%',#para(q),'%') OR class.cInvCName like concat('%',#para(q),'%'))
+	#end
 #end
 

@@ -4,13 +4,13 @@ SELECT
 	NULL AS iPid,
 	master.iInventoryId,
 	master.cInvCode,
-	master.cInvName,
-	NULL AS iBomMid,
-	NULL AS iInvPartBomMid
+	master.cInvName
 FROM
 	Bd_BomM master
 WHERE
 	master.IsDeleted = '0'
+    AND master.iAuditStatus = 2
+    AND master.isEffective = 1
 	#if(isView)
 	    AND master.isView = #para(isView)
 	#end
@@ -23,9 +23,7 @@ SELECT
 	compare.iPid,
 	compare.iInventoryId,
 	compare.cInvCode,
-	compare.cInvName,
-	compare.iBomMid,
-	compare.iInvPartBomMid
+	compare.cInvName
 FROM
 	Bd_BomD compare
 WHERE
@@ -57,6 +55,7 @@ WHERE
 #sql("getVersionRecord")
 SELECT
 	master.iAutoId,
+	master.isEffective,
 	master.cVersion,
 	master.iType,
 	master.isView,
@@ -91,6 +90,9 @@ WHERE
 	#if(cInvName1)
 	    AND minv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
 	#end
+	#if(isEffective)
+        AND master.isEffective = #para(isEffective59)
+	#end
 	ORDER BY master.dCreateTime DESC
 #end
 
@@ -114,7 +116,7 @@ WHERE m.isDeleted = '0'
 
 #sql("findByInvId")
 SELECT
-     master.cVersion,
+    master.cVersion,
 	master.dEnableDate,
 	master.dDisableDate
 FROM

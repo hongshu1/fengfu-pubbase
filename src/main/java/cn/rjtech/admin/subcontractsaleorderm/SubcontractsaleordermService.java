@@ -2,7 +2,9 @@ package cn.rjtech.admin.subcontractsaleorderm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dept.DeptService;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -10,21 +12,30 @@ import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dept;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
+import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.Subcontractsaleorderm;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.javaparser.utils.Log;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -58,9 +69,68 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     private FormApprovalService formApprovalService;
     @Inject
     private WeekOrderMService weekOrderMService;
+    @Inject
+    private DictionaryService dictionaryService;
+    @Inject
+    private SaleTypeService saleTypeService;
+    @Inject
+    private CustomerService customerService;
+    @Inject
+    private InventoryService inventoryService;
     @Override
     protected Subcontractsaleorderm dao() {
         return dao;
+    }
+
+
+    /**
+     * U8推单
+     * 成功则返回U8单号
+     */
+    private String pushOrder(Subcontractsaleorderm subcontractsaleorderm, List<Subcontractsaleorderd> subcontractsaleorderds) {
+        Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), subcontractsaleorderm.getIBusType().toString())).findFirst().orElse(null);
+        String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
+        String cSTCode = Optional.ofNullable(saleTypeService.findById(subcontractsaleorderm.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
+
+        // 封装JSON
+        JSONArray jsonArray = new JSONArray();
+        for (Subcontractsaleorderd subcontractsaleorderd : subcontractsaleorderds) {
+            for (int i = 1; i <= 31; i++) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("DocNo", subcontractsaleorderm.getCOrderNo());
+                jsonObject.put("ccuscode", Optional.ofNullable(customerService.findById(subcontractsaleorderm.getICustomerId())).map(Customer::getCCusCode).orElse(""));
+                jsonObject.put("cmaker", JBoltUserKit.getUserName());
+                jsonObject.put("dDate", DateUtils.formatDate(subcontractsaleorderm.getDCreateTime()));
+                jsonObject.put("cPersonCode", subcontractsaleorderm.getIBusPersonId());
+                jsonObject.put("cBusType", busName);
+                jsonObject.put("cSTCode", cSTCode);
+                jsonObject.put("cexch_name", subcontractsaleorderm.getIExchangeRate());
+                jsonObject.put("iExchRate", subcontractsaleorderm.getIExchangeRate());
+                jsonObject.put("iTaxRate", subcontractsaleorderm.getITaxRate());
+                Inventory inventory = inventoryService.findById(subcontractsaleorderd.getIInventoryId());
+                jsonObject.put("cInvCode", inventory.getCInvCode());
+                jsonObject.put("cInvName", inventory.getCInvName1());
+                jsonObject.put("iQuantity", subcontractsaleorderd.getInt("iqty" + i));
+                jsonObject.put("iQuotedPrice", 0);
+                jsonObject.put("KL", 100);
+                jsonObject.put("iNatDisCount", 0);
+                jsonArray.add(jsonObject);
+            }
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("data", jsonArray);
+
+        // 推送U8
+        Map<String, String> header = new HashMap<>(5);
+        header.put("Content-Type", "application/json");
+        String url = "http://120.24.44.82:8099/api/cwapi/SODocAdd?dbname=U8Context";
+        String post = HttpApiUtils.httpHutoolPost(url, data, header);
+        JSONObject jsonObject = JSON.parseObject(post);
+        ValidationUtils.notNull(jsonObject, "推送U8失败");
+        ValidationUtils.equals("S", jsonObject.getString("status"), "失败推单:" + jsonObject.getString("remark"));
+
+        String remark = jsonObject.getString("remark");
+        return remark.substring(remark.indexOf("执行结果为") + 5);
     }
 
     /**
@@ -333,16 +403,24 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param formAutoId 单据ID
      * @return 错误信息
      */
+    @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
         // 订单状态校验
 //        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
+
+        // 推送U8订单
+        List<Subcontractsaleorderd> subcontractsaleorderds = subcontractsaleorderdService.findByMId(formAutoId);
+        String cDocNo = pushOrder(subcontractsaleorderm, subcontractsaleorderds);
+        ValidationUtils.notNull(cDocNo, "推单失败");
 
         // 订单状态修改
         subcontractsaleorderm.setIOrderStatus(MonthOrderStatusEnum.AUDITTED.getValue());
         subcontractsaleorderm.setIUpdateBy(JBoltUserKit.getUserId());
         subcontractsaleorderm.setCUpdateName(JBoltUserKit.getUserName());
         subcontractsaleorderm.setDUpdateTime(new Date());
+        subcontractsaleorderm.setIPushTo(1);
+        subcontractsaleorderm.setCDocNo(cDocNo);
         subcontractsaleorderm.update();
         // 审批通过生成客户计划汇总
         cusOrderSumService.algorithmSum();
@@ -381,6 +459,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param isFirst    是否为审批的第一个节点
      * @param isLast     是否为审批的最后一个节点
      */
+    @Override
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 只有一个审批人
         if (isFirst && isLast) {
@@ -427,6 +506,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 提审后业务处理，如有异常返回错误信息
      */
+    @Override
     public String postSubmitFunc(long formAutoId) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
         if (WeekOrderStatusEnum.NOT_AUDIT.getValue() == subcontractsaleorderm.getIOrderStatus() || WeekOrderStatusEnum.REJECTED.getValue() == subcontractsaleorderm.getIOrderStatus()) {
@@ -438,6 +518,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 撤回审核业务处理，如有异常返回错误信息
      */
+    @Override
     public String postWithdrawFunc(long formAutoId) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
 //        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审批状态");
@@ -465,6 +546,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     /**
      * 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
      */
+    @Override
     public String postWithdrawFromAuditted(long formAutoId) {
         ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
         // 修改客户计划汇总
@@ -477,6 +559,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param formAutoIds 单据IDs
      * @return  错误信息
      */
+    @Override
     public String postBatchApprove(List<Long> formAutoIds) {
         // 审批通过生成客户计划汇总
         cusOrderSumService.algorithmSum();
@@ -488,6 +571,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param formAutoIds 单据IDs
      * @return  错误信息
      */
+    @Override
     public String postBatchReject(List<Long> formAutoIds) {
         for (Long formAutoId:formAutoIds) {
             ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
@@ -500,6 +584,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
      * @param formAutoIds 单据IDs
      * @return  错误信息
      */
+    @Override
     public String postBatchBackout(List<Long> formAutoIds) {
         List<Subcontractsaleorderm> subcontractsaleorderms = getListByIds(StringUtils.join(formAutoIds, COMMA));
         Boolean algorithmSum = subcontractsaleorderms.stream().anyMatch(item -> item.getIOrderStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));

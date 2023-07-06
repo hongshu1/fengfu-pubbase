@@ -30,6 +30,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -229,7 +230,9 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     }
 
     public Page<Record> getSaleDeliverBillNoList(int pageNumber, int pageSize, Kv kv) {
-        return dbTemplate("syssaledeliverplan.getSaleDeliverBillNoList", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("syssaledeliverplan.getSaleDeliverBillNoList", kv).paginate(pageNumber, pageSize);
+
+        return paginate;
     }
 
     /**
@@ -241,50 +244,52 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
             return fail("行数据不能为空");
         }
         SysSaledeliverplan sysotherin = jBoltTable.getFormModel(SysSaledeliverplan.class, "syssaledeliverplan");
+        Record formRecord = jBoltTable.getFormRecord();
         //获取当前用户信息？
         User user = JBoltUserKit.getUser();
         Date now = new Date();
         tx(() -> {
             //通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
+                sysotherin.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
                 sysotherin.setOrganizeCode(getOrgCode());
                 sysotherin.setIcreateby(user.getId());
                 sysotherin.setCcreatename(user.getName());
                 sysotherin.setDcreatetime(now);
-                sysotherin.setIupdateby(user.getId());
-                sysotherin.setCupdatename(user.getName());
-                sysotherin.setDupdatetime(now);
+                sysotherin.setSourceBillType("手动新增");
+                sysotherin.setSourceBillID(formRecord.getStr("sourcebillid"));//来源id
+                sysotherin.setIsDeleted(false);
 
+                saveSaleDeliverPlanModel(sysotherin, formRecord, now, user);
                 //主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
             } else {
-                sysotherin.setIupdateby(user.getId());
-                sysotherin.setCupdatename(user.getName());
-                sysotherin.setDupdatetime(now);
+                saveSaleDeliverPlanModel(sysotherin, formRecord, now, user);
                 //主表修改
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
+            List<Record> savelist = jBoltTable.getSaveRecordList();
+            List<Record> updatelist = jBoltTable.getUpdateRecordList();
+            Object[] ids = jBoltTable.getDelete();
             //从表的操作
-            // 获取保存数据（执行保存，通过 getSaveRecordList）
-            saveTableSubmitDatas(jBoltTable, sysotherin);
-            //获取修改数据（执行修改，通过 getUpdateRecordList）
-            updateTableSubmitDatas(jBoltTable, sysotherin);
-            //获取删除数据（执行删除，通过 getDelete）
+            // 保存
+            saveTableSubmitDatas(jBoltTable, sysotherin, user, now);
+            //更新
+            updateTableSubmitDatas(jBoltTable, sysotherin, user, now);
+            //删除
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return SUCCESS;
+        return successWithData(sysotherin.keep("autoid"));
     }
 
     //可编辑表格提交-新增数据
-    private void saveTableSubmitDatas(JBoltTable jBoltTable, SysSaledeliverplan sysotherin) {
+    private void saveTableSubmitDatas(JBoltTable jBoltTable, SysSaledeliverplan sysotherin, User user, Date now) {
         List<Record> list = jBoltTable.getSaveRecordList();
         if (CollUtil.isEmpty(list)) {
             return;
         }
         ArrayList<SysSaledeliverplandetail> sysproductindetail = new ArrayList<>();
-        User user = JBoltUserKit.getUser();
-        Date now = new Date();
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
             SysSaledeliverplandetail sysdetail = new SysSaledeliverplandetail();
@@ -294,27 +299,24 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
             sysdetail.setWhCode(row.getStr("whcode"));
             sysdetail.setQty(row.getBigDecimal("qty"));
             sysdetail.setMasID(sysotherin.getAutoID());
-            sysdetail.setSourceBillType(row.getStr("sourcebilltype"));
-            sysdetail.setSourceBillNo(row.getStr("sourcebillno"));
-            sysdetail.setSourceBillDid(row.getStr("sourcebilldid"));
-            sysdetail.setSourceBillID(row.getStr("sourcebilldid"));
-            sysotherin.setIupdateby(user.getId());
-            sysotherin.setCupdatename(user.getName());
-            sysotherin.setDupdatetime(now);
+            sysdetail.setIsDeleted(false);
+            sysdetail.setIcreateby(user.getId());
+            sysdetail.setCcreatename(user.getName());
+            sysdetail.setDcreatetime(now);
+            saveSaleDeliverPlanDetailModel(sysdetail, row, now, user, i);
+
             sysproductindetail.add(sysdetail);
         }
         syssaledeliverplandetailservice.batchSave(sysproductindetail);
     }
 
     //可编辑表格提交-修改数据
-    private void updateTableSubmitDatas(JBoltTable jBoltTable, SysSaledeliverplan sysotherin) {
+    private void updateTableSubmitDatas(JBoltTable jBoltTable, SysSaledeliverplan sysotherin, User user, Date now) {
         List<Record> list = jBoltTable.getUpdateRecordList();
         if (CollUtil.isEmpty(list)) {
             return;
         }
         ArrayList<SysSaledeliverplandetail> sysproductindetail = new ArrayList<>();
-        Date now = new Date();
-        User user = JBoltUserKit.getUser();
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
             SysSaledeliverplandetail sysdetail = new SysSaledeliverplandetail();
@@ -344,6 +346,83 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
             return;
         }
         syssaledeliverplandetailservice.deleteByIds(ids);
+    }
+
+    public void saveSaleDeliverPlanModel(SysSaledeliverplan sysotherin, Record formRecord, Date now, User user) {
+        sysotherin.setRdCode(formRecord.getStr("rdcode"));
+        sysotherin.setBillNo(formRecord.getStr("billno"));
+        sysotherin.setBillType(formRecord.getStr("billtype"));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        sysotherin.setBillDate(format.format(now));
+        sysotherin.setDeptCode(formRecord.getStr("deptcode"));
+        sysotherin.setExchName(formRecord.getStr("exchname"));
+        sysotherin.setExchRate(formRecord.getBigDecimal("exchrate"));
+        sysotherin.setTaxRate(formRecord.getBigDecimal("taxrate"));
+//                sysotherin.setReceiveAddress(formRecord.getStr(""));//收获地址
+//                sysotherin.setVenCode(formRecord.getStr(""));//供应商编码
+        sysotherin.setPreDeliverDate(formRecord.getStr("predeliverdate"));//发货日期
+        sysotherin.setInvoice(formRecord.getStr("invoice"));
+        sysotherin.setMemo(formRecord.getStr("memo"));
+        sysotherin.setCondition(formRecord.getStr("condition"));
+        sysotherin.setIssue(formRecord.getStr("issue"));
+        sysotherin.setIupdateby(user.getId());
+        sysotherin.setCupdatename(user.getName());
+        sysotherin.setDupdatetime(now);
+    }
+
+    public void saveSaleDeliverPlanDetailModel(SysSaledeliverplandetail detail, Record row, Date now, User user, int i) {
+        detail.setSourceBillType(row.getStr("sourcebilltype"));
+        detail.setSourceBillNo(row.getStr("sourcebillno"));
+        detail.setSourceBillDid(row.getStr("sourcebilldid"));
+        detail.setSourceBillID(row.getStr("sourcebilldid"));
+        detail.setIupdateby(user.getId());
+        detail.setCupdatename(user.getName());
+        detail.setDupdatetime(now);
+        detail.setSourceBillDid(null);
+        detail.setSourceBIllNoRow(StrUtil.toString(i));
+        detail.setSourceBillNo(null);
+        detail.setSourceBillType("手动新增");
+        detail.setPosCode(row.getStr("careacode"));
+    }
+
+    /*
+     * 根据barcode加载数据
+     * */
+    public List<Record> getBarcodeDatas(String q, Kv kv) {
+        List<Record> recordList = new ArrayList<>();
+       /* if (kv.get("sourcebillid") != null) {
+            kv.set("sourcebillid", kv.get("sourcebillid"));
+            List<Record> list = dbTemplate("syssaledeliverplan.selectInvocodeByMaskid", kv).find();
+            String cinvcodes = list.stream().map(e -> e.getStr("cinvcode")).collect(Collectors.joining(","));
+            recordList = dbTemplate("syssaledeliverplan.scanBarcode",
+                Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode()).set("cinvcodes", cinvcodes)).find();
+        } else {
+            recordList = dbTemplate("syssaledeliverplan.scanBarcode",
+                Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        }*/
+        recordList = dbTemplate("syssaledeliverplan.scanBarcode",
+            Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        return recordList;
+    }
+
+    /*
+     * 根据invcode加载数据
+     * */
+    public List<Record> getDatasByInvcode(String q, Kv kv) {
+        List<Record> recordList = new ArrayList<>();
+        /*if (kv.get("sourcebillid") != null) {
+            kv.set("sourcebillid", kv.get("sourcebillid"));
+            List<Record> list = dbTemplate("syssaledeliverplan.selectInvocodeByMaskid", kv).find();
+            String cinvcodes = list.stream().map(e -> e.getStr("cinvcode")).collect(Collectors.joining(","));
+            recordList = dbTemplate("syssaledeliverplan.scanInvcode",
+                Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode()).set("cinvcodes", cinvcodes)).find();
+        } else {
+            recordList = dbTemplate("syssaledeliverplan.scanInvcode",
+                Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        }*/
+        recordList = dbTemplate("syssaledeliverplan.scanInvcode",
+            Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        return recordList;
     }
 
     /*处理审批通过的其他业务操作，如有异常返回错误信息*/
@@ -385,8 +464,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         SysSaledeliverplan saledeliverplan = findById(autoid);
         List<SysSaledeliverplan> saledeliverplanList = new ArrayList<>();
         //打u8接口，通知u8删除单据，然后更新mom平台的数据
-//        String json = getSysPuinstoreDeleteDTO(saledeliverplan.getU8BillNo());
-        String json = "";
+        String json = getSysPuinstoreDeleteDTO(saledeliverplan.getU8BillNo());
         try {
             String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
             LOG.info(post);
@@ -395,7 +473,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         }
         //
         User user = JBoltUserKit.getUser();
-        //saledeliverplan.setU8BillNo(null);//将u8的单据号置为空
+        saledeliverplan.setU8BillNo(null);//将u8的单据号置为空
         saledeliverplan.setDAuditTime(date);
         saledeliverplan.setIAuditby(user.getId());
         saledeliverplan.setCAuditname(user.getUsername());

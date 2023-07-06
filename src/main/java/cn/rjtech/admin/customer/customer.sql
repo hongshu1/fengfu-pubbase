@@ -75,3 +75,7 @@ WHERE
         AND A.cVenCode = #para(vendorCode)
     #end
 #end
+
+#sql("getCustomerByName")
+SELECT * from Bd_Customer WHERE isDeleted=0 AND cCusName = #para(icustomername)
+#end

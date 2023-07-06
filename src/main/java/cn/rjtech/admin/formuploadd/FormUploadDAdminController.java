@@ -8,9 +8,12 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.FormUploadD;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
+
 /**
  * 制造工单-上传记录明细
  * @ClassName: FormUploadDAdminController
@@ -86,4 +89,12 @@ public class FormUploadDAdminController extends BaseAdminController {
 		renderJson(service.delete(getLong(0)));
 	}
 
+	/**
+	 * 删除相关附件
+	 */
+	public void deletePicture(@Para(value = "iautoid") Long iautoid,@Para(value = "url") String url){
+		ValidationUtils.validateId(iautoid, "记录上传附件ID");
+		renderJson(service.deletePicture(iautoid,url));
+
+	}
 }

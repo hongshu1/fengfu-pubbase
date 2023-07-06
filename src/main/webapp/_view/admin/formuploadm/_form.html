@@ -128,7 +128,7 @@
                             </div>
                         </div>
                         <input id="operationType" type="hidden" name="operationType" value="#(operationType??)">
-                        <input id="cattachments" type="hidden" name="cattachments" value="#(cattachments??)">
+                        <input id="cattachments" type="hidden" name="cattachments2" value="#(cattachments??)">
                     </form>
                 </div>
             </div>
@@ -147,17 +147,20 @@
             #end
             <td >
                 {@if data.cattachments != null}
-                <div  class="float-right">
-                    {@each data.cattachments.split(",") as url}
-                    {@if url.
-                    indexOf('png') != -1 || url.indexOf('jpg')!=-1}
-                    <img  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
+                <a  style="position: relative; top:25px; " href="admin/formUploadM/attachment?iautoid=${data.iautoid}&cattachments=${data.cattachments}&edit=true" tooltip data-dialog-title="图片上传" data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst"><i class="fa fa-plus"></i></a>
+                {@each data.cattachments.split(",") as url}
+                    {@if url.indexOf('png') != -1 || url.indexOf('jpg')!=-1}
+                <div  class="float-right" id="${data.cattachments}" style="position: relative">
+                    <a href="admin/formUploadD/deletePicture?iautoid=${data.iautoid}&url=${url}"   onclick="deletePicture('${data.iautoid}','${data.cattachments}','${url}')" style="position: absolute; right: 0"  data-loading="执行中 " tooltip data-title="删除附件" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger" style="position: absolute; right: 0"></i></a>
+                        <img  id="${url}"  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
+                 </div>
                     {@/if}
                     {@/each}
-                </div>
+
                 {@/if}
             </td>
             <td>${data.cmemo}</td>
+            <td hidden>${data.cattachments2}</td>
         </tr>
         {@/each}
     </script>
@@ -183,11 +186,11 @@
             <th data-width="60" data-column="index">序号</th>
 
             #if(readonly != 'readonly')
-            <th data-width="150" data-column="cattachments">操作</th>
+            <th data-width="20" data-column="">操作</th>
             #end
-
-            <th data-width="150"  data-column="cattachments">附件</th>
-            <th data-width="150" data-column="cmemo">备注</th>
+            <th data-width="550"  data-column="cattachments">附件</th>
+            <th data-width="480" data-column="cmemo">备注</th>
+            <th hidden data-width="1" data-column="cattachments2">附件2</th>
         </tr>
         </thead>
     </table>
@@ -230,7 +233,6 @@
             trigger: "click",
             submit: {
                 withForm: ["formUploadM_#(pageId)"],
-                name: 'formUploadM',
                 type: "all",
                 url: "admin/formUploadM/submitAll",
                 success: function (res) {
@@ -264,43 +266,89 @@
                 cmemo: {
                     type: "input",
                     submitAttr:"cmemo",
-
                 },
+                cattachments2: {
+                    type: "input",
+                    submitAttr:"cattachments2"
+                }
             }
         };
         return editableTableOptions;
     }
 
     // 新增插入数据
-    function insertDatas(data) {
+    function insertDatas(iautoid,data,url) {
+        //data为新增图片，url为原来数据
         if (!data) {
             LayerMsgBox.alert("导入数据异常", 2);
             return;
         }
-        var datas=[];
-        var cattachments="";
-        for (var i = 0; i < data.length; i++) {
-            if (i > 0) {
-                var datum = data[i];
-                cattachments +=  datum.url + ",";
+        console.log(url);
+        const datas = [];
+        datas.push({cattachments:data})
+        const strs = [];
+        if (data.indexOf(",") != -1) {
+            var ress= data.split(',');
+            for (var i=0;i<ress.length;i++){
+                var data2={}
+                data2.url=ress[i]
+                strs.push(data2)
             }
         }
-        if (cattachments.length > 0) {
-            cattachments = cattachments.substr(0,cattachments.length - 1);
-        }
-        datas.push({cattachments:cattachments})
-        // 插入数据
-        jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
-        var val = $("#cattachments").val();
-        if (cattachments.indexOf(",") === -1) {
-            if (val == null) {
-                $("#cattachments").val(cattachments);
+        if (url){
+            if (strs.length > 0) {
+            for (var i = 0; i < strs.length; i++) {
+                let datum1 = strs[i];
+                let element = document.getElementById(""+datum1.url);
+                if (!element){
+                    var elementById2 = document.getElementById(""+url);
+                    var bigImg2 = document.createElement("img");
+                    bigImg2.id=""+datum1.url;  //200个像素 不用加px
+                    bigImg2.src=""+real_image(datum1.url);
+                    bigImg2.setAttribute("data-photobtn","");
+                    bigImg2.setAttribute("tooltip","");
+                    bigImg2.setAttribute("data-title","点击查看图片");
+                    bigImg2.setAttribute("style","width: 60px;height: 60px;border-radius:50%;");
+                    bigImg2.setAttribute("onerror","this.src='assets/img/avatar.jpg'");
+                    bigImg2.setAttribute("data-original-title","");
+                    bigImg2.setAttribute("title","");
+                    elementById2.appendChild(bigImg2);
+                }
+            }
             }else {
-                $("#cattachments").val(val+','+cattachments);
+                    var elementById = document.getElementById(""+url);
+                    var bigImg = document.createElement("img");
+                    bigImg.id=""+data;  //200个像素 不用加px
+                    bigImg.src=""+real_image(data);
+                    bigImg.setAttribute("data-photobtn","");
+                    bigImg.setAttribute("tooltip","");
+                    bigImg.setAttribute("data-title","点击查看图片");
+                    bigImg.setAttribute("style","width: 60px;height: 60px;border-radius:50%;");
+                    bigImg.setAttribute("onerror","this.src='assets/img/avatar.jpg'");
+                    bigImg.setAttribute("data-original-title","");
+                    bigImg.setAttribute("title","");
+                    elementById.appendChild(bigImg);
             }
+            // 修改数据
+            var $table = $('#jbolt_Table_#(pageId)');
+            var $td = $("table#jbolt_Table_#(pageId) td:contains('" + url + "')").first();
+            var cols = [
+                {column: "cattachments2", text: url+","+data, value:url+","+data}
+            ];
+            jboltTableSetCells($table, $td.parent(), cols);
+
+        }else {
+            jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
+            var val = $("#cattachments").val();
+                if (val === "") {
+                    $("#cattachments").val(data);
+                }else {
+                    $("#cattachments").val(val+'-'+data);
+                }
         }
 
     }
+
 
 </script>
 #end

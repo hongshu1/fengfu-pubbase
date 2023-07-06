@@ -226,6 +226,7 @@ public class SysAssemAdminController extends BaseAdminController {
 		//供应商code，名字
 		String vencode = get("vencode");
 		String venname = get("venname");
+		String qty = get("qty");
 		//转换前 存货主键
 		String ibeforeinventoryid = get("ibeforeinventoryid");
 		//转换后 存货主键
@@ -236,6 +237,7 @@ public class SysAssemAdminController extends BaseAdminController {
 		kv.set("venname",notOk(venname)?"":venname);
 		kv.set("ibeforeinventoryid",notOk(ibeforeinventoryid)?"":ibeforeinventoryid);
 		kv.set("iafterinventoryid",notOk(iafterinventoryid)?"":iafterinventoryid);
+		kv.set("qty",notOk(qty)?"":qty);
 		renderJsonData(service.getBarcodeDatas(kv));
 	}
 

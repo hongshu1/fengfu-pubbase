@@ -620,12 +620,6 @@ function moDocType(val) {
             return "已关闭";
         case 8:
             return "已取消";
-        case 9:
-            return "待审批";
-        case 10:
-            return "审批中";
-        case 11:
-            return "审批不通过";
         default:
             return "";
     }
