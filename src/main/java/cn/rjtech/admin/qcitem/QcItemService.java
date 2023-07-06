@@ -121,6 +121,15 @@ public class QcItemService extends BaseService<QcItem> {
         return query(selectSql().select(QcItem.CQCITEMNAME).eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
     }
 
+
+    /**
+     * 检验项目名称
+     */
+    public QcItem findFristQcItemName(String cqcItemName) {
+        QcItem qcItem = findFirst(selectSql().eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
+        return qcItem;
+    }
+
     /**
      * 更新
      */
