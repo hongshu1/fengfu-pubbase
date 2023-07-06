@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
@@ -59,7 +60,8 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
   private InventoryChangeService inventoryChangeService;
   @Inject
   private ExchService exchService;
-
+  @Inject
+  private DepartmentService departmentService;
 
   /**
    * 首页
@@ -101,7 +103,14 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     if (ObjUtil.isNotNull(exch)) {
       record.set(PurchaseOrderM.IEXCHANGERATE, exch.getNflat());
     }
-    record.set(SubcontractOrderM.IDEPARTMENTID, vendor.getCVenDepart());
+  
+    if (StrUtil.isNotBlank(vendor.getCVenDepart())){
+      Department department = departmentService.findByCdepcode(vendor.getCVenDepart());
+      String format = "部门编码【%s】找不到记录";
+      ValidationUtils.notNull(department, String.format(format, vendor.getCVenDepart()));
+      record.set(SubcontractOrderM.IDEPARTMENTID, department.getIAutoId());
+    }
+    
     record.set(SubcontractOrderM.IDUTYUSERID, vendor.getIDutyPersonId());
 
     Person person = personService.findById(vendor.getIDutyPersonId());
