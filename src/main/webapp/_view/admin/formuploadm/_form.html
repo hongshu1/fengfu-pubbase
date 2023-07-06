@@ -147,14 +147,16 @@
             #end
             <td >
                 {@if data.cattachments != null}
-                <div  class="float-right" id="${data.cattachments}">
-                    <a href="admin/formUploadM/attachment?iautoid=${data.iautoid}&cattachments=${data.cattachments}&edit=true" tooltip data-dialog-title="图片上传" data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst"><i class="fa fa-plus"></i></a>
-                    {@each data.cattachments.split(",") as url}
+                <a  style="position: relative; top:25px; " href="admin/formUploadM/attachment?iautoid=${data.iautoid}&cattachments=${data.cattachments}&edit=true" tooltip data-dialog-title="图片上传" data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst"><i class="fa fa-plus"></i></a>
+                {@each data.cattachments.split(",") as url}
                     {@if url.indexOf('png') != -1 || url.indexOf('jpg')!=-1}
-                    <img  id="${url}"  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
+                <div  class="float-right" id="${data.cattachments}" style="position: relative">
+                    <a href="admin/formUploadD/deletePicture?iautoid=${data.iautoid}&url=${url}"   onclick="deletePicture('${data.iautoid}','${data.cattachments}','${url}')" style="position: absolute; right: 0"  data-loading="执行中 " tooltip data-title="删除附件" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger" style="position: absolute; right: 0"></i></a>
+                        <img  id="${url}"  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
+                 </div>
                     {@/if}
                     {@/each}
-                </div>
+
                 {@/if}
             </td>
             <td>${data.cmemo}</td>
@@ -275,12 +277,13 @@
     }
 
     // 新增插入数据
-    function insertDatas(data,url) {
+    function insertDatas(iautoid,data,url) {
         //data为新增图片，url为原来数据
         if (!data) {
             LayerMsgBox.alert("导入数据异常", 2);
             return;
         }
+        console.log(url);
         const datas = [];
         datas.push({cattachments:data})
         const strs = [];
@@ -350,6 +353,7 @@
         }
 
     }
+
 
 </script>
 #end

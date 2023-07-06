@@ -36,6 +36,8 @@
 <!--			<a class="text-danger" data-ajaxbtn href="admin/bomM/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>-->
 		 {@else if data.iauditstatus==1 }
 			<a data-ajaxbtn href='admin/bomM/audit?bomMasterId=${data.iautoid}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
+		{@else if data.iauditstatus==2 }
+			<a class="text-warning" tooltip='' data-title='复制版本提示' data-dialogbtn='' data-area='400,300' href='admin/bommaster/copyForm/${data.iautoid}' data-handler='refreshPjaxContainer'>复制</a>
 		{@/if}
 		<a class="text-danger" data-ajaxbtn href="admin/bomM/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>
 	</td>

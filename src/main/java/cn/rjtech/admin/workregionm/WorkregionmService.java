@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -93,6 +94,16 @@ public class WorkregionmService extends BaseService<Workregionm> {
     public Ret update(Workregionm workregionm) {
         if (workregionm == null || notOk(workregionm.getIAutoId()) || StrUtil.isBlank(workregionm.getCWorkCode())) {
             return fail(JBoltMsg.PARAM_ERROR);
+        }
+        if (ObjectUtil.isNotNull(workregionm.getIDepId())){
+            Department department = departmentService.findById(workregionm.getIDepId());
+            workregionm.setCDepCode(department.getCDepCode());
+            workregionm.setCDepName(department.getCDepName());
+        }
+        if (ObjectUtil.isNotNull(workregionm.getIPersonId())){
+            Person person = personService.findById(workregionm.getIPersonId());
+            workregionm.setCPersonCode(person.getCpsnNum());
+            workregionm.setCPersonName(person.getCpsnName());
         }
         //更新时需要判断数据存在
         Workregionm dbWorkregionm = findById(workregionm.getIAutoId());
@@ -252,7 +263,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
         Map<String, Warehouse> warehouseMap = new HashMap<>();
         // 人员
         Map<String, Person> personMap = new HashMap<>();
-            
+        
         for (Record record : records) {
 
             if (StrUtil.isBlank(record.getStr("cWorkCode"))) {
@@ -321,7 +332,7 @@ public class WorkregionmService extends BaseService<Workregionm> {
             Person person = personMap.get(cpersonname);
 
             if (ObjUtil.isNull(person)) {
-                person = personService.findFirstByCpersonName(cpersonname); 
+                person = personService.findFirstByCpersonName(cpersonname);
                 ValidationUtils.notNull(person, String.format("人员“%s”不存在", cpersonname));
 
                 personMap.put(cpersonname, person);

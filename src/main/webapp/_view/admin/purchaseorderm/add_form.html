@@ -1,4 +1,34 @@
 #set(pageId=RandomUtil.random(6))
+#if(readonly != 'readonly' && (purchaseOrderM.iauditstatus??0 == 1 || purchaseOrderM.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+<div class="jbolt_page_title">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        #if(purchaseOrderM.iAutoId??)
+                        ### 参数列表
+                        ### uri: 接口URI
+                        ### formSn: 表单名
+                        ### o: 当前表单对象名
+                        ### primaryKeyName: 主键名
+                        ### permissionKeyPrefix: 权限key
+                        ### redonly: 查看页定义为readonly=readonly, 新增/编辑页 可不传
+                        ### className: 实现审批业务的类名
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/purchaseorderm",
+                        formSn="PS_PurchaseOrderM", o=purchaseOrderM, primaryKeyName="iAutoId",
+                        className="cn.rjtech.admin.purchaseorderm.PurchaseOrderMService", permissionKeyPrefix="purchaseorderm")
+                        #end
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <form onsubmit="return false;" id="PurchaseOrderM_Form" action="#(action)" method="post">
     #if(purchaseOrderM.iautoid??)
     <input type="hidden" name="iAutoId" value="#(purchaseOrderM.iautoid??)"/>
@@ -154,8 +184,12 @@
     </div>
     </div>
 </form>
-<!-- 定义JBoltTable使用的数据渲染模板 -->
 
+#if(purchaseOrderM.iautoid?? && purchaseOrderM.iauditway == 2 && purchaseOrderM.iauditstatus > 0)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=purchaseorderm.iAutoId, primaryKeyName="iAutoId", formSn="Co_purchaseorderm", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.purchaseorderm.purchaseordermService", o=purchaseOrderM)
+#end
+
+<!-- 定义JBoltTable使用的数据渲染模板 -->
 #if(isView??0 !=1)
 <div class="jbolt_table_toolbar" id="PurchaseOrderD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
