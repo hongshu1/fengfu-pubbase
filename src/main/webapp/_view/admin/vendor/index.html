@@ -64,6 +64,25 @@
                 class="btn btn-outline-danger"><i class="fa fa-trash"></i> 删除
         </button>
         <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info"><i class="fa fa-refresh"></i> 刷新</button>
+        <div class="btn-group dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+          </button>
+          <div class="dropdown-menu" aria-labelledby="importMenuButton">
+            <a data-downloadbtn href="/admin/vendor/downloadTpl" class="btn dropdown-item"><i
+                class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-url="/admin/vendor/importExcel">
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>

@@ -1,16 +1,20 @@
 package cn.rjtech.admin.vendor;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
+import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -18,7 +22,9 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.upload.UploadFile;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -158,5 +164,30 @@ public class VendorAdminController extends BaseAdminController {
     @UnCheck
     public void autocomplete() {
         renderJsonData(service.getAutocompleteList(get("q"), getInt("limit", 10)));
+    }
+
+    /**
+     * Excel模板下载
+     */
+    @SuppressWarnings("unchecked")
+    public void downloadTpl() throws Exception {
+        renderJxls("vendor_import.xlsx", Kv.by("rows", null), "供应商导入模板.xlsx");
+    }
+
+    /**
+     * 供应商分类Excel导入数据库
+     */
+    public void importExcel() {
+        UploadFile uploadFile = getFile("file");
+        ValidationUtils.notNull(uploadFile, "上传文件不能为空");
+
+        File file = uploadFile.getFile();
+        List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+
+        // 截取最后一个“.”之前的文件名，作为导入格式名
+        String extension = list.get(1);
+        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+
+        renderJson(service.importExcelData(file));
     }
 }

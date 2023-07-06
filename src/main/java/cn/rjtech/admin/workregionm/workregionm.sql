@@ -4,8 +4,6 @@ SELECT
     ware.cWhName,
     m.*
 FROM Bd_WorkRegionM m
-    LEFT JOIN Bd_Department jd ON jd.iautoid = m.iDepId
-    LEFT JOIN Bd_Person per ON per.iAutoId = m.iPersonId
     LEFT JOIN Bd_Warehouse ware ON ware.iAutoId = m.iWarehouseId
 WHERE m.isDeleted = '0'
     #if(ids)

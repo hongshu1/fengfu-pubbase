@@ -95,12 +95,12 @@ public class WorkregionmAdminController extends JBoltBaseController {
             renderFail(JBoltMsg.DATA_NOT_EXIST);
             return;
         }
-        if (isOk(workregionm) && isOk(workregionm.getIPersonId())) {
-            Person person = personService.findById(workregionm.getIPersonId());
-            if (person != null) {
-                set("personname", person.getCpsnName());
-            }
-        }
+//        if (isOk(workregionm) && isOk(workregionm.getIPersonId())) {
+//            Person person = personService.findById(workregionm.getIPersonId());
+//            if (person != null) {
+//                set("personname", person.getCpsnName());
+//            }
+//        }
 
         set("workregionm", workregionm);
         render("edit.html");
