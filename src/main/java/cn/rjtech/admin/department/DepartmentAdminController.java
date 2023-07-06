@@ -223,7 +223,7 @@ public class DepartmentAdminController extends BaseAdminController {
     /**
      * 执行导入
      */
-    @UnCheck
+    @CheckPermission(PermissionKey.DEPARTMENT_IMPORT)
     public void importExcel() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
 
@@ -260,6 +260,7 @@ public class DepartmentAdminController extends BaseAdminController {
         renderJsonData(service.findParentData(excludeId));
     }
 
+    @CheckPermission(PermissionKey.DEPARTMENT_EXPORT)
     public void exportExcelByIds() throws Exception {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -273,7 +274,7 @@ public class DepartmentAdminController extends BaseAdminController {
         }
         renderBytesToExcelXlsFile(service.exportExcelTpl(data));
     }
-
+    @CheckPermission(PermissionKey.DEPARTMENT_EXPORT)
     public void exportExcelAll() throws Exception {
         List<Record> rows = service.findAll(getKv());
         if (notOk(rows)) {

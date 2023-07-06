@@ -302,7 +302,6 @@ public class VendorClassService extends BaseService<VendorClass> {
                 VendorClass vendorClass = findFirst(Okv.by("cvccode", row.get("cvccode")), "iautoid", "asc");
                 ValidationUtils.isTrue(vendorClass == null, row.get("cvccode") + "编码重复");
 
-
                 String ipidStr = row.getStr("ipid");
                 if (StrUtil.isNotBlank(ipidStr)) {
                     VendorClass parentVendorClass = findByCVCCode(ipidStr);

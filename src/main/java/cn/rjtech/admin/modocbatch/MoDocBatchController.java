@@ -64,6 +64,7 @@ public class MoDocBatchController extends BaseAdminController {
   public void personEdit() {
     keepPara();
     set("taskId", getLong(0));
+    set("modocbatch", service.findById(getLong(0)));
     render("person_edit.html");
   }
 

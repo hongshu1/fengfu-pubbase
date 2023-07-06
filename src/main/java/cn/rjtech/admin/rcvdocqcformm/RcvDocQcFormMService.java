@@ -35,6 +35,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
+import com.jfinal.json.Json;
+import com.jfinal.kit.JsonKit;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -536,9 +538,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         }
         Long docqcformmiautoid = JboltPara.getLong("docqcformmiautoid"); //主表id
         String isok = JboltPara.getString("isok");
-        //是否合格不能为空
-//        ValidationUtils.notBlank(isok, "请判定是否合格");
 
+//        System.out.println("JboltPara.getJSONArray(\"serializeSubmitList\")========》"+JboltPara.getJSONArray("serializeSubmitList"));
         Boolean result = achieveSerializeSubmitList(JboltPara.getJSONArray("serializeSubmitList"), docqcformmiautoid,
             JboltPara.getString("cmeasurepurpose"), JboltPara.getString("cmeasurereason"),
             JboltPara.getString("cmeasureunit"), JboltPara.getString("cmemo"),
