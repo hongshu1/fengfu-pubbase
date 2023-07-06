@@ -58,14 +58,15 @@ WHERE
 #end
 
 #sql("findBycOrder")
-   SELECT
+SELECT
  orderm.cOrderNo DocNo,
  ven.cVenCode cvencode,
  orderm.cCreateName cmaker,
- orderm.dOrderDate dDate,
- '' cPersonCode,
+ CONCAT(Qty.iYear,'-',Qty.iMonth,'-',Qty.iDate)dDate,
+ per.cPsn_Num cPersonCode,
  '普通采购' cBusType,
- '普通销售' cPTCode,
+ cPTName cPTCode,
+ cDepCode cdepcode,
  	'' inum,
   orderm.cCurrency cexch_name,
 	orderm.iExchangeRate iExchRate,
@@ -74,22 +75,27 @@ WHERE
 	inv.cInvCode cInvCode,
 	inv.cInvName cInvName,
 	Qty.iQty iQuantity,
-	CONCAT(Qty.iYear,'-',Qty.iMonth,'-',Qty.iMonth)dPlanDate,
+	qty.iSeq,
 	0 iQuotedPrice,
 	iSeq irowno,
 	100 KL,
 	0 iNatDisCount,
-	'' cPayType
+	  cPTName cPayType
+
 FROM
- PS_PurchaseOrderD_Qty qty
+ PS_PurchaseOrderD_Qty Qty
  INNER JOIN PS_PurchaseOrderD orderd ON orderd.iAutoId = qty.iPurchaseOrderDid
  INNER JOIN PS_PurchaseOrderM orderm ON orderm.iAutoId = orderd.iPurchaseOrderMid
  INNER JOIN Bd_Inventory inv ON inv.iAutoId = orderd.iInventoryId
+ LEFT JOIN Bd_PurchaseType TP  ON orderm.iPurchaseTypeId =TP.iAutoId
  LEFT JOIN Bd_Vendor ven ON ven.iAutoId = orderm.iVendorId
  LEFT JOIN bd_person per ON per.iAutoId= orderm.iDutyUserId
+ LEFT JOIN  Bd_Department dt on dt.iAutoId = orderm.iDepartmentId
+
 WHERE
  orderm.IAUTOID = #para(iautoid)
  ORDER BY Qty.iYear, Qty.iMonth, Qty.iDate
+
 #end
 
 

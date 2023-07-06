@@ -356,10 +356,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String WORKREGIONM_ADD = "workregionm_add";
-	/**
-	 * 新增
-	 */
 	public static final String VENDOR_ADD = "vendor_add";
 	/**
 	 * 编辑
@@ -916,7 +912,7 @@ public class PermissionKey {
 	/**
 	 * 销售发货单列表
 	 */
-	public static final String SYSSALEDELIVERPLAN = "syssaledeliverplan";
+	public static final String SALES_SHIPMENT_LIST = "sales_shipment_list";
 	/**
 	 * 条码报表
 	 */
@@ -1413,14 +1409,6 @@ public class PermissionKey {
 	 * 现品票
 	 */
 	public static final String API_MOMOINVBATCH = "api_momoinvbatch";
-	/**
-	 * 始业点检表管理
-	 */
-	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
-	/**
-	 * 始业点检表管理
-	 */
-	public static final String API_SPOTCHECKFORMM_SUBMITFORM = "api_spotcheckformm_submitform";
 	/**
 	 * 新增
 	 */
@@ -2989,4 +2977,109 @@ public class PermissionKey {
 	 * 审核不通过
 	 */
 	public static final String SYSSALEDELIVERPLAN_REJECT = "syssaledeliverplan_reject";
+	/**
+	 * 提交按钮
+	 */
+	public static final String API_SPOTCHECKFORMM_SUBMITFORM = "api_spotcheckformm_submitform";
+	/**
+	 * 提审
+	 */
+	public static final String MODOC_SUBMIT = "modoc_submit";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String PURCHASEORDERM_BATCH_APPROVE = "purchaseorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String PURCHASEORDERM_BATCH_REJECT = "purchaseorderm_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String PURCHASEORDERM_REVERSE_APPROVE = "purchaseorderm_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String PURCHASEORDERM_WITHDRAW = "purchaseorderm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String PURCHASEORDERM_SUBMIT = "purchaseorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String PURCHASEORDERM_APPROVE = "purchaseorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String PURCHASEORDERM_REJECT = "purchaseorderm_reject";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String SUBCONTRACTORDERM_BATCH_APPROVE = "subcontractorderm_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String SUBCONTRACTORDERM_BATCH_REJECT = "subcontractorderm_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String SUBCONTRACTORDERM_REVERSE_APPROVE = "subcontractorderm_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String SUBCONTRACTORDERM_WITHDRAW = "subcontractorderm_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String SUBCONTRACTORDERM_SUBMIT = "subcontractorderm_submit";
+	/**
+	 * 通过
+	 */
+	public static final String SUBCONTRACTORDERM_APPROVE = "subcontractorderm_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String SUBCONTRACTORDERM_REJECT = "subcontractorderm_reject";
+	/**
+	 * 新增
+	 */
+	public static final String WORKREGIONM_ADD = "workregionm_add";
+	/**
+	 * 修改
+	 */
+	public static final String WORKREGIONM_EDIT = "workregionm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WORKREGIONM_DELETE = "workregionm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String WORKREGIONM_EXPORT = "workregionm_export";
+	/**
+	 * 导入
+	 */
+	public static final String WORKREGIONM_IMPORT = "workregionm_import";
+	/**
+	 * 新增
+	 */
+	public static final String PERSON_ADD = "person_add";
+	/**
+	 * 修改
+	 */
+	public static final String PERSON_EDIT = "person_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PERSON_DELETE = "person_delete";
+	/**
+	 * 导入
+	 */
+	public static final String PERSON_IMPORT = "person_import";
+	public static final String FITEMSS97_DELETED = "fitemss97_deleted";
+	/**
+	 * 提审
+	 */
+	public static  final  String  modoc_submit = "modoc_submit";
 }

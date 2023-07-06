@@ -4,6 +4,7 @@ SELECT mt.iAutoId,
        mt.dBeginDate,
        mt.dEndDate,
        mt.iStatus,
+       mt.iAuditStatus,
        mt.cCreateName,
        mt.dCreateTime,
        dp.cDepName
