@@ -223,13 +223,13 @@
         success: function (res) {
           var state = res.state;
           if (state === 'ok') {
+            var data = res.data;
             if (submit) {
-              let data = res.data;
               submit_#(pageId)(data.iautoid, function () {
                 successHandler('提交审核成功', data.iautoid);
               });
             } else {
-              successHandler(ret.msg, iautoid);
+              successHandler(res.msg, data.iautoid);
             }
           } else {
             LayerMsgBox.error(res.msg);

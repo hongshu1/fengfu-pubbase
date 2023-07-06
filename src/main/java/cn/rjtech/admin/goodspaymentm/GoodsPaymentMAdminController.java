@@ -1,11 +1,14 @@
 package cn.rjtech.admin.goodspaymentm;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Customer;
@@ -17,7 +20,10 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import com.jfinal.upload.UploadFile;
+import org.jsoup.select.Evaluator;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -138,6 +144,21 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
         ValidationUtils.notNull(iCustomerId1, "请优先选择客户。");
         List<Record> barcodeDatas = service.getBarcodeDatas(get("q"), getInt("limit", 10), get("orgCode", getOrgCode()),iCustomerId1 );
         renderJsonData(barcodeDatas);
+    }
+
+    /**
+     * 执行导入excel
+     */
+    public void importExcel() {
+        UploadFile uploadFile = getFile("file");
+        ValidationUtils.notNull(uploadFile, "上传文件不能为空");
+        File file = uploadFile.getFile();
+        List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+        // 截取最后一个“.”之前的文件名，作为导入格式名
+        String cformatName = list.get(0);
+        String extension = list.get(1);
+        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        renderJsonData(service.importExcel(file, cformatName));
     }
 
 }

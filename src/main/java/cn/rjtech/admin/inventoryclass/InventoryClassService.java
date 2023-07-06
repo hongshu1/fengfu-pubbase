@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 物料建模-存货分类
@@ -323,11 +324,19 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 				return fail("存货分类名称不能为空");
 			}
 
+			if (notNull(record.get("iPid")))
+			{
+				InventoryClass inventoryClass = findFirst(selectSql().eq("cInvCCode", record.getStr("iPid")).or().eq("cInvCName", record.getStr("iPid")));
+				Long iPid = Optional.ofNullable(inventoryClass).map(InventoryClass::getIAutoId).orElse(null);
+				record.set("iPid", iPid);
+			}
+
 			Date now=new Date();
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
 			record.set("iOrgId", getOrgId());
 			record.set("cOrgCode", getOrgCode());
 			record.set("cOrgName", getOrgName());
+			record.set("iSourceId", record.getStr("cInvCCode"));
 			record.set("iCreateBy", JBoltUserKit.getUserId());
 			record.set("dCreateTime", now);
 			record.set("iSource", SourceEnum.MES.getValue());

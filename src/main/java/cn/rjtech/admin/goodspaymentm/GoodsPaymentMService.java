@@ -3,6 +3,7 @@ package cn.rjtech.admin.goodspaymentm;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -10,23 +11,26 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.GoodsPaymentD;
-import cn.rjtech.model.momdata.GoodsPaymentM;
-import cn.rjtech.model.momdata.WeekOrderD;
-import cn.rjtech.model.momdata.WeekOrderM;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +69,11 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 
 	@Inject
 	private WeekOrderMService weekordermservice;
+	@Inject
+	private CusFieldsMappingDService cusFieldsMappingdService;
+
+	@Inject
+	private InventoryService inventoryservice;
 
 	/**
 	 * 后台管理数据查询
@@ -184,6 +193,44 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 			return true;
 		});
 		return SUCCESS;
+	}
+
+	/**
+	 * 读取excel文件
+	 * @param file
+	 * @return
+	 */
+	public Ret importExcel(File file, String cformatName) {
+		StringBuilder errorMsg=new StringBuilder();
+		//使用字段配置维护
+		Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
+//		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
+		String docInfoRelaStrings= JSON.toJSONString(importData);
+		List<GoodsPaymentD> goodsPaymentDS = JSON.parseArray(docInfoRelaStrings, GoodsPaymentD.class);
+		System.out.println("===="+goodsPaymentDS);
+		if(notOk(goodsPaymentDS)) {
+			if(errorMsg.length()>0) {
+				return fail(errorMsg.toString());
+			}else {
+				return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+			}
+		}
+//		for (GoodsPaymentD goodsPaymentD : goodsPaymentDS) {
+//			setGoodsPaymentDModel(goodsPaymentD,iAutoId);
+//		}
+		//执行批量操作
+		boolean success=tx(new IAtom() {
+			@Override
+			public boolean run() throws SQLException {
+//				goodsPaymentDservice.batchSave(goodsPaymentDS);
+				return true;
+			}
+		});
+
+		if(!success) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL);
+		}
+		return SUCCESS.data(goodsPaymentDS);
 	}
 
 	/**
@@ -510,6 +557,33 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 			}
 		}
 		return "";
+	}
+
+
+	/**
+	 * 设置参数
+	 * @param goodsPaymentDModel
+	 * @return
+	 */
+	private GoodsPaymentD setGoodsPaymentDModel(GoodsPaymentD goodsPaymentDModel,Long iAutoId){
+		String cInvCode = goodsPaymentDModel.getCInvCode();
+		Inventory inventory = inventoryservice.findFirst("select * from bd_inventory where cInvCode= ? ", cInvCode);
+		System.out.println("cInvCode===="+cInvCode);
+		goodsPaymentDModel.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		goodsPaymentDModel.setIGoodsPaymentMid(iAutoId);
+		goodsPaymentDModel.setIsDeleted(false);
+		Long userId = JBoltUserKit.getUserId();
+		goodsPaymentDModel.setIInventoryId(StrUtil.toString(inventory.getIAutoId()));
+		goodsPaymentDModel.setCInvCode(cInvCode);
+		goodsPaymentDModel.setICreateBy(userId);
+		goodsPaymentDModel.setIUpdateBy(userId);
+		String userName = JBoltUserKit.getUserName();
+		goodsPaymentDModel.setCCreateName(userName);
+		goodsPaymentDModel.setCUpdateName(userName);
+		Date date = new Date();
+		goodsPaymentDModel.setDCreateTime(date);
+		goodsPaymentDModel.setDUpdateTime(date);
+		return goodsPaymentDModel;
 	}
 
 

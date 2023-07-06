@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.http.HttpUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
@@ -26,6 +27,7 @@ import cn.rjtech.admin.purchaseorderdbatchversion.PurchaseOrderDBatchVersionServ
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderref.PurchaseOrderRefService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
@@ -82,6 +84,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
     private PurchaseOrderDBatchVersionService purchaseOrderDBatchVersionService;
     @Inject
     private InventoryService                  inventoryService;
+    @Inject
+    private WarehouseService warehouseService;
 
     @Override
     protected PurchaseOrderM dao() {
@@ -367,6 +371,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
             List<Integer> list = dateMap.get(dateKey);
             record.set(PurchaseOrderM.SIZE, list.size() + 1);
             record.set(PurchaseOrderM.DATESTR, dateKey);
+            Record sumRecord = new Record();
+            String sumStr = "";
             for (Integer date : list) {
                 String dateStr = String.format("%02d", date).concat("日");
                 Record dateRecord = new Record();
@@ -377,14 +383,18 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
                 dateRecord.set(PurchaseOrderM.INDEX, index);
                 dateHeadList.add(dateRecord);
                 index += 1;
+                sumStr+=dateKey.concat(dateStr).concat("+");
             }
-            Record sum = new Record();
-            sum.set(PurchaseOrderM.FIELDNAME, "合计");
+            sumRecord.set(PurchaseOrderM.FIELDNAME, "合计");
             // 需要统计的月份
-            sum.set(PurchaseOrderM.DATESTR, dateKey);
-            sum.set(PurchaseOrderM.INDEX, index);
+            sumRecord.set(PurchaseOrderM.DATESTR, dateKey);
+            sumRecord.set(PurchaseOrderM.INDEX, index);
+            if (StrUtil.isNotBlank(sumStr)){
+                sumRecord.set(PurchaseOrderM.SUMSTR, sumStr.substring(0, sumStr.length()-1));
+            }
+           
             index += 1;
-            dateHeadList.add(sum);
+            dateHeadList.add(sumRecord);
             dateMonthHeadList.add(record);
         }
         ValidationUtils.notEmpty(dateHeadList, "未获取到日期范围数据");
@@ -962,15 +972,15 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
         List<PurchaseorderdQty> purchaseOrderQtyList = new ArrayList<>();
         List<Long> vendorAdIds = recordList.stream().map(record -> record.getLong(PurchaseOrderD.IVENDORADDRID))
             .collect(Collectors.toList());
-        List<VendorAddr> vendorAddrList = vendorAddrService.findByIds(vendorAdIds);
-        Map<Long, VendorAddr> vendorAddrMap = vendorAddrList.stream()
-            .collect(Collectors.toMap(VendorAddr::getIAutoId, vendorAddr -> vendorAddr));
+        List<Warehouse> warehouseList = warehouseService.findByIds(vendorAdIds);
+        Map<Long, Warehouse> warehouseMap = warehouseList.stream()
+            .collect(Collectors.toMap(Warehouse::getIAutoId, warehouse -> warehouse));
         int seq = 0;
         for (Record record : recordList) {
 
             String isPresentStr = record.getStr(PurchaseOrderD.ISPRESENT);
-            VendorAddr vendorAddr = vendorAddrMap.get(record.getLong(PurchaseOrderD.IVENDORADDRID));
-            ValidationUtils.notNull(vendorAddr, "供应商地址不存在");
+            Warehouse warehouse = warehouseMap.get(record.getLong(PurchaseOrderD.IVENDORADDRID));
+            ValidationUtils.notNull(warehouse, "仓库不存在!");
             int isPresent = 0;
             if (BoolCharEnum.YES.getText().equals(isPresentStr)) {
                 isPresent = 1;
@@ -981,7 +991,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
                     purchaseOrderD = purchaseOrderDService.create(purchaseOrderMId,
                         record.getLong(PurchaseOrderD.IVENDORADDRID),
                         record.getLong(PurchaseOrderD.IINVENTORYID),
-                        vendorAddr.getCDistrictName(),
+                        warehouse.getCWhName(),
                         record.getStr(PurchaseOrderD.CMEMO),
                         record.getStr(PurchaseOrderD.IPKGQTY),
                         IsOkEnum.toEnum(isPresent).getText());
@@ -991,7 +1001,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
                         purchaseOrderMId,
                         record.getLong(PurchaseOrderD.IVENDORADDRID),
                         record.getLong(PurchaseOrderD.IINVENTORYID),
-                        vendorAddr.getCDistrictName(),
+                        warehouse.getCWhName(),
                         record.getStr(PurchaseOrderD.CMEMO),
                         record.getStr(PurchaseOrderD.IPKGQTY),
                         IsOkEnum.toEnum(isPresent).getText());
@@ -1436,5 +1446,9 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
      */
     public String postBatchBackout(List<Long> formAutoIds) {
         return null;
+    }
+
+    public List<Record> getWhcodeAll(String q, Integer limit) {
+        return dbTemplate("purchaseorderm.getWhcodeAll", Okv.by("q", q).set("limit", limit)).find();
     }
 }
