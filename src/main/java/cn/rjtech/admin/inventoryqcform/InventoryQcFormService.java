@@ -625,15 +625,24 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                 return fail("检验类型不能为空");
             }
             if (StrUtil.isBlank(record.getStr("iInventoryId"))) {
-                return fail("存货名称不能为空");
+                return fail("存货编码不能为空");
             }
 
             String cTypeNames = record.getStr("cTypeNames");
-            BigDecimal iQcFormId = record.getBigDecimal("iQcFormId");
-            QcForm byId = qcFormService.findById(iQcFormId);
-            if (ObjUtil.isNull(byId)){
-                ValidationUtils.error(""+iQcFormId+"检验表格id不存在");
+            String iQcFormId = record.getStr("iQcFormId");
+            QcForm qcForm = qcFormService.getBycQcFormName(iQcFormId);
+            if (ObjUtil.isNull(qcForm)){
+                ValidationUtils.error("检验表格名称:"+iQcFormId+",不存在");
             }
+            record.set("iQcFormId",qcForm.getIAutoId());
+
+            String iInventoryId = record.getStr("iInventoryId");
+            Inventory inventory = inventoryService.findBycInvCode(iInventoryId);
+            if (ObjUtil.isNull(inventory)){
+                ValidationUtils.error("存货编码名称:"+iInventoryId+",不存在");
+            }
+
+            record.set("iInventoryId",inventory.getIAutoId());
 
 
             List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("inspection_type", true);
