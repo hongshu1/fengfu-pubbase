@@ -63,6 +63,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.PERSON_EDIT)
     public void edit() {
         Person person = service.findById(getLong(0));
         if (person == null) {
@@ -80,6 +81,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 保存
      */
+
     public void save() {
         renderJson(service.save(getModel(Person.class, "person")));
     }
@@ -87,6 +89,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 更新
      */
+
     public void update() {
         renderJson(service.update(getModel(Person.class, "person")));
     }
@@ -101,6 +104,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.PERSON_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -108,6 +112,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.PERSON_DELETE)
     public void deleteByAjax() {
         renderJson(service.deleteByAjax());
     }
@@ -157,7 +162,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 表格提交
      */
-    @UnCheck
+    @CheckPermission(PermissionKey.PERSON_ADD)
     public void submitTable() {
         renderJson(service.submitTable(getJBoltTable()));
     }
@@ -165,6 +170,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 数据导入界面
      */
+    @CheckPermission(PermissionKey.PERSON_IMPORT)
     public void importExcelIndex() {
         render("import_excel_index.html");
     }
