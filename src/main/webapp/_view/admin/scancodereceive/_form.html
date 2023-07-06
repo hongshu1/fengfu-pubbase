@@ -135,7 +135,7 @@ className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",o=sysPureceiv
 <div class="jbolt_page_content">
     <script type="text/template" id="sysPureceive_tpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.autoid}" data-barcode="${data.rowno}">
+        <tr data-id="${data.autoid}" data-barcode="${data.rowno}" data-rowno="${data.rowno}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <!--<td>
                 <a href="admin/scancodereceivedetail/delete/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
@@ -170,7 +170,7 @@ className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",o=sysPureceiv
         <div style="padding-right: 15px;">
             <button onclick="insertEmpty(this)" class="btn btn-outline-secondary">添加行
             </button>
-            <button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-outline-secondary"><i class="fa fa-trash"></i> 删除</button>
+            <button onclick="removeTwin(this)" class="btn btn-outline-secondary"><i class="fa fa-trash"></i> 删除</button>
         </div>
         <div class="clearfix">
             <form class="form-inline" id="sysscandeliver_detail_#(pageId)" onsubmit="return false;">
@@ -660,6 +660,51 @@ className="cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",o=sysPureceiv
             }
         };
         return editableTableOptions;
+    }
+
+    /**
+     * 结对删除
+     */
+    function removeTwin(ele) {
+        // 获取当前行
+        var rows = jboltTableGetCheckedDatas(ele);
+        if (rows && rows.length > 0) {
+
+            console.log(JSON.stringify(rows))
+
+            let rownoArr = [];
+            
+            $.each(rows, function (index, row) {
+
+                if ($.inArray(row.rowno, rownoArr) === -1) {
+                    rownoArr.push(row.rowno);
+                }
+
+                switch (row.barcodetype) {
+                    case '转换前':
+                        var i = row.rowno + 1;
+                        if ($.inArray(i, rownoArr) === -1) {
+                            rownoArr.push(i);
+                        }
+                        break;
+                    case '转换后':
+                        i = row.rowno - 1;
+                        if ($.inArray(i, rownoArr) === -1) {
+                            rownoArr.push(i);
+                        }
+                        break;
+                }
+            });
+
+            console.log(JSON.stringify(rownoArr));
+
+            var $table = getJBoltTableInst('#jbolt_Table_#(pageId)');
+ 
+            $.each(rownoArr, function (idx, rowno) {
+                var $tr = $('tr[data-rowno="' + rowno + '"]')
+                $table.me.removeRow($table, $tr);
+            });
+        }
     }
 
 </script>

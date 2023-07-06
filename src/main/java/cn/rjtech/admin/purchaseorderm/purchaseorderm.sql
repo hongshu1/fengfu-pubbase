@@ -203,3 +203,12 @@ ORDER BY
     t.cInvCode,
     t.cVersion ASC
 #end
+
+#sql("getWhcodeAll")
+        SELECT  top #(limit) iautoid,cWhName cdistrictname   FROM  Bd_Warehouse WHERE 1=1 and isEnabled =1
+        #if(q)
+        and (
+            cWhCode like concat('%',#para(q),'%') or cWhName like concat('%',#para(q),'%')
+        )
+        #end
+ #end

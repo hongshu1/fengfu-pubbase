@@ -278,8 +278,14 @@
 <!--                        </svg>-->
 <!--                        提交审批-->
 <!--                    </button>-->
-                    #include("/_view/_common/_batch_approval_btns.html", formSn="Mo_MoTask", uri="admin/modocbatch??", primaryKeyName="iAutoId",
-                    className="cn.rjtech.admin.modocbatch", permissionKeyPrefix="modocbatch")
+                    #include("/_view/_common/_approval_btns.html", uri="/admin/modocbatch",
+                    formSn="Mo_MoTask", primaryKeyName="iAutoId", o=uptimeM,
+                    permissionKeyPrefix="modocbatch",  className="cn.rjtech.admin.momotask.MoMotaskService")
+
+                    ### 新增之后，并且为审核流
+                    #if(apsAnnualplanm.iautoid?? && apsAnnualplanm.iauditway == 2)
+                    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=modocbatch.iAutoId, primaryKeyName="iAutoId", formSn="Mo_MoTask", btnNeed=1, pId=pageId,className="cn.rjtech.admin.momotask.MoMotaskService")
+                    #end
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>

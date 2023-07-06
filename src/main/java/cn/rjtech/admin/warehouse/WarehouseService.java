@@ -17,6 +17,7 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -391,5 +392,10 @@ public class WarehouseService extends BaseService<Warehouse> {
 
     ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
     return SUCCESS;
+  }
+
+  public List<Warehouse> findByIds(List<Long> ids){
+    Sql sql = selectSql().in(Warehouse.IAUTOID, ids);
+    return find(sql);
   }
 }

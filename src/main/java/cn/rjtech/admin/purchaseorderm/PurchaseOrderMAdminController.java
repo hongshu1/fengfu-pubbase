@@ -408,6 +408,13 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         }
         renderJxlsToPdf(Version, data, String.format("订货清单_%s.pdf", DateUtil.today()));
     }
+
+    /**
+     * 获取仓库
+     */
+    public void getWhcodeAll(){
+        renderJsonData(service.getWhcodeAll(get("q"),getInt("limit")));
+    }
 }
 
 
