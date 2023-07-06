@@ -116,7 +116,7 @@
 
 
 		<table
-				 id="chooseDataTable"
+				 id="jbolt_table_#(pageId)"
 				 class="jbolt_table jbolt_main_table table-center"
 			   data-jbolttable
 			   data-height="fill"
@@ -160,7 +160,7 @@
 <script>
 	//点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
 	function submitThisForm(callback) {
-		var data = getJboltTableCheckedData("chooseDataTable");
+		var data = getJboltTableCheckedData("jbolt_table_#(pageId)");
 		if (data) {
 			parent.setChooseDialogSelectResultFromSupplier(data);
 			if (callback) {

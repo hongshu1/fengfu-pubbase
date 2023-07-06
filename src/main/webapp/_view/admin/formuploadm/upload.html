@@ -46,7 +46,8 @@
         }
         // 将选中数据插入from表单
         var val2 = $('#cattachments').val();
-        parent.insertDatas(val,val2);
+        var iautoid = $('#iautoid').val();
+        parent.insertDatas(iautoid,val,val2);
         // 关闭当前页面
         parent.layer.close(parent.layer.getFrameIndex(window.name));
     });

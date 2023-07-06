@@ -131,4 +131,20 @@ public class FormUploadDService extends BaseService<FormUploadD> {
 		deleteById(iautoid);
 		return SUCCESS;
 	}
+
+	public Ret deletePicture(Long iautoid, String url) {
+		tx(() -> {
+			FormUploadD formUploadD = findById(iautoid);
+			String replace = formUploadD.getCAttachments().replace(","+url, "");
+			if (replace.equals(formUploadD.getCAttachments())) {
+				String replace2 = formUploadD.getCAttachments().replace(url, "");
+				formUploadD.setCAttachments(replace2);
+			}else {
+				formUploadD.setCAttachments(replace);
+			}
+			formUploadD.update();
+		return true;
+		});
+		return SUCCESS;
+	}
 }

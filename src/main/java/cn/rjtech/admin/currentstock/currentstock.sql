@@ -262,7 +262,7 @@ SELECT
     t3.cInvName1,
     t3.cInvStd,
     uom.cUomName,
-    area.iMaxCapacity AS Qty,
+    t2.Qty,
     t1.CheckType,
     t2.StockQty,
     t2.PlqtyQty,
@@ -300,6 +300,26 @@ WHERE t3.isDeleted = 0
     #end
      #if(cinvname1)
     AND t3.cInvName1 = '#(cinvname1)'
+    #end
+    #if(status == '0')
+    AND t2.StockStatus is NOT NULL
+    AND t2.StockQty = t2.Qty
+    #end
+    # if(status == '1')
+    AND t2.StockStatus is NOT NULL
+    AND t2.StockQty != t2.Qty
+    #end
+    #if(status == '2')
+    AND t2.StockStatus is NULL
+    AND area.iMaxCapacity > 0
+    #end
+    #if(status == '3')
+    AND t2.StockStatus is NULL
+    AND area.iMaxCapacity = 0
+    #end
+    #if(status == '4')
+    AND t2.StockStatus is NULL
+    AND area.iMaxCapacity < 0
     #end
     #end
 
@@ -369,7 +389,6 @@ WHERE
     #if(sqlids)
     AND t2.AutoID in (#(sqlids))
     #end
-
 #end
 
     #sql("barcodeDatas")

@@ -1311,23 +1311,6 @@ public class BomMService extends BaseService<BomM> {
 		return parentInvMap;
 	}
 	
-	private void addBomCompareList(List<BomD> bomDList, List<BomD> bomCompareList, Map<Long, Record> effectiveBomMap, Map<Long, List<Record>> effectiveBomCompareMap, Map<Long, List<BomD>> parentInvMap){
-		for (BomD productBomD : bomDList){
-			// 部品存货编码
-			Long inventoryId = productBomD.getIInventoryId();
-			// 判断是存在 有效的版本
-			if (effectiveBomMap.containsKey(inventoryId)){
-				Record effectiveBom = effectiveBomMap.get(inventoryId);
-				checkBomCompareList(productBomD, effectiveBom, effectiveBomMap, effectiveBomCompareMap, parentInvMap);
-			}else if (parentInvMap.containsKey(inventoryId)){ // 不存在则一个个添加进去
-				addBomCompareList(parentInvMap.get(inventoryId), bomCompareList, effectiveBomMap, effectiveBomCompareMap, parentInvMap);
-			}
-			if (ObjUtil.isNotNull(productBomD.getIInventoryId())){
-				bomCompareList.add(productBomD);
-			}
-		}
-	}
-	
 	private void addParentInvMap(Map<Long, List<BomD>> parentInvMap, Long invId, BomD bomD){
 //		ValidationUtils.notNull(invId, "存货编码不能为空");
 		List<BomD> bomDList = parentInvMap.containsKey(invId) ? parentInvMap.get(invId) : new ArrayList<>();
@@ -1365,7 +1348,10 @@ public class BomMService extends BaseService<BomM> {
 		
 		// 子件集合
 		List<BomD> bomDList = parentInvMap.get(inventoryId);
-		ValidationUtils.notEmpty(bomDList, cInvLev+"行，已存在版本记录，但文件中未找到子件");
+		if (CollectionUtil.isEmpty(bomDList)){
+			return;
+		}
+//		ValidationUtils.notEmpty(bomDList, cInvLev+"行，已存在版本记录，但文件中未找到子件");
 		// 按存货编码-- 子件
 		Map<Long, BomD> bomDMap = bomDList.stream().collect(Collectors.toMap(BomD::getIInventoryId, bomD1 -> bomD1));
 		
@@ -1393,8 +1379,8 @@ public class BomMService extends BaseService<BomM> {
 			BomD bomCompare = bomDMap.get(invId);
 			// 校验数量及重量是否相同
 			checkQtyOrWeight(bomCompare, invId, cInvCode, qty, weight);
-			List<BomD> bomCompareList = parentInvMap.get(invId);
-			ValidationUtils.isTrue(ObjUtil.isEmpty(bomCompareList), cInvCode+"：存货下，不允许再有子件！");
+//			List<BomD> bomCompareList = parentInvMap.get(invId);
+//			ValidationUtils.isTrue(ObjUtil.isEmpty(bomCompareList), cInvCode+"：存货下，不允许再有子件！");
 	
 			/**
 			 * 1.再判断当前子件是否还存在版本号
@@ -1404,17 +1390,6 @@ public class BomMService extends BaseService<BomM> {
 			 *	3.不存在 版本号及母件版本时，还需要校验当前是否存在子件，存在则报错
  			 */
 			
-//			if (ObjUtil.isNotNull(iInvPartBomMid)){
-//				Record recordById = findRecordById(iInvPartBomMid);
-//				ValidationUtils.notNull(recordById, "未通过子件版本找到对于的母件版本");
-//				checkBomCompareList(bomCompare, recordById, effectiveBomMap, effectiveBomCompareMap, parentInvMap);
-//			}else if (effectiveBomMap.containsKey(invId)){
-//				Record bomRecord = effectiveBomMap.get(invId);
-//				checkBomCompareList(bomCompare, bomRecord, effectiveBomMap, effectiveBomCompareMap, parentInvMap);
-//			}else{
-//				List<BomD> bomCompareList = parentInvMap.get(invId);
-//				ValidationUtils.isTrue(ObjUtil.isEmpty(bomCompareList), cInvCode+"：存货下，不允许再有子件！");
-//			}
 		}
 	}
 	
@@ -1438,13 +1413,25 @@ public class BomMService extends BaseService<BomM> {
 		Long bomCompareInvId = bomCompare.getIInventoryId();
 		String cInvLev = bomCompare.getCInvLev();
 		ValidationUtils.notNull(bomCompareQty, qtyErrorMsg(1, bomCompare.getCInvLev(), cInvCode));
-		ValidationUtils.notNull(bomCompareIWeight, qtyErrorMsg(2, bomCompare.getCInvLev(), cInvCode));
+		
+		if (ObjectUtil.isNotNull(bomCompareIWeight)){
+            ValidationUtils.isTrue(bomCompareIWeight.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(4, bomCompare.getCInvLev(), cInvCode));
+		}
+		
 		ValidationUtils.isTrue(bomCompareQty.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(3, bomCompare.getCInvLev(), cInvCode));
-		ValidationUtils.isTrue(bomCompareIWeight.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(4, bomCompare.getCInvLev(), cInvCode));
+		
 		// 校验存货编码是否一致
 		if (invId.equals(bomCompareInvId)){
 			ValidationUtils.isTrue(bomCompareQty.compareTo(qty)==0, qtyErrorMsg(5, bomCompare.getCInvLev(), cInvCode));
-			ValidationUtils.isTrue(bomCompareIWeight.compareTo(weight)==0, qtyErrorMsg(6, bomCompare.getCInvLev(), cInvCode));
+			if (ObjectUtil.isNotNull(bomCompareIWeight) && ObjectUtil.isNotNull(weight)){
+				ValidationUtils.isTrue(bomCompareIWeight.compareTo(weight)==0, qtyErrorMsg(6, bomCompare.getCInvLev(), cInvCode));
+			}
+			if (ObjectUtil.isNull(bomCompareIWeight) &&  ObjectUtil.isNotNull(weight)){
+				ValidationUtils.isTrue(ObjectUtil.isNotNull(bomCompareIWeight), qtyErrorMsg(7, bomCompare.getCInvLev(), cInvCode));
+			}
+			if (ObjectUtil.isNotNull(bomCompareIWeight) &&  ObjectUtil.isNull(weight)){
+				ValidationUtils.isTrue(ObjectUtil.isNotNull(weight), qtyErrorMsg(8, bomCompare.getCInvLev(), cInvCode));
+			}
 		}
 	}
 	
@@ -1461,6 +1448,10 @@ public class BomMService extends BaseService<BomM> {
 			return String.format("编码栏【%s】存货编码【%s】子件基本用量不相同", cInvLev, invCode);
 		}else if (type == 6){
 			return String.format("编码栏【%s】存货编码【%s】子件重量不相同", cInvLev, invCode);
+		}else if (type == 7){
+			return String.format("编码栏【%s】存货编码【%s】文件重量不为空，物料清单重量为空", cInvLev, invCode);
+		}else if (type == 8){
+			return String.format("编码栏【%s】存货编码【%s】文件重量为空，物料清单重量不为空", cInvLev, invCode);
 		}
 		return null;
 	}

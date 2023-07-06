@@ -9,7 +9,8 @@ FROM
 	Bd_BomM master
 WHERE
 	master.IsDeleted = '0'
-
+    AND master.iAuditStatus = 2
+    AND master.isEffective = 1
 	#if(isView)
 	    AND master.isView = #para(isView)
 	#end
@@ -115,7 +116,7 @@ WHERE m.isDeleted = '0'
 
 #sql("findByInvId")
 SELECT
-     master.cVersion,
+    master.cVersion,
 	master.dEnableDate,
 	master.dDisableDate
 FROM
