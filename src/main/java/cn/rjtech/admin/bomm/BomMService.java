@@ -14,6 +14,9 @@ import cn.jbolt.core.bean.JsTreeStateBean;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bomd.BomDService;
@@ -329,8 +332,12 @@ public class BomMService extends BaseService<BomM> {
 	
 	public Page<Record> getVersionRecord(Integer pageNumber, Integer pageSize, Kv kv) {
 		Page<Record> page = dbTemplate("bomm.getVersionRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
-        changeRecord(page.getList());
+//		changeRecord(page.getList());
 		return page;
+	}
+	
+	public List<Record> getVersionRecordList(Kv kv){
+		return dbTemplate("bomm.getVersionRecord", kv.set("orgId", getOrgId())).find();
 	}
 	
 	/**
@@ -347,10 +354,18 @@ public class BomMService extends BaseService<BomM> {
         if (CollUtil.isEmpty(recordList)){
             return;
         }
-        for (Record record : recordList){
-            AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(record.getInt(BomM.IAUDITSTATUS));
-            record.set(BomM.AUDITSTATUSSTR, auditStatusEnum.getText());
-        }
+		DateTime date = DateUtil.date();
+		for (Record record : recordList){
+//            AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(record.getInt(BomM.IAUDITSTATUS));
+//            record.set(BomM.AUDITSTATUSSTR, auditStatusEnum.getText());
+//			Date dEnableDate = record.getDate(BomM.DENABLEDATE);
+//			Date dDisableDate = record.getDate(BomM.DDISABLEDATE);
+//			String isEffectiveStr = "0";
+//			if (DateUtil.compare(date, dEnableDate, DatePattern.NORM_DATE_PATTERN) >=0 && DateUtil.compare(date, dDisableDate, DatePattern.NORM_DATE_PATTERN) <= 0){
+//				isEffectiveStr = "1";
+//			}
+//			record.set(BomM.ISEFFECTIVE, isEffectiveStr);
+		}
     }
     
     public void setBomRecord(Long id, Boolean isChildren, Boolean isView, Kv kv){
@@ -700,7 +715,7 @@ public class BomMService extends BaseService<BomM> {
 		// 设置主键id
 		long bomMasterId = JBoltSnowflakeKit.me.nextId();
 		bomMaster.setIAutoId(bomMasterId);
-		Map<BomM, List<BomD>> bomMListMap =getBomMasterMap(bomMaster, tableData);
+		Map<BomM, List<BomD>> bomMListMap = getBomMasterMap(bomMaster, tableData);
 		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
 		bommTrl.setIBomMid(bomMasterId);
 		tx(() -> {
@@ -716,6 +731,8 @@ public class BomMService extends BaseService<BomM> {
 				}
 				bomM.setDEnableDate(bomMaster.getDEnableDate());
 				bomM.setDDisableDate(bomMaster.getDDisableDate());
+				// 校验生成的bom日期是否会出现重叠
+				checkBomDateOrVersion(bomMaster.getCVersion(), bomM);
 				save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
 				bomDService.batchSave(bomDList);
 			}
@@ -752,9 +769,7 @@ public class BomMService extends BaseService<BomM> {
 		String inventoryId = formData.getString(BomMaster.IINVENTORYID);
 		String equipmentModelId = formData.getString(BomMaster.IEQUIPMENTMODELID);
 		// 普通校验
-		ValidationUtils.notBlank(inventoryId, "产品存货编码为空");
-//		ValidationUtils.notBlank(formData.getString(BomMaster.CBOMVERSION), "版本/版次为空");
-//		ValidationUtils.notBlank(equipmentModelId, "机型为空");
+		ValidationUtils.notBlank(inventoryId, "产品存货编码为空");;
 		ValidationUtils.notBlank(formData.getString(BomMaster.CDOCNAME), "文件名称为空");
 		ValidationUtils.notBlank(formData.getString(BomMaster.CDOCCODE), "文件编码为空");
 		ValidationUtils.notBlank(formData.getString(BomMaster.DENABLEDATE), "启用日期为空");
@@ -1597,5 +1612,90 @@ public class BomMService extends BaseService<BomM> {
 	public Page<Record> getFileRecord(Integer pageNumber, Integer pageSize, Kv kv) {
 		Page<Record> page = dbTemplate("bomm.getFileRecord", kv.set("orgId", getOrgId())).paginate(pageNumber, pageSize);
 		return page;
+	}
+	
+	/**
+	 * 统一导入导出模板
+	 */
+	private JBoltExcelSheet createJboltExcelSheetTpl() {
+		JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create("sheet");
+		jBoltExcelSheet.setHeaders(
+				JBoltExcelHeader.create("cinvcode", "存货编码", 20),
+				JBoltExcelHeader.create("cinvcode1", "客户部番", 20),
+				JBoltExcelHeader.create("cinvname1", "部品名称", 20),
+				JBoltExcelHeader.create("cinvstd", "规格", 20),
+				JBoltExcelHeader.create("cuomname", "计量单位", 20),
+				JBoltExcelHeader.create("iseffective", "是否有效", 15),
+				JBoltExcelHeader.create("cversion", "版本/版次", 15),
+				JBoltExcelHeader.create("denabledate", "启用日期", 15),
+				JBoltExcelHeader.create("ddisabledate", "停用日期", 15),
+				JBoltExcelHeader.create("ccreatename", "创建人", 15),
+				JBoltExcelHeader.create("dcreatetime", "创建时间", 20)
+				
+		);
+		return jBoltExcelSheet;
+	}
+	
+	public JBoltExcel exportExcelTpl(List<Record> datas) {
+		//2、创建JBoltExcel
+		//3、返回生成的excel文件
+		return JBoltExcel.create()//创建JBoltExcel 从模板加载创建
+				.addSheet(createJboltExcelSheetTpl().setDataChangeHandler((data, index) -> {
+					String isEffective = data.getStr(BomM.ISEFFECTIVE.toLowerCase());
+					if (StrUtil.isNotBlank(isEffective)) {
+						data.change(BomM.ISEFFECTIVE.toLowerCase(), "1".equals(isEffective) ? "是": "否");
+					}
+					Date dEnableDate = data.getDate(BomM.DENABLEDATE.toLowerCase());
+					if (ObjectUtil.isNotNull(dEnableDate)){
+						data.change(BomM.DENABLEDATE.toLowerCase(), DateUtil.formatDate(dEnableDate));
+					}
+					Date dDisableDate = data.getDate(BomM.DDISABLEDATE.toLowerCase());
+					if (ObjectUtil.isNotNull(dDisableDate)){
+						data.change(BomM.DDISABLEDATE.toLowerCase(), DateUtil.formatDate(dDisableDate));
+					}
+					Date dCreateTime = data.getDate(BomM.DCREATETIME.toLowerCase());
+					if (ObjectUtil.isNotNull(dCreateTime)){
+						data.change(BomM.DCREATETIME.toLowerCase(), DateUtil.formatDate(dDisableDate));
+					}
+				}).setRecordDatas(2, datas)).setFileName("物料清单" + "_" + DateUtil.today());
+	}
+	
+	public JBoltExcel exportExcelByForm(List<Record> recordList){
+		JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create("sheet");
+		jBoltExcelSheet.setHeaders(
+				JBoltExcelHeader.create("cinvcode", "子件物料编码", 20),
+				JBoltExcelHeader.create("cinvname", "子件物料名称", 20),
+				JBoltExcelHeader.create("cinvstd", "规格", 20),
+				JBoltExcelHeader.create("cuomname", "计量单位", 20),
+				JBoltExcelHeader.create("parttypename", "材料类别", 15),
+				JBoltExcelHeader.create("ibaseqty", "基本用量", 15),
+				JBoltExcelHeader.create("iweight", "重量", 15),
+				JBoltExcelHeader.create("cvenname", "部品加工商", 15),
+				JBoltExcelHeader.create("bproxyforeignname", "虚拟件", 15),
+				JBoltExcelHeader.create("isvirtalname", "是否外作", 15),
+				JBoltExcelHeader.create("cmemo", "备注", 20),
+				JBoltExcelHeader.create("cversion", "版本/版次", 15),
+				JBoltExcelHeader.create("denabledate", "启用日期", 15),
+				JBoltExcelHeader.create("ddisabledate", "停用日期", 15),
+				JBoltExcelHeader.create("", "单位材料成本", 20),
+				JBoltExcelHeader.create("", "材料成本", 20)
+		);
+		
+		return JBoltExcel.create()//创建JBoltExcel 从模板加载创建
+				.addSheet(jBoltExcelSheet.setDataChangeHandler((data, index) -> {
+					
+					Date dEnableDate = data.getDate(BomM.DENABLEDATE.toLowerCase());
+					if (ObjectUtil.isNotNull(dEnableDate)){
+						data.change(BomM.DENABLEDATE.toLowerCase(), DateUtil.formatDate(dEnableDate));
+					}
+					Date dDisableDate = data.getDate(BomM.DDISABLEDATE.toLowerCase());
+					if (ObjectUtil.isNotNull(dDisableDate)){
+						data.change(BomM.DDISABLEDATE.toLowerCase(), DateUtil.formatDate(dDisableDate));
+					}
+					Date dCreateTime = data.getDate(BomM.DCREATETIME.toLowerCase());
+					if (ObjectUtil.isNotNull(dCreateTime)){
+						data.change(BomM.DCREATETIME.toLowerCase(), DateUtil.formatDate(dDisableDate));
+					}
+				}).setRecordDatas(2, recordList)).setFileName("物料清单明细" + "_" + DateUtil.today());
 	}
 }

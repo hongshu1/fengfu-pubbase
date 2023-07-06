@@ -50,6 +50,7 @@ public class CalendarAdminController extends JBoltBaseController {
         renderJsonData(service.getTakeDateListByYear(getKv()));
     }
 
+    @CheckPermission(PermissionKey.WORKCALENDARM_ADD)
     public void saveCalendar() {
         renderJson(service.saveCalendar(getKv()));
     }

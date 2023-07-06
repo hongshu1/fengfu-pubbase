@@ -19,6 +19,7 @@ import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -232,6 +233,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 
 				String autoID = sysPureceive.getAutoID();
 
+
+
 //				新增 根据供应商分组
 				if (notOk(autoID)) {
 					ValidationUtils.isTrue(jBoltTable.saveIsNotBlank(), "行数据为空，不允许保存！");
@@ -260,7 +263,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 							List<SysPureceivedetail> list = entry.getValue();
 
 							SysPureceive tarSySPuReceive = new SysPureceive().put(sysPureceive);
-							String billNo = JBoltSnowflakeKit.me.nextIdStr();
+							String billNo = BillNoUtils.genCode(getOrgCode(),table());
 							tarSySPuReceive.setBillNo(billNo);
 							tarSySPuReceive.setVenCode(venCode);
 							tarSySPuReceive.setDupdatetime(nowDate);
@@ -273,6 +276,9 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 							tarSySPuReceive.setIsDeleted(false);
 							tarSySPuReceive.save();
 							String id = tarSySPuReceive.getAutoID();
+
+							headerId.set(id);
+
 							list.forEach(sysPureceivedetail -> {
 								sysPureceivedetail.setMasID(id);
 								sysPureceivedetail.setIcreateby(user.getId());
@@ -304,6 +310,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 						sysPureceive.setCupdatename(user.getName());
 						sysPureceive.update();
 
+						headerId.set(sysPureceive.getAutoID());
+
 						saveModelList.forEach(sysPureceivedetail -> {
 							sysPureceivedetail.setMasID(sysPureceive.getAutoID());
 							sysPureceivedetail.setIcreateby(user.getId());
@@ -317,8 +325,6 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 						scanCodeReceiveDetailService.batchSave(saveModelList, saveModelList.size());
 					}
 				}
-
-				headerId.set(autoID);
 			}
 
 			//更新
@@ -665,7 +671,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 				List<Record> resource = getResource(para);
 
 				SysPuinstore sysPuinstore = new SysPuinstore();
-                sysPuinstore.setBillNo(sysPureceive.getBillNo()+1);
+
+                sysPuinstore.setBillNo(BillNoUtils.genCode(getOrgCode(),syspuinstoreservice.table()));
                 sysPuinstore.setBillType(sysPureceive.getBillType());
                 sysPuinstore.setBillDate(DateUtil.formatDate(now));
                 sysPuinstore.setOrganizeCode(getOrgCode());
@@ -694,21 +701,23 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                 sysPuinstore.save();
 
                 String autoID = sysPuinstore.getAutoID();
+                String whCode = sysPuinstore.getWhCode();
 
                 List<SysPuinstoredetail> pureceivedetailList = new ArrayList<>();
-                puiList.forEach(record -> {
+
+				for (int i = 0; i < puiList.size(); i++) {
+					Record record = puiList.get(i);
 
                     //往采购订单入库表插入信息
                     SysPuinstoredetail sysPuinstoredetail = new SysPuinstoredetail();
                     sysPuinstoredetail.setMasID(autoID);
-                    sysPuinstoredetail.setWhcode(sysPureceive.getWhCode());
+                    sysPuinstoredetail.setWhcode(whCode);
                     sysPuinstoredetail.setSourceBillType(record.getStr("sourcebilltype"));
                     sysPuinstoredetail.setSourceBillNo(record.getStr("sourcebillno"));
                     sysPuinstoredetail.setSourceBillNoRow(record.getStr("sourcebillno") + "-" + record.get("rowno"));
                     sysPuinstoredetail.setSourceBillDid(record.getStr("sourcebilldid"));
                     sysPuinstoredetail.setSourceBillID(record.getStr("sourcebillid"));
                     sysPuinstoredetail.setRowNo(record.get("rowno"));
-                    sysPuinstoredetail.setWhcode(record.getStr("whcode"));
                     sysPuinstoredetail.setPosCode(record.getStr("poscode"));
                     sysPuinstoredetail.setQty(record.getBigDecimal("qty"));
                     sysPuinstoredetail.setTrackType(record.getStr("tracktype"));
@@ -721,7 +730,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                     sysPuinstoredetail.setInvcode(record.getStr("invcode"));
                     pureceivedetailList.add(sysPuinstoredetail);
 
-                });
+                }
 				syspuinstoredetailservice.batchSave(pureceivedetailList);
             }
 

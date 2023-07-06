@@ -79,6 +79,10 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
     public static final String CAUDITNAME = "cAuditname";
     /**U8单据号*/
     public static final String U8BILLNO = "U8BillNo";
+    /**来源单号*/
+    public static final String SOURCEBILLNO = "sourceBillNo";
+    /**客户id*/
+    public static final String ICUSTOMERID = "iCustomerId";
 	/**
 	 * AutoID
 	 */
@@ -655,6 +659,40 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
 	@JSONField(name = "u8billno")
 	public java.lang.String getU8BillNo() {
 		return getStr("U8BillNo");
+	}
+
+	/**
+	 * 来源单号
+	 */
+	public M setSourceBillNo(java.lang.String sourceBillNo) {
+		set("sourceBillNo", sourceBillNo);
+		return (M)this;
+	}
+
+	/**
+	 * 来源单号
+	 */
+	@JBoltField(name="sourcebillno" ,columnName="sourceBillNo",type="String", remark="来源单号", required=false, maxLength=1, fixed=0, order=35)
+	@JSONField(name = "sourcebillno")
+	public java.lang.String getSourceBillNo() {
+		return getStr("sourceBillNo");
+	}
+
+	/**
+	 * 客户id
+	 */
+	public M setICustomerId(java.lang.String iCustomerId) {
+		set("iCustomerId", iCustomerId);
+		return (M)this;
+	}
+
+	/**
+	 * 客户id
+	 */
+	@JBoltField(name="icustomerid" ,columnName="iCustomerId",type="String", remark="客户id", required=false, maxLength=1, fixed=0, order=36)
+	@JSONField(name = "icustomerid")
+	public java.lang.String getICustomerId() {
+		return getStr("iCustomerId");
 	}
 
 }

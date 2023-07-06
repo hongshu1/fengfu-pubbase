@@ -110,6 +110,7 @@ public class CustomerAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.CUSTOMER_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -128,6 +129,7 @@ public class CustomerAdminController extends BaseAdminController {
         renderJson(service.toggleIsenabled(getLong(0)));
     }
 
+    @CheckPermission(PermissionKey.CUSTOMER_SUBMIT)
     public void updateEditTable() {
 //		renderJson(service.updateEditTable(getJBoltTable(), JBoltUserKit.getUserId(), new Date()));
         renderJson(service.submitByJBoltTables(getJBoltTables()));
@@ -154,6 +156,7 @@ public class CustomerAdminController extends BaseAdminController {
     /**
      * 客户档案Excel导入数据库
      */
+    @CheckPermission(PermissionKey.CUSTOMER_IMPORT)
     public void importExcel() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

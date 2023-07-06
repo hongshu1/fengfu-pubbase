@@ -2,6 +2,7 @@ package cn.rjtech.admin.syssaledeliverplan;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -62,11 +63,17 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-    public List<Record> getAdminDatas(Kv kv) {
-        List<Record> records = dbTemplate("syssaledeliverplan.syssaledeliverplanList", kv).find();
-        return records;
+    public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> paginate = dbTemplate("syssaledeliverplan.syssaledeliverplanList", kv).paginate(pageNumber, pageSize);
+        for (Record record : paginate.getList()) {
+            if (ObjUtil.equal(record.getStr("sourcebilltype"), "手工新增")) {
+                Record cordernoRecord =
+                    dbTemplate("syssaledeliverplan.findCOrderNoBySourceBillId",Kv.by("iautoid",record.get("sourcebillid"))).findFirst();
+                record.set("corderno",cordernoRecord.getStr("corderno"));
+            }
+        }
+        return paginate;
     }
-
 
     /**
      * 保存
@@ -201,40 +208,6 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         return null;
     }
 
-    public List<Record> getorder(Kv kv) {
-        return dbTemplate("syssaledeliverplan.order", kv).find();
-    }
-
-    public List<Record> saletype(Kv kv) {
-        return dbTemplate("syssaledeliverplan.saletype", kv).find();
-    }
-
-    public List<Record> department(Kv kv) {
-        return dbTemplate("syssaledeliverplan.department", kv).find();
-    }
-
-    public List<Record> customeraddr(Kv kv) {
-        return dbTemplate("syssaledeliverplan.customeraddr", kv).find();
-    }
-
-    public List<Record> rdstyle(Kv kv) {
-        return dbTemplate("syssaledeliverplan.RdStyle", kv).find();
-    }
-
-    public List<Record> settlestyle(Kv kv) {
-        return dbTemplate("syssaledeliverplan.settlestyle", kv).find();
-    }
-
-    public Object foreigncurrency(Kv kv) {
-        return dbTemplate("syssaledeliverplan.foreigncurrency", kv).find();
-    }
-
-    public Page<Record> getSaleDeliverBillNoList(int pageNumber, int pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("syssaledeliverplan.getSaleDeliverBillNoList", kv).paginate(pageNumber, pageSize);
-
-        return paginate;
-    }
-
     /**
      * 执行JBoltTable表格整体提交
      */
@@ -256,10 +229,10 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
                 sysotherin.setIcreateby(user.getId());
                 sysotherin.setCcreatename(user.getName());
                 sysotherin.setDcreatetime(now);
-                sysotherin.setSourceBillType("手动新增");
+                sysotherin.setSourceBillType("手工新增");
                 sysotherin.setSourceBillID(formRecord.getStr("sourcebillid"));//来源id
                 sysotherin.setIsDeleted(false);
-
+                sysotherin.setICustomerId(formRecord.getStr("icustomerid"));
                 saveSaleDeliverPlanModel(sysotherin, formRecord, now, user);
                 //主表新增
                 ValidationUtils.isTrue(sysotherin.save(), ErrorMsg.SAVE_FAILED);
@@ -303,6 +276,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
             sysdetail.setIcreateby(user.getId());
             sysdetail.setCcreatename(user.getName());
             sysdetail.setDcreatetime(now);
+            sysdetail.setSourceBillID(sysotherin.getSourceBillID());
             saveSaleDeliverPlanDetailModel(sysdetail, row, now, user, i);
 
             sysproductindetail.add(sysdetail);
@@ -354,6 +328,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         sysotherin.setBillType(formRecord.getStr("billtype"));
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         sysotherin.setBillDate(format.format(now));
+        sysotherin.setShipAddress(formRecord.getStr("shipaddress"));
         sysotherin.setDeptCode(formRecord.getStr("deptcode"));
         sysotherin.setExchName(formRecord.getStr("exchname"));
         sysotherin.setExchRate(formRecord.getBigDecimal("exchrate"));
@@ -374,15 +349,50 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         detail.setSourceBillType(row.getStr("sourcebilltype"));
         detail.setSourceBillNo(row.getStr("sourcebillno"));
         detail.setSourceBillDid(row.getStr("sourcebilldid"));
-        detail.setSourceBillID(row.getStr("sourcebilldid"));
         detail.setIupdateby(user.getId());
         detail.setCupdatename(user.getName());
         detail.setDupdatetime(now);
         detail.setSourceBillDid(null);
         detail.setSourceBIllNoRow(StrUtil.toString(i));
         detail.setSourceBillNo(null);
-        detail.setSourceBillType("手动新增");
+        detail.setSourceBillType("手工新增");
+        detail.setPredictDeliverDate(row.getDate("predictdeliverdate"));
         detail.setPosCode(row.getStr("careacode"));
+        detail.setInvCode(row.getStr("invcode"));
+    }
+
+    public List<Record> getorder(Kv kv) {
+        return dbTemplate("syssaledeliverplan.order", kv).find();
+    }
+
+    public List<Record> saletype(Kv kv) {
+        return dbTemplate("syssaledeliverplan.saletype", kv).find();
+    }
+
+    public List<Record> department(Kv kv) {
+        return dbTemplate("syssaledeliverplan.department", kv).find();
+    }
+
+    public List<Record> customeraddr(Kv kv) {
+        return dbTemplate("syssaledeliverplan.customeraddr", kv).find();
+    }
+
+    public List<Record> rdstyle(Kv kv) {
+        return dbTemplate("syssaledeliverplan.RdStyle", kv).find();
+    }
+
+    public List<Record> settlestyle(Kv kv) {
+        return dbTemplate("syssaledeliverplan.settlestyle", kv).find();
+    }
+
+    public Object foreigncurrency(Kv kv) {
+        return dbTemplate("syssaledeliverplan.foreigncurrency", kv).find();
+    }
+
+    public Page<Record> getSaleDeliverBillNoList(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> paginate = dbTemplate("syssaledeliverplan.getSaleDeliverBillNoList", kv).paginate(pageNumber, pageSize);
+
+        return paginate;
     }
 
     /*

@@ -79,6 +79,7 @@ public class CustomerClassAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.CUSTOMER_ADD)
     public void save() {
         renderJson(service.save(getModel(CustomerClass.class, "customerclass")));
     }
@@ -86,6 +87,7 @@ public class CustomerClassAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.CUSTOMER_EDIT)
     public void update() {
         renderJson(service.update(getModel(CustomerClass.class, "customerclass")));
     }
@@ -93,6 +95,7 @@ public class CustomerClassAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.CUSTOMER_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -146,6 +149,7 @@ public class CustomerClassAdminController extends BaseAdminController {
     /**
      * 客户档案Excel导入数据库
      */
+    @CheckPermission(PermissionKey.CUSTOMER_IMPORT)
     public void importExcel() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");

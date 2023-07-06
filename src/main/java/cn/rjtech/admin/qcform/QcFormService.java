@@ -550,80 +550,14 @@ public class QcFormService extends BaseService<QcForm> {
         return findFirst(selectSql().eq(QcForm.CQCFORMNAME, cqcformname).eq(QcForm.IORGID, getOrgId()).eq(QcForm.ISDELETED, ZERO_STR).first());
     }
 
-//    public Ret importExcelData(File file) {
-//        StringBuilder errorMsg = new StringBuilder();
-//
-//        Date now = new Date();
-//
-//        JBoltExcel jBoltExcel = JBoltExcel
-//                //从excel文件创建JBoltExcel实例
-//                .from(file)
-//                //设置工作表信息
-//                .setSheets(
-//                        JBoltExcelSheet.create("sheet1")
-//                                //设置列映射 顺序 标题名称
-//                                .setHeaders(
-//                                        JBoltExcelHeader.create("cqcformname", "检验表格名称"),
-//                                        JBoltExcelHeader.create("iQcFormItemId", "检验项目名称"),
-//                                        JBoltExcelHeader.create("iQcParamId", "检验参数名称"),
-//                                        JBoltExcelHeader.create("itype", "参数录入方式"),
-//                                        JBoltExcelHeader.create("istdval", "标准值"),
-//                                        JBoltExcelHeader.create("imaxval", "最大值"),
-//                                        JBoltExcelHeader.create("iminval", "最小值"),
-//                                        JBoltExcelHeader.create("coptions", "列表可选值")
-//                                )
-//
-//                                //从第三行开始读取
-//                                .setDataStartRow(3)
-//                );
-//
-//
-//
-//
-//        //从指定的sheet工作表里读取数据
-//        List<Record> records = JBoltExcelUtil.readRecords(jBoltExcel, "sheet1", true, errorMsg);
-//        if (notOk(records)) {
-//            if (errorMsg.length() > 0) {
-//                return fail(errorMsg.toString());
-//            } else {
-//                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-//            }
-//        }
-//        QcForm qcForm=new QcForm();
-//
-//        QcFormParam qcFormParam=new QcFormParam();
-//        for (Record record : records) {
-//          qcForm.setIAutoId(JBoltSnowflakeKit.me.nextId());
-//          qcForm.setIOrgId(getOrgId());
-//          qcForm.setCOrgCode(getOrgCode());
-//          qcForm.setCOrgName(getOrgName());
-//          qcForm.setICreateBy(JBoltUserKit.getUserId());
-//          qcForm.setCCreateName(JBoltUserKit.getUserName());
-//          qcForm.setDCreateTime(now);
-//          qcForm.setIsDeleted(false);
-//          qcForm.setIsEnabled(true);
-//          qcForm.setIUpdateBy(JBoltUserKit.getUserId());
-//          qcForm.setDUpdateTime(now);
-//          qcForm.setCUpdateName(JBoltUserKit.getUserName());
-//          qcForm.setCQcFormName(record.getStr("cqcformname"));
-//
-//
-//          qcFormParam.setIAutoId(JBoltSnowflakeKit.me.nextId());
-//          qcFormParam.set
-//
-//
-//
-//        }
-//
-//        //读取数据没有问题后判断必填字段
-//        if (records.size() > 0) {
-//            tx(() -> {
-////                batchSave(qcform);
-//                return true;
-//            });
-//
-//        }
-//
-//        return SUCCESS;
-//    }
+
+
+    /**
+     * 根据名称查询id
+     */
+    public QcForm getBycQcFormName(String cTypeNames) {
+        Kv para=Kv.by("cTypeNames",cTypeNames);
+        return daoTemplate("qcform.getBycQcFormName", para).findFirst();
+
+    }
 }
