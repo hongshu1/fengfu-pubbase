@@ -206,11 +206,11 @@ public class MoDocAdminController extends BaseAdminController {
 
 
 	/**
-	 * 提交
-	 * @param rowid
+	 * 编辑界面保存
+	 * @param
 	 */
-	public void subUpdata(String  rowid) {
-		renderJson(service.subSave(getJBoltTable(),rowid));
+	public void subUpdata() {
+		renderJson(service.subUpdata(getJBoltTable()));
 	}
 	/**
 	 * 关闭
@@ -525,7 +525,14 @@ public class MoDocAdminController extends BaseAdminController {
 		Page<Record> pageList = service.getInventoryList(getPageNumber(),getPageSize(),getKv());
 		renderJsonData(pageList);
 	}
-    
+
+	@UnCheck
+	/**
+	 * 选择物料autocomplete数据查询
+	 * */
+	public void getMouldsAutocomplete(){
+		renderJsonData(service.inventoryAutocompleteDatas(get("q"),getInt("limit")));
+	}
 	/**
 	 * 获取操作资质的人员
 	 */

@@ -630,6 +630,22 @@ public class PermissionKey {
 	 */
 	public static final String PMISSUERECORDLINE = "pmissuerecordline";
 	/**
+	 * 编辑
+	 */
+	public static final String WORKREGIONM_EDIT = "workregionm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WORKREGIONM_DELETE = "workregionm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String WORKREGIONM_EXPORT = "workregionm_export";
+	/**
+	 * 导入
+	 */
+	public static final String WORKREGIONM_IMPORT = "workregionm_import";
+	/**
 	 * 卷料采购送货单
 	 */
 	public static final String DELIVERY_HEADER = "delivery_header";
@@ -896,7 +912,7 @@ public class PermissionKey {
 	/**
 	 * 销售发货单列表
 	 */
-	public static final String SYSSALEDELIVERPLAN = "syssaledeliverplan";
+	public static final String SALES_SHIPMENT_LIST = "sales_shipment_list";
 	/**
 	 * 条码报表
 	 */
@@ -1393,10 +1409,6 @@ public class PermissionKey {
 	 * 现品票
 	 */
 	public static final String API_MOMOINVBATCH = "api_momoinvbatch";
-	/**
-	 * 始业点检表管理
-	 */
-	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
 	/**
 	 * 新增
 	 */
@@ -3065,4 +3077,9 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String PERSON_IMPORT = "person_import";
+	public static final String FITEMSS97_DELETED = "fitemss97_deleted";
+	/**
+	 * 提审
+	 */
+	public static  final  String  modoc_submit = "modoc_submit";
 }

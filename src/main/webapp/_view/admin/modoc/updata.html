@@ -1,16 +1,18 @@
 <form onsubmit="return false;" id="moDocForm_#(pageId)" action="#(action)" method="post">
 
     <input type="hidden" id="iMoDocId" name="moDoc.iautoid" value="#(moDoc.iautoid??)"/>
-    #if(moDoc==null||moDoc.istatus<7)
+
     <button type="submit"  onclick="submitThisForm()" class="btn btn-primary btn-sm"><i class="fa fa-save"></i>保存</button>
-    <button onclick="submitForm()" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交</button>
-    <button onclick="closeHandler()" class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
-    #end
+    <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
+    #include("/_view/_common/_approval_btns.html", uri="/admin/modoc",
+    formSn="Mo_MoDoc", primaryKeyName="iAutoId", o=moDoc,
+    permissionKeyPrefix="modoc", className="cn.rjtech.admin.modoc.MoDocService")
+    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
     <div class="form-group row" style="margin-top: 20px">
         <label class="col-sm-1 col-form-label">工单号</label>
         <div class="col-3">
             <input type="text"  class="form-control"
-                   placeholder="" maxlength="50" name="moDoc.clabelmodocno" readonly="readonly"
+                   placeholder="" maxlength="50" name="moDoc.cMoDocNo" readonly="readonly"
                    value="#(moDoc.cmodocno??)"/>
         </div>
 
@@ -25,8 +27,6 @@
             <input type="text"  class="form-control" id="cworkname"
                    placeholder="" maxlength="50" name="moDoc.croutingname" readonly="readonly"
                    value="#(moDoc.cworkname??)"/>
-
-            <input type="hidden" id="iworkregionmid" value="moDoc.iworkregionmid" name="moDoc.iworkregionmid"/>
         </div>
 
     </div>
@@ -197,6 +197,15 @@
 
 #define js()
 <script>
+    var submit = false;
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+        // 调用保存处理
+        jboltTableSubmit("#itemroutingconfigid2_#(pageId)");
+    }
     $(function(){
         //alert("ssss");
         var iMoDocId=$("#iMoDocId").val();
@@ -290,14 +299,29 @@
                 withForm: ["moDocForm_#(pageId)"],
                 name: 'docForm',
                 type:"all",//cell|all
-                //params:{"orderId":3},//携带其他额外参数
+                params:{"imdocid":imdocid},//携带其他额外参数
                 //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
-                url:"/admin/modoc/save?rowid=",
+                url:"/admin/modoc/subUpdata",
                 success:function(res){
+                    console.log(JSON.stringify(res))
                     LayerMsgBox.success("提交成功",600,function(){
                         //parent.refreshPjaxContainer();
-                        parent.refreshJBoltTable()
-                        parent.layer.closeAll();
+                        if (res.state === 'ok') {
+                            // 提交审核（审批）调用
+                            if (submit) {
+                                // 提审
+                                submit_#(pageId)(res.data, function (data) {
+                                    successHandler('提审成功', res.data.iautoid);
+                                });
+                            } else {
+                                LayerMsgBox.alert("保存成功！");
+                                parent.refreshJBoltTable()
+                                parent.layer.closeAll();
+                            }
+                        } else {
+                            LayerMsgBox.alert(res.msg, 2);
+                        }
+
                     });
                 }
             },
@@ -376,7 +400,16 @@
 
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 100, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/modoc/index';
+            parent.refreshPjaxContainer();
+        });
+    }
     //$(document).ready(function () {
     $('#routid').on('change', function () {
         var input = $(this);
@@ -479,6 +512,13 @@
             });
         });
         // });
+    }
+    /**
+     * 关闭窗口
+     */
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
     }
 </script>
 #end

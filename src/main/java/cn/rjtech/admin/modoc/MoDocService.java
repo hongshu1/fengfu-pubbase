@@ -30,13 +30,18 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.entity.vo.instockqcformm.MoDocFormVo;
+import cn.rjtech.enums.MonthOrderStatusEnum;
+import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
+import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.github.javaparser.utils.Log;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -48,6 +53,9 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 工单管理 Service
@@ -56,7 +64,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author: RJ
  * @date: 2023-04-26 16:15
  */
-public class MoDocService extends BaseService<MoDoc> {
+public class MoDocService extends BaseService<MoDoc> implements IApprovalService {
   @Inject
   private InventoryRoutingService inventoryRoutingService;
   @Inject
@@ -147,10 +155,11 @@ public class MoDocService extends BaseService<MoDoc> {
    */
   public Ret save(JBoltTable jBoltTable) {
     MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
+    Map<String,Object> map=new HashMap<>();
     if (moDoc == null || isOk(moDoc.getIAutoId())) {
       return fail(JBoltMsg.PARAM_ERROR);
     }
-
+    Record formRecord = jBoltTable.getFormRecord();
     ValidationUtils.notNull(moDoc.getIWorkRegionMid(), "未找到产线,请在存货档案维护产线!");
     ValidationUtils.notNull(moDoc.getIDepartmentId(), "未找到部门，请在存货档案维护部门!");
 
@@ -185,9 +194,13 @@ public class MoDocService extends BaseService<MoDoc> {
     moDoc.setICreateBy(userId);
     moDoc.setCCreateName(userName);
     moDoc.setDCreateTime(dCreateTime);
+    moDoc.setIAuditWay(1);
+    moDoc.setIAuditStatus(0);
+    moDoc.setIsDeleted(false );
     tx(() -> {
       moDoc.save();
       // 工艺路线
+      map.put("iautoid",moDoc.getIAutoId());
       MoMorouting moMorouting = new MoMorouting();
       moMorouting.setIMoDocId(moDoc.getIAutoId());
       moMorouting.setIInventoryId(moDoc.getIInventoryId());
@@ -260,7 +273,7 @@ public class MoDocService extends BaseService<MoDoc> {
       }
       return true;
     });
-    return SUCCESS;
+    return successWithData(map);
   }
 
   /**
@@ -1063,6 +1076,10 @@ public class MoDocService extends BaseService<MoDoc> {
     return dbTemplate("modoc.getInventoryList", keywords).paginate(pageNumber, pageSize);
   }
 
+  public List<Record> inventoryAutocompleteDatas(String q, Integer limit) {
+    return dbTemplate("modoc.inventoryAutocompleteDatas", Okv.by("q", q).set("limit", limit)).find();
+  }
+
   public Page<Record> getPersonByEquipment(int pageNumber, int pageSize, Kv keywords) {
     if (keywords.get("configpersonids") != null) {
       String configpersonids = keywords.getStr("configpersonids");
@@ -1297,4 +1314,171 @@ public class MoDocService extends BaseService<MoDoc> {
       }
       return records;
     }
+
+
+  /**
+   * 处理审批通过的其他业务操作，如有异常返回错误信息
+   *
+   * @param formAutoId 单据ID
+   * @return 错误信息
+   */
+  @Override
+  public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+    return null;
+  }
+
+  /**
+   * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
+   */
+  @Override
+  public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
+    return null;
+  }
+
+  /**
+   * 实现反审之前的其他业务操作，如有异常返回错误信息
+   *
+   * @param formAutoId 单据ID
+   * @param isFirst    是否为审批的第一个节点
+   * @param isLast     是否为审批的最后一个节点
+   */
+  @Override
+  public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+    return null;
+  }
+
+  /**
+   * 实现反审之后的其他业务操作, 如有异常返回错误信息
+   *
+   * @param formAutoId 单据ID
+   * @param isFirst    是否为审批的第一个节点
+   * @param isLast     是否为审批的最后一个节点
+   */
+  @Override
+  public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+    return null;
+  }
+
+  /**
+   * 提审前业务，如有异常返回错误信息
+   */
+  @Override
+  public String preSubmitFunc(long formAutoId) {
+
+    return null;
+  }
+
+  /**
+   * 提审后业务处理，如有异常返回错误信息
+   */
+  @Override
+  public String postSubmitFunc(long formAutoId) {
+
+    return null;
+  }
+
+  /**
+   * 撤回审核业务处理，如有异常返回错误信息
+   */
+  @Override
+  public String postWithdrawFunc(long formAutoId) {
+    return null;
+  }
+
+  /**
+   * 从审批中，撤回到已保存，业务实现，如有异常返回错误信息
+   */
+  @Override
+  public String withdrawFromAuditting(long formAutoId) {
+    ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
+    return null;
+  }
+
+  /**
+   * 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+   */
+  @Override
+  public String preWithdrawFromAuditted(long formAutoId) {
+    return null;
+  }
+
+  /**
+   * 从已审核，撤回到已保存，业务实现，如有异常返回错误信息
+   */
+  @Override
+  public String postWithdrawFromAuditted(long formAutoId) {
+   return null;
+  }
+
+  /**
+   * 批量审批（审核）通过
+   * @param formAutoIds 单据IDs
+   * @return  错误信息
+   */
+  @Override
+  public String postBatchApprove(List<Long> formAutoIds) {
+
+    return null;
+  }
+
+  /**
+   * 批量审批（审核）不通过
+   * @param formAutoIds 单据IDs
+   * @return  错误信息
+   */
+  @Override
+  public String postBatchReject(List<Long> formAutoIds) {
+    for (Long formAutoId:formAutoIds) {
+      ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+    }
+    return null;
+  }
+
+  /**
+   * 批量撤销审批
+   * @param formAutoIds 单据IDs
+   * @return  错误信息
+   */
+  @Override
+  public String postBatchBackout(List<Long> formAutoIds) {
+
+    return null;
+  }
+
+  public Ret subUpdata(JBoltTable jBoltTable){
+    MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
+    Map<String,Object> map=new HashMap<>();
+    if (moDoc == null ) {
+      return fail(JBoltMsg.PARAM_ERROR);
+    }
+    //存工艺路线工序,人员,设备,物料集
+    List<MoDocFormVo> saveModelList1 = jBoltTable.getSaveModelList(MoDocFormVo.class);
+    //人员
+    for (MoDocFormVo record : saveModelList1) {
+      String configperson = record.getConfigpersonids();
+      List<Record> records = dbTemplate("modoc.getConfigPersonById",Kv.by("id",record.getIautoid())).find();
+      if(records.size()==0 && configperson != null){
+          String[] arr = configperson.split(",");
+          for (int i = 0; i < arr.length; i++) {
+            MoMoroutingconfigPerson mp =new MoMoroutingconfigPerson();
+            mp.setIMoRoutingConfigId(Long.parseLong(record.getIautoid()));
+            mp.setIPersonId(Long.parseLong(arr[i]));
+            moMoroutingconfigPersonService.save(mp);
+          }
+      }
+      if(records.size()!=0 && configperson != null){
+         String[] arr2 = configperson.split(",");
+          for (Record record1 : records) {
+            moMoroutingconfigPersonService.deleteById(record1.getLong("iautoid"));
+          }
+          for (int i = 0; i < arr2.length; i++) {
+            MoMoroutingconfigPerson mp =new MoMoroutingconfigPerson();
+            mp.setIMoRoutingConfigId(Long.parseLong(record.getIautoid()));
+            mp.setIPersonId(Long.parseLong(arr2[i]));
+            moMoroutingconfigPersonService.save(mp);
+          }
+      }
+    }
+    return successWithData(moDoc.getIAutoId());
+  }
 }

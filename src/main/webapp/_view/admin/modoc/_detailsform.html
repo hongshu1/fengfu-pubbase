@@ -240,7 +240,10 @@
 
 
         </div>
-
+        ### 新增之后，并且为审核流
+        #if(moDoc.iautoid?? && moDoc.iauditway == 2 && moDoc.iauditstatus > 0)
+        #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=moDoc.iAutoId, primaryKeyName="iAutoId", formSn="Mo_MoDoc", btnNeed=1, pId=pageId, className="cn.rjtech.admin.modoc.MoDocService")
+        #end
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
             <div class="btn-group" role="group" aria-label="btn-group">
