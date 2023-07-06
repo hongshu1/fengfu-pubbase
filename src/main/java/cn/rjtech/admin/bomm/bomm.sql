@@ -9,8 +9,8 @@ FROM
 	Bd_BomM master
 WHERE
 	master.IsDeleted = '0'
-    AND master.iAuditStatus = 2
-    AND master.isEffective = 1
+    AND CONVERT(DATE, master.dEnableDate) <= CONVERT(DATE, GETDATE())
+	AND CONVERT(DATE, master.dDisableDate) >= CONVERT(DATE, GETDATE())
 	#if(isView)
 	    AND master.isView = #para(isView)
 	#end
@@ -54,46 +54,62 @@ WHERE
 
 #sql("getVersionRecord")
 SELECT
-	master.iAutoId,
-	master.isEffective,
-	master.cVersion,
-	master.iType,
-	master.isView,
-	master.dEnableDate,
-	master.dDisableDate,
-	master.iAuditStatus,
-	master.cCreateName,
-	master.dCreateTime,
-	master.cInvCode,
-	master.cInvName,
-	minv.cInvStd,
-	minv.cInvCode1,
-	minv.cInvAddCode1,
-	minv.cInvName1,
-	minv.cInvName2,
-	uom.cUomName
+    *
 FROM
-	Bd_BomM master
-	INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
-	LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
-WHERE
-	master.IsDeleted = '0'
-	#if(orgId)
-	AND  master.iOrgId = #para(orgId)
-	#end
+(
+    SELECT
+        master.iAutoId,
+        CASE
+        WHEN CONVERT(DATE, master.dEnableDate) <= CONVERT(DATE, GETDATE())
+            AND CONVERT(DATE, master.dDisableDate) >= CONVERT(DATE, GETDATE()) THEN 1
+            ELSE 0
+        END AS isEffective,
+        master.cVersion,
+        master.iType,
+        master.isView,
+        master.dEnableDate,
+        master.dDisableDate,
+        master.iAuditStatus,
+        master.cCreateName,
+        master.dCreateTime,
+        master.cInvCode,
+        master.cInvName,
+        minv.cInvStd,
+        minv.cInvCode1,
+        minv.cInvAddCode1,
+        minv.cInvName1,
+        minv.cInvName2,
+        uom.cUomName
+    FROM
+        Bd_BomM master
+        INNER JOIN Bd_Inventory minv ON minv.iAutoId = master.iInventoryId
+        LEFT JOIN Bd_Uom uom ON uom.iAutoId = minv.iUomClassId
+    WHERE
+        master.IsDeleted = '0'
+        #if(orgId)
+            AND  master.iOrgId = #para(orgId)
+        #end
+        ) A
+WHERE 1 = 1
+
 	#if(cInvCode)
-	    AND master.cInvCode LIKE CONCAT('%',#para(cInvCode),'%')
+	    AND A.cInvCode LIKE CONCAT('%',#para(cInvCode),'%')
 	#end
 	#if(cInvCode1)
-	    AND minv.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%')
+	    AND A.cInvCode1 LIKE CONCAT('%',#para(cInvCode1),'%')
 	#end
 	#if(cInvName1)
-	    AND minv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
+	    AND A.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
 	#end
-	#if(isEffective)
-        AND master.isEffective = #para(isEffective59)
+    #if(isEffective)
+        AND A.isEffective = #para(isEffective59)
 	#end
-	ORDER BY master.dCreateTime DESC
+	#if(sonInvCode)
+	    AND EXISTS (
+	        SELECT 1 FROM Bd_BomD c WHERE c.iPid = a.iAutoId AND c.cInvCode LIKE CONCAT('%',#para(sonInvCode),'%') AND isDeleted = '0'
+	    )
+	#end
+	ORDER BY a.dCreateTime DESC
 #end
 
 #sql("findByVersion")
