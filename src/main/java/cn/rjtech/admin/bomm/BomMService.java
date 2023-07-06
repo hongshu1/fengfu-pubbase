@@ -1365,7 +1365,10 @@ public class BomMService extends BaseService<BomM> {
 		
 		// 子件集合
 		List<BomD> bomDList = parentInvMap.get(inventoryId);
-		ValidationUtils.notEmpty(bomDList, cInvLev+"行，已存在版本记录，但文件中未找到子件");
+		if (CollectionUtil.isEmpty(bomDList)){
+			return;
+		}
+//		ValidationUtils.notEmpty(bomDList, cInvLev+"行，已存在版本记录，但文件中未找到子件");
 		// 按存货编码-- 子件
 		Map<Long, BomD> bomDMap = bomDList.stream().collect(Collectors.toMap(BomD::getIInventoryId, bomD1 -> bomD1));
 		
