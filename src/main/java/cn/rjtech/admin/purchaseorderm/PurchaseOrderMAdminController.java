@@ -11,6 +11,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.foreigncurrency.ForeignCurrencyService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
@@ -23,10 +24,7 @@ import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.annotations.RequestLimit;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.enums.SourceTypeEnum;
-import cn.rjtech.model.momdata.Exch;
-import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.PurchaseOrderM;
-import cn.rjtech.model.momdata.Vendor;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -78,6 +76,8 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     private InventoryChangeService inventoryChangeService;
     @Inject
     private ExchService exchService;
+    @Inject
+    private DepartmentService departmentService;
 
 
     /**
@@ -128,7 +128,12 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
         if (ObjUtil.isNotNull(person)) {
             set("personname", person.getCpsnName());
         }
-        record.set(PurchaseOrderM.IDEPARTMENTID, vendor.getCVenDepart());
+        if (StrUtil.isNotBlank(vendor.getCVenDepart())){
+            Department department = departmentService.findByCdepcode(vendor.getCVenDepart());
+            String format = "部门编码【%s】找不到记录";
+            ValidationUtils.notNull(department, String.format(format, vendor.getCVenDepart()));
+            record.set(PurchaseOrderM.IDEPARTMENTID, department.getIAutoId());
+        }
         // 带出供应商下的业务员，币种，税率
         set("purchaseOrderM", record);
 
