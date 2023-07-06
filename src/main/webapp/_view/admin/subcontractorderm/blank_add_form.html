@@ -1,4 +1,33 @@
 #set(pageId=RandomUtil.random(6))
+### 默认为非只读,查看页有readonly=readonly标识
+### 【readonly为false】, 或 【审核中或已通过】，设置只读
+#if(readonly != 'readonly' && (subcontractOrderM.iauditstatus??0 == 1 || subcontractOrderM.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+<div class="jbolt_page_title">
+
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        #if(readonly != 'readonly')
+                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs">保存</button>
+                        #end
+                        #if(subcontractOrderM.iAutoId??)
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/subcontractorderm", formSn="PS_SubcontractOrderM", o=subcontractOrderM, primaryKeyName="iAutoId", className="cn.rjtech.admin.subcontractorderm.SubcontractOrderMService", permissionKeyPrefix="subcontractorderm")
+                        #end
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
 <form onsubmit="return false;" id="subcontractOrderM_Form" action="#(action)" method="post">
     #if(subcontractOrderM.iautoid??)
     <input type="hidden" name="iAutoId" value="#(subcontractOrderM.iautoid??)"/>
@@ -156,6 +185,9 @@
     </div>
     </div>
 </form>
+#if(subcontractOrderM.iautoid?? && subcontractOrderM.iauditway == 2 && subcontractOrderM.iauditstatus > 0)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=subcontractOrderM.iAutoId, primaryKeyName="iAutoId", formSn="PS_SubcontractOrderM", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.subcontractorderm.SubcontractOrderMService", o=subcontractorderm)
+#end
 
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="puraseOrder_tpl_2">

@@ -31,29 +31,81 @@ ORDER BY so.dcreatetime DESC
 
 
 #sql("dList")
-SELECT  a.*,
-    m.cOrderNo as sourcebillno,
-    aa.cCompleteBarcode as barcode,
-    b.cInvCode ,
-    b.cInvCode1,
-    b.cInvName1,
-    CONVERT(VARCHAR(10), aa.dPlanDate, 120) as plandate,
-    aa.iQty as qtys,
-    m.cOrderNo as SourceBillNo,
-    m.iBusType as SourceBillType,
-    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
-    m.cOrderNo as SourceBillID,
-    d.iAutoId as SourceBillDid,
-    m.iVendorId,
-	v.cVenCode as vencode,
-	v.cVenName as venname
+SELECT  a.*,t.*
 FROM T_Sys_PUReceiveDetail a
-LEFT JOIN PS_PurchaseOrderDBatch aa on aa.cCompleteBarcode = a.Barcode and aa.isEffective = '1'
-LEFT JOIN Bd_Inventory b on aa.iinventoryId = b.iAutoId
-LEFT JOIN PS_PurchaseOrderD d on aa.iPurchaseOrderDid = d.iAutoId
-LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
-LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
-LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = aa.iPurchaseOrderdQtyId
+LEFT JOIN
+(
+SELECT
+	m.cOrderNo AS sourcebillno,
+	a.cCompleteBarcode AS barcode,
+	b.cInvCode ,
+	b.cInvCode1,
+	b.cInvName1,
+	b.cInvName,
+	a.dPlanDate AS plandate,
+	b.cInvStd AS cinvstd,
+	a.iQty AS qty,
+	a.iQty AS qtys,
+	a.iAutoId AS autoid,
+	m.iBusType AS SourceBillType,
+	m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+	m.cOrderNo AS SourceBillID,
+	d.iAutoId AS SourceBillDid,
+	m.iVendorId,
+	v.cVenCode AS vencode,
+	v.cVenName AS venname,
+	uom.cUomCode AS purchasecuomcode,
+	uom.cUomName AS purchasecuomname,
+	config.iWarehouseId,
+	area.cAreaCode AS poscode
+FROM
+	PS_PurchaseOrderDBatch a
+	LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+	LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+	LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+	LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+	LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+	LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+	LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+
+
+UNION
+
+SELECT
+	m.cOrderNo AS sourcebillno,
+	a.cCompleteBarcode AS barcode,
+	b.cInvCode ,
+	b.cInvCode1,
+	b.cInvName1,
+	b.cInvName,
+	a.dPlanDate AS plandate,
+	b.cInvStd AS cinvstd,
+	a.iQty AS qty,
+	a.iQty AS qtys,
+	a.iAutoId AS autoid,
+	m.iBusType AS SourceBillType,
+	m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+	m.cOrderNo AS SourceBillID,
+	d.iAutoId AS SourceBillDid,
+	m.iVendorId,
+	v.cVenCode AS vencode,
+	v.cVenName AS venname,
+	uom.cUomCode AS purchasecuomcode,
+	uom.cUomName AS purchasecuomname,
+	config.iWarehouseId,
+	area.cAreaCode AS poscode
+FROM
+	PS_SubcontractOrderDBatch a
+	LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+	LEFT JOIN PS_SubcontractOrderD d ON a.iSubcontractOrderDid = d.iAutoId
+	LEFT JOIN PS_SubcontractOrderM m ON m.iAutoId = d.iSubcontractOrderMid
+	LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+	LEFT JOIN PS_SubcontractOrderD_Qty tc ON tc.iSubcontractOrderDid = d.iAutoId AND tc.iAutoId = a.iSubcontractOrderDid
+	LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+	LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+) as t on a.Barcode = t.barcode
 where a.isDeleted = '0'
 	#if(masid)
 		and a.MasID = #para(masid)
@@ -106,38 +158,42 @@ where a.isDeleted = 0
 
 #sql("getBarcodeDatas")
 select top #(limit)
-    m.cOrderNo as sourcebillno,
-    a.cCompleteBarcode as barcode,
-    b.cInvCode ,
-    b.cInvCode1,
-    b.cInvName1,
+    'PO' as SourceBillType,
+    m.cOrderNo AS sourcebillno,
+	a.cCompleteBarcode AS barcode,
+	b.cInvCode ,
+	b.cInvCode1,
+	b.cInvName1,
 	b.cInvName,
-    a.dPlanDate as plandate,
-    b.cInvStd as cinvstd,
-    a.iQty as qty,
-    a.iQty as qtys,
-    a.iAutoId as autoid,
-    m.cOrderNo as SourceBillNo,
-    m.iBusType as SourceBillType,
-    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
-    m.cOrderNo as SourceBillID,
-    d.iAutoId as SourceBillDid,
-    m.iVendorId,
-	v.cVenCode as vencode,
-	v.cVenName as venname,
-	uom.cUomCode as purchasecuomcode,uom.cUomName as purchasecuomname,
+	a.dPlanDate AS plandate,
+	b.cInvStd AS cinvstd,
+	a.iQty AS qty,
+	a.iQty AS qtys,
+	a.iAutoId AS autoid,
+	m.iBusType AS SourceBillType,
+	m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+	m.cOrderNo AS SourceBillID,
+	d.iAutoId AS SourceBillDid,
+	m.iVendorId,
+	v.cVenCode AS vencode,
+	v.cVenName AS venname,
+	uom.cUomCode AS purchasecuomcode,
+	uom.cUomName AS purchasecuomname,
 	config.iWarehouseId,
-	area.cAreaCode as poscode
-FROM PS_PurchaseOrderDBatch a
-LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
-LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
-LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
-LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
-LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
-LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
-LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-LEFT JOIN Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
-LEFT JOIN Bd_Warehouse_Area area on area.iAutoId =config.iWarehouseAreaId
+	area.cAreaCode AS poscode
+FROM
+	PS_PurchaseOrderDBatch a
+	LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+	LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+	LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+	LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+	LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
+	LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+	LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+	LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
+	LEFT JOIN T_Sys_AssemDetail ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
+	LEFT JOIN T_Sys_OtherInDetail od ON od.Barcode = a.cCompleteBarcode AND od.isDeleted = '0'
 where a.isEffective = '1'
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
@@ -145,13 +201,74 @@ where a.isEffective = '1'
 			or v.cVenCode like concat('%',#para(q),'%')
 		)
 	#end
-
+        and a.cCompleteBarcode IS NOT NULL
 		AND b.cOrgCode = #(orgCode)
         AND pd.AutoID IS NULL
+        AND ad.AutoID IS NULL
+        AND od.AutoID IS NULL
 
 	#if(vencode)
 		and m.iVendorId = #para(vencode)
 	#end
+
+union
+
+
+SELECT
+    'OM' as SourceBillType,
+	m.cOrderNo AS sourcebillno,
+	a.cCompleteBarcode AS barcode,
+	b.cInvCode ,
+	b.cInvCode1,
+	b.cInvName1,
+	b.cInvName,
+	a.dPlanDate AS plandate,
+	b.cInvStd AS cinvstd,
+	a.iQty AS qty,
+	a.iQty AS qtys,
+	a.iAutoId AS autoid,
+	m.iBusType AS SourceBillType,
+	m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+	m.cOrderNo AS SourceBillID,
+	d.iAutoId AS SourceBillDid,
+	m.iVendorId,
+	v.cVenCode AS vencode,
+	v.cVenName AS venname,
+	uom.cUomCode AS purchasecuomcode,
+	uom.cUomName AS purchasecuomname,
+	config.iWarehouseId,
+	area.cAreaCode AS poscode
+FROM
+	PS_SubcontractOrderDBatch a
+	LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+	LEFT JOIN PS_SubcontractOrderD d ON a.iSubcontractOrderDid = d.iAutoId
+	LEFT JOIN PS_SubcontractOrderM m ON m.iAutoId = d.iSubcontractOrderMid
+	LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+	LEFT JOIN PS_SubcontractOrderD_Qty tc ON tc.iSubcontractOrderDid = d.iAutoId AND tc.iAutoId = a.iSubcontractOrderDid
+	LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+	LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+	LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
+	LEFT JOIN T_Sys_AssemDetail ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
+	LEFT JOIN T_Sys_OtherInDetail od ON od.Barcode = a.cCompleteBarcode AND od.isDeleted = '0'
+where a.isEffective = '1'
+    #if(q)
+		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
+			or b.cinvname1 like concat('%',#para(q),'%') or a.cCompleteBarcode like concat('%',#para(q),'%')
+			or v.cVenCode like concat('%',#para(q),'%')
+		)
+	#end
+        and a.cCompleteBarcode IS NOT NULL
+		AND b.cOrgCode = #(orgCode)
+        AND pd.AutoID IS NULL
+        AND ad.AutoID IS NULL
+        AND od.AutoID IS NULL
+
+	#if(vencode)
+		and m.iVendorId = #para(vencode)
+	#end
+
+
 
 #end
 
@@ -190,91 +307,195 @@ and p.cPTName like CONCAT('%', #para(cPTName), '%')
 
 
 #sql("tuibarcode")
-select
-    m.cOrderNo as sourcebillno,
-    a.cCompleteBarcode as barcode,
-    a.cCompleteBarcode as barcode,
-    b.cInvCode as invcode,
-    b.cinvname,
-    b.cInvCode ,
-    b.cInvCode1,
-    b.cInvName1,
-    a.dPlanDate as plandate,
-    b.cInvStd as cinvstd,
-    a.iQty as qtys,
-    a.iQty as qty,
-    a.iinventoryId,
-    b.iAutoId,
-    m.cOrderNo as SourceBillNo,
-    m.iBusType as SourceBillType,
-    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
-    m.cOrderNo as SourceBillID,
-    d.iAutoId as SourceBillDid,
-    m.iVendorId,
-	v.cVenCode as vencode,
-	v.cVenName as venname,
-    uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname
-FROM PS_PurchaseOrderDBatch a
-LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
-LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
-LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
-LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
-LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
-LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cCompleteBarcode  AND pd.isDeleted = '0'
-LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-where a.isEffective = '1'
+SELECT
+	t.*
+FROM
+	(
+	SELECT
+		m.cOrderNo AS sourcebillno,
+		a.cCompleteBarcode AS barcode,
+		b.cInvCode AS invcode,
+		b.cinvname,
+		b.cInvCode ,
+		b.cInvCode1,
+		b.cInvName1,
+		a.dPlanDate AS plandate,
+		b.cInvStd AS cinvstd,
+		a.iQty AS qtys,
+		a.iQty AS qty,
+		a.iinventoryId,
+		b.iAutoId,
+		m.iBusType AS SourceBillType,
+		m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+		m.cOrderNo AS SourceBillID,
+		d.iAutoId AS SourceBillDid,
+		m.iVendorId,
+		v.cVenCode AS vencode,
+		v.cVenName AS venname,
+		uom.cUomCode,
+		uom.cUomName AS purchasecuomname,
+		uom.cUomName AS puunitname
+	FROM
+		PS_PurchaseOrderDBatch a
+		LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+		LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+		LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+		LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+		LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
+		AND tc.iAutoId = a.iPurchaseOrderdQtyId
+		LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+	WHERE
+		a.isEffective = '1' UNION
+	SELECT
+		m.cOrderNo AS sourcebillno,
+		a.cCompleteBarcode AS barcode,
+		b.cInvCode AS invcode,
+		b.cinvname,
+		b.cInvCode ,
+		b.cInvCode1,
+		b.cInvName1,
+		a.dPlanDate AS plandate,
+		b.cInvStd AS cinvstd,
+		a.iQty AS qtys,
+		a.iQty AS qty,
+		a.iinventoryId,
+		b.iAutoId,
+		m.iBusType AS SourceBillType,
+		m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+		m.cOrderNo AS SourceBillID,
+		d.iAutoId AS SourceBillDid,
+		m.iVendorId,
+		v.cVenCode AS vencode,
+		v.cVenName AS venname,
+		uom.cUomCode,
+		uom.cUomName AS purchasecuomname,
+		uom.cUomName AS puunitname
+	FROM
+		PS_SubcontractOrderDBatch a
+		LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+		LEFT JOIN PS_SubcontractOrderD d ON a.iSubcontractOrderDid = d.iAutoId
+		LEFT JOIN PS_SubcontractOrderM m ON m.iAutoId = d.iSubcontractOrderMid
+		LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+		LEFT JOIN PS_SubcontractOrderD_Qty tc ON tc.iSubcontractOrderDid = d.iAutoId
+		AND tc.iAutoId = a.iSubcontractOrderdQtyId
+		LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+	WHERE
+	a.isEffective = '1'
+	) AS t
+where 1=1
 
 	#if(barcode)
-		and a.cCompleteBarcode = #para(barcode)
+		and t.barcode = #para(barcode)
 	#end
 
 #end
 
 
 #sql("barcode")
-select
-    m.cOrderNo as sourcebillno,
-    a.cCompleteBarcode as barcode,
-    a.cCompleteBarcode as barcode,
-    b.cInvCode as invcode,
-    b.cinvname,
-    b.cInvCode ,
-    b.cInvCode1,
-    b.cInvName1,
-    a.dPlanDate as plandate,
-    b.cInvStd as cinvstd,
-    a.iQty as qtys,
-    a.iQty as qty,
-    a.iAutoId as autoid,
-    a.iinventoryId,
-    b.iAutoId,
-    m.cOrderNo as SourceBillNo,
-    m.iBusType as SourceBillType,
-    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
-    m.cOrderNo as SourceBillID,
-    d.iAutoId as SourceBillDid,
-    m.iVendorId,
-	v.cVenCode as vencode,
-	v.cVenName as venname,
-    uom.cUomCode,uom.cUomName as purchasecuomname,uom.cUomName as  puunitname,
-	config.iWarehouseId,
-	area.cAreaCode as poscode
-FROM PS_PurchaseOrderDBatch a
-LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
-LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
-LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
-LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
-LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
-LEFT JOIN T_Sys_PUReceiveDetail pd on pd.Barcode = a.cCompleteBarcode  AND pd.isDeleted = '0'
-LEFT JOIN Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-LEFT JOIN Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
-LEFT JOIN Bd_Warehouse_Area area on area.iAutoId =config.iWarehouseAreaId
-where a.isEffective = '1'
+SELECT
+	t.*
+FROM
+	(
+	SELECT
+		m.cOrderNo AS sourcebillno,
+		a.cCompleteBarcode AS barcode,
+		b.cInvCode AS invcode,
+		b.cinvname,
+		b.cInvCode ,
+		b.cInvCode1,
+		b.cInvName1,
+		a.dPlanDate AS plandate,
+		b.cInvStd AS cinvstd,
+		a.iQty AS qtys,
+		a.iQty AS qty,
+		a.iAutoId AS autoid,
+		a.iinventoryId,
+		b.iAutoId,
+		m.iBusType AS SourceBillType,
+		m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+		m.cOrderNo AS SourceBillID,
+		d.iAutoId AS SourceBillDid,
+		m.iVendorId,
+		v.cVenCode AS vencode,
+		v.cVenName AS venname,
+		uom.cUomCode,
+		uom.cUomName AS purchasecuomname,
+		uom.cUomName AS puunitname,
+		config.iWarehouseId,
+		area.cAreaCode AS poscode
+	FROM
+		PS_PurchaseOrderDBatch a
+		LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+		LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+		LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+		LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+		LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
+		AND tc.iAutoId = a.iPurchaseOrderdQtyId
+		LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+		LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+		LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+		LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
+        LEFT JOIN T_Sys_AssemDetail ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
+        LEFT JOIN T_Sys_OtherInDetail od ON od.Barcode = a.cCompleteBarcode AND od.isDeleted = '0'
+	WHERE
+		a.isEffective = '1'
+		AND pd.AutoID IS NULL
+        AND ad.AutoID IS NULL
+        AND od.AutoID IS NULL
+
+		UNION
+	SELECT
+		m.cOrderNo AS sourcebillno,
+		a.cCompleteBarcode AS barcode,
+		b.cInvCode AS invcode,
+		b.cinvname,
+		b.cInvCode ,
+		b.cInvCode1,
+		b.cInvName1,
+		a.dPlanDate AS plandate,
+		b.cInvStd AS cinvstd,
+		a.iQty AS qtys,
+		a.iQty AS qty,
+		a.iAutoId AS autoid,
+		a.iinventoryId,
+		b.iAutoId,
+		m.iBusType AS SourceBillType,
+		m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+		m.cOrderNo AS SourceBillID,
+		d.iAutoId AS SourceBillDid,
+		m.iVendorId,
+		v.cVenCode AS vencode,
+		v.cVenName AS venname,
+		uom.cUomCode,
+		uom.cUomName AS purchasecuomname,
+		uom.cUomName AS puunitname,
+		config.iWarehouseId,
+		area.cAreaCode AS poscode
+	FROM
+		PS_SubcontractOrderDBatch a
+		LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+		LEFT JOIN PS_SubcontractOrderD d ON a.iSubcontractOrderDid = d.iAutoId
+		LEFT JOIN PS_SubcontractOrderM m ON m.iAutoId = d.iSubcontractOrderMid
+		LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+		LEFT JOIN PS_SubcontractOrderD_Qty tc ON tc.iSubcontractOrderDid = d.iAutoId
+		LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
+		LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+		LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+		LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
+        LEFT JOIN T_Sys_AssemDetail ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
+        LEFT JOIN T_Sys_OtherInDetail od ON od.Barcode = a.cCompleteBarcode AND od.isDeleted = '0'
+	WHERE
+	a.isEffective = '1'
+	    AND pd.AutoID IS NULL
+        AND ad.AutoID IS NULL
+        AND od.AutoID IS NULL
+	) AS t
+where 1 = 1
 
 	#if(barcode)
-		and a.cCompleteBarcode = #para(barcode)
+		and t.barcode = #para(barcode)
 	#end
-        AND pd.AutoID IS NULL
+
 
 #end
 
@@ -305,47 +526,92 @@ WHERE isDeleted = 0
 
 
 #sql("purchaseOrderD")
-select
-    d.*,
-    m.*,
-    m.cOrderNo as sourcebillno,
-    a.cCompleteBarcode as barcode,
-    b.cInvCode ,
-    b.cInvCode1,
-    b.cInvName1,
-    a.dPlanDate as plandate,
-    b.cInvStd as cinvstd,
-    a.iQty as qtys,
-    a.iQty as qty,
-    m.cOrderNo as SourceBillNo,
-    m.iBusType as SourceBillType,
-    m.cDocNo+'-'+CAST(tc.iseq AS NVARCHAR(10)) as SourceBillNoRow,
-    m.iAutoId as SourceBillID,
-    d.iAutoId as SourceBillDid,
-    m.iVendorId,
-	v.cVenCode as vencode,
-	v.cVenName as venname,
-	u.cUomCode as puunitcode,
-	u.cUomName as puunitname,
-	p.iAutoId,
-	s.iAutoId as siautoid,
-    s.cRdName as scrdname,
-    s.cRdCode as scrdcode,
-    dep.cdepcode,dep.cdepname,
-    a.iinventoryId
-FROM PS_PurchaseOrderDBatch a
-LEFT JOIN Bd_Inventory b on a.iinventoryId = b.iAutoId
-LEFT JOIN PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
-LEFT JOIN PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
-LEFT JOIN Bd_Vendor v on m.iVendorId = v.iAutoId
-LEFT JOIN PS_PurchaseOrderD_Qty tc on tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
-LEFT JOIN Bd_Uom u on b.iPurchaseUomId = u.iAutoId
-LEFT JOIN Bd_PurchaseType p on p.iAutoId = m.iPurchaseTypeId
-LEFT JOIN Bd_Rd_Style s ON s.cRdCode = p.cRdCode
-left join Bd_Department dep on m.idepartmentid = dep.iautoid
+SELECT
+	t.*
+FROM
+	(
+	SELECT
+		m.iPurchaseTypeId,
+		m.cOrderNo AS sourcebillno,
+		a.cCompleteBarcode AS barcode,
+		b.cInvCode ,
+		b.cInvCode1,
+		b.cInvName1,
+		a.dPlanDate AS plandate,
+		b.cInvStd AS cinvstd,
+		a.iQty AS qtys,
+		a.iQty AS qty,
+		m.iBusType,
+		m.iBusType AS SourceBillType,
+		m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+		m.iAutoId AS SourceBillID,
+		d.iAutoId AS SourceBillDid,
+		m.iVendorId,
+		v.cVenCode AS vencode,
+		v.cVenName AS venname,
+		u.cUomCode AS puunitcode,
+		u.cUomName AS puunitname,
+		s.iAutoId AS siautoid,
+		s.cRdName AS scrdname,
+		s.cRdCode AS scrdcode,
+		dep.cdepcode,
+		dep.cdepname,
+		a.iinventoryId
+	FROM
+		PS_PurchaseOrderDBatch a
+		LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+		LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
+		LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
+		LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+		LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
+		AND tc.iAutoId = a.iPurchaseOrderdQtyId
+		LEFT JOIN Bd_Uom u ON b.iPurchaseUomId = u.iAutoId
+		LEFT JOIN Bd_PurchaseType p ON p.iAutoId = m.iPurchaseTypeId
+		LEFT JOIN Bd_Rd_Style s ON s.cRdCode = p.cRdCode
+		LEFT JOIN Bd_Department dep ON m.idepartmentid = dep.iautoid UNION
+	SELECT
+		m.iPurchaseTypeId,
+		m.cOrderNo AS sourcebillno,
+		a.cCompleteBarcode AS barcode,
+		b.cInvCode ,
+		b.cInvCode1,
+		b.cInvName1,
+		a.dPlanDate AS plandate,
+		b.cInvStd AS cinvstd,
+		a.iQty AS qtys,
+		a.iQty AS qty,
+		m.iBusType,
+		m.iBusType AS SourceBillType,
+		m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+		m.iAutoId AS SourceBillID,
+		d.iAutoId AS SourceBillDid,
+		m.iVendorId,
+		v.cVenCode AS vencode,
+		v.cVenName AS venname,
+		u.cUomCode AS puunitcode,
+		u.cUomName AS puunitname,
+		s.iAutoId AS siautoid,
+		s.cRdName AS scrdname,
+		s.cRdCode AS scrdcode,
+		dep.cdepcode,
+		dep.cdepname,
+		a.iinventoryId
+	FROM
+		PS_SubcontractOrderDBatch a
+		LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
+		LEFT JOIN PS_SubcontractOrderD d ON a.iSubcontractOrderDid = d.iAutoId
+		LEFT JOIN PS_SubcontractOrderM m ON m.iAutoId = d.iSubcontractOrderMid
+		LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
+		LEFT JOIN PS_SubcontractOrderD_Qty tc ON tc.iSubcontractOrderDid = d.iAutoId
+		AND tc.iAutoId = a.iSubcontractOrderDid
+		LEFT JOIN Bd_Uom u ON b.iPurchaseUomId = u.iAutoId
+		LEFT JOIN Bd_PurchaseType p ON p.iAutoId = m.iPurchaseTypeId
+		LEFT JOIN Bd_Rd_Style s ON s.cRdCode = p.cRdCode
+	LEFT JOIN Bd_Department dep ON m.idepartmentid = dep.iautoid
+	) AS t
 where 1=1
    	#if(barcode)
-		and a.cCompleteBarcode = #para(barcode)
+		and t.barcode = #para(barcode)
 	#end
 #end
 
