@@ -39,6 +39,14 @@ public class FitemAdminController extends BaseAdminController {
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(),getKv()));
 	}
+
+	/**
+	 * 获取项目大类
+	 */
+	 public void selectFitem(){
+		 renderJsonData(service.selectFitem());
+	 }
+
 	/**
 	 * 树结构数据源
 	 */

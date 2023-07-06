@@ -11,6 +11,23 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
+                        <div class="btn-group dropdown">
+                            <button class="btn btn-outline-secondary btn-xs" type="button" id="importTableButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入</button>
+                            <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                                <a href="assets/exceltpl/goodspaymentm.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                                <div class="j_upload_file_box"
+                                     data-name="file"
+                                     data-btn-class="btn dropdown-item"
+                                     data-placeholder="上传导入"
+                                     data-confirm="确认导入数据？"
+                                     data-accept="excel"
+                                     data-maxsize="20480"
+                                     data-handler="uploadFile"
+                                     data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                                     data-url="/admin/paymentCheckManage/importExcel?iAutoId=#(iAutoId??)">
+                                </div>
+                            </div>
+                        </div>
                         <button onclick="" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 数据导入</button>
 <!--                        <button onclick="submitThisForm()" class="btn btn-success btn-sm" onclick="submitThisForm()"><i-->
 <!--                                class="fa fa-refresh"></i> 保存</button>-->
@@ -33,6 +50,7 @@
                         #if(goodspaymentm.iAutoId??)
                         <input type="hidden" name="goodspaymentm.iAutoId" value="#(goodspaymentm.iAutoId??)" />
                         #end
+                        <input type="text" name="iAutoId" value="#(iAutoId)">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group row">

@@ -58,3 +58,7 @@ FROM
 WHERE t1.iQcFormId = '#(iQcFormId)'
   AND t3.iQcFormItemId = t1.iAutoId
 #end
+
+#sql ("getBycQcFormName")
+select * from Bd_QcForm where cQcFormName=#para(cTypeNames)
+#end

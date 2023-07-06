@@ -3,43 +3,56 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey)">
 
-    <div class="jbolt_page_title">
-        <div class="row">
-            <div class="col-md-auto">
-                <h1>制造工单任务</h1>
-            </div>
-            <div class="col">
-                <form class="form-inline" id="moMotaskForm_#(pageId)" onsubmit="return false;" method="post">
-                    <input type="text" autocomplete="off" class="form-control" placeholder="请输入任务单号" name="cmoplanno"
-                           value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="请输入生产部门" name="cdepname"
-                           value=""/>
-                    <select class="form-control" name="istatus" data-autoload data-url="admin/dictionary/options?key=motask_audit"
-                            data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
-                    <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate_#(pageId)" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
-                    <span style="margin-top: 5px">至</span>
-                    <input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate_#(pageId)" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
+  <div class="jbolt_page_title">
+    <div class="row">
+      <div class="col-md-auto">
+        <h1>制造工单任务</h1>
+      </div>
+      <div class="col">
+        <form class="form-inline" id="moMotaskForm_#(pageId)" onsubmit="return false;" method="post">
+          <input type="text" autocomplete="off" class="form-control" placeholder="请输入任务单号" name="cmoplanno"
+                 value=""/>
+          <input type="text" autocomplete="off" class="form-control" placeholder="请输入生产部门" name="cdepname"
+                 value=""/>
+          <select class="form-control" name="istatus" data-autoload data-url="admin/dictionary/options?key=motask_audit"
+                  data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
+          <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
+                 id="startdate_#(pageId)" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+          <span style="margin-top: 5px">至</span>
+          <input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate_#(pageId)"
+                 name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
 
-                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
-                    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-                </form>
-            </div>
-            <div class="col-md-auto">
-            </div>
-        </div>
+          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+        </form>
+      </div>
+      <div class="col-md-auto">
+      </div>
     </div>
-    <div class="jbolt_page_content">
-        <!-- JBoltTable的数据模板定义-->
-        <textarea class="jb_tpl_box" id="moMotaskRowtpl_#(pageId)">
+  </div>
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="moMotaskRowtpl_#(pageId)">
 {@each datas as data,index}
-<tr data-id="${data.iautoid}" >
+<tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	<a href="admin/modocbatch/personShow/${data.iautoid}" data-fs="true"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看制造工单任务" class="jbolt_table_editbtn">查看</a>
-	<a href="admin/modocbatch/personEdit/${data.iautoid}" data-fs="true"   tooltip data-title="编辑人员"  data-handler="refreshJBoltTable" data-dialog-title="编辑制造工单人员" class="jbolt_table_editbtn">编辑人员</a>
-	<a href="admin/modocbatch/editPlan/${data.iautoid}" data-fs="true"  tooltip data-title="编辑计划"  data-handler="refreshJBoltTable" data-dialog-title="编辑制造工单计划" class="jbolt_table_editbtn">编辑计划</a>
+	<a href="admin/modocbatch/personShow/${data.iautoid}" data-fs="true" tooltip data-title="查看"
+     data-handler="refreshJBoltTable" data-dialog-title="查看制造工单任务" class="jbolt_table_editbtn">查看</a>
+  	{@if  data.iauditstatus == '0' }
+	<a href="admin/modocbatch/personEdit/${data.iautoid}" data-fs="true" tooltip data-title="编辑人员"
+     data-handler="refreshJBoltTable" data-dialog-title="编辑制造工单人员" class="jbolt_table_editbtn">编辑人员</a>
+	<a href="admin/modocbatch/editPlan/${data.iautoid}" data-fs="true" tooltip data-title="编辑计划"
+     data-handler="refreshJBoltTable" data-dialog-title="编辑制造工单计划" class="jbolt_table_editbtn">编辑计划</a>
+  	{@/if}
+	{@if  data.iauditstatus == '1' }
+  		<a class="jbolt_table_delbtn"
+         href="admin/formapproval/withdraw?formSn=Mo_MoTask&primaryKeyName=iAutoId&formAutoId=${data.iautoid}&permissionKey=modocbatch&className=cn.rjtech.admin.modocbatch.MoMotaskService"
+         data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态"><i
+          class="fa fa-remove c-danger">撤回</i></a>
+	{@/if}
 </td>
-<td>${data.istatusname}</td>
+<td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
 <td>${data.dbegindate|date_ymd}</td>
 <td>${data.denddate|date_ymd}</td>
 <td>${data.cmoplanno}</td>
@@ -50,109 +63,101 @@
 {@/each}
 </textarea>
 
-        <!-- 工具条 toolbar -->
-        <div class="jbolt_table_toolbar" id="moMotask_toolbar_#(pageId)">
-            <div class="" role="group" aria-label="btn-group">
-                <button data-openpage="dialog" data-area="1200,800" data-handler="refreshJBoltTable" data-title="批量审批"
-                        data-check-handler="jboltTableGetCheckedId" data-url="admin/momotask/edit/"
-                        class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 批量审批
-                </button>
-                <button data-openpage="dialog" data-area="1200,800" data-handler="refreshJBoltTable" data-title="批量反审批"
-                        data-check-handler="jboltTableGetCheckedId" data-url="admin/momotask/edit/"
-                        class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 批量反审批
-                </button>
-                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i
-                        class="fa fa-refresh"></i> 刷新
-                </button>
-            </div>
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="moMotask_toolbar_#(pageId)">
+      <div class="" role="group" aria-label="btn-group">
+        #include("/_view/_common/_batch_approval_btns.html", formSn="Mo_MoTask", uri="admin/modocbatch??",
+        primaryKeyName="iAutoId",
+        className="cn.rjtech.admin.modocbatch", permissionKeyPrefix="modocbatch")
+      </div>
 
-            <div class="clearfix"></div>
-        </div>
-
-        <table class="jbolt_table jbolt_main_table table-center hover_info"
-               data-jbolttable
-               data-height="fill"
-               data-ajax="true"
-               data-url="admin/momotask/datas"
-               data-column-resize="true"
-               data-row-click-active="true"
-               data-column-prepend="1:checkbox:true"
-               data-conditions-form="moMotaskForm_#(pageId)"
-               data-rowtpl="moMotaskRowtpl_#(pageId)"
-               data-page="moMotaskPage_#(pageId)"
-               data-toolbar="moMotask_toolbar_#(pageId)"
-               data-fixed-columns-left="1,2,3"
-               data-row-dblclick-active="false"
-        >
-            <thead>
-            <tr>
-                <th data-width="10">序号</th>
-                <th data-width="200">操作</th>
-                <th data-width="150" data-column="istatusname">状态</th>
-                <th data-width="150" data-column="dBeginDate">开始日期</th>
-                <th data-width="150" data-column="dEndDate">结束日期</th>
-                <th data-width="150" data-column="cMoPlanNo">任务单号</th>
-                <th data-width="150" data-column="cdepname">生产部门</th>
-                <th data-width="150" data-column="cCreateName">创建人</th>
-                <th data-width="150" data-column="dCreateTime">创建时间</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-
-
+      <div class="clearfix"></div>
     </div>
+
+    <table class="jbolt_table jbolt_main_table table-center hover_info"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/momotask/datas"
+           data-column-resize="true"
+           data-row-click-active="true"
+           data-column-prepend="1:checkbox:true"
+           data-conditions-form="moMotaskForm_#(pageId)"
+           data-rowtpl="moMotaskRowtpl_#(pageId)"
+           data-page="moMotaskPage_#(pageId)"
+           data-toolbar="moMotask_toolbar_#(pageId)"
+           data-fixed-columns-left="1,2,3"
+           data-row-dblclick-active="false"
+    >
+      <thead>
+      <tr>
+        <th data-width="10">序号</th>
+        <th data-width="200">操作</th>
+        <th data-width="150" data-column="iauditstatus">状态</th>
+        <th data-width="150" data-column="dBeginDate">开始日期</th>
+        <th data-width="150" data-column="dEndDate">结束日期</th>
+        <th data-width="150" data-column="cMoPlanNo">任务单号</th>
+        <th data-width="150" data-column="cdepname">生产部门</th>
+        <th data-width="150" data-column="cCreateName">创建人</th>
+        <th data-width="150" data-column="dCreateTime">创建时间</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+
+  </div>
 </div>
 #end
 
 #define js()
 <script type="text/javascript">
-    //获得配置参数
-    function getEditableTableOptions_#(pageId)(){
-        var editableTableOptions={
-            trigger:"click",
-            // 初始行数
-            initRowCount:1,
-            // 限制最大数 默认30
-            submit:{
-                withForm:["sysMessageTemplateForm_#(pageId)"],
-                name: 'sysMessageTemplateForm',
-                type:"all",//cell|all
-                //params:{"orderId":3},//携带其他额外参数
-                url:"admin/messageTemplate/submitTable",
-                success:function(res){
-                    LayerMsgBox.success("提交成功",600,function(){
-                        parent.refreshPjaxContainer();
-                        parent.layer.closeAll();
-                    });
-                }
-            },
-            cols: {
-                id: {
-                    submitAttr: "id",
-                },
-                username: {
-                    type: "autocomplete",
-                    url: "admin/user/autocomplete",
-                    maxLength: 100,
-                    placeholder: "请选择",
-                    textAttr: "username",
-                    width: 500,
-                    required: true,
-                    valueAttr: "username",
-                    columnAttr: "username,name,email",
-                    header:'用户id',
-                    changeColumns:[
-                        {column: "user_id", use: "id"},
-                        {column: "username", use: "username"},
-                        {column: "name", use: "name"},
-                        {column: "email", use: "email"}
-                    ]
-                }
-            }
-        };
-        return editableTableOptions;
-    }
+  //获得配置参数
+  // function getEditableTableOptions_#(pageId)(){
+  //   var editableTableOptions = {
+  //     trigger: "click",
+  //     // 初始行数
+  //     initRowCount: 1,
+  //     // 限制最大数 默认30
+  //     submit: {
+  //       withForm: ["sysMessageTemplateForm_#(pageId)"],
+  //       name: 'sysMessageTemplateForm',
+  //       type: "all",//cell|all
+  //       //params:{"orderId":3},//携带其他额外参数
+  //       url: "admin/messageTemplate/submitTable",
+  //       success: function (res) {
+  //         LayerMsgBox.success("提交成功", 600, function () {
+  //           parent.refreshPjaxContainer();
+  //           parent.layer.closeAll();
+  //         });
+  //       }
+  //     },
+  //     cols: {
+  //       id: {
+  //         submitAttr: "id",
+  //       },
+  //       username: {
+  //         type: "autocomplete",
+  //         url: "admin/user/autocomplete",
+  //         maxLength: 100,
+  //         placeholder: "请选择",
+  //         textAttr: "username",
+  //         width: 500,
+  //         required: true,
+  //         valueAttr: "username",
+  //         columnAttr: "username,name,email",
+  //         header: '用户id',
+  //         changeColumns: [
+  //           {column: "user_id", use: "id"},
+  //           {column: "username", use: "username"},
+  //           {column: "name", use: "name"},
+  //           {column: "email", use: "email"}
+  //         ]
+  //       }
+  //     }
+  //   };
+  //   return editableTableOptions;
+  // }
 </script>
 #end

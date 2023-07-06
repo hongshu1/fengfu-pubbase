@@ -89,6 +89,7 @@ public class SubcontractOrderMAdminController extends BaseAdminController {
     record.set(SubcontractOrderM.IVENDORID, vendor.getIAutoId());
     record.set(SubcontractOrderM.DBEGINDATE, beginDate);
     record.set(SubcontractOrderM.DENDDATE, endDate);
+    set(Vendor.CVENNAME, vendor.getCVenName());
 
     if (ObjUtil.isNotNull(vendor.getITaxRate())) {
       record.set(SubcontractOrderM.ITAXRATE, vendor.getITaxRate().stripTrailingZeros().stripTrailingZeros());

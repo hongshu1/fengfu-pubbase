@@ -67,6 +67,7 @@ public class VendorClassAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.VENDOR_ADD)
     public void save() {
         renderJson(service.save(getModel(VendorClass.class, "vendorClass")));
     }
@@ -102,6 +103,7 @@ public class VendorClassAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.VENDOR_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteVendorClassByIds(get("ids")));
     }
@@ -124,6 +126,7 @@ public class VendorClassAdminController extends BaseAdminController {
      * 导出数据
      */
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.VENDOR_EXPORT)
     public void dataExport() throws Exception {
 		/*List<Record> rows = service.getDataExport(getKv());
 		renderJxls("vendorclass.xlsx", Kv.by("rows",rows),"供应商分类_" + DateUtil.today() + ".xlsx");*/
@@ -148,6 +151,7 @@ public class VendorClassAdminController extends BaseAdminController {
     /**
      * 供应商分类Excel导入数据库
      */
+    @CheckPermission(PermissionKey.VENDOR_IMPORT)
     public void importExcel() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");

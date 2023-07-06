@@ -1,11 +1,15 @@
 <form onsubmit="return false;" id="moDocForm_#(pageId)" action="#(action)" method="post">
 
     <input type="hidden" id="iMoDocId" name="moDoc.iautoid" value="#(moDoc.iautoid??)"/>
-    #if(moDoc==null||moDoc.istatus<7)
+    <input type="hidden" id="modoctype" name="type" value=""/>
+
     <button type="submit"  onclick="submitThisForm()" class="btn btn-primary btn-sm"><i class="fa fa-save"></i>保存</button>
-    <button onclick="submitForm()" class="btn btn-warning btn-sm"><i class="fa fa-check"></i>提交</button>
-    <button onclick="closeHandler()" class="btn btn-danger btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
-    #end
+    <button onclick="saveData(this)" class="btn btn-secondary btn-sm" hidden id="save_btn_#(pageId)"></button>
+    #include("/_view/_common/_approval_btns.html", uri="/admin/modoc",
+    formSn="Mo_MoDoc", primaryKeyName="iAutoId", o=moDoc,
+    permissionKeyPrefix="modoc", className="cn.rjtech.admin.modoc.MoDocService")
+    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+
     <div class="form-group row" style="margin-top: 20px">
         <label class="col-sm-1 col-form-label">工单号</label>
         <div class="col-3">
@@ -65,7 +69,7 @@
         </div>
         <label class="col-sm-1 col-form-label">存货编码</label>
         <div class="col-3">
-            <input type="text" name="iInventoryId" value="#(iInventoryId??)" hidden data-sync-attr="itemid" id="itemId_#(pageId)"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
+            <input type="text"  name="iInventoryId" data-rule="required" value="#(iInventoryId??)" hidden data-sync-attr="itemid" id="itemId_#(pageId)"  data-notnull="true" data-tips="请输入转换前存货ID" autocomplete="off"  class="form-control" placeholder="请输入转换前存货ID" maxlength="40" />
             <div class="input-group">
                 <input type="text"
                        data-rule="required"
@@ -76,9 +80,11 @@
                        value="#(moDoc.cinvcode??)"
                        name="cInvCode"
                        id="inventoryName"
-                       data-text-attr="cinvcode"
+                       data-text-attr="iautoid,cinvcode,cworkname,cinvcode1,cinvname1,iinventoryroutingid,iworkregionmid,idepartmentid,cdepname"
                        data-column-attr="cinvcode"
-
+                       data-url="admin/modoc/getMouldsAutocomplete"
+                       data-handler="changeOthers"
+                       data-autocomplete
                 />
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#inventoryName_#(pageId)" data-area="1280,600"  data-title="选择数据（单选）"  data-url="admin/modoc/inventoryDialogIndex"><i class="fa fa-search"></i></button>
@@ -192,17 +198,48 @@
 
 #define js()
 <script>
-    $(function(){
-        //alert("ssss");
-        var iMoDocId=$("#iMoDocId").val();
 
-        if(iMoDocId) {
-            reqTableDate("admin/modoc/getDocdetail?imodocid=" +iMoDocId);
+    function changeOthers(input, hiddenInput, value, rowData) {
+        if (rowData) {
+            $("#iinventoryid").val(rowData.iautoid);
+            $("#inventoryName").val(rowData.cinvcode);
+            $("#cworkname").val(rowData.cworkname);
+            $("#cinvcode1").val(rowData.cinvcode1);
+            $("#cinvname1").val(rowData.cinvname1);
+            $("#iinventoryrouting").val(rowData.iinventoryroutingid);
+            $("#iworkregionmid").val(rowData.iworkregionmid);
+            $("#iDepartmentId").val(rowData.idepartmentid);
+            $("#idepartmentname").val(rowData.cdepname);
+            $.ajax({
+                url: 'admin/inventoryroutingconfig/list?iinventoryroutingid=' + rowData.iinventoryroutingid,
+                type: 'GET',
+                success: function (ret) {
+                    if (ret.state === 'ok') {
+                        var datas = ret.data;
+                        jboltTableClear('#itemroutingconfigid_#(pageId)');
+                        jboltTableInsertRow('#itemroutingconfigid_#(pageId)', datas, false, false, true);
+                        // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
+                    }
+                },
+                error: function () {
+                }
+            });
         }
-    })
+    }
+
+
+    var submit = false;
+    function submitThisForm_#(pageId)(s) {
+        // 保存并提交
+        if (s) {
+            submit = s;
+        }
+        // 调用保存处理
+        jboltTableSubmit("#itemroutingconfigid_#(pageId)");
+    }
+
     //加载产线，存货信息，工艺路线
     function setChooseDialogSelectResult3(data){
-        console.log(JSON.stringify(data))
         $("#iinventoryid").val(data.iautoid);
         $("#inventoryName").val(data.cinvcode);
         $("#cworkname").val(data.cworkname);
@@ -218,56 +255,17 @@
             success: function (ret) {
                 if (ret.state === 'ok') {
                     var datas = ret.data;
-                    console.log(JSON.stringify(datas[0].equipmentjson))
                     jboltTableClear('#itemroutingconfigid_#(pageId)');
                     jboltTableInsertRow('#itemroutingconfigid_#(pageId)', datas, false, false, true);
                     // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
                 }
             },
             error: function () {
-                console.log();
             }
         });
     }
-    function submitForm(){
-        LayerMsgBox.confirm("确认提交此数据?",function(){
-            // submitThisForm();
-            subDoc("","admin/modoc/subSave")
-        });
-    }
-    function closeHandler(){
-        LayerMsgBox.confirm("确认关闭此数据?",function(){
-            subDoc("","admin/modoc/stopSave")
-        });
-    }
-    function  subDoc2(rowid,url) {
-        var tableDatas = getJboltTableAllDatas('itemroutingconfigid_#(pageId)');
-        var formData = formToJson('moDocForm_#(pageId)');
-        console.info(JSON.stringify(tableDatas))
-        console.info(JSON.stringify(formData))
-        LayerMsgBox.loading("更新中...", 5000);
-        var data = {};
-        var s = {
-            "delete": null, "update": null, "save": tableDatas,
-            "form": formData
-        }
-        data.jboltTable = JSON.stringify(s);
-        Ajax.post(url+"?rowid="+rowid, data, function (res) {
-            LayerMsgBox.success("提交成功", 600, function () {
-                parent.refreshJBoltTable()
-                parent.layer.closeAll();
-                // var iMoDocId=$("#iMoDocId").val(res.data.iautoid);
-
-                //getTbleData("admin/modoc/getDocdetail?imodocid="+res.data.iautoid);
-
-                //LayerMsgBox.closeAll();
-            });
-        });
-
-    }
     function getItemValue() {
         let  itemidValue = $('#itemid').val();
-        console.log("得到存货id"+itemidValue)
         return itemidValue;
     }
     function getEditableTableOptionsModocFirst2(){
@@ -281,14 +279,30 @@
                 withForm: ["moDocForm_#(pageId)"],
                 name: 'docForm',
                 type:"all",//cell|all
-                //params:{"orderId":3},//携带其他额外参数
+                //params:{"submit":submit},//携带其他额外参数
                 //commonAttr:{"save":{"update_time":new Date().getTime(),"autoId":1}},//给save或者update的时候 表格每一行数据 都添加指定的属性一并提交
-                url:"/admin/modoc/save?rowid=",
+                url:"/admin/modoc/save",
                 success:function(res){
+                    console.log(JSON.stringify(res));
+                    console.log(JSON.stringify(submit));
                     LayerMsgBox.success("提交成功",600,function(){
                         //parent.refreshPjaxContainer();
-                        parent.refreshJBoltTable()
-                        parent.layer.closeAll();
+                        if (res.state === 'ok') {
+                            // 提交审核（审批）调用
+                            if (submit) {
+                                // 提审
+                                submit_#(pageId)(res.data.iautoid, function (data) {
+                                    successHandler('提审成功', res.data.iautoid);
+                                });
+                            } else {
+                                LayerMsgBox.alert("保存成功！");
+                                parent.refreshJBoltTable()
+                                parent.layer.closeAll();
+                            }
+                        } else {
+                            LayerMsgBox.alert(res.msg, 2);
+                        }
+
                     });
                 }
             },
@@ -367,40 +381,18 @@
 
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
-
-    //$(document).ready(function () {
-    $('#routid').on('change', function () {
-        var input = $(this);
-        var inputValue = input.val();
-
-        var $iinventoryroutingid = $('#iinventoryroutingid_#(pageId)');
-        $iinventoryroutingid.val(inputValue);
-
-        let iinventoryroutingidValue = $iinventoryroutingid.val();
-
-        $.ajax({
-            url: 'admin/inventoryroutingconfig/list?iinventoryroutingid=' + inputValue,
-            type: 'GET',
-            success: function (ret) {
-                if (ret.state === 'ok') {
-                    var data = ret.data;
-
-                    jboltTableClear('#itemroutingconfigid_#(pageId)');
-
-                    jboltTableInsertRow('#itemroutingconfigid_#(pageId)', data, false, false, true);
-                    // console.log(jboltTableGetSubmitData('#itemroutingconfigid_#(pageId)'));
-                }
-            },
-            error: function () {
-                console.log();
-            }
+    /**
+     * 新增/修改/提审
+     */
+    function successHandler(msg, iautoid) {
+        LayerMsgBox.success(msg, 100, function () {
+            // 新增/修改，均跳转到详情页
+            location.href = '/admin/modoc/index';
+            parent.refreshPjaxContainer();
         });
-        // refreshJBoltTable('#itemroutingconfigid_#(pageId)');
-    });
-    //});
-
+    }
     function submitThisForm() {
-        console.log("提交表单")
+        $("#modoctype").val("false");
         jboltTableSubmit("#itemroutingconfigid_#(pageId)");
     }
 
@@ -426,49 +418,12 @@
             }
         });
     }
-    function  getTbleData(url){
-
-
-        /*   var inputValue=$('#iinventoryroutingid_#(pageId)').val();
-           if(!inputValue){
-
-               return;
-           }
-           var requrl="admin/inventoryroutingconfig/list?iinventoryroutingid=" + inputValue
-           if(url){
-
-               requrl=url;
-           }*/
-        reqTableDate(url)
-
-    }
-
-    function  saveDoc2(updateDatas,rowid) {
-        var tableDatas = getJboltTableAllDatas('itemroutingconfigid_#(pageId)');
-        var formData = formToJson('moDocForm_#(pageId)');
-
-        // LayerMsgBox.confirm("确定提交？", function () {
-        LayerMsgBox.loading("更新中...", 5000);
-        var data = {};
-        var s = {
-            "delete": null, "update": updateDatas, "save": tableDatas,
-            "form": formData
-        }
-        data.jboltTable = JSON.stringify(s);
-        Ajax.post("admin/modoc/save?rowid="+rowid, data, function (res) {
-            LayerMsgBox.success("提交成功", 600, function () {
-                //alert("提交行")
-                // refreshPjaxContainer();
-                //parent.refreshJBoltTable("#modoctable");
-                //parent.refreshJBoltTable();
-                var iMoDocId=$("#iMoDocId").val(res.data.iautoid);
-                //var  requrl="admin/modoc/getDocdetail?iMoDocId="+"?iMoDocId="+iMoDocId;
-                getTbleData("admin/modoc/getDocdetail?imodocid="+res.data.iautoid);
-                //refreshPjaxContainer();
-                LayerMsgBox.closeAll();
-            });
-        });
-        // });
+    /**
+     * 关闭窗口
+     */
+    function closeHandler() {
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+        window.parent.refreshJBoltTable();
     }
 </script>
 #end

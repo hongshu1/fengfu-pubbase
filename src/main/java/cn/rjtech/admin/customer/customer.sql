@@ -77,5 +77,10 @@ WHERE
 #end
 
 #sql("getCustomerByName")
-SELECT * from Bd_Customer WHERE isDeleted=0 AND cCusName = #para(name)
+SELECT * from Bd_Customer WHERE isDeleted=0 AND cCusName = #para(icustomername)
+#end
+
+
+#sql("getPerson")
+select * from Bd_Person WHERE cPsn_Num = '#(code)'
 #end

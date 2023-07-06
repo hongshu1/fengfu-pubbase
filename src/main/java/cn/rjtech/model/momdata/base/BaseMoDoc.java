@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**来源类型：1. APS 2. 手工新增*/
@@ -67,6 +67,18 @@ public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M
     public static final String ISMODIFIED = "isModified";
     /**包装数量*/
     public static final String IPKGQTY = "iPkgQty";
+    /**作业员，人员ID*/
+    public static final String CWORKPERSONIDS = "cWorkPersonIds";
+    /**审批方式： 1. 审批状态 2. 审批流*/
+    public static final String IAUDITWAY = "iAuditWay";
+    /**提审时间*/
+    public static final String DSUBMITTIME = "dSubmitTime";
+    /**审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过*/
+    public static final String IAUDITSTATUS = "iAuditStatus";
+    /**审核时间*/
+    public static final String DAUDITTIME = "dAuditTime";
+    /**删除状态：0. 未删除 1. 已删除*/
+    public static final String ISDELETED = "isDeleted";
 	/**
 	 * 主键ID
 	 */
@@ -541,6 +553,108 @@ public abstract class BaseMoDoc<M extends BaseMoDoc<M>> extends JBoltBaseModel<M
 	@JSONField(name = "ipkgqty")
 	public java.lang.Integer getIPkgQty() {
 		return getInt("iPkgQty");
+	}
+
+	/**
+	 * 作业员，人员ID
+	 */
+	public M setCWorkPersonIds(java.lang.String cWorkPersonIds) {
+		set("cWorkPersonIds", cWorkPersonIds);
+		return (M)this;
+	}
+
+	/**
+	 * 作业员，人员ID
+	 */
+	@JBoltField(name="cworkpersonids" ,columnName="cWorkPersonIds",type="String", remark="作业员，人员ID", required=false, maxLength=500, fixed=0, order=29)
+	@JSONField(name = "cworkpersonids")
+	public java.lang.String getCWorkPersonIds() {
+		return getStr("cWorkPersonIds");
+	}
+
+	/**
+	 * 审批方式： 1. 审批状态 2. 审批流
+	 */
+	public M setIAuditWay(java.lang.Integer iAuditWay) {
+		set("iAuditWay", iAuditWay);
+		return (M)this;
+	}
+
+	/**
+	 * 审批方式： 1. 审批状态 2. 审批流
+	 */
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式： 1. 审批状态 2. 审批流", required=false, maxLength=10, fixed=0, order=30)
+	@JSONField(name = "iauditway")
+	public java.lang.Integer getIAuditWay() {
+		return getInt("iAuditWay");
+	}
+
+	/**
+	 * 提审时间
+	 */
+	public M setDSubmitTime(java.util.Date dSubmitTime) {
+		set("dSubmitTime", dSubmitTime);
+		return (M)this;
+	}
+
+	/**
+	 * 提审时间
+	 */
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=31)
+	@JSONField(name = "dsubmittime")
+	public java.util.Date getDSubmitTime() {
+		return getDate("dSubmitTime");
+	}
+
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	public M setIAuditStatus(java.lang.Integer iAuditStatus) {
+		set("iAuditStatus", iAuditStatus);
+		return (M)this;
+	}
+
+	/**
+	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
+	 */
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=32)
+	@JSONField(name = "iauditstatus")
+	public java.lang.Integer getIAuditStatus() {
+		return getInt("iAuditStatus");
+	}
+
+	/**
+	 * 审核时间
+	 */
+	public M setDAuditTime(java.util.Date dAuditTime) {
+		set("dAuditTime", dAuditTime);
+		return (M)this;
+	}
+
+	/**
+	 * 审核时间
+	 */
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=33)
+	@JSONField(name = "daudittime")
+	public java.util.Date getDAuditTime() {
+		return getDate("dAuditTime");
+	}
+
+	/**
+	 * 删除状态：0. 未删除 1. 已删除
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 删除状态：0. 未删除 1. 已删除
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=34)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
 	}
 
 }
