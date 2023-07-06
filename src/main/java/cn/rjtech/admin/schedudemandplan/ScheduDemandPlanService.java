@@ -19,6 +19,7 @@ import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -783,7 +784,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 
 		//TODO:查询物料集信息
-		List<Record> invInfoAllList = dbTemplate("schedudemandplan.getInvInfoByidsList",Kv.by("ids",idsAllJoin)).find();
+		List<Record> invInfoAllList = dbTemplate("schedudemandplan.getInvInfoByidsList",Kv.by("ids",idsJoin)).find();
 		Map<String,Record> invInfoMap = new HashMap<>();
 		for (Record record : invInfoAllList){
 			String invCode = record.getStr("invCode");
@@ -811,7 +812,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		//物料期初差异数量
 		Map<String,BigDecimal> qichuDayQty4Map = new HashMap<>();
 		//TODO:根据日期查询期初物料集需求计划
-		List<Record> demandList = dbTemplate("schedudemandplan.getDemandComputeDQtyList",Okv.by("ids",idsAllJoin).set("startdate",beforeDate)).find();
+		List<Record> demandList = dbTemplate("schedudemandplan.getDemandComputeDQtyList",Okv.by("ids",idsJoin).set("startdate",beforeDate)).find();
 		for (Record record : demandList){
 			qichuDayQty5Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty5"));
 			qichuDayQty4Map.put(record.getStr("cInvCode"),record.getBigDecimal("iQty4"));
@@ -952,8 +953,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				BigDecimal qty = dateQtyMap.get(date);
 
 				MrpDemandcomputed demandcomputed;
-				if (mrpDemandMap.containsKey(date)){
-					demandcomputed = mrpDemandMap.get(date);
+				if (mrpDemandMap.containsKey(key)){
+					demandcomputed = mrpDemandMap.get(key);
 					demandcomputed.setIQty2(qty);
 				}else {
 					demandcomputed = new MrpDemandcomputed();
@@ -985,8 +986,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				BigDecimal qty = dateQtyMap.get(date);
 
 				MrpDemandcomputed demandcomputed;
-				if (mrpDemandMap.containsKey(date)){
-					demandcomputed = mrpDemandMap.get(date);
+				if (mrpDemandMap.containsKey(key)){
+					demandcomputed = mrpDemandMap.get(key);
 					demandcomputed.setIQty3(qty);
 				}else {
 					demandcomputed = new MrpDemandcomputed();
@@ -1018,8 +1019,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				BigDecimal qty = dateQtyMap.get(date);
 
 				MrpDemandcomputed demandcomputed;
-				if (mrpDemandMap.containsKey(date)){
-					demandcomputed = mrpDemandMap.get(date);
+				if (mrpDemandMap.containsKey(key)){
+					demandcomputed = mrpDemandMap.get(key);
 					demandcomputed.setIQty4(qty);
 				}else {
 					demandcomputed = new MrpDemandcomputed();
@@ -1051,8 +1052,8 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				BigDecimal qty = dateQtyMap.get(date);
 
 				MrpDemandcomputed demandcomputed;
-				if (mrpDemandMap.containsKey(date)){
-					demandcomputed = mrpDemandMap.get(date);
+				if (mrpDemandMap.containsKey(key)){
+					demandcomputed = mrpDemandMap.get(key);
 					demandcomputed.setIQty5(qty);
 				}else {
 					demandcomputed = new MrpDemandcomputed();
