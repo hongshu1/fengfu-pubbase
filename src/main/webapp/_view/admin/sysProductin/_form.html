@@ -165,7 +165,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(sysProductin.AutoID?? && sysProductin.iauditway == 2)
+#if(sysProductin.AutoID?? && sysProductin.iauditway == 2 && sysProductin.iauditstatus != 0)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=sysProductin.AutoID, formSn="T_Sys_PUReceive", btnNeed=1, pId=pageId,primaryKeyName="AutoID", className="cn.rjtech.admin.sysproductin.SysProductinService")
 #end
 

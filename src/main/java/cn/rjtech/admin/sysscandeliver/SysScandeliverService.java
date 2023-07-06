@@ -397,7 +397,8 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 		Date nowDate = new Date();
 		SysSaledeliverplan saledeliverplan = new SysSaledeliverplan();
 		saledeliverplan.setSourceBillType(sysScandeliver.getSourceBillType());
-		saledeliverplan.setSourceBillDid(sysScandeliver.getSourceBillDid());
+		saledeliverplan.setSourceBillID(sysScandeliver.getSourceBillID());
+		saledeliverplan.setSourceBillType("扫码出货");
 		saledeliverplan.setOrganizeCode(sysScandeliver.getOrganizeCode());
 		saledeliverplan.setBillNo(sysScandeliver.getBillNo());
 		saledeliverplan.setBillType(sysScandeliver.getBillType());

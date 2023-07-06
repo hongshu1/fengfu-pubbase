@@ -128,8 +128,6 @@
 				 data-row-dblclick-handler="dbClickCheckData"
 
 
-
-
 				 data-fixed-columns-left="1,2,3"
 		>
 			<thead>
@@ -161,7 +159,6 @@
 	function submitThisForm(callback) {
 		var data = getJboltTableCheckedData("chooseDataTable");
 		if (data) {
-			// LayerMsgBox.confirm("确认选择此数据?",function(){
 			parent.setChooseDialogSelectResultFromSupplier(data);
 			if (callback) {
 				callback();

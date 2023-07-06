@@ -372,8 +372,8 @@ public class RcvDocQcFormMService extends BaseService<RcvDocQcFormM> {
         sysPuinstore.setDCreateTime(date);
         //状态 0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
         sysPuinstore.setIAuditStatus(0);
-        sysPuinstore.setSourceBillNo(sysPureceive.getSourceBillNo());
-        sysPuinstore.setSourceBillID(sysPureceive.getSourceBillID());
+        sysPuinstore.setSourceBillNo(docQcFormM.getCRcvDocNo());
+        sysPuinstore.setSourceBillID(StrUtil.toString(docQcFormM.getIAutoId()));
         sysPuinstore.setWhCode(sysPureceive.getWhCode());
         sysPuinstore.setWhName(sysPureceive.getWhName());
         sysPuinstore.setIAuditWay(0);

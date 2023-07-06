@@ -3,6 +3,7 @@ package cn.rjtech.admin.bomd;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -173,8 +174,6 @@ public class BomDService extends BaseService<BomD> {
 			return new ArrayList<>();
 		}
 		List<Record> recordList = dbTemplate("bomd.getBomComparePageData", kv).find();
-		
-		
 		List<Record> jsTreeBean = createJsTreeBean(recordList, kv.getStr(BomD.CCODE));
 		
 		changeRecord(jsTreeBean, kv.getStr(BomD.CCODE), false);
@@ -186,20 +185,27 @@ public class BomDService extends BaseService<BomD> {
 		List<Record> trees = new ArrayList<>();
 		if (CollUtil.isNotEmpty(recordList)){
 			
-			List<Record> allList = dbTemplate("bomd.getBomComparePageData", Kv.by("orgId", getOrgId())).find();
-			Map<Long, List<Record>> compareMap = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
+			List<Record> bomCompareList = dbTemplate("bomd.getBomComparePageData", Kv.by("orgId", getOrgId())).find();
+			List<Record> parentBomList = dbTemplate("bomd.getParentBomList", Kv.by("orgId", getOrgId())).find();
+			
+			Map<Long, List<Record>> bomCompareMap = bomCompareList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
+			// 第二层及以下的通过存货编码区分下一级
+			Map<Long, Long> invMap = new HashMap<>();
+			for (Record record : parentBomList){
+				Long iInventoryId = record.getLong(BomD.IINVENTORYID);
+				// pId不为空，则说明是子件
+				if (ObjectUtil.isNotNull(record.getLong(BomD.IPID))){
+					continue;
+				}
+				invMap.put(iInventoryId, record.getLong(BomD.IAUTOID));
+			}
 			
 			for (Record record : recordList){
+				Long iInventoryId = record.getLong(BomD.IINVENTORYID);
 				// 设置编码
 				setCodeLevel(record, code);
-				Long id = record.getLong(BomM.IAUTOID);
-				if (compareMap.containsKey(id)){
-					recursiveTraversal(record, trees, compareMap.get(id), compareMap);
-				}
-				Long compareId = record.getLong(BomD.IINVPARTBOMMID);
-				// 判断版本号是否为空
-				if (ObjUtil.isNotNull(compareId)){
-					recursiveTraversal(record, trees, compareMap.get(compareId), compareMap);
+				if (invMap.containsKey(iInventoryId)){
+					recursiveTraversal(record, trees, bomCompareMap.get(invMap.get(iInventoryId)), bomCompareMap, invMap);
 				}
 				record.set(BomD.IPID, "0");
 				// 添加子件
@@ -216,21 +222,16 @@ public class BomDService extends BaseService<BomD> {
 	 * @param compareList 子件集合
 	 * @param compareMap  key=父id, value = 子件集合
 	 */
-	public void recursiveTraversal(Record parentRecord, List<Record> trees, List<Record> compareList, Map<Long, List<Record>> compareMap){
+	public void recursiveTraversal(Record parentRecord, List<Record> trees, List<Record> compareList, Map<Long, List<Record>> compareMap, Map<Long, Long> invMap){
 		for (Record record : compareList){
 			Long id = record.getLong(BomM.IAUTOID);
-			Long compareId = record.getLong(BomD.IINVPARTBOMMID);
-			
+			Long iInventoryId = record.getLong(BomD.IINVENTORYID);
 			Integer iLevel = parentRecord.getInt(BomD.ILEVELStr);
 			String code = String.valueOf(iLevel+1);
 			setCodeLevel(record, code);
 			// 判断当前子件是否存在 子件
-			if (compareMap.containsKey(id)){
-				recursiveTraversal(record, trees, compareMap.get(id), compareMap);
-			}
-			// 判断版本号是否为空
-			if (ObjUtil.isNotNull(compareId)){
-				recursiveTraversal(record, trees, compareMap.get(compareId), compareMap);
+			if (invMap.containsKey(iInventoryId)){
+				recursiveTraversal(record, trees, compareMap.get(invMap.get(iInventoryId)), compareMap, invMap);
 			}
 			Record newRecord = new Record();
 			newRecord.setColumns(record);
@@ -277,7 +278,8 @@ public class BomDService extends BaseService<BomD> {
 	private void setCodeLevel(Record record, String code){
 		
 		if (ObjUtil.isNull(code)){
-			code =record.getStr(BomD.CCODE);
+//			code =record.getStr(BomD.CCODE);
+			code = "1";
 		}
 		String codeKey = BomD.CCODE.concat(code);
 		record.set(codeKey, code);
@@ -355,5 +357,14 @@ public class BomDService extends BaseService<BomD> {
 		Sql sql = selectSql().eq(BomD.IPID, pid).eq(BomD.ISDELETED, "0");
 		return findFirst(sql);
 	}
- 
+	
+	public boolean existsBomDSon(String pidName, Object pidValue) {
+		if (!this.notOk(pidName) && !this.notOk(pidValue)) {
+			Sql sql = this.selectSql().select(BomD.IAUTOID).eqQM(new String[]{pidName}).eq(BomD.ISDELETED, "0").first();
+			Object existId = this.queryColumn(sql, new Object[]{pidValue});
+			return this.isOk(existId);
+		} else {
+			throw new RuntimeException("参数异常");
+		}
+	}
 }

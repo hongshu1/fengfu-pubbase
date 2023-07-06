@@ -186,6 +186,7 @@ public class SysPuinstoredetailService extends BaseService<SysPuinstoredetail> {
         detail.setRowNo(i);  //行号
         detail.setMasID(puinstore.getAutoID()); //主表ID;T_Sys_PUInStore.AutoID
         detail.setWhcode(puinstore.getWhCode()); //仓库
+        detail.setPosCode(detailRecord.getStr("poscode"));
         detail.setQty(detailRecord.getBigDecimal("qty")); //入库数量
         detail.setCCreateName(JBoltUserKit.getUserName());
         detail.setDCreateTime(puinstore.getDCreateTime());
