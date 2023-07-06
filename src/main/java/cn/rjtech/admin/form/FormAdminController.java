@@ -8,6 +8,7 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Form;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
@@ -112,6 +113,13 @@ public class FormAdminController extends BaseAdminController {
     @UnCheck
     public void findByFuzzy(@Para(value = "q") String keywords) {
         renderJsonData(service.findByFuzzy(keywords));
+    }
+
+    /**
+     * 测试用例
+     */
+    public void test(@Para(value = "table") String table) {
+        renderText(BillNoUtils.genCode(getOrgCode(), table));
     }
 
 }

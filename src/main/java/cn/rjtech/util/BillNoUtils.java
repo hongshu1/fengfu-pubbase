@@ -1,11 +1,15 @@
 package cn.rjtech.util;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.rjtech.cache.FormCache;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import com.jfinal.aop.Aop;
+import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 卡号生成工具类
@@ -34,8 +38,8 @@ public class BillNoUtils {
             return useAllQty ? prefix + "01" : MOM_DATA_FUNC_SERVICE.getNextRouteNo(orgId, prefix, billNoLength);
         }
     }
-    
-    
+
+
     /**
      * 生成工序卡号
      */
@@ -125,7 +129,7 @@ public class BillNoUtils {
     /**
      * 条码编码
      */
-    public static String getCassiGnOrderNo(String itemCategoryName,Long orgId) {
+    public static String getCassiGnOrderNo(String itemCategoryName, Long orgId) {
         String prefix = "";
         if ("焊接件".equals(itemCategoryName)) {
             prefix = "H";
@@ -167,27 +171,67 @@ public class BillNoUtils {
             return MOM_DATA_FUNC_SERVICE.getNextRouteNo(orgId, prefix + DateUtil.format(new Date(), "yyMMdd"), billNoLength);
         }
     }
-    
-    private char[] getLowerCaseLetter(){
+
+    private char[] getLowerCaseLetter() {
         char[] letter = new char[26];
-        for (int i=0; i<26;i++){
-            letter[i] = (char) ('a'+i);
+        for (int i = 0; i < 26; i++) {
+            letter[i] = (char) ('a' + i);
         }
         return letter;
     }
-    
-    private char[] getUpperCaseLetter(){
+
+    private char[] getUpperCaseLetter() {
         char[] letter = getLowerCaseLetter();
-        for (int i=0; i<letter.length; i++){
+        for (int i = 0; i < letter.length; i++) {
             letter[i] = Character.toUpperCase(letter[i]);
         }
         return letter;
     }
 
-
-    
-    public String getMaterialsBill(Long orgId, Long a){
+    public String getMaterialsBill(Long orgId, Long a) {
         return null;
     }
-    
+
+    /**
+     * 生成编码
+     *
+     * @param orgCode   组织编码
+     * @param cformcode 表单编码，传入table()
+     */
+    public static String genCode(String orgCode, String cformcode) {
+        return MOM_DATA_FUNC_SERVICE.generateCode(orgCode, FormCache.ME.getFormId(cformcode));
+    }
+
+    /**
+     * 生成多个编码值
+     *
+     * @param orgCode   组织编码
+     * @param cformcode 表单编码，传入table()
+     */
+    public static List<String> genCodes(String orgCode, String cformcode, int generateQty) {
+        List<Record> codeRecords = MOM_DATA_FUNC_SERVICE.barcodeGenerateForFormID(orgCode, FormCache.ME.getFormId(cformcode), generateQty);
+        return CollUtil.getFieldValues(codeRecords, "barcode", String.class);
+    }
+
+    /**
+     * 生成编码记录，已知字段：barcode、seq、serial
+     *
+     * @param orgCode   组织编码
+     * @param cformcode 表单编码，传入table()
+     */
+    public static Record genCodeRecord(String orgCode, String cformcode) {
+        return MOM_DATA_FUNC_SERVICE.generateCodeRecord(orgCode, FormCache.ME.getFormId(cformcode));
+    }
+
+    /**
+     * 生成多个编码记录，已知字段：barcode、seq、serial
+     *
+     * @param orgCode     组织编码
+     * @param cformcode   表单编码，传入table()
+     * @param generateQty 生成数量
+     */
+    public static List<Record> genCodeRecords(String orgCode, String cformcode, int generateQty) {
+        return MOM_DATA_FUNC_SERVICE.barcodeGenerateForFormID(orgCode, FormCache.ME.getFormId(cformcode), generateQty);
+    }
+
 }
