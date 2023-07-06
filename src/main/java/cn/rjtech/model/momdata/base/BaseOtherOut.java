@@ -197,7 +197,7 @@ public abstract class BaseOtherOut<M extends BaseOtherOut<M>> extends JBoltBaseM
 	/**
 	 * 单据日期
 	 */
-	public M setBillDate(java.lang.String BillDate) {
+	public M setBillDate(java.util.Date BillDate) {
 		set("BillDate", BillDate);
 		return (M)this;
 	}
@@ -207,8 +207,8 @@ public abstract class BaseOtherOut<M extends BaseOtherOut<M>> extends JBoltBaseM
 	 */
 	@JBoltField(name="billdate" ,columnName="BillDate",type="String", remark="单据日期", required=false, maxLength=30, fixed=0, order=8)
 	@JSONField(name = "billdate")
-	public java.lang.String getBillDate() {
-		return getStr("BillDate");
+	public java.util.Date getBillDate() {
+		return getDate("BillDate");
 	}
 
 	/**
