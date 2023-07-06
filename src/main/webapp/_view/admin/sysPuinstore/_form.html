@@ -109,25 +109,6 @@
                            value="#(sysPuinstore.ccreatename??)"/>
                   </div>
                 </div>
-
-                <!--<div class="form-group row">
-                  <label class="col-sm-3 col-form-label">订单类型</label>
-                  <div class="col-6">
-                    <select class="form-control"
-                            id="sourcebilltype"
-                            name="sourcebilltype"
-                            data-autoload
-                            data-rule="required"
-                            data-url="admin/dictionary/options?key=order_type"
-                            data-select-type="select"
-                            data-text="=请选择订单类型="
-                            data-value=""
-                            data-text-attr="name"
-                            data-value-attr="sn"
-                            data-select="#(sysPuinstore.sourcebilltype??)"
-                    ></select>
-                  </div>
-                </div>-->
             </div>
 
               <div class="col">
@@ -387,13 +368,13 @@
         url: "/admin/purchaseReceiptList/submitAll", success: function (res) {
           var state = res.state;
           if(state === 'ok'){
+            var data = res.data;
             if (submit){
-              let data = res.data;
               submit_#(pageId)(data.autoid,function () {
                 successHandler('提交审核成功', data.autoid);
               });
             } else {
-              successHandler(ret.msg, autoid);
+              successHandler(res.msg, data.autoid);
             }
           }else {
             LayerMsgBox.error(res.msg);
