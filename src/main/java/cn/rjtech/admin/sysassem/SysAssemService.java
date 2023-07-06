@@ -623,7 +623,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         firstRecord.set("venname",kv.get("venname"));
         firstRecord.set("ibeforeinventoryid",kv.get("ibeforeinventoryid"));
         firstRecord.set("iafterinventoryid",kv.get("iafterinventoryid"));
-
+        firstRecord.set("qty",kv.get("qty"));
         return firstRecord;
     }
 

@@ -1,25 +1,15 @@
 #sql("getPage")
-SELECT md.iAutoId,
-       md.iMoTaskId,
-       md.iInventoryId,
+SELECT
+    md.*,
        bi.cInvAddCode,
-       md.cMoDocNo,
-       md.dPlanDate,
-       md.iDepartmentId,
-       md.iQty,
-       md.iCompQty,
-       md.iPersonNum,
-       md.iDutyPersonId,
-       md.iStatus,
-       md.iType,
        jdh.name as iStatusname,### 状态说明
     bi.cInvCode, ### 存货编码
     bi.cInvCode1, ### 客户部番
     bi.cInvName1, ### 部品名称
     bd.cDepName, ### 部门
     wr.cWorkName,  ### 产线名称
-    ws.cWorkShiftName, ### 班次名称
-    md.dCreateTime
+    ws.cWorkShiftName ### 班次名称
+
 FROM dbo.Mo_MoDoc AS md
          LEFT JOIN
      dbo.Bd_Inventory AS bi
@@ -254,6 +244,38 @@ WHERE
 select * from Bd_InventoryRoutingEquipment  where iInventoryRoutingConfigId=#para(iEquipmentIds)
 #end
 
+#sql("inventoryAutocompleteDatas")
+SELECT
+    top #(limit)
+	inv.iAutoId,
+	cInvCode,
+	cInvName,
+	cInvCode1,
+	cInvName1,
+	wm.iAutoId iworkregionmid,
+	wm.cWorkCode,
+	wm.cWorkName,
+	dt.iAutoId iDepartmentId,
+    dt.cDepCode,
+	dt.cDepName,
+	rt.iAutoId iinventoryroutingid
+FROM
+	Bd_Inventory inv
+	LEFT JOIN ( SELECT * FROM Bd_InventoryWorkRegion WHERE isDeleted = 0 AND isDefault = 1 ) wk ON wk.iInventoryId = inv.iAutoId
+	left JOIN Bd_WorkRegionM wm ON wm.iAutoId = wk.iWorkRegionMid
+	left JOIN (SELECT iAutoId,iInventoryId FROM Bd_InventoryRouting WHERE  getdate () >= dFromDate AND getdate ( ) <= dToDate  AND iAuditStatus=2) rt on rt.iInventoryId = inv.iAutoId
+    LEFT JOIN Bd_Department dt on dt.iAutoId =wk.iDepId
+WHERE
+    1=1
+	AND inv.isDeleted = 0
+	AND inv.isEnabled = 1
+	#if(q)
+		and (
+			cInvCode like concat('%',#para(q),'%') or cInvName like concat('%',#para(q),'%')
+		)
+	#end
+#end
+
 #sql("getMoDocEquipments")
 	select * from Mo_MoRoutingEquipment where iMoRoutingConfigId=#para(iEquipmentIds)
 #end
@@ -377,6 +399,10 @@ WHERE iAutoId = (
     WHERE mr.iMoDocId = #para(iautoid)
     ORDER BY mrc.iSeq DESC
 )
+#end
+
+#sql("getConfigPersonById")
+    select * from Mo_MoRoutingConfig_Person where iMoRoutingConfigId = #para(id)
 #end
 #sql("findByModecIdProcessDatas")
 select a.iMoDocId as modocid, a.iinventoryroutingid, a.iinventoryid, b.iAutoId as RoutingConfigid, b.cOperationName
