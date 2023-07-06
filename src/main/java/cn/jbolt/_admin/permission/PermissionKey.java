@@ -206,18 +206,6 @@ public class PermissionKey {
 	 */
 	public static final String CALENDAR = "calendar";
 	/**
-	 * 新增日历
-	 */
-	public static final String WORKCALENDARM_ADD = "workcalendarm_add";
-	/**
-	 * 修改日历
-	 */
-	public static final String WORKCALENDARM_EDIT = "workcalendarm_edit";
-	/**
-	 * 删除日历
-	 */
-	public static final String WORKCALENDARM_DELETE = "workcalendarm_delete";
-	/**
 	 * 应用管理
 	 */
 	public static final String RJ_APPLICATION = "rj_application";
@@ -602,22 +590,6 @@ public class PermissionKey {
 	 */
 	public static final String PMISSUERECORDLINE = "pmissuerecordline";
 	/**
-	 * 编辑
-	 */
-	public static final String WORKREGIONM_EDIT = "workregionm_edit";
-	/**
-	 * 删除
-	 */
-	public static final String WORKREGIONM_DELETE = "workregionm_delete";
-	/**
-	 * 导出
-	 */
-	public static final String WORKREGIONM_EXPORT = "workregionm_export";
-	/**
-	 * 导入
-	 */
-	public static final String WORKREGIONM_IMPORT = "workregionm_import";
-	/**
 	 * 卷料采购送货单
 	 */
 	public static final String DELIVERY_HEADER = "delivery_header";
@@ -884,7 +856,7 @@ public class PermissionKey {
 	/**
 	 * 销售发货单列表
 	 */
-	public static final String SALES_SHIPMENT_LIST = "sales_shipment_list";
+	public static final String SYSSALEDELIVERPLAN = "syssaledeliverplan";
 	/**
 	 * 条码报表
 	 */
@@ -1381,6 +1353,10 @@ public class PermissionKey {
 	 * 现品票
 	 */
 	public static final String API_MOMOINVBATCH = "api_momoinvbatch";
+	/**
+	 * 始业点检表管理
+	 */
+	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
 	/**
 	 * 新增
 	 */
@@ -3017,7 +2993,22 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String WORKREGIONM_ADD = "workregionm_add";
-
+	/**
+	 * 修改
+	 */
+	public static final String WORKREGIONM_EDIT = "workregionm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WORKREGIONM_DELETE = "workregionm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String WORKREGIONM_EXPORT = "workregionm_export";
+	/**
+	 * 导入
+	 */
+	public static final String WORKREGIONM_IMPORT = "workregionm_import";
 	/**
 	 * 新增
 	 */
@@ -3034,11 +3025,6 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String PERSON_IMPORT = "person_import";
-	public static final String FITEMSS97_DELETED = "fitemss97_deleted";
-	/**
-	 * 提审
-	 */
-	public static  final  String  modoc_submit = "modoc_submit";
 	/**
 	 * 新增
 	 */
@@ -3064,11 +3050,27 @@ public class PermissionKey {
 	 */
 	public static final String WORKSHIFTM_SUBMIT = "workshiftm_submit";
 	/**
-	 * 点检
+	 * 新增
 	 */
-	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
+	public static final String WORKCALENDARM_ADD = "workcalendarm_add";
 	/**
-	 *销售出货(计划)
+	 * 修改
 	 */
-	public static final String SYSSALEDELIVERPLAN = "syssaledeliverplan";
+	public static final String WORKCALENDARM_EDIT = "workcalendarm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WORKCALENDARM_DELETE = "workcalendarm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String WORKCALENDARM_EXPORT = "workcalendarm_export";
+	/**
+	 * 导入
+	 */
+	public static final String WORKCALENDARM_IMPORT = "workcalendarm_import";
+	/**
+	 * 保存
+	 */
+	public static final String CUSTOMER_SUBMIT = "customer_submit";
 }
