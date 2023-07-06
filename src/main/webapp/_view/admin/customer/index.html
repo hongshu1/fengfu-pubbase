@@ -9,7 +9,9 @@
 				<h1>客户列表</h1>
 			</div>
 			<div class="col">
-				<form class="form-inline text-left" id="customermForm_#(pageId)"   onsubmit="return false;" method="post">
+				<form class="form-inline text-left" id="customermForm_#(pageId)" action="#(action??)"  onsubmit="return
+				false;"
+					  method="post">
 					<input value="" hidden id="customermForm_autoid" name="icustomerclassid">
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="客户编码" name="ccustomercode" value="" />
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="客户名称" name="ccustomername" value="" />
@@ -73,6 +75,27 @@
 				#end
 				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 <!--				<button data-ajaxbtn data-confirm="确定同步最新数据？" data-handler="refreshJBoltTable" data-title="同步最新数据" data-url="admin/u9datassynctaskrecord/syncU9Datas?type=4" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 同步U9</button>-->
+
+				#permission(PermissionKey.CUSTOMER_IMPORT)
+				<div class="btn-group dropdown">
+					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
+					<div class="dropdown-menu" aria-labelledby="importMenuButton">
+						<a data-downloadbtn href="/admin/customer/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+						<div class="j_upload_file_box"
+							 data-name="file"
+							 data-btn-class="btn dropdown-item"
+							 data-placeholder="上传导入"
+							 data-confirm="确认导入数据？"
+							 data-accept="excel"
+							 data-maxsize="20480"
+							 data-handler="uploadFile"
+							 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+							 data-url="/admin/customer/importExcel">
+						</div>
+					</div>
+				</div>
+				#end
+
 			</div>
 
 			#permission(PermissionKey.CUSTOMER_EXPORT)
@@ -80,31 +103,11 @@
 				<!--<div class="btn-group dropdown">
 					<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportMenucustomermButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
 					<div class="dropdown-menu" aria-labelledby="exportMenucustomermButton">
-						<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/customerm/dataExport"><i class="fa fa-download"></i> 导出选中</button>
+						<button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="admin/customer/dataExport"><i class="fa fa-download"></i> 导出选中</button>
 						<button class="btn dropdown-item" data-downloadbtn data-url="admin/customer/dataExport"  data-form="customermForm_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
 					</div>
 				</div>-->
 			</div>
-			#end
-
-			#permission(PermissionKey.CUSTOMER_IMPORT)
-			<!--<div class="btn-group dropdown">
-				<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入</button>
-				<div class="dropdown-menu" aria-labelledby="importMenuButton">
-					<a data-downloadbtn href="/admin/customer/downloadTpl" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-					<div class="j_upload_file_box"
-						 data-name="file"
-						 data-btn-class="btn dropdown-item"
-						 data-placeholder="上传导入"
-						 data-confirm="确认导入数据？"
-						 data-accept="excel"
-						 data-maxsize="20480"
-						 data-handler="uploadFile"
-						 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-						 data-url="/admin/customer/importExcel">
-					</div>
-				</div>
-			</div>-->
 			#end
 
 			<div class="clearfix"></div>
@@ -113,7 +116,7 @@
 
 
 		<table
-				 id="chooseDataTable"
+				 id="jbolt_table_#(pageId)"
 				 class="jbolt_table jbolt_main_table table-center"
 			   data-jbolttable
 			   data-height="fill"
@@ -157,7 +160,7 @@
 <script>
 	//点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
 	function submitThisForm(callback) {
-		var data = getJboltTableCheckedData("chooseDataTable");
+		var data = getJboltTableCheckedData("jbolt_table_#(pageId)");
 		if (data) {
 			parent.setChooseDialogSelectResultFromSupplier(data);
 			if (callback) {

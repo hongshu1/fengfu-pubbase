@@ -9,6 +9,7 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
@@ -19,13 +20,16 @@ import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
 import cn.rjtech.util.ValidationUtils;
+
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.TableMapping;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,15 +53,17 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     @Inject
-    private VendorClassService vendorClassService;
+    private VendorClassService       vendorClassService;
     @Inject
-    private VendorAddrService  vendorAddrService;
+    private VendorAddrService        vendorAddrService;
     @Inject
-    private WarehouseService   warehouseService;
+    private WarehouseService         warehouseService;
     @Inject
-    private PersonService      personService;
+    private PersonService            personService;
     @Inject
-    private DepartmentService  departmentService;
+    private DepartmentService        departmentService;
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingdService;
 
     @Override
     protected int systemLogTargetType() {
@@ -78,7 +84,7 @@ public class VendorService extends BaseService<Vendor> {
         kv.set("corgcode", getOrgCode());
         Page<Record> paginate = dbTemplate("vendor.getAdminDatas", kv).paginate(pageNumber, pageSize);
         for (Record record : paginate.getList()) {
-            Department dept = departmentService.findById(record.getStr("cvendepart"));
+            Department dept = departmentService.findByCdepcode(getOrgId(),record.getStr("cvendepart"));
             record.set("cvendepart", null != dept ? dept.getCDepName() : "");
             Person person = personService.findById(record.getStr("idutypersonid"));
             record.set("cvenpperson", person != null ? person.getCpsnName() : "");
@@ -401,7 +407,7 @@ public class VendorService extends BaseService<Vendor> {
     }
 
     public Page<Record> getVendorPaginate(Integer pageNumber, Integer pageSize, Kv para) {
-    	para.set("iorgid",getOrgId());
+        para.set("iorgid", getOrgId());
         return dbTemplate("vendor.getVendorList", para).paginate(pageNumber, pageSize);
     }
 
@@ -419,4 +425,84 @@ public class VendorService extends BaseService<Vendor> {
         return find("select * from bd_vendor where cVCCode = ? and iVendorClassId = ?", cVCCode, iVendorClassId);
     }
 
+    /**
+     * 供应商excel导入数据库
+     */
+    public Ret importExcelData(File file) {
+        StringBuilder errorMsg = new StringBuilder();
+
+        // 使用字段配置维护
+        List<Record> vendors = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
+
+        if (notOk(vendors)) {
+            if (errorMsg.length() > 0) {
+                return fail(errorMsg.toString());
+            } else {
+                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+            }
+        }
+
+        // 读取数据没有问题后判断必填字段
+        if (vendors.size() > 0) {
+            Date now = new Date();
+
+            for (Record row : vendors) {
+                if(notOk(row.getStr("cvccode"))){
+                    return fail("供应商分类编码不能为空");
+                }
+                if (notOk(row.getStr("cvencode"))) {
+                    return fail("供应商编码不能为空");
+                }
+                if (notOk(row.getStr("cvenname"))) {
+                    return fail("供应商名称不能为空");
+                }
+                if (notOk(row.getStr("cvenabbname"))) {
+                    return fail("供应商简称不能为空");
+                }
+                if (notOk(row.getStr("cvenmnemcode"))) {
+                    return fail("助记码不能为空");
+                }
+                Vendor vendor = findByCode(row.getStr("cvencode"));
+                ValidationUtils.isTrue(vendor == null, row.getStr("cvencode") + "：供应商编码已存在，不能重复");
+
+                VendorClass vendorClass = vendorClassService.findByCVCCode(row.getStr("cvccode"));
+                ValidationUtils.notNull(vendorClass, String.format("供应商分类“%s”不存在", row.getStr("cvccode")));
+
+                if(StrUtil.isNotBlank(row.getStr("cvendepart"))){
+                    Department department = departmentService.findByCdepcode(getOrgId(), row.getStr("cvendepart"));
+                    ValidationUtils.notNull(department, String.format("分管部门“%s”不存在", row.getStr("cvendepart")));
+                }
+
+                row.keep(ArrayUtil.toArray(TableMapping.me().getTable(Vendor.class).getColumnNameSet(), String.class));
+
+                row.set("iautoid", JBoltSnowflakeKit.me.nextId());
+                row.set("IOrgId", getOrgId());
+                row.set("COrgCode", getOrgCode());
+                row.set("COrgName", getOrgName());
+                row.set("cVenCode",row.getStr("cvencode"));//供应商编码
+                row.set("cVenName",row.getStr("cvenname"));//供应商名称
+                row.set("cVenMnemCode",row.getStr("cvenmnemcode"));//助记码
+                row.set("cVenDepart",row.getStr("cvendepart"));//分管部门编码
+                row.set("cVenAbbName",row.getStr("cvenabbname"));//供应商简称
+                row.set("iTaxRate",row.get("itaxrate"));//税率
+                row.set("ISource", SourceEnum.MES.getValue());
+                row.set("isEnabled","1");
+                row.set("IsDeleted", ZERO_STR);
+                row.set("dcreatetime", now);
+                row.set("ICreateBy", JBoltUserKit.getUserId());
+                row.set("ccreatename", JBoltUserKit.getUserName());
+                row.set("DUpdateTime", now);
+                row.set("IUpdateBy", JBoltUserKit.getUserId());
+                row.set("CUpdateName", JBoltUserKit.getUserName());
+                row.set("iVendorClassId",vendorClass.getIAutoId());//分类id
+            }
+        }
+
+        // 执行批量操作
+        boolean success = tx(() -> {
+            batchSaveRecords(vendors);
+            return true;
+        });
+        return SUCCESS;
+    }
 }

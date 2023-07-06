@@ -1,6 +1,26 @@
 #set(pageId=RandomUtil.random(6))
 #set(iYear=DateUtil.getYear())
 <div class="jbolt_page" data-key="#(pmkey??)" style="margin-top: -16px">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        #if(isedit)
+                        <button onclick="submitThisFormPlan()" class="btn btn-outline-secondary btn-xs">保存</button>
+                        #end
+                        #if(apsAnnualplanm.iAutoId??)
+                        #include("/_view/_common/_approval_btns.html", uri="/admin/scheduproductplanyear",
+                        formSn="Aps_AnnualPlanM", o=apsAnnualplanm, primaryKeyName="iAutoId",
+                        className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService", permissionKeyPrefix="scheduplanyear")
+                        #end
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     ### 新增之后，并且为审核流
     #if(apsAnnualplanm.iautoid?? && apsAnnualplanm.iauditway == 2)
@@ -112,16 +132,6 @@
                         data-url="admin/scheduproductplanyear/dataExportYear" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
                 #end
 
-                #if(isedit)
-                <button onclick="submitThisFormPlan()" class="btn btn-outline-secondary btn-xs">保存</button>
-                #end
-                #if(apsAnnualplanm.iAutoId??)
-                #include("/_view/_common/_approval_btns.html", uri="/admin/scheduproductplanyear",
-                formSn="Aps_AnnualPlanM", o=apsAnnualplanm, primaryKeyName="iAutoId",
-                className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService", permissionKeyPrefix="scheduplanyear")
-                #end
-                <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
-
             </div>
         </div>
         <table class="jbolt_table thead_font_normal table-bordered table-center"
@@ -148,7 +158,7 @@
                 <th data-width="150" data-column="cinvname1" rowspan="3">部品名称</th>
                 <th data-width="110" data-column="plantypecode" rowspan="3">项目</th>
                 <!--<th data-width="100" data-column="nowmonth0" rowspan="">年份</th>-->
-                <th colspan="12" id="nowYear">#(startyear)年</th>
+                <th colspan="14" id="nowYear">#(startyear)年</th>
                 <th colspan="4" id="nextYear">#(endyear)年</th>
             </tr>
             <tr>

@@ -79,7 +79,8 @@ FROM
 	Bd_BomM master
 WHERE
 	master.IsDeleted = '0'
-
+    AND master.iAuditStatus = 2
+    AND master.isEffective = 1
 	#if(orgId)
 	AND master.iOrgId = #para(orgId)
 	#end

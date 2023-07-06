@@ -198,13 +198,14 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
         if (StrUtil.isNotBlank(formRecord.getStr("cattachments2"))) {
             if (CollUtil.isNotEmpty(saveRecords)) {
                 for (Record saveRecord : saveRecords) {
-                    if (formRecord.getStr("cattachments2").contains(saveRecord.getStr("cattachments"))) {
-                        String replace = formRecord.getStr("cattachments2").replace("-" + saveRecord.getStr("cattachments"), "");
+                    if (formRecord.getStr("cattachments2").contains(saveRecord.getStr("cattachments2"))) {
+                        String replace = formRecord.getStr("cattachments2").replace(saveRecord.getStr("cattachments2"), "");
                         formRecord.set("cattachments2", replace);
                     }
                 }
             }
         }
+
         if (jBoltTable.saveIsNotBlank()) {
             ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
             for (Record saveRecord : saveRecords) {
@@ -221,13 +222,15 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
                 formUploadDS.add(formUploadD);
             }
             formUploadDService.batchSave(formUploadDS);
-        } else if (jBoltTable.updateIsBlank()){
+        } else {
             ArrayList<FormUploadD> formUploadDS = new ArrayList<>();
             for (String cattachment : StrSplitter.split(formRecord.getStr("cattachments2"), "-", true, true)) {
-                FormUploadD formUploadD = new FormUploadD();
-                formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
-                formUploadD.setCAttachments(cattachment);
-                formUploadDS.add(formUploadD);
+                if (StrUtil.isNotBlank(cattachment)){
+                    FormUploadD formUploadD = new FormUploadD();
+                    formUploadD.setIFormUploadMid(formUploadM.getIAutoId());
+                    formUploadD.setCAttachments(cattachment);
+                    formUploadDS.add(formUploadD);
+                }
             }
             formUploadDService.batchSave(formUploadDS);
         }
