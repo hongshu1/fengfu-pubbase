@@ -1,7 +1,7 @@
 <!-- 定义JBoltTable使用的数据渲染模板 -->
 <textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">
     {@each datas as data,index}
-        <tr data-id="${data.autoid}" data-needsave="true" data-changed="true">
+        <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>${data.barcode}</td> <!--现品票-->
             <td>${data.invcode}</td> <!--材料编码-->
@@ -114,7 +114,7 @@
         if (barcode) {
             Ajax.post("admin/otherdeliverylist/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden},
                 function (res) {
-                    jboltTableInsertRow("jbolt_table_otherdeliverylist_split_#(pageId)", res.data, false, true, true)
+                    jboltTableInsertRow("jbolt_table_otherdeliverylist_split_#(pageId)", res.data, false, false, true)
                     $("#barcode").val('');
                 }, function (err) {
                 })

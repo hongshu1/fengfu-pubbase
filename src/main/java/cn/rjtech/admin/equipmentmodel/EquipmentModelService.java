@@ -1,6 +1,7 @@
 package cn.rjtech.admin.equipmentmodel;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -76,6 +77,7 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 	 * @return
 	 */
 	private EquipmentModel setEquipmentModel(EquipmentModel equipmentModel){
+		equipmentModel.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		equipmentModel.setIsDeleted(false);
 		equipmentModel.setIOrgId(getOrgId());
 		equipmentModel.setCOrgCode(getOrgCode());
