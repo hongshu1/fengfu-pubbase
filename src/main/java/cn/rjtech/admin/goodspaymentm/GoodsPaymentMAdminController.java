@@ -21,6 +21,7 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
+import org.jsoup.select.Evaluator;
 
 import java.io.File;
 import java.util.List;
@@ -61,7 +62,6 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
      * 新增
      */
     public void add() {
-        set("iAutoId", JBoltSnowflakeKit.me.nextIdStr());
         render("add.html");
     }
 
@@ -150,8 +150,6 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
      * 执行导入excel
      */
     public void importExcel() {
-        Long iAutoId = getLong("iAutoId");
-        System.out.println("iAutoId=="+iAutoId);
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");
         File file = uploadFile.getFile();
@@ -160,7 +158,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
         String cformatName = list.get(0);
         String extension = list.get(1);
         ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-        renderJson(service.importExcel(file, cformatName,iAutoId));
+        renderJsonData(service.importExcel(file, cformatName));
     }
 
 }

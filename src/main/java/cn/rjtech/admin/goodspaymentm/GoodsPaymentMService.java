@@ -200,7 +200,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 	 * @param file
 	 * @return
 	 */
-	public Ret importExcel(File file, String cformatName,Long iAutoId) {
+	public Ret importExcel(File file, String cformatName) {
 		StringBuilder errorMsg=new StringBuilder();
 		//使用字段配置维护
 		Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
@@ -215,14 +215,14 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 				return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 			}
 		}
-		for (GoodsPaymentD goodsPaymentD : goodsPaymentDS) {
-			setGoodsPaymentDModel(goodsPaymentD,iAutoId);
-		}
+//		for (GoodsPaymentD goodsPaymentD : goodsPaymentDS) {
+//			setGoodsPaymentDModel(goodsPaymentD,iAutoId);
+//		}
 		//执行批量操作
 		boolean success=tx(new IAtom() {
 			@Override
 			public boolean run() throws SQLException {
-				goodsPaymentDservice.batchSave(goodsPaymentDS);
+//				goodsPaymentDservice.batchSave(goodsPaymentDS);
 				return true;
 			}
 		});
@@ -230,7 +230,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 		if(!success) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);
 		}
-		return SUCCESS;
+		return SUCCESS.data(goodsPaymentDS);
 	}
 
 	/**
