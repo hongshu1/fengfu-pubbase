@@ -16,7 +16,6 @@ import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.BomM;
 import cn.rjtech.model.momdata.BomMaster;
 import cn.rjtech.model.momdata.Inventory;
@@ -203,7 +202,6 @@ public class BomMasterAdminController extends BaseAdminController {
         set("oldId", get(0));
         BomM bomM = bomMService.findById(get(0));
         ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
-        ValidationUtils.isTrue(bomM.getIAuditStatus() == AuditStatusEnum.APPROVED.getValue(), "已审核的物料清单才能复制");
         DateTime dateTime = DateUtil.offsetDay(bomM.getDDisableDate(), 1);
         set(BomM.DENABLEDATE, DateUtil.formatDate(dateTime));
         set(BomM.CVERSION, bomMService.getNextVersion(getOrgId(), bomM.getIInventoryId()));

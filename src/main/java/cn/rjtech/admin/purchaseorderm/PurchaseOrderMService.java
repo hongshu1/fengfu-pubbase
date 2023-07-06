@@ -1074,8 +1074,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				jsonObject.put("cPersonCode", order.get("cPersonCode"));
 				jsonObject.put("cBusType", order.get("cBusType"));
 				jsonObject.put("cPTCode", order.get("cPTCode"));
-				jsonObject.put("iExchRate", order.get("iExchRate"));
-				jsonObject.put("iTaxRate", order.get("iTaxRate"));
+				jsonObject.put("iExchRate", order.getBigDecimal("iExchRate"));
+				jsonObject.put("iTaxRate", order.getBigDecimal("iTaxRate"));
 				jsonObject.put("cexch_name", order.get("cexch_name"));
 				jsonObject.put("cmemo", order.get("cmemo"));
 				jsonObject.put("inum", order.get("inum"));
@@ -1088,6 +1088,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				jsonObject.put("KL", order.get("KL"));
 				jsonObject.put("iNatDisCount", order.get("iNatDisCount"));
                 jsonObject.put("cPayType", order.get("cPayType"));
+                jsonObject.put("cdepcode",order.get("cdepcode"));
 				jsonArray.add(jsonObject);
 			}
 			JSONObject params = new JSONObject();

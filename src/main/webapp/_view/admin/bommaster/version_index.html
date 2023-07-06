@@ -6,9 +6,10 @@
 <div class="row">
 	<div class="col">
 	<form class="form-inline text-left" id="BomCompare_version_form_#(pageId)">
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="存货编码" name="cInvCode" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="客户部番" name="cInvCode1" value="" />
-		<input type="text" autocomplete="off"  class="form-control"  placeholder="部品名称" name="cInvName1" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="母件存货编码" name="cInvCode" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="子件存货编码" name="sonInvCode" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="母件客户部番" name="cInvCode1" value="" />
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="母件部品名称" name="cInvName1" value="" />
 		<select class="form-control"
 				data-autoload
 				name="isEffective">
@@ -29,19 +30,22 @@
 <tr data-id="${data.iautoid}">
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-			<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bomcompare/info/${data.iautoid}" tooltip data-title="查看" >查看</a>
-		 {@if data.iauditstatus==0 || data.iauditstatus==3}
+		<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bomcompare/info/${data.iautoid}" tooltip data-title="查看" >查看</a>
+		<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bomcompare/edit/${data.iautoid}" onclick="" tooltip data-title="编辑" >编辑</a>
+		<a class="text-warning" tooltip='' data-area='28%,70%' data-title='复制版本提示' data-dialogbtn='' href='admin/bommaster/copyForm/${data.iautoid}' data-handler='refreshPjaxContainer'>复制</a>
+		<a class="text-danger" data-ajaxbtn href="admin/bomM/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>
+		<!--{@if data.iauditstatus==0 || data.iauditstatus==3}
 			<a data-ajaxbtn href='admin/bomM/audit?bomMasterId=${data.iautoid}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
-			<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bomcompare/edit/${data.iautoid}" onclick="" tooltip data-title="编辑" >编辑</a>
-<!--			<a class="text-danger" data-ajaxbtn href="admin/bomM/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>-->
+
+		&lt;!&ndash;			<a class="text-danger" data-ajaxbtn href="admin/bomM/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>&ndash;&gt;
 		 {@else if data.iauditstatus==1 }
 			<a data-ajaxbtn href='admin/bomM/audit?bomMasterId=${data.iautoid}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
 		{@else if data.iauditstatus==2 }
-			<a class="text-warning" tooltip='' data-title='复制版本提示' data-dialogbtn='' data-area='400,300' href='admin/bommaster/copyForm/${data.iautoid}' data-handler='refreshPjaxContainer'>复制</a>
-		{@/if}
-		<a class="text-danger" data-ajaxbtn href="admin/bomM/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>
+
+		{@/if}-->
 	</td>
-	<td>${data.auditstatusstr}</td>
+	<td><img data-switchbtn data-confirm="确定切换是否显示？" data-value="${data.isview}"  data-handler="refreshJBoltTable"  data-url="admin/bomM/updateIsView/${data.iautoid}"/></td>
+<!--	<td>${data.auditstatusstr}</td>-->
 <!--	<td>${data.typename}</td>-->
 	<td>${data.cinvcode}</td>
 	<td>${data.cinvcode1}</td>
@@ -52,7 +56,6 @@
 	<td>${data.cversion}</td>
 	<td>${data.denabledate |date_ymd}</td>
 	<td>${data.ddisabledate |date_ymd}</td>
-	<td><img data-switchbtn data-confirm="确定切换是否显示？" data-value="${data.isview}"  data-handler="refreshJBoltTable"  data-url="admin/bomM/updateIsView/${data.iautoid}"/></td>
 	<td>${data.ccreatename}</td>
 	<td>${data.dcreatetime}</td>
 </tr>
@@ -73,7 +76,7 @@
 	   data-ajax="true"
        data-column-resize="true"
 	   data-conditions-form="BomCompare_version_form_#(pageId)"
-	   data-url="admin/bomM/getVersionRecord?iType=#(iType)"
+	   data-url="admin/bomM/getVersionRecord"
 	   data-rowtpl="BomCompare_version_tpl_#(pageId)"
 	   data-copy-to-excel="false"
 	   data-page="BomCompare_version_page"
@@ -83,7 +86,8 @@
 <tr>
 	<th data-width="60" data-column="index">序号</th>
 	<th data-width="170">操作</th>
-	<th data-width="150" data-column="auditstatusstr">状态</th>
+	<th data-width="100" data-column="isView">根目录展示</th>
+<!--	<th data-width="150" data-column="auditstatusstr">状态</th>-->
 <!--	<th data-width="150" data-column="iType">来源</th>-->
 	<th data-width="150" data-column="cInvCode">存货编码</th>
 	<th data-width="150" data-column="cInvCode1">客户部番</th>
@@ -94,7 +98,6 @@
 	<th data-width="120" data-column="cVersion">版本/版次</th>
 	<th data-width="120" data-column="dEnableDate">启用日期</th>
 	<th data-width="120" data-column="dDisableDate">停用日期</th>
-	<th data-width="100" data-column="isView">根目录展示</th>
 	<th data-width="120" data-column="ccreatename">创建人</th>
 	<th data-width="150" data-column="dcreatetime">创建时间</th>
 </tr>
