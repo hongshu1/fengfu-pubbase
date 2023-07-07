@@ -62,6 +62,7 @@ public class OperationAdminController extends JBoltBaseController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.OPERATION_ADD)
     public void add() {
         render("add.html");
     }
@@ -69,6 +70,7 @@ public class OperationAdminController extends JBoltBaseController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.OPERATION_EDIT)
     public void edit() {
         Operation operation = service.findById(getLong(0));
         if (operation == null) {
@@ -82,6 +84,7 @@ public class OperationAdminController extends JBoltBaseController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.OPERATION_ADD)
     public void save() {
         Operation model = getModel(Operation.class, "operation");
         renderJson(service.save(model));
@@ -90,6 +93,7 @@ public class OperationAdminController extends JBoltBaseController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.OPERATION_EDIT)
     public void update() {
         Operation model = getModel(Operation.class, "operation");
         renderJson(service.update(model));
@@ -98,6 +102,7 @@ public class OperationAdminController extends JBoltBaseController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.OPERATION_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -138,6 +143,7 @@ public class OperationAdminController extends JBoltBaseController {
     /**
      * 导出选中
      */
+    @CheckPermission(PermissionKey.OPERATION_EXPORT)
     public void exportExcelByIds() throws Exception {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -165,6 +171,7 @@ public class OperationAdminController extends JBoltBaseController {
     /**
      * 导出全部
      */
+    @CheckPermission(PermissionKey.OPERATION_EXPORT)
     public void exportExcelAll() throws Exception {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {
@@ -209,6 +216,7 @@ public class OperationAdminController extends JBoltBaseController {
         renderJsonData(service.getIdAndNameListToInventoryCheckForm());
     }
 
+    @CheckPermission(PermissionKey.OPERATION_IMPORT)
     public void importExcelClass() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

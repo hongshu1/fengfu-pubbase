@@ -11,6 +11,7 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.ApsWeekschedule;
 import cn.rjtech.model.momdata.MrpDemandcomputem;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
@@ -20,10 +21,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 物料需求计划 Controller
@@ -133,6 +131,92 @@ public class ScheduDemandPlanController extends BaseAdminController {
     @UnCheck
 	public void getSupplierList() {
 		renderJsonData(service.getSupplierList(getKv()));
+	}
+
+	public void getSwitchDate() {
+		Calendar calendarMonth = Calendar.getInstance();
+		calendarMonth.setTime(new Date());
+		calendarMonth.add(Calendar.MONTH, 1);//月份+1
+		//下一个月份
+		renderJsonData(calendarMonth.getTime().getTime());
+	}
+	/**
+	 * 获取表格表头日期展示
+	 */
+	public void getTableHead() {
+		//TODO:查询排产开始日期与截止日期
+		Record mRecord = service.findFirstRecord("SELECT dBeginDate,dEndDate FROM Mrp_DemandComputeM WHERE iAutoId = 1 ");
+		String startDate = "";
+		String endDate = "";
+		if (mRecord != null){
+			//startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(),"yyyy-MM-dd");
+			endDate = DateUtils.formatDate(mRecord.get("dEndDate"),"yyyy-MM-dd");
+		}
+
+		startDate = isOk(get("startDate")) ? get("startDate") : startDate;
+		endDate = isOk(get("endDate")) ? get("endDate") : endDate;
+		LocalDate localDate = LocalDate.now();
+		if (StrUtil.isBlank(startDate)){
+			startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();
+		}
+		if (StrUtil.isBlank(endDate)){
+			endDate = localDate.with(TemporalAdjusters.lastDayOfMonth()).toString();
+		}
+
+		List<Record> monthlist = new ArrayList<>();
+		List<String> namelist = new ArrayList<>();
+		List<String> weeklist = new ArrayList<>();
+		//排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+		List<String> scheduDateList = Util.getBetweenDate(startDate,endDate);
+		//页面顶部colspan列  key:2023年1月  value:colspan="13"
+		Map<String,Integer> yearMonthMap = new HashMap<>();
+		for (String s : scheduDateList) {
+			String year = s.substring(0, 4);
+			int month = Integer.parseInt(s.substring(5, 7));
+			String yearMonth = year + "年" + month + "月";
+			if (yearMonthMap.containsKey(yearMonth)) {
+				int count = yearMonthMap.get(yearMonth);
+				yearMonthMap.put(yearMonth, count + 1);
+			} else {
+				yearMonthMap.put(yearMonth, 1);
+			}
+		}
+
+		List<String> name2listStr = new ArrayList<>();
+		for (int i = 0; i < scheduDateList.size(); i++) {
+			String year = scheduDateList.get(i).substring(0,4);
+			int month = Integer.parseInt(scheduDateList.get(i).substring(5,7));
+			String yearMonth = year + "年" + month + "月";
+			if (!name2listStr.contains(yearMonth)){
+				name2listStr.add(yearMonth);
+				Record record = new Record();
+				record.set("colname",yearMonth);
+				record.set("colsum",yearMonthMap.get(yearMonth));
+				monthlist.add(record);
+			}
+
+			String weekDay = DateUtils.formatDate(DateUtils.parseDate(scheduDateList.get(i)),"E");
+			String weekType = "";
+			if (weekDay.equals("星期一") || weekDay.equals("Mon")){weekType = "Mon";}
+			if (weekDay.equals("星期二") || weekDay.equals("Tue")){weekType = "Tue";}
+			if (weekDay.equals("星期三") || weekDay.equals("Wed")){weekType = "Wed";}
+			if (weekDay.equals("星期四") || weekDay.equals("Thu")){weekType = "Thu";}
+			if (weekDay.equals("星期五") || weekDay.equals("Fri")){weekType = "Fri";}
+			if (weekDay.equals("星期六") || weekDay.equals("Sat")){weekType = "Sat";}
+			if (weekDay.equals("星期日") || weekDay.equals("Sun")){weekType = "Sun";}
+
+			int day = Integer.parseInt(scheduDateList.get(i).substring(8));
+
+			namelist.add(day+"日");
+			weeklist.add(weekType);
+		}
+
+		Map<String,Object> map = new HashMap<>();
+		map.put("month",monthlist);
+		map.put("day",namelist);
+		map.put("week",weeklist);
+
+		renderJsonData(map);
 	}
 
 	/**

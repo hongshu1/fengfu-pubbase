@@ -51,6 +51,9 @@
 
                     <a class="jbolt_table_delbtn" href="admin/scheduproductplanyear/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
                 {@/if}
+                {@if  data.iauditstatus == '1' }
+                    <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=Aps_AnnualPlanM&primaryKeyName=iAutoId&formAutoId=${data.iautoid}&permissionKey=scheduproductplanyear&className=cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
+                {@/if}
             </td>
             <td>${data.iauditstatus|cOrderStatusDescByAuditStatus}</td>
             <td>${data.cplanorderno}</td>
