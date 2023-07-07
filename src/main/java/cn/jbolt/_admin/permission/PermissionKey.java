@@ -3233,4 +3233,8 @@ public class PermissionKey {
 	 * 打印
 	 */
 	public static final String WAREHOUSE_AREA_PRINT = "warehouse_area_print";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_POSITION_PRINT = "warehouse_position_print";
 }
