@@ -20,7 +20,7 @@ WHERE
  AND i.iInventoryClassId = #para(iInventoryClassId)
 #end
 #if(iInventoryClassCode)
- OR ic.cInvCCode like CONCAT(#para(iInventoryClassCode), '%')
+ AND ic.cInvCCode like CONCAT(#para(iInventoryClassCode), '%')
 #end
 #if(isEnabled)
  AND i.isenabled = #para(isEnabled)

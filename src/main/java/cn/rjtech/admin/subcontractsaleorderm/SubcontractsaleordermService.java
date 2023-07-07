@@ -23,6 +23,7 @@ import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
+import cn.rjtech.admin.syssaledeliverplan.SysSaledeliverplanService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.MonthOrderStatusEnum;
@@ -77,6 +78,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     private CustomerService customerService;
     @Inject
     private InventoryService inventoryService;
+    @Inject
+    private SysSaledeliverplanService sysSaledeliverplanService;
     @Override
     protected Subcontractsaleorderm dao() {
         return dao;
@@ -406,11 +409,15 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         Subcontractsaleorderm subcontractsaleorderm = findById(formAutoId);
+        List<Subcontractsaleorderd> subcontractsaleorderds = subcontractsaleorderdService.findByMId(formAutoId);
+
         // 订单状态校验
 //        ValidationUtils.equals(subcontractsaleorderm.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
+        // 生成销售出库单
+        ValidationUtils.isTrue(sysSaledeliverplanService.saveBySubcontractSaleOrderDatas(subcontractsaleorderm, subcontractsaleorderds), "生成销售发货单失败");
+
         // 推送U8订单
-        List<Subcontractsaleorderd> subcontractsaleorderds = subcontractsaleorderdService.findByMId(formAutoId);
         String cDocNo = pushOrder(subcontractsaleorderm, subcontractsaleorderds);
         ValidationUtils.notNull(cDocNo, "推单失败");
 

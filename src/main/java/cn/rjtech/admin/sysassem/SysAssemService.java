@@ -28,27 +28,21 @@ import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
-import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.Controller;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -226,10 +220,10 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             List<SysAssem> sysAssems = find("select *  from T_Sys_Assem where AutoID in (" + ids + ")");
             for (SysAssem s : sysAssems) {
                 if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
                 if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-                    ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
+                    ValidationUtils.error( "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
             deleteByIds(ids);
@@ -249,10 +243,10 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         tx(() -> {
             SysAssem byId = findById(id);
             if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
-                ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+                ValidationUtils.error( "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-                ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
+                ValidationUtils.error( "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
             delete("DELETE T_Sys_AssemDetail   where  MasID = ?", id);
@@ -616,7 +610,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 "         left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId\n" +
                 "where t1.iBeforeInventoryId = '" + ibeforeinventoryid + "'");
         if (firstRecord==null){
-            ValidationUtils.isTrue(false, "未查找到该物料的双单位，请先维护物料的形态对照表");
+            ValidationUtils.error( "未查找到该物料的双单位，请先维护物料的形态对照表");
         }
         firstRecord.set("sourcebillno",kv.get("sourcebillno"));
         firstRecord.set("vencode",kv.get("vencode"));
