@@ -3141,4 +3141,56 @@ public class PermissionKey {
 	 * 添加
 	 */
 	public static final String PERSON_SUBMIT = "person_submit";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String ROUTING_BATCH_APPROVE = "routing_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String ROUTING_BATCH_REJECT = "routing_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String ROUTING_REVERSE_APPROVE = "routing_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String ROUTING_WITHDRAW = "routing_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String ROUTING_SUBMIT = "routing_submit";
+	/**
+	 * 通过
+	 */
+	public static final String ROUTING_APPROVE = "routing_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String ROUTING_REJECT = "routing_reject";
+	/**
+	 * 新增
+	 */
+	public static final String BOMMASTER_VERSION_ADD = "bommaster_version_add";
+	/**
+	 * 修改
+	 */
+	public static final String BOMMASTER_VERSION_EDIT = "bommaster_version_edit";
+	/**
+	 * 删除
+	 */
+	public static final String BOMMASTER_VERSION_DELETE = "bommaster_version_delete";
+	/**
+	 * 导出
+	 */
+	public static final String BOMMASTER_VERSION_EXPORT = "bommaster_version_export";
+	/**
+	 * 保存
+	 */
+	public static final String BOMMASTER_VERSION_SUBMIT = "bommaster_version_submit";
+	/**
+	 * 复制
+	 */
+	public static final String BOMMASTER_VERSION_COPY = "bommaster_version_copy";
 }

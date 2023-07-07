@@ -197,6 +197,7 @@ public class BomMasterAdminController extends BaseAdminController {
         ok();
     }
 
+    @CheckPermission(PermissionKey.BOMMASTER_VERSION_COPY)
     public void copyForm() {
         ValidationUtils.notNull(get(0), "未获取到指定产品id");
         set("oldId", get(0));
