@@ -59,9 +59,11 @@ order by a.dUpdateTime desc
 #sql("pageDetailList")
 SELECT
     a.*,
-    i.cinvname,i.cinvcode1,i.cinvstd,i.cinvname1
+    i.cinvname,i.cinvcode1,i.cinvstd,i.cinvname1,
+    u.cUomCode,u.cUomName
 FROM T_Sys_PUInStoreDetail a
 left join bd_inventory i on a.invcode = i.cinvcode
+left join bd_uom u on i.iPurchaseUomId = u.iautoid
 where 1=1
 #if(masid)
     and a.MasID = #para(masid)

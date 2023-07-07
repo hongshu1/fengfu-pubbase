@@ -642,13 +642,6 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
 
     }
 
-    public Record getBarcodeVersion(String corderno, String barcode) {
-        Kv kv = new Kv();
-        kv.set("corderno", corderno);
-        kv.set("barcode", barcode);
-        return dbTemplate("syspuinstore.getBarcodeVersion", kv).findFirst();
-    }
-
     public Object printData(Kv kv) {
         return dbTemplate("syspuinstore.getPrintData", kv).find();
     }
