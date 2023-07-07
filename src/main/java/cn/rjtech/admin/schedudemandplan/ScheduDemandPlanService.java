@@ -15,6 +15,7 @@ import cn.rjtech.admin.scheduproductplan.CollectionUtils;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
@@ -1076,14 +1077,40 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		}
 		if (list.size() == 0){
 			tx(() -> {
-				int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
+				dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
 				return true;
 			});
 			return SUCCESS;
 		}
+		Record mRecord = findFirstRecord("SELECT dBeginDate,dEndDate FROM Mrp_DemandComputeM WHERE iAutoId = 1 ");
 
 		tx(() -> {
-			int num = dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
+			if (mRecord == null){
+				MrpDemandcomputem demandcomputem = new MrpDemandcomputem();
+				demandcomputem.setIAutoId(1l);
+				demandcomputem.setDBeginDate(DateUtils.parseDate(startDate));
+				demandcomputem.setDEndDate(DateUtils.parseDate(endDate));
+				demandcomputem.setIOrgId(getOrgId());
+				demandcomputem.setCOrgCode(getOrgCode());
+				demandcomputem.setCOrgName(getOrgName());
+				demandcomputem.setICreateBy(JBoltUserKit.getUserId());
+				demandcomputem.setCCreateName(JBoltUserKit.getUserUserName());
+				demandcomputem.setDCreateTime(new Date());
+				demandcomputem.setIUpdateBy(JBoltUserKit.getUserId());
+				demandcomputem.setCUpdateName(JBoltUserKit.getUserName());
+				demandcomputem.setDUpdateTime(new Date());
+				demandcomputem.save();
+			}else {
+				MrpDemandcomputem demandcomputem = new MrpDemandcomputem();
+				demandcomputem.setIAutoId(1l);
+				demandcomputem.setDEndDate(DateUtils.parseDate(endDate));
+				demandcomputem.setIUpdateBy(JBoltUserKit.getUserId());
+				demandcomputem.setCUpdateName(JBoltUserKit.getUserName());
+				demandcomputem.setDUpdateTime(new Date());
+				demandcomputem.update();
+			}
+
+			dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
 			List<List<MrpDemandcomputed>> groupList = CollectionUtils.partition(list,300);
 			CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
 			ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
@@ -1125,9 +1152,17 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		//物料需求计划
 		List<Map<String,Object>> dataList = new ArrayList<>();
 
-		String startDate = kv.getStr("startdate");
-		String endDate = kv.getStr("enddate");
+		//TODO:查询排产开始日期与截止日期
+		Record mRecord = findFirstRecord("SELECT dBeginDate,dEndDate FROM Mrp_DemandComputeM WHERE iAutoId = 1 ");
+		String startDate = "";
+		String endDate = "";
+		if (mRecord != null){
+			//startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(),"yyyy-MM-dd");
+			endDate = DateUtils.formatDate(mRecord.get("dEndDate"),"yyyy-MM-dd");
+		}
 
+		startDate = isOk(kv.get("startdate")) ? kv.getStr("startdate") : startDate;
+		endDate = isOk(kv.get("enddate")) ? kv.getStr("enddate") : endDate;
 		LocalDate localDate = LocalDate.now();
 		if (StrUtil.isBlank(startDate)){
 			startDate =localDate.with(TemporalAdjusters.firstDayOfMonth()).toString();

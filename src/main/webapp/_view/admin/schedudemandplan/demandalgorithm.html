@@ -3,7 +3,7 @@
 #define css()
 <link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
-<link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
+
 <style>
     .spread-container {
         height:63vh;
@@ -303,6 +303,42 @@
     .btn{
         border: #28a745 1px solid;
     }
+/*    */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        width: 300px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .btn-container {
+        text-align: right;
+        margin-top: 20px;
+    }
+
+    .btn-container button {
+        margin-left: 10px;
+    }
 </style>
 #end
 #set(pageId=RandomUtil.random(6))
@@ -369,7 +405,7 @@
             <div id="table-tool">
                 <!-- 表格工具开始 -->
                 <div class="but_box">
-                    <button id="content" lay-on="test-page-custom" style="border: #797979 1px solid;background-color: transparent;padding: 5px 10px">
+                    <button id="content" onClick="openModal()" style="border: #797979 1px solid;background-color: transparent;padding: 5px 10px">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
                             <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
                             <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
@@ -400,14 +436,14 @@
         </div>
 
         <!--计划生成弹框-->
-        <div id="alert">
-            <p class="alert_title"><span id="close">X</span></p>
-            <p class="alert_but"><button id="alert_save">确定</button></p>
-            <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
-                <label class="col-form-label" >截止日期：</label>
-                <input type="date" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">
-            </div>
-        </div>
+<!--        <div id="alert">-->
+<!--            <p class="alert_title"><span id="close">X</span></p>-->
+<!--            <p class="alert_but"><button id="alert_save">确定</button></p>-->
+<!--            <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">-->
+<!--                <label class="col-form-label" >截止日期：</label>-->
+<!--                <input type="date" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">-->
+<!--            </div>-->
+<!--        </div>-->
         <!--预示保存弹框-->
         <div id="indicate_Mode">
             <p class="indicate_title"><span id="indicate_title"></span><span id="close_indicate">X</span></p>
@@ -447,6 +483,21 @@
             <button onclick="excelFileSave()" class="buttons" style="float: right;width: 60px;">确定</button>
         </div>
         <!--导出弹出框结束-->
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="layui-form" style="margin: 16px;">
+                <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
+                    <label class="col-form-label">截止日期：</label>
+                    <input type="date" id="datetime-locals" name="datetime-locals" style="display: inline-block; width: 200px">
+                </div>
+            </div>
+            <div class="btn-container">
+                <button onclick="closeModal()">关闭</button>
+                <button onclick="confirmAction()">确定</button>
+            </div>
+        </div>
     </div>
 </div>
 #end
@@ -556,8 +607,8 @@
      * @param initDate
      */
     function initDate(searchData) {
-        let url = searchData!=undefined?Api+`admin/scheduproductplanmonth/getTableHead?startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
-            :`admin/scheduproductplanmonth/getTableHead?startDate=&endDate=`;
+        let url = searchData!=undefined?Api+`admin/schedudemandplan/getTableHead?startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
+            :`admin/schedudemandplan/getTableHead?startDate=&endDate=`;
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
@@ -592,13 +643,13 @@
                 sheet.setValue(2,parms.dayRow++,res.data.day[i]);
                 sheet.setValue(3,parms.weekRow++,res.data.week[i]);
             }
-            var addCol = res.data.day.length*2,addRow = 41;
-            var row = parms.ColumnCount+addRow;
-            var col = parms.RowCount+addCol;
-            spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
-            spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
-            parms.RowCount=col;
-            parms.ColumnCount=row;
+            // var addCol = res.data.day.length*2,addRow = 41;
+            // var row = parms.ColumnCount+addRow;
+            // var col = parms.RowCount+addCol;
+            // spread.getSheet(0).setRowCount(col); //设置一列单元格的个数
+            // spread.getSheet(0).setColumnCount(row); //设置一行有多少个单元格
+            // parms.RowCount=col;
+            // parms.ColumnCount=row;
             //设置周六日背景色条件格式
             let style3Sat = new GC.Spread.Sheets.Style();
             style3Sat.foreColor = '#000';
@@ -836,63 +887,51 @@
         loadInit();
         initData(searchData);
     }
-    //计划生成弹出框
-    var myAlert = document.getElementById("alert");
-    layui.use(function(){
-        const $ = layui.$;
-        const layer = layui.layer;
-        const util = layui.util;
-        const form = layui.form;
-        // 事件
-        util.on('lay-on', {
-            'test-page-custom': function(){
-                layer.open({
-                    type: 1,
-                    area: '350px',
-                    resize: false,
-                    shadeClose: true,
-                    title: '请选择计划',
-                    content: `<div class="layui-form" lay-filter="filter-test-layer" style="margin: 16px;">
-                    <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
-                                <label class="col-form-label" >截止日期：</label>
-                                <input type="date" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">
-                                <div class="layui-form-item" style="margin-top:20px;width:20%;">
-                                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="demo-login">保存</button>
-                                </div>
-                            </div></div>`,
-                    success: ()=>{
-                        // 对弹层中的表单进行初始化渲染
-                       form.render();
-                       // 表单提交事件
-                       form.on('submit(demo-login)', function(data){
-                           const myVal = data.field['datetime-local'].substring(0,10);
-                           let url =Api+"admin/schedudemandplan/apsScheduDemandPlan";
-                           LayerMsgBox.loading("正在获取最新数据...",20000);
-                           $.ajax({
-                               url,
-                               data:{
-                                   endDate:myVal
-                               },
-                               type:'post',
-                               dataType:'json',
-                               success:function (res){
-                                   if(res.data.msg=="操作成功"){
-                                       LayerMsgBox.closeLoading();
-                                       layer.closeAll();
-                                   }else{
-                                       LayerMsgBox.error(res.msg,2000);
-                                   }
-                               },error: function(error) {
-                                   console.log(error);
-                               }
-                           })
-                           return false; //阻止默认form跳转
-                       });
+    function openModal() {
+        var modal = document.getElementById("modal");
+        modal.style.display = "flex";
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("modal");
+        modal.style.display = "none";
+    }
+
+    function confirmAction() {
+        const datetimeLocalInput = document.getElementById('datetime-locals');
+        const myVal = datetimeLocalInput.value;
+        console.log(myVal)
+            let url =Api+"admin/schedudemandplan/apsScheduDemandPlan";
+            LayerMsgBox.loading("正在获取最新数据...",20000);
+            $.ajax({
+                url,
+                data:{
+                    endDate:myVal
+                },
+                type:'post',
+                dataType:'json',
+                success:function (res){
+                    if(res.data.msg=="操作成功"){
+                        LayerMsgBox.closeLoading();
+                        var json = sheet.toJSON();//储存表单数据
+                        sheet.fromJSON(json);//清空表单数据
+                        sheet.reset();//重置表单
+                        //从新赋值到原始渲染位置
+                        parms.planListRowIndex=4;
+                        parms.dayRow=10;
+                        parms.weekRow=10;
+                        loadInit();
+                        initDate();
+                        initData();
+                        closeModal();
+                    }else{
+                        LayerMsgBox.error("请选择截止日期",2000);
                     }
-                });
-            }
-        })
-    });
+                },error: function(error) {
+                    console.log(error);
+                }
+            })
+    }
 
     var myIndicate = document.getElementById("indicate_Mode");
     var save = document.getElementById("indicate_save");

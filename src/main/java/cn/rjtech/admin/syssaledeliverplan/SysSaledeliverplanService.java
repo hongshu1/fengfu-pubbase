@@ -1,6 +1,7 @@
 package cn.rjtech.admin.syssaledeliverplan;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -14,6 +15,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.customer.CustomerService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syssaledeliverplandetail.SysSaledeliverplandetailService;
@@ -23,6 +25,9 @@ import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseSysSaledeliverplandetail;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.u9.entity.saledeliverplan.SaleDeliverPlanDTO;
+import cn.rjtech.u9.entity.saledeliverplan.SaleDeliverPlanDTO.Main;
+import cn.rjtech.u9.entity.saledeliverplan.SaleDeliverPlanDTO.PreAllocate;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO.data;
 import cn.rjtech.util.BaseInU8Util;
@@ -67,9 +72,11 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     @Inject
     private DictionaryService               dictionaryService;
     @Inject
-    private SaleTypeService saleTypeService;
+    private SaleTypeService                 saleTypeService;
     @Inject
-    private CustomerService customerService;
+    private CustomerService                 customerService;
+    @Inject
+    private InventoryService                inventoryService;
 
     @Override
     protected int systemLogTargetType() {
@@ -481,7 +488,8 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         SysSaledeliverplan saledeliverplan = findById(formAutoId);
-
+        commonApproveFunc(saledeliverplan, new Date());
+        ValidationUtils.isTrue(saledeliverplan.update(), "审批通过失败");
         return null;
     }
 
@@ -561,14 +569,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         ArrayList<SysSaledeliverplan> sysSaledeliverplans = new ArrayList<>();
         for (Long autoid : formAutoIds) {
             SysSaledeliverplan saledeliverplan = findById(autoid);
-            try {
-                commonApproveFunc(saledeliverplan, date);
-            } catch (Exception ex) {
-                return ex.getMessage();
-            }
-
-            //todo 审核通过，获取u8单号
-
+            commonApproveFunc(saledeliverplan, date);
             sysSaledeliverplans.add(saledeliverplan);
         }
         ValidationUtils.isTrue(batchUpdate(sysSaledeliverplans).length > 0, "批量审批通过失败！");
@@ -600,22 +601,13 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     /*
      * 公共审批通过方法
      * */
-    public String commonApproveFunc(SysSaledeliverplan saledeliverplan, Date date) throws Exception {
-        comonApproveMethods(saledeliverplan, date);
-        String u8Billno = "";
+    public void commonApproveFunc(SysSaledeliverplan saledeliverplan, Date date){
         //2、同步于U8
-        String json = getSysPuinstoreDto();
-        try {
-            u8Billno = new BaseInU8Util().base_in(json);
-        } catch (Exception ex) {
-            return ex.getMessage();
-        }
+        String json = getSaledeliverplanDto(saledeliverplan, date);
+        String u8Billno = new BaseInU8Util().base_in(json);
         //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
         saledeliverplan.setU8BillNo(u8Billno);
-        if (!saledeliverplan.update()) {
-            return "审核通过失败！！!";
-        }
-        return null;
+        comonApproveMethods(saledeliverplan, date);
     }
 
     /*
@@ -635,7 +627,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         SysSaledeliverplan saledeliverplan = findById(autoid);
         List<SysSaledeliverplan> saledeliverplanList = new ArrayList<>();
         //打u8接口，通知u8删除单据，然后更新mom平台的数据
-        String json = getSysPuinstoreDeleteDTO(saledeliverplan.getU8BillNo());
+        String json = getSaledeliverplanDeleteDTO(saledeliverplan.getU8BillNo());
         try {
             String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
             LOG.info(post);
@@ -658,15 +650,67 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     /*
      * 获取请求u8的json
      * */
-    public String getSysPuinstoreDto() {
+    public String getSaledeliverplanDto(SysSaledeliverplan saledeliverplan, Date date) {
 
-        return "";
+        List<Main> mains = new ArrayList<>();
+        User user = JBoltUserKit.getUser();
+        List<SysSaledeliverplandetail> detailList = syssaledeliverplandetailservice.findListByMasid(saledeliverplan.getAutoID());
+        Customer customer = customerService.findById(saledeliverplan.getICustomerId());
+        int i = 1;
+        for (SysSaledeliverplandetail detail : detailList) {
+            Main main = new Main();
+            main.setBarcode(detail.getBarcode());
+            main.setBillDate(saledeliverplan.getBillDate());
+            main.setBilldid(detail.getAutoID());
+            main.setBillid(saledeliverplan.getAutoID());
+            main.setBillno(saledeliverplan.getBillNo());
+            main.setBillnorow(saledeliverplan.getBillNo() + "-" + i);
+            main.setBillrowno(i);
+            main.setCuscode(customer.getCCusCode());
+            main.setCusname(customer.getCCusName());
+            main.setIndex(i);
+            main.setInvcode(detail.getInvCode());
+            Inventory inventory = inventoryService.findBycInvCode(detail.getInvCode());
+            if (inventory != null) {
+                main.setInvname(inventory.getCInvName());
+                main.setInvstd(inventory.getCInvStd());
+            }
+            main.setOdeptcode(saledeliverplan.getDeptCode());
+            main.setOposcode(detail.getPosCode());
+            main.setoRdType(saledeliverplan.getRdCode());
+            main.setOrganizeCode(saledeliverplan.getOrganizeCode());
+            main.setOwhcode(detail.getWhCode());
+            main.setQty(detail.getQty().intValue());
+            main.setSourcebilldid(detail.getSourceBillDid());
+            main.setSourcebillno(detail.getSourceBillNo());
+            main.setSourcebillnorow(detail.getSourceBillNo() + "-" + i);
+            main.setSourcebillrowno(i);
+            main.setTag("SaleDispatchMES");
+            main.setUserCode(user.getUsername());
+            mains.add(main);
+        }
+        SaleDeliverPlanDTO dto = new SaleDeliverPlanDTO();
+        PreAllocate preAllocate = new PreAllocate();
+        preAllocate.setCreatePerson(user.getUsername());
+        preAllocate.setCreatePersonName(saledeliverplan.getCcreatename());
+        preAllocate.setLoginDate(DateUtil.formatDate(saledeliverplan.getDcreatetime()));
+        preAllocate.setOrganizeCode(saledeliverplan.getOrganizeCode());
+        preAllocate.setTag("SaleDispatchMES");
+        preAllocate.setType("SaleDispatchMES");
+        preAllocate.setUserCode(user.getUsername());
+        //放入dto
+        dto.setMainData(mains);
+        dto.setPreAllocate(preAllocate);
+        dto.setUserCode(user.getUsername());
+        dto.setOrganizeCode(saledeliverplan.getOrganizeCode());
+        dto.setToken("");
+        return JSON.toJSONString(dto);
     }
 
     /*
      * 获取删除的json
      * */
-    public String getSysPuinstoreDeleteDTO(String u8billno) {
+    public String getSaledeliverplanDeleteDTO(String u8billno) {
         User user = JBoltUserKit.getUser();
 
         Record userRecord = puinstoreService.findU8UserByUserCode(user.getUsername());
@@ -686,16 +730,16 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
 
     /**
      * 根据客户订单-委外销售订单生成数据
-     *
-     * @param subcontractsaleorderm
-     * @param subcontractsaleorderds
-     * @return
      */
-    public Boolean saveBySubcontractSaleOrderDatas(Subcontractsaleorderm subcontractsaleorderm, List<Subcontractsaleorderd> subcontractsaleorderds) {
+    public Boolean saveBySubcontractSaleOrderDatas(Subcontractsaleorderm subcontractsaleorderm,
+                                                   List<Subcontractsaleorderd> subcontractsaleorderds) {
         return tx(() -> {
-            Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), subcontractsaleorderm.getIBusType().toString())).findFirst().orElse(null);
+            Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream()
+                .filter(item -> StrUtil.equals(item.getSn(), subcontractsaleorderm.getIBusType().toString())).findFirst()
+                .orElse(null);
             String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
-            String cSTCode = Optional.ofNullable(saleTypeService.findById(subcontractsaleorderm.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
+            String cSTCode = Optional.ofNullable(saleTypeService.findById(subcontractsaleorderm.getISaleTypeId()))
+                .map(SaleType::getCSTCode).orElse("普通销售");
             SysSaledeliverplan sysSaledeliverplan = new SysSaledeliverplan();
             sysSaledeliverplan.setSourceBillType("委外销售订单");
             sysSaledeliverplan.setSourceBillID(subcontractsaleorderm.getIAutoId().toString());
@@ -704,12 +748,15 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
             sysSaledeliverplan.setBillNo(BillNoUtils.getcDocNo(getOrgId(), "FH", 6));
             sysSaledeliverplan.setBillType(busName);
             sysSaledeliverplan.setBillDate(DateUtils.getDate());
-            sysSaledeliverplan.setDeptCode(Optional.ofNullable(customerService.findById(subcontractsaleorderm.getICustomerId())).map(Customer::getCCusCode).orElse(null));
+            sysSaledeliverplan.setDeptCode(
+                Optional.ofNullable(customerService.findById(subcontractsaleorderm.getICustomerId())).map(Customer::getCCusCode)
+                    .orElse(null));
             sysSaledeliverplan.setExchName(subcontractsaleorderm.getCCurrency());
             sysSaledeliverplan.setExchRate(subcontractsaleorderm.getIExchangeRate());
             sysSaledeliverplan.setTaxRate(subcontractsaleorderm.getITaxRate());
             sysSaledeliverplan.setCondition(subcontractsaleorderm.getCPaymentTerm());
-            sysSaledeliverplan.setICustomerId(Optional.ofNullable(subcontractsaleorderm.getICustomerId()).map(Object::toString).orElse(null));
+            sysSaledeliverplan
+                .setICustomerId(Optional.ofNullable(subcontractsaleorderm.getICustomerId()).map(Object::toString).orElse(null));
             sysSaledeliverplan.setIsDeleted(false);
             sysSaledeliverplan.setIcreateby(JBoltUserKit.getUserId());
             sysSaledeliverplan.setCcreatename(JBoltUserKit.getUserName());

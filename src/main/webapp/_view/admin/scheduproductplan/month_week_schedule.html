@@ -1,6 +1,7 @@
 #@jboltLayout()
 #define css()
 <link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
 <style>
     .spread-container {
         /*width:100vh;*/
@@ -203,61 +204,143 @@
 <div class="jbolt_page" data-key="#(pmkey)" >
     <div class="jbolt_page_title">
         <!-- 搜索工具类开始 -->
-        <div class="search">
-            <div class="select">
-                <span>产线名称:</span>
-                <input style="width:150px;height:2rem;" id="cworkname"/>
-            </div>
-            <div class="select">
-                <span>存货编码:</span>
-                <input style="width:150px;height:2rem;" id="cinvcode"/>
-            </div>
-            <div class="select">
-                <span>客户部番:</span>
-                <input style="width:150px;height:2rem;" id="cinvcode1"/>
-            </div>
-            <div class="select">
-                <span>部品名称:</span>
-                <input style="width:150px;height:2rem;" id="cinvname1"/>
-            </div>
-            <div class="select" style="margin-right: 15px">
-                <span">排产层级：</span>
-                <select id="search_level" style="width: 150px;height:2rem;">
-                    <option value="1">全部</option>
-                    <option value="1">层级1</option>
-                    <option value="2">层级2</option>
-                    <option value="3">层级3</option>
-                    <option value="4">层级4</option>
-                    <option value="5">层级5</option>
-                </select>
-            </div>
-            <div class="select" style="display: flex;justify-content: center;align-items: center;">
-                <div class="row">
-                    <span style="margin-top: 5px">日期：</span>
-                    <div class="col" style="display:flex;">
-                        <input type="date" id="search_start-time" name="search_start-time" style="height:2rem;">
-                        <p style="width: 30px;text-align: center;margin-top: 5px">至</p>
-                        <input type="date" id="search_end-time" name="search_end-time" style="height:2rem;">
-                    </div>
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md1">
+                <div class="grid-demo grid-demo-bg1">
+<!--                    <div class="select">-->
+                        <span>产线名称:</span>
+                        <input style="width:150px;height:2rem;" id="cworkname"/>
+<!--                    </div>-->
                 </div>
             </div>
-            <div style="margin-left:1rem">
-                <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                    </svg>
-                    搜索
-                </button>
-                <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                    </svg>
-                    重置
-                </button>
+            <div class="layui-col-md1">
+                <div class="grid-demo">
+                    <span>产线名称:</span>
+                    <input style="width:150px;height:2rem;" id="cworkname"/>
+                </div>
+            </div>
+            <div class="layui-col-md1">
+                <div class="grid-demo grid-demo-bg1">
+                    <span>产线名称:</span>
+                    <input style="width:150px;height:2rem;" id="cworkname"/>
+                </div>
+            </div>
+            <div class="layui-col-md1">
+                <div class="grid-demo">
+                    <span>存货编码:</span>
+                    <input style="width:150px;height:2rem;" id="cinvcode"/>
+                </div>
+            </div>
+            <div class="layui-col-md1">
+                <div class="grid-demo">
+                    <span>客户部番:</span>
+                    <input style="width:150px;height:2rem;" id="cinvcode1"/>
+                </div>
+            </div>
+            <div class="layui-col-md1">
+                <div class="grid-demo">
+                    <span>部品名称:</span>
+                    <input style="width:150px;height:2rem;" id="cinvname1"/>
+                </div>
+            </div>
+            <div class="layui-col-md1">
+                <div class="grid-demo">
+                    <span>排产层级：</span>
+                    <select id="search_level" style="width: 150px;height:2rem;">
+                        <option value="1">全部</option>
+                        <option value="1">层级1</option>
+                        <option value="2">层级2</option>
+                        <option value="3">层级3</option>
+                        <option value="4">层级4</option>
+                        <option value="5">层级5</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-col-md1">
+                <div class="grid-demo">
+                   <div class="row">
+                       <span>日期：</span>
+                       <div style="display:flex;">
+                           <input type="date" id="search_start-time" name="search_start-time" style="height:2rem;">
+                           <p style="width: 30px;text-align: center;margin-top: 5px">至</p>
+                           <input type="date" id="search_end-time" name="search_end-time" style="height:2rem;">
+                       </div>
+                   </div>
+                </div>
+            </div>
+            <div class="layui-col-md1">
+                <div class="grid-demo">
+                   <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                       </svg>
+                       搜索
+                   </button>
+                </div>
+            </div>
+            <div class="layui-col-md1">
+                <div class="grid-demo">
+                   <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                           <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                           <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                       </svg>
+                       重置
+                   </button>
+                </div>
             </div>
         </div>
-    </div>
+                    <!--        <div class="search">-->
+<!--            <div class="select">-->
+
+<!--            </div>-->
+<!--            <div class="select">-->
+
+<!--            </div>-->
+<!--            <div class="select">-->
+
+<!--            </div>-->
+<!--            <div class="select">-->
+
+<!--            </div>-->
+<!--            <div class="select" style="margin-right: 15px">-->
+<!--                <span>排产层级：</span>-->
+<!--                <select id="search_level" style="width: 150px;height:2rem;">-->
+<!--                    <option value="1">全部</option>-->
+<!--                    <option value="1">层级1</option>-->
+<!--                    <option value="2">层级2</option>-->
+<!--                    <option value="3">层级3</option>-->
+<!--                    <option value="4">层级4</option>-->
+<!--                    <option value="5">层级5</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div class="select" style="display: flex;justify-content: center;align-items: center;">-->
+<!--                <div class="row">-->
+<!--                    <span style="margin-top: 5px">日期：</span>-->
+<!--                    <div class="col" style="display:flex;">-->
+<!--                        <input type="date" id="search_start-time" name="search_start-time" style="height:2rem;">-->
+<!--                        <p style="width: 30px;text-align: center;margin-top: 5px">至</p>-->
+<!--                        <input type="date" id="search_end-time" name="search_end-time" style="height:2rem;">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div style="margin-left:1rem">-->
+<!--                <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">-->
+<!--                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">-->
+<!--                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>-->
+<!--                    </svg>-->
+<!--                    搜索-->
+<!--                </button>-->
+<!--                <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">-->
+<!--                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">-->
+<!--                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>-->
+<!--                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>-->
+<!--                    </svg>-->
+<!--                    重置-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
     <div class="jbolt_page_content">
         <div class="sample-container">
             <!-- 表格 -->
@@ -319,7 +402,7 @@
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>
                 <div id="statusBar" class="gc-statusbar"></div>
-            </div>
+<!--            </div>-->
         </div>
         <!--锁定弹框-->
         <div id="alert">
@@ -430,9 +513,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         const ilevel = urlParams.get('level');
         if(ilevel!=null){
-            initDate();
             parms.level=ilevel;
             initData(ilevel);
+            initDate();
             loadInit();
         }
     }
@@ -667,8 +750,8 @@
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
-            var addCol = res.data.day.length;
-            var addRow = 30;
+            let addCol = res.data.day.length+20;
+            let addRow = 30;
             parms.RowCount = parms.RowCount+addRow;
             parms.ColumnCount = parms.ColumnCount+addCol;
             spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
@@ -813,9 +896,6 @@
                             let valArr = [];
                             for (let k = 0; k < parms['scheduplanmonth'][i].childList[j].day.length; k++) {
                                 sheet.setValue(shiyongRow, shiyongCol+k, parms['scheduplanmonth'][i].childList[j].day[k].shiyong);
-                                //
-                                // sheet.setValue(shiyongRow, 16, 120);
-                                //
                                 sheet.setValue(1 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
                                 sheet.setValue(2 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].two));
                                 sheet.setValue(3 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].three));
@@ -842,6 +922,7 @@
                                 let useArray = [];
                                 for (let f = 0; f < Num; f++) {
                                     useArray.push(`R[-5]C[${f+1}]`);
+                                    sheet.setValue(shiyongRow, shiyongCol+parms['scheduplanmonth'][i].childList[j].day.length+f, '');
                                 }
                                 //嵌入计划在库公式
                                 sheet.setFormula(shiyongRow+5-1,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
@@ -850,28 +931,27 @@
                                     //嵌入在库天数公式
                                     sheet.setFormula(AS,Z+k,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
                                 }else{
-                                    // parms['colArr'] = [];
-                                    // var col = Z+k; // 初始列值
-                                    // // parms['cols'] = col+1;
-                                    // var row = AS-5; // 初始行值
-                                    // let value = 0;
-                                    // // console.log(parms['scheduplanmonth'][i].childList[j].day[col-10])
-                                    // for (let l = 0; l < Num; l++) {
-                                    //     /**
-                                    //      * @param parms['cols'] {number} 当前公式所在列
-                                    //      * @param row {number} 当前公式所在行
-                                    //      * @param parms['scheduplanmonth'][i].childList[j].day[parms['cols']-10] 当天数据对象
-                                    //      */
-                                    //     findColumns(col,row,parms['scheduplanmonth'][i].childList[j].day[col-10]);
-                                    //     console.log(col)
-                                    //     // ++col;
-                                    // }
-                                    // setTimeout(()=>{
-                                    //     // console.log(parms['colArr'],"3333333333333")
-                                    //     sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})/R${AS+1}C10`);
-                                    //     parms['colArr'].length=0;
-                                    // },0);
+                                    parms['colArr'] = [];
+                                    var col = Z+k; // 初始列值
+                                    var row = AS-5; // 初始行值
+                                    // console.log(col)
+                                    // console.log(parms['scheduplanmonth'][i].childList[j].day[col-10])
+                                    for (let l = 0; l < Num; l++) {
+                                        /**
+                                         * @param parms['cols'] {number} 当前公式所在列
+                                         * @param row {number} 当前公式所在行
+                                         * @param parms['scheduplanmonth'][i].childList[j].day[parms['cols']-10] 当天数据对象
+                                         */
+                                        // findColumns(col,row);
+                                    }
+                                    setTimeout(()=>{
+                                        sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})/R${AS+1}C10`);
+                                        parms['colArr'].length=0;
+                                    },0);
                                     // console.log(`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})`)
+                                    if(parms['scheduplanmonth'][i].childList[j].day.at(-1)||parms['scheduplanmonth'][i].childList[j].day.at(-2)){
+                                        // console.log('at')
+                                    }
                                 }
                                 //控制小数位为1位
                                 sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
@@ -922,18 +1002,18 @@
     function findColumns(col,row,obj){
         let value = 0;
         setTimeout(()=>{
-            // console.log(col)
-            value = sheet.getValue(row, col);//17
+            value = sheet.getValue(row, col);
             if(value==0){
-                if(obj.iswork){//false
+                if(obj.iswork){
                     parms['colArr'].push(col);
                     ++col;
+                    return;
                 }else{
                     findColumns(++col,row);
-                    ++col;
                 }
             }else {
-                parms['colArr'].push(col);//17
+                parms['colArr'].push(col);
+                return;
             }
         },0)
     }

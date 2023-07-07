@@ -18,7 +18,7 @@
                         <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-success btn-sm"  #if(sysAssem.iAuditStatus?? ==2  || sysAssem.iAuditStatus?? ==1) disabled #end  ><i
                                 class=" fa fa-refresh"></i> 保存</button>
                         #end
-                
+
 
 
                         #include("/_view/_common/_approval_btns.html", formSn="T_Sys_Assem", o=sysAssem,primaryKeyName="AutoID",className="cn.rjtech.admin.sysassem.SysAssemService",permissionKeyPrefix="sysAssem")
@@ -206,6 +206,41 @@
             </div>
         </div>
     </div>
+    <!-- 创建Dialog结构 -->
+    <div class="dialog-mask" id="dialog-mask">
+        <div class="dialog-wrapper">
+            <div class="dialog-header">
+                <span class="dialog-title">选择人员</span>
+                <span class="dialog-close" id="dialog-close">×</span>
+            </div>
+            <div class="layui-form-item" style="padding-bottom: 0px;padding-top: 15px;margin-bottom: 0px">
+                <div class="layui-input-group" style="margin:auto;">
+
+                </div>
+            </div>
+            <div class="dialog-body">
+                <div class="popup-layer" id="popup-layer">
+                    <table border width="100%" id="popup_table" style="height: 330px;">
+                        <thead>
+                        <tr style="height: 35px">
+                            <th><input type="checkbox" id="selectAll" onChange="selectAllCheckboxs(event)"></th>
+                            <!--                             <th>用户名</th>-->
+                            <th>编码</th>
+                            <th>姓名</th>
+                            <th>手机号</th>
+                            <th>部门名称</th>
+                        </tr>
+                        </thead>
+                        <tbody id="layer_tr"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="dialog-btn dialog-btn-cancel" id="dialog-btn-cancel">取消</button>
+                <button class="dialog-btn dialog-btn-ok" id="dialog-btn-ok" onClick="dialogBtnOk()">确定</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 ### 新增之后，并且为审核流
@@ -218,6 +253,7 @@
         {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
+            <td onclick="dilog(this)">${data.number}</td>
             <td>${data.combination}</td>
             <td>${data.assemtype}</td>
             <td>${data.whname}</td>
@@ -298,7 +334,7 @@
         <thead>
         <tr>
             <th data-width="60" data-column="index">序号</th>
-            <!--            <th data-width="150">操作</th>-->
+            <th data-width="150">条码数</th>
             <th data-width="60" data-column="combination">组号</th>
             <th data-width="100" data-column="assemtype">类型</th>
             <th data-width="200" data-column="whname">仓库名称</th>
@@ -327,6 +363,21 @@
 <script>
     hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
+
+    var dialogMask = document.getElementById("dialog-mask");
+    document.getElementById("dialog-btn-cancel").onclick = function() {
+        dialogMask.style.display = "none";
+    }
+    document.getElementById("dialog-close").onclick = function(){
+        dialogMask.style.display = "none";
+    }
+    function dilog(e){
+        var table = $(e).parent().parent();
+        var data = jboltTableGetRowJsonData(table, $(e).parent());
+        console.log(data);
+        // 获取Dialog元素
+        dialogMask.style.display = "block";
+    }
 
     /**
      * 搜索现品票
@@ -365,7 +416,7 @@
                                         // res.data.assemtype = '转换后';
                                         // res.data.combination = trJsonData.combination;
                                         // tableDataSuccess();
-                                   
+
                                         rres.data.assemtype = '转换后';
                                         rres.data.combination = trJsonData.combination;
                                         jboltTableInsertRow("jbolt_Table_#(pageId)", rres.data, false, false, false);
@@ -443,7 +494,7 @@
         if(null != data && data.length % 2 == 0){
             groupCode+=data.length/2
         }
-      
+
         $("#groupCode").val(groupCode);
         return true;
     }
@@ -643,7 +694,7 @@
                     valueAttr: "barcode",
                     columnAttr: "barcode,cinvcode,cinvcode1,cinvname1,cinvstd,qty",
                     header: '现品票,存货编码,客户部番,部品名称,规格型号,数量',
-                    changeColumns: [{column: "barcode", use: "barcode"}, { column: "cinvcode", use: "cinvcode"}, 
+                    changeColumns: [{column: "barcode", use: "barcode"}, { column: "cinvcode", use: "cinvcode"},
                         { column: "invcode", use: "cinvcode"}, {column: "cinvcode1", use: "cinvcode1"},{column: "assemtype", use: "assemtype"},
                         {column: "cinvname1", use: "cinvname1"},{column: "combination", use: "combination"},
                         {column: "cinvstd",use: "cinvstd"}, {column: "dplandate", use: "dplandate"},
@@ -684,3 +735,89 @@
 
 </script>
 #end
+<style>
+    /* 设置Dialog的样式 */
+    .dialog-mask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        text-align: center;
+        display: none;
+    }
+
+    .dialog-wrapper {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .dialog-header {
+        padding: 10px;
+        background-color: #f5f7fa;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        border-bottom: 1px solid #ebeef5;
+    }
+
+    .dialog-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #303133;
+    }
+
+    .dialog-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 2rem;
+        color: #909399;
+        cursor: pointer;
+    }
+
+    .dialog-body {
+        padding: 20px;
+        font-size: 14px;
+        color: #606266;
+    }
+
+    .dialog-footer {
+        padding: 10px;
+        text-align: right;
+        border-top: 1px solid #ebeef5;
+    }
+
+    .dialog-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .dialog-btn-cancel {
+        background-color: #c0c4cc;
+        margin-right: 10px;
+    }
+
+    .dialog-btn-ok {
+        background-color: #409eff;
+    }
+    .popup-layer{
+        width:100%;
+        height:330px;
+        overflow-y: scroll;
+    }
+    .hide{
+        display: none;
+    }
+</style>

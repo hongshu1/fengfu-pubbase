@@ -26,7 +26,6 @@ import java.util.List;
  * @date: 2023-05-29 15:16
  */
 @CheckPermission(PermissionKey.FORM_UPLOAD_CATEGORY)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/formUploadCategory", viewPath = "/_view/admin/formuploadcategory")
 public class FormUploadCategoryAdminController extends BaseAdminController {
@@ -49,6 +48,7 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.FORMUPLOADCATEGORY_ADD)
 	public void add() {
 		render("add.html");
 	}
@@ -56,13 +56,15 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
    /**
 	* 保存
 	*/
-	public void save() {
+   @CheckPermission(PermissionKey.FORMUPLOADCATEGORY_ADD)
+   public void save() {
 		renderJson(service.save(getModel(FormUploadCategory.class, "formUploadCategory")));
 	}
 
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.FORMUPLOADCATEGORY_EDIT)
 	public void edit() {
 		FormUploadCategory formUploadCategory=service.findById(getLong(0));
 		if(formUploadCategory == null){
@@ -76,13 +78,15 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
    /**
 	* 更新
 	*/
-	public void update() {
+   @CheckPermission(PermissionKey.FORMUPLOADCATEGORY_EDIT)
+   public void update() {
 		renderJson(service.update(getModel(FormUploadCategory.class, "formUploadCategory")));
 	}
 
    /**
 	* 删除
 	*/
+   @CheckPermission(PermissionKey.FORMUPLOADCATEGORY_DELETE)
 	public void delete() {
 		renderJson(service.deleteByIds(getLong(0)));
 	}
@@ -100,7 +104,7 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	public void downloadTpl() {
 		renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("上传记录-分类导入模板"));
 	}
-
+	@CheckPermission(PermissionKey.FORMUPLOADCATEGORY_IMPORT)
 	public void importExcelClass() {
 		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
 		UploadFile file = getFile("file", uploadPath);
@@ -115,6 +119,7 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
     /**
 	* 执行导出excel 根据表格选中数据
 	*/
+	@CheckPermission(PermissionKey.FORMUPLOADCATEGORY_EXPORT)
 	public void exportExcelByCheckedIds() {
 	    String ids = get("ids");
 	    if(notOk(ids)){
@@ -132,6 +137,7 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	/**
 	 * 执行导出excel 所有数据
 	 */
+	@CheckPermission(PermissionKey.FORMUPLOADCATEGORY_EXPORT)
 	public void exportExcelAll() {
 		List<Record> datas = service.list(getKv());
 		if (notOk(datas)) {
@@ -146,7 +152,7 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	 */
 	@UnCheck
 	public void options() {
-		renderJsonData(service.options(get("q")));
+		renderJsonData(service.options(getKv()));
 	}
 
 	/**

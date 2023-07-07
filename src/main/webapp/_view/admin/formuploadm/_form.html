@@ -63,6 +63,8 @@
                                                 data-text="=请选择="
                                                 data-value-attr="iautoid"
                                                 data-text-attr="cworkname"
+                                                data-sonid="l2Select"
+                                                data-linkage="true"
                                                 data-select="#(formUploadM.iworkregionmid??)"
                                                 #if(readonly)
                                                 disabled
@@ -72,14 +74,15 @@
                                     <label class="col-sm-2 col-form-label">目录名称</label>
                                     <div class="col-1">
                                         <select class="form-control"
+                                                id="l2Select"
                                                 data-height="30"
                                                 data-width="220"
-                                                data-autoload
-                                                data-url="admin/formUploadCategory/options"
+                                                data-url="admin/formUploadCategory/options?iworkregionmid="
                                                 data-select-type="select2"
                                                 name="formUploadM.iCategoryId"
                                                 data-refresh="true"
                                                 data-rule="select"
+                                                data-linkage="true"
                                                 data-notnull="true"
                                                 data-tips="请选择目录名称"
                                                 data-text="=请选择="
@@ -145,14 +148,18 @@
             <a href="admin/formUploadD/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger">删除</i></a>
             </td>
             #end
-            <td >
+            <td id="${data.cattachments}+1">
+                #if(readonly != 'readonly')
+                <a  style="position: relative;" href="admin/formUploadM/attachment?iautoid=${data.iautoid}&cattachments=${data.cattachments}&edit=true" tooltip data-dialog-title="图片上传" data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst"><i class="fa fa-plus"></i></a>
+                #end
                 {@if data.cattachments != null}
-                <a  style="position: relative; top:25px; " href="admin/formUploadM/attachment?iautoid=${data.iautoid}&cattachments=${data.cattachments}&edit=true" tooltip data-dialog-title="图片上传" data-openpage="dialog" data-area="700,800" data-handler="jboltTablePageToFirst"><i class="fa fa-plus"></i></a>
                 {@each data.cattachments.split(",") as url}
                     {@if url.indexOf('png') != -1 || url.indexOf('jpg')!=-1}
                 <div  class="float-right" id="${data.cattachments}" style="position: relative">
-                    <a href="admin/formUploadD/deletePicture?iautoid=${data.iautoid}&url=${url}"   onclick="deletePicture('${data.iautoid}','${data.cattachments}','${url}')" style="position: absolute; right: 0"  data-loading="执行中 " tooltip data-title="删除附件" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger" style="position: absolute; right: 0"></i></a>
-                        <img  id="${url}"  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
+                    #if(readonly != 'readonly')
+                    <a  ID="${url}+1"  onclick="deletePicture('${data.iautoid}','${data.cattachments}','${url}')" style="position: absolute; right: 0"  data-loading="执行中 " tooltip data-title="删除附件" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove c-danger" style="position: absolute; right: 0"></i></a>
+                    #end
+                    <img  id="${url}"  data-photobtn tooltip data-title="点击查看图片"  style="width: 60px;height: 60px;border-radius:50%;" src="${url|real_image}" onerror="this.src='assets/img/avatar.jpg'"/>
                  </div>
                     {@/if}
                     {@/each}
@@ -160,7 +167,7 @@
                 {@/if}
             </td>
             <td>${data.cmemo}</td>
-            <td hidden>${data.cattachments2}</td>
+            <td hidden id="${data.cattachments}+2">${data.cattachments2}</td>
         </tr>
         {@/each}
     </script>
@@ -198,7 +205,46 @@
 </div>
 #define js()
 <script>
-    hideParentLayerDialogBtn(0);
+    function deletePicture(iautoid, cattachments, Url) {
+
+        if (iautoid) {
+            if (cattachments.indexOf(Url) !=- 1) {
+                let elementById = document.getElementById(Url+"+1");
+                elementById.setAttribute("href","admin/formUploadD/deletePicture?iautoid="+iautoid+"&url="+Url);
+            }else {
+               let element = document.getElementById(cattachments+"+2");
+                let innerText = element.innerText;
+                let repeat = innerText.replace(Url);
+                // 修改数据
+                var $table = $('#jbolt_Table_#(pageId)');
+                var $td = $("table#jbolt_Table_#(pageId) td:contains('" + cattachments + "')").first();
+                var cols = [
+                    {column: "cattachments2", text: repeat, value:repeat}
+                ];
+
+                jboltTableSetCells($table, $td.parent(), cols);
+                var elementById1 = document.getElementById(""+Url);
+                var elementById4 = document.getElementById(""+Url+"+1");
+                elementById1.remove();
+                elementById4.remove();
+            }
+
+        }else {
+            var val = $("#cattachments").val();
+            if (val === "") {
+                $("#cattachments").val(replace);
+            }else {
+                let s = val.replace(Url,"");
+                $("#cattachments").val(s);
+            }
+            var elementById2 = document.getElementById(""+Url);
+            var elementById3 = document.getElementById(""+Url+"+1");
+            elementById2.remove();
+            elementById3.remove();
+        }
+}
+
+hideParentLayerDialogBtn(0);
     hideParentLayerDialogBtn(1);
     // 保存是否提审处理，默认为false, 在点击提审时，修改此变量值
     var submit = false;
@@ -283,7 +329,6 @@
             LayerMsgBox.alert("导入数据异常", 2);
             return;
         }
-        console.log(url);
         const datas = [];
         datas.push({cattachments:data})
         const strs = [];
@@ -301,7 +346,11 @@
                 let datum1 = strs[i];
                 let element = document.getElementById(""+datum1.url);
                 if (!element){
-                    var elementById2 = document.getElementById(""+url);
+                    var div1 = document.getElementById(""+url+"+1");
+                    var elementById2 = document.createElement("div");
+                    elementById2.setAttribute("class","float-right")
+                    elementById2.setAttribute("id",""+url)
+                    elementById2.setAttribute("style","position: relative")
                     var bigImg2 = document.createElement("img");
                     bigImg2.id=""+datum1.url;  //200个像素 不用加px
                     bigImg2.src=""+real_image(datum1.url);
@@ -312,11 +361,25 @@
                     bigImg2.setAttribute("onerror","this.src='assets/img/avatar.jpg'");
                     bigImg2.setAttribute("data-original-title","");
                     bigImg2.setAttribute("title","");
+                    var a1 = document.createElement("a");
+                    var i1 = document.createElement("i");
+                    a1.id=""+datum1.url+"+1"
+                    a1.setAttribute("onclick","deletePicture('"+iautoid+"','"+url+"','"+datum1.url+"')")
+                    a1.setAttribute("style","position: absolute; right: 0")
+                    i1.setAttribute("class","fa fa-remove c-danger")
+                    i1.setAttribute("style","position: absolute; right: 0")
+                    a1.appendChild(i1);
+                    elementById2.appendChild(a1);
                     elementById2.appendChild(bigImg2);
+                    div1.appendChild(elementById2);
                 }
             }
             }else {
-                    var elementById = document.getElementById(""+url);
+                var div2 = document.getElementById(""+url+"+1");
+                var elementById = document.createElement("div");
+                   elementById.setAttribute("class","float-right")
+                   elementById.setAttribute("id",""+url)
+                   elementById.setAttribute("style","position: relative")
                     var bigImg = document.createElement("img");
                     bigImg.id=""+data;  //200个像素 不用加px
                     bigImg.src=""+real_image(data);
@@ -327,7 +390,17 @@
                     bigImg.setAttribute("onerror","this.src='assets/img/avatar.jpg'");
                     bigImg.setAttribute("data-original-title","");
                     bigImg.setAttribute("title","");
+                    var a = document.createElement("a");
+                    var i2 = document.createElement("i");
+                    a.id=""+data+"+1"
+                    a.setAttribute("onclick","deletePicture('"+iautoid+"','"+url+"','"+data+"')")
+                    a.setAttribute("style","position: absolute; right: 0")
+                    i2.setAttribute("class","fa fa-remove c-danger")
+                    i2.setAttribute("style","position: absolute; right: 0")
+                    a.appendChild(i2);
+                    elementById.appendChild(a);
                     elementById.appendChild(bigImg);
+                    div2.appendChild(elementById);
             }
             // 修改数据
             var $table = $('#jbolt_Table_#(pageId)');
