@@ -1,4 +1,5 @@
 package cn.rjtech.admin.currentstock;
+
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -41,8 +42,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static cn.hutool.core.text.StrPool.COMMA;
 
 
 /**
@@ -262,11 +261,11 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             Record first = dbTemplate("currentstock.barcodeDatas",kv).findFirst();
             System.out.println("first===="+ first);
             if (isNull(first)) {
-                ValidationUtils.isTrue(false, "Excel文档中第" + k + "行格式错误！！");
+                ValidationUtils.error( "Excel文档中第" + k + "行格式错误！！");
             }
             String iQty = first.getStr("iQty");
             if (qty.compareTo(iQty) == 1){
-                ValidationUtils.isTrue(false, "Excel文档中第" + k + "超出现品票数量！！");
+                ValidationUtils.error( "Excel文档中第" + k + "超出现品票数量！！");
             }
             Date now=new Date();
 
@@ -353,11 +352,11 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             Record first = dbTemplate("currentstock.barcodeDatas",kv).findFirst();
             System.out.println("first===="+ first);
             if (isNull(first)) {
-                ValidationUtils.isTrue(false, "Excel文档中第" + k + "行,格式错误！！");
+                ValidationUtils.error( "Excel文档中第" + k + "行,格式错误！！");
             }
             BigDecimal iQty = first.getBigDecimal("iQty");
             if (qty.compareTo(iQty) == 1){
-                ValidationUtils.isTrue(false, "Excel文档中第" + k + "行,超出现品票数量！！");
+                ValidationUtils.error( "Excel文档中第" + k + "行,超出现品票数量！！");
             }
         }
         if(notOk(stockCheckVouchBarcodes)) {

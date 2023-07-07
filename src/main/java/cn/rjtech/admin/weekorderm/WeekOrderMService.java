@@ -286,7 +286,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
         try {
             save = jBoltTable.getSaveBeanList(WeekOrderD.class);
         } catch (Exception e) {
-            ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
+            ValidationUtils.error( "周间客户订单不合法,请检查订单数据!");
         }
         ValidationUtils.notEmpty(save, JBoltMsg.PARAM_ERROR);
 
@@ -312,7 +312,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
             updateDs(updateBeanList);
             weekOrderDService.deleteByIds(jBoltTable.getDelete());
         } catch (Exception e) {
-            ValidationUtils.isTrue(false, "周间客户订单不合法,请检查订单数据!");
+            ValidationUtils.error( "周间客户订单不合法,请检查订单数据!");
         }
     }
 

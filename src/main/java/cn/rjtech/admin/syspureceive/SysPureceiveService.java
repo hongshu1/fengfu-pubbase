@@ -793,10 +793,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
             for (SysPureceive s : sysPureceives) {
                 if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
                 }
                 if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + "流程已结束！！");
                 }
             }
         }
@@ -808,10 +808,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
             for (SysPureceive s : sysPureceives) {
                 if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
                 }
                 if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
                 }
                 //查出从表
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
