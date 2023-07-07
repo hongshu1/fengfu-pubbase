@@ -320,6 +320,22 @@
                         }
                     }
                 },
+                poscode:{
+                    placeholder: "库区",
+                    tooltip: "库区",
+                    type: "autocomplete",
+                    url: "admin/warehousearea/options",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择库区编码",
+                    textAttr: "careacode",
+                    width: 500,
+                    valueAttr: "careacode",//选择赋值的字段
+                    columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
+                    header: '库区编码,库区名称',
+                    changeColumns: [
+                        {column: "poscode", use: "careacode"}]
+                },
                 memo: {
                     type:"input",
                     submitAttr:"memo",
