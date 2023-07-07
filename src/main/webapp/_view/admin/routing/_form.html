@@ -1,4 +1,29 @@
 #set(pageId=RandomUtil.random(6))
+#if(readonly != 'readonly' && (routing.iauditstatus??0 == 1 || routing.iauditstatus??0 == 2))
+#set(readonly = 'readonly')
+#end
+<div class="jbolt_page_title">
+
+	<div class="row">
+
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<div class="col">
+						#if(routing.iautoid??)
+						#include("/_view/_common/_approval_btns.html", uri="/admin/routing", formSn="Bd_BomMaster",
+						o=routing, primaryKeyName="iAutoId", className="cn.rjtech.admin.routing.RoutingService",
+						permissionKeyPrefix="routing")
+						#end
+						<button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
 <form onsubmit="return false;" id="InventoryClass_Form" action="#(action)" method="post">
 	<div class="py-2">
 		<span class="py-1"><strong>基本信息</strong></span>
@@ -49,6 +74,11 @@
 		</div>
 	</div>
 </form>
+
+### 新增之后，并且为审核流
+#if(routing.iautoid?? && routing.iauditway == 2 && routing.iauditstatus > 0)
+#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=routing.iautoid, primaryKeyName="iAutoId", formSn="Bd_BomMaster", btnNeed=1, pId=pageId, primaryKeyName="iAutoId", className="cn.rjtech.admin.routing.RoutingService", o=routing)
+#end
 
 <!-- JBoltTable的数据模板定义-->
 <textarea class="jb_tpl_box" id="itemroutingconfigRowtpl_#(pageId)">

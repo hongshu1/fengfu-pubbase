@@ -45,6 +45,7 @@
         <div class="jbolt_table_toolbar" id="routingVersion_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Bd_BomMaster", primaryKeyName="iAutoId", className="cn.rjtech.admin.routing.RoutingService", permissionKeyPrefix="routing")
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
             </div>
 
