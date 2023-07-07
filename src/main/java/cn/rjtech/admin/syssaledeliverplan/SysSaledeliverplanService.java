@@ -701,7 +701,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
                     sysSaledeliverplandetail.setIsDeleted(false);
                     sysSaledeliverplandetail.setSourceBillType("委外销售订单");
                     sysSaledeliverplandetail.setSourceBillNo(subcontractsaleorderm.getCOrderNo());
-                    sysSaledeliverplandetail.setSourceBIllNoRow(subcontractsaleorderm.getCOrderNo() + "-" + row);
+                    sysSaledeliverplandetail.setSourceBIllNoRow(subcontractsaleorderm.getCOrderNo() + "-" + (i * 10));
                     sysSaledeliverplandetail.setSourceBillDid(subcontractsaleorderd.getIAutoId().toString());
                     sysSaledeliverplandetail.setIcreateby(JBoltUserKit.getUserId());
                     sysSaledeliverplandetail.setCcreatename(JBoltUserKit.getUserName());

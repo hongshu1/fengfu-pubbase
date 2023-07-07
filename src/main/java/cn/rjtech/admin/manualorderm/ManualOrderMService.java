@@ -439,9 +439,10 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
 
         // 生成出货检
         for (ManualOrderD manualOrderD : manualOrderDS) {
-            Boolean isIQC = inventoryMfgInfoService.getIsIqc2(manualOrderD.getIInventoryId());
-            if (isIQC) {
-                createStockoutQcFormM(manualOrderD.getIInventoryId(), manualOrderM.getIAutoId());
+            Boolean isIqc2 = inventoryMfgInfoService.getIsIqc2(manualOrderD.getIInventoryId());
+            if (isIqc2) {
+                Ret ret = createStockoutQcFormM(manualOrderD.getIInventoryId(), manualOrderM.getIAutoId());
+                ValidationUtils.isTrue(ret.isOk(), "生成出货检失败!");
             }
         }
 
