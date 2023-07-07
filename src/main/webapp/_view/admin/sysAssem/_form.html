@@ -372,13 +372,9 @@
         dialogMask.style.display = "none";
     }
     function dilog(e){
-        console.log(e)
-
         var table = $(e).parent().parent();
-
         var data = jboltTableGetRowJsonData(table, $(e).parent());
         console.log(data);
-
         // 获取Dialog元素
         dialogMask.style.display = "block";
     }
