@@ -16,10 +16,7 @@ import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.rcvpland.RcvPlanDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.OrderStatusEnum;
-import cn.rjtech.model.momdata.GoodsPaymentD;
-import cn.rjtech.model.momdata.Inventory;
-import cn.rjtech.model.momdata.RcvPlanD;
-import cn.rjtech.model.momdata.RcvPlanM;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseRcvPlanD;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
@@ -31,6 +28,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.TableMapping;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
@@ -295,8 +293,15 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
         Date now = new Date();
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
-            row.keep("iAutoId", "iRcvPlanMid", "cCarNo", "cPlanCode", "cRcvDate", "cRcvTime", "cBarcode", "cVersion",
-                "cAddress", "iInventoryId", "iQty", "IsDeleted", "dCreateTime", "dUpdateTime");
+            /*row.keep("iAutoId", "iRcvPlanMid", "cCarNo", "cPlanCode", "cRcvDate", "cRcvTime", "cBarcode", "cVersion",
+                "cAddress", "iInventoryId", "iQty", "IsDeleted", "dCreateTime", "dUpdateTime");*/
+            row.keep(ArrayUtil.toArray(TableMapping.me().getTable(RcvPlanD.class).getColumnNameSet(), String.class));
+            String cinvcode = row.get("cinvcode");
+            Inventory inventory = inventoryservice.findBycInvCode(cinvcode);
+            if (inventory ==null){
+                ValidationUtils.notNull(inventory, "存货编码不存在,无法生成单据或检验单据！！！");
+            }
+            row.set("iinventoryid", inventory.getIAutoId());
             row.set("iautoid", JBoltSnowflakeKit.me.nextId());
             row.set("isdeleted", "0");
             row.set("ircvplanmid", rcvplanm.getIAutoId());
@@ -315,13 +320,10 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
         }
         Date now = new Date();
         for (int i = 0; i < list.size(); i++) {
+
             Record row = list.get(i);
             row.set("dupdatetime", now);
-            row.remove("cinvcode");
-            row.remove("cinvcode1");
-            row.remove("cinvname1");
-            row.remove("cinvstd");
-            row.remove("cuomname");
+            row.keep(ArrayUtil.toArray(TableMapping.me().getTable(RcvPlanD.class).getColumnNameSet(), String.class));
         }
         planDService.batchUpdateRecords(list);
     }

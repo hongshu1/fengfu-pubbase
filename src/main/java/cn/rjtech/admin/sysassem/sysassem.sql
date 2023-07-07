@@ -50,7 +50,6 @@ SELECT
 	b.cInvCode1,
 	b.cInvName1,
 	uom.cUomName ,
-	a.Qty,
 	change.iBeforeInventoryId,
     change.iAfterInventoryId
 FROM
