@@ -331,12 +331,12 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
                             InventoryQcForm inventoryQcForm = inventoryQcFormService.findFirst(selectSql().select(" q.* ").from("Bd_InventoryQcForm", "q").innerJoin("Bd_InventoryQcFormType", " qt ", " q.iAutoId = qt.iInventoryQcFormId and qt.iType = 3 ").eq("iInventoryId", inventory.getIAutoId()));
                             StockoutQcFormM stockoutQcFormM = new StockoutQcFormM();
                             stockoutQcFormM.setIInventoryId(inventory.getIAutoId());
+                            stockoutQcFormM.setIStatus(0);
                             stockoutQcFormM.setICustomerId(icustomerid);
-                            if (notNull(inventoryQcForm))
-                            {
+                            if (notNull(inventoryQcForm)) {
                                 stockoutQcFormM.setIQcFormId(inventoryQcForm.getIAutoId());
+                                stockoutQcFormM.setIStatus(1);
                             }
-
 
                             Date date = new Date();
                             String format = new SimpleDateFormat("yyyy-MM-dd").format(date);

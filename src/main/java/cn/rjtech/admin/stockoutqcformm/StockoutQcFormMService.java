@@ -563,9 +563,9 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
      */
     public boolean saveByManualOrderDatas(ManualOrderM manualOrderM, ManualOrderD manualOrderD) {
         return tx(() -> {
-
             Integer status = 0;
             Long iQcFormId = null;
+            String format = JBoltSnowflakeKit.me.nextIdStr();
             // 根据存货查询质检表格ID
             InventoryQcForm inventoryQcForm = inventoryQcFormService.findByIInventoryId(manualOrderD.getIInventoryId());
             if (notNull(inventoryQcForm)) {
@@ -584,6 +584,8 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
                 stockoutQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
                 stockoutQcFormM.setCUpdateName(JBoltUserKit.getUserName());
                 stockoutQcFormM.setDUpdateTime(new Date());
+                stockoutQcFormM.setCStockoutQcFormNo(format);
+                stockoutQcFormM.setCBatchNo(format);
                 stockoutQcFormM.setIManualOrderMid(manualOrderM.getIAutoId());
                 stockoutQcFormM.setIsDeleted(false);
                 stockoutQcFormM.setIsCpkSigned(true);
