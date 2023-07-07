@@ -37,54 +37,35 @@ ORDER BY so.dupdatetime DESC
 #end
 
 #sql("dList")
-SELECT  t1.*, t2.*,v.cVenName as venname,t1.WhCode as whcodeh,t1.poscode as poscodeh, 0 as number
+SELECT  t1.*, t2.*
 FROM T_Sys_AssemDetail t1
          LEFT JOIN (
-         select b.cInvCode1,
-         b.cInvCode as cinvcode,
-         b.cInvName as cinvname,
-       b.cInvName1,
-       a.cCompleteBarcode as cbarcode,
-       a.dPlanDate,
-       b.cInvStd  as cinvstd,
-       a.iQty     as quantity,
-       uom.cUomName
-     ,wh.cWhCode as whcode
-     ,wh.cWhName as whname
-     ,area.cAreaCode as poscode
-     ,area.cAreaName as posname
-from PS_PurchaseOrderDBatch a
-         left join Bd_Inventory b on a.iinventoryId = b.iAutoId
-         left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-         left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
-         left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
-	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
-	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
-where 1 = 1
-union all
-select b.cInvCode1,
-       b.cInvCode as cinvcode,
-       b.cInvName as cinvname,
-       b.cInvName1,
-       a.cBarcode as cbarcode,
-       a.dPlanDate,
-       b.cInvStd  as cinvstd,
-       a.iQty     as quantity,
-       uom.cUomName
-     ,wh.cWhCode as whcode
-     ,wh.cWhName as whname
-     ,area.cAreaCode as poscode
-     ,area.cAreaName as posname
-from PS_SubcontractOrderDBatch a
-         left join Bd_Inventory b on a.iinventoryId = b.iAutoId
-         left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-         left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
-         left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
-	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
-	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
-where 1 = 1
-         ) t2 on t1.Barcode = t2.cbarcode
- left join Bd_Vendor v on t1.VenCode = v.cVenCode
+SELECT
+	a.WhCode,
+	wh.cWhName AS whname,
+	a.PosCode,
+	area.cAreaName AS posname,
+	a.Barcode ,
+	a.InvCode AS cinvcode,
+	b.cInvCode1,
+	b.cInvName1,
+	uom.cUomName ,
+	a.Qty,
+	change.iBeforeInventoryId,
+    change.iAfterInventoryId
+FROM
+	T_Sys_StockBarcodePosition a
+	LEFT JOIN Bd_Warehouse wh ON a.WhCode = wh.cWhCode
+	LEFT JOIN Bd_Warehouse_Area area ON area.cAreaCode = a.PosCode
+	LEFT JOIN UFDATA_001_2023.dbo.V_sys_BarcodeDetail ua ON ua.Barcode = a.Barcode
+	LEFT JOIN Bd_Customer mer ON ua.CusCode = mer.cCusCode
+	LEFT JOIN bd_inventory b ON ua.InvCode = b.cInvCode
+	LEFT JOIN Bd_Uom uom ON b.iInventoryUomId1 = uom.iAutoId
+	LEFT JOIN Bd_InventoryChange change ON change.iBeforeInventoryId= b.iAutoId and change.IsDeleted=0
+	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+
+         ) t2 on t1.Barcode = t2.Barcode
+
 where 1=1
 	#if(masid)
 		and t1.MasID = #para(masid)
@@ -180,75 +161,43 @@ where 1=1
 
 #sql("getResource")
 select t.* from
-(select '#(combination)'                              as combination,
-    '#(assemtype)'                                 as assemtype,
-    'PO'                                             as SourceBillType
-     ,m.cOrderNo                                          as SourceBillNo
-     , m.cOrderNo + '-' + cast(tc.iseq as NVARCHAR(10)) as SourceBillNoRow
-     , m.iAutoId                                        as SourceBillID
-     ,d.iAutoId                                           as SourceBillDid
-     ,tc.iSeq                                             as RowNo
-     , b.cInvCode
-     , b.cInvName
-     , b.cInvCode1
-     , b.cInvName1
-     , a.cCompleteBarcode                                       as barcode
-     , CONVERT(VARCHAR(10), a.dPlanDate, 120)          as dPlanDate
-     , b.cInvStd                                        as cinvstd
-     , a.iQty                                           as qty
-     , a.iQty                                           as quantity
-     , v.cVenCode                                       as vencode
-     , v.cVenName                                       as venname
-     , uom.cUomCode
-     , uom.cUomName
-     ,change.iBeforeInventoryId
-     ,change.iAfterInventoryId
-     ,wh.cWhCode as whcode
-     ,wh.cWhName as whname
-     ,area.cAreaCode as poscode
-     ,area.cAreaName as posname
-from PS_PurchaseOrderDBatch a
-         left join Bd_Inventory b on a.iinventoryId = b.iAutoId
-         left join PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
-         left join PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
-         left join Bd_Vendor v on m.iVendorId = v.iAutoId
-         left join PS_PurchaseOrderD_Qty tc
-                   on tc.iPurchaseOrderDid = d.iAutoId
-                       and tc.iAutoId = a.iPurchaseOrderdQtyId
-         left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-         left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
-         left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
-	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
-	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
-	     left join T_Sys_PUInStoreDetail pdetail on pdetail.BarCode = a.cCompleteBarcode
-	     left join T_Sys_PUInStore store on store.AutoID = pdetail.MasID
-where a.isEffective = '1' and change.iAutoId is not null  and store.iAuditStatus = '2' and pdetail.AutoId is not null
-  and m.IsDeleted = '0'
-###   and m.hideInvalid = '0'
-  and d.isDeleted = '0'
+(
+
+SELECT
+	'#(combination)' AS combination,
+	'#(assemtype)' AS assemtype,
+	a.WhCode,
+	wh.cWhName AS whname,
+	a.PosCode,
+	area.cAreaName AS posname,
+	a.Barcode ,
+	a.InvCode AS cinvcode,
+	b.cInvCode1,
+	b.cInvName1,
+	uom.cUomName ,
+	a.Qty,
+	change.iBeforeInventoryId,
+    change.iAfterInventoryId
+FROM
+	T_Sys_StockBarcodePosition a
+	LEFT JOIN Bd_Warehouse wh ON a.WhCode = wh.cWhCode
+	LEFT JOIN Bd_Warehouse_Area area ON area.cAreaCode = a.PosCode
+	LEFT JOIN UFDATA_001_2023.dbo.V_sys_BarcodeDetail ua ON ua.Barcode = a.Barcode
+	LEFT JOIN Bd_Customer mer ON ua.CusCode = mer.cCusCode
+	LEFT JOIN bd_inventory b ON ua.InvCode = b.cInvCode
+	LEFT JOIN Bd_Uom uom ON b.iInventoryUomId1 = uom.iAutoId
+	LEFT JOIN Bd_InventoryChange change ON change.iBeforeInventoryId= b.iAutoId
+	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+	LEFT JOIN T_Sys_AssemDetail sse ON sse.Barcode = a.Barcode   and sse.isDeleted ='0'
+where a.State = '1'
+    AND sse.AutoID IS NULL
+    and change.iAutoId is not null
   #if(keywords)
     and (b.cInvCode like concat('%', '#(keywords)', '%') or b.cInvName like concat('%', '#(keywords)', '%')
-    or a.cCompleteBarcode like concat('%', '#(keywords)', '%'))
-  #end
-  #if(supplier)
-    and (v.cVenCode like concat('%', '#(supplier)', '%') or v.cVenName like concat('%', '#(supplier)', '%'))
-  #end
-  #if(poNumber)
-  and m.cOrderNo = '#(poNumber)'
-  #end
-  #if(orgCode)
-  and b.cOrgCode = '#(orgCode)'
+    or a.Barcode like concat('%', '#(keywords)', '%'))
   #end
   ) t
-  where 1=1
-  #if(sourceBillType)
-  and t.SourceBillType = '#(sourceBillType)'
-  #end
-  #if(detailHidden)
-  and t.SourceBillDid not in (#(detailHidden))
-  #end
-###   and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
-###   and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.barcode = t.barcode)
+
 #end
 
 
@@ -256,79 +205,41 @@ where a.isEffective = '1' and change.iAutoId is not null  and store.iAuditStatus
 
 #sql("getBarcode")
 select t.* , t.cInvCode as invcode from
-(select '#(combination)'                              as combination,
-    '#(assemtype)'                                 as assemtype,
-    'PO'                                             as SourceBillType
-     ,m.cOrderNo                                          as SourceBillNo
-     , m.cOrderNo + '-' + cast(tc.iseq as NVARCHAR(10)) as SourceBillNoRow
-     , m.iAutoId                                        as SourceBillID
-     ,d.iAutoId                                           as SourceBillDid
-     ,tc.iSeq                                             as RowNo
-     , b.cInvCode
-     , b.cInvName
-     , b.cInvCode1
-     , b.cInvName1
-     , a.cCompleteBarcode                                       as barcode
-     , CONVERT(VARCHAR(10), a.dPlanDate, 120)          as dPlanDate
-     , b.cInvStd                                        as cinvstd
-     , a.iQty                                           as qty
-     , a.iQty                                           as quantity
-     , v.cVenCode                                       as vencode
-     , v.cVenName                                       as venname
-     , uom.cUomCode
-     , uom.cUomName
-     ,change.iBeforeInventoryId
-     ,change.iAfterInventoryId
-     ,wh.cWhCode as whcode
-     ,wh.cWhName as whname
-     ,area.cAreaCode as poscode
-     ,area.cAreaName as posname
-from PS_PurchaseOrderDBatch a
-         left join Bd_Inventory b on a.iinventoryId = b.iAutoId
-         left join PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
-         left join PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
-         left join Bd_Vendor v on m.iVendorId = v.iAutoId
-         left join PS_PurchaseOrderD_Qty tc
-                   on tc.iPurchaseOrderDid = d.iAutoId
-                       and tc.iAutoId = a.iPurchaseOrderdQtyId
-         left join Bd_Uom uom on b.iPurchaseUomId = uom.iAutoId
-         left join Bd_InventoryChange change on change.iBeforeInventoryId=b.iAutoId
-         left join Bd_InventoryStockConfig config on config.iInventoryId = b.iAutoId
-	     left join Bd_Warehouse_Area area on area.iAutoId = config.iWarehouseAreaId
-	     left join Bd_Warehouse wh on wh.iAutoId = config.iWarehouseId
-	     left join T_Sys_PUInStoreDetail pdetail on pdetail.BarCode = a.cCompleteBarcode
-	     left join T_Sys_PUInStore store on store.AutoID = pdetail.MasID
-where a.isEffective = '1' and change.iAutoId is not null  and store.iAuditStatus = '2' and pdetail.AutoId is not null
-  and m.IsDeleted = '0'
-###   and m.hideInvalid = '0'
-  and d.isDeleted = '0'
-  #if(keywords)
-    and (b.cInvCode like concat('%', '#(keywords)', '%') or b.cInvName like concat('%', '#(keywords)', '%')
-    or a.cCompleteBarcode like concat('%', '#(keywords)', '%'))
-  #end
-  #if(supplier)
-    and (v.cVenCode like concat('%', '#(supplier)', '%') or v.cVenName like concat('%', '#(supplier)', '%'))
-  #end
-  #if(poNumber)
-  and m.cOrderNo = '#(poNumber)'
-  #end
-  #if(orgCode)
-  and b.cOrgCode = '#(orgCode)'
-  #end
+(
+SELECT
+	'#(combination)' AS combination,
+	'#(assemtype)' AS assemtype,
+	a.WhCode,
+	wh.cWhName AS whname,
+	a.PosCode,
+	area.cAreaName AS posname,
+	a.Barcode ,
+	a.InvCode AS cinvcode,
+	b.cInvCode1,
+	b.cInvName1,
+	uom.cUomName ,
+	a.Qty,
+	change.iBeforeInventoryId,
+    change.iAfterInventoryId
+FROM
+	T_Sys_StockBarcodePosition a
+	LEFT JOIN Bd_Warehouse wh ON a.WhCode = wh.cWhCode
+	LEFT JOIN Bd_Warehouse_Area area ON area.cAreaCode = a.PosCode
+	LEFT JOIN UFDATA_001_2023.dbo.V_sys_BarcodeDetail ua ON ua.Barcode = a.Barcode
+	LEFT JOIN Bd_Customer mer ON ua.CusCode = mer.cCusCode
+	LEFT JOIN bd_inventory b ON ua.InvCode = b.cInvCode
+	LEFT JOIN Bd_Uom uom ON b.iInventoryUomId1 = uom.iAutoId
+	LEFT JOIN Bd_InventoryChange change ON change.iBeforeInventoryId= b.iAutoId
+	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+	LEFT JOIN T_Sys_AssemDetail sse ON sse.Barcode = a.Barcode   and sse.isDeleted ='0'
+where a.State = '1'
+    AND sse.AutoID IS NULL
+    and change.iAutoId is not null
+    #if(barcode)
+      and a.Barcode = #para(barcode)
+    #end
   ) t
-  where 1=1
-  #if(sourceBillType)
-  and t.SourceBillType = '#(sourceBillType)'
-  #end
-  #if(detailHidden)
-  and t.SourceBillDid not in (#(detailHidden))
-  #end
-  #if(barcode)
-  and t.barcode = #para(barcode)
-  #end
 
- ###  and not exists (select 1 from T_Sys_PUReceiveDetail detail where  detail.barcode = t.barcode)
- ###   and not exists (select 1 from T_Sys_AssemDetail adetail where  adetail.Barcode = t.barcode)
 #end
 
 
