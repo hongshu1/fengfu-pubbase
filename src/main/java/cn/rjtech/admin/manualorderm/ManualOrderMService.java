@@ -332,7 +332,11 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
                             StockoutQcFormM stockoutQcFormM = new StockoutQcFormM();
                             stockoutQcFormM.setIInventoryId(inventory.getIAutoId());
                             stockoutQcFormM.setICustomerId(icustomerid);
-                            stockoutQcFormM.setIQcFormId(inventoryQcForm.getIAutoId());
+                            if (notNull(inventoryQcForm))
+                            {
+                                stockoutQcFormM.setIQcFormId(inventoryQcForm.getIAutoId());
+                            }
+
 
                             Date date = new Date();
                             String format = new SimpleDateFormat("yyyy-MM-dd").format(date);
@@ -441,11 +445,9 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
         for (ManualOrderD manualOrderD : manualOrderDS) {
             Boolean isIqc2 = inventoryMfgInfoService.getIsIqc2(manualOrderD.getIInventoryId());
             if (isIqc2) {
-                Ret ret = createStockoutQcFormM(manualOrderD.getIInventoryId(), manualOrderM.getIAutoId());
-                ValidationUtils.isTrue(ret.isOk(), "生成出货检失败!");
+                ValidationUtils.isTrue(stockoutQcFormMService.saveByManualOrderDatas(manualOrderM, manualOrderD), "生成出货检失败!");
             }
         }
-
 
         // 推送U8订单
         String cDocNo = pushOrder(manualOrderM, manualOrderDS);
