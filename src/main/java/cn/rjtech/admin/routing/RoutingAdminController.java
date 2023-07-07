@@ -147,6 +147,7 @@ public class RoutingAdminController extends BaseAdminController {
         renderJsonData(service.audit(routingId, status));
     }
 
+    @CheckPermission(PermissionKey.ROUTING_EXPORT)
     public void exportExcel() throws Exception {
         List<Record> rows = service.getRoutingDetails(getKv());
         if (notOk(rows)) {
@@ -157,6 +158,7 @@ public class RoutingAdminController extends BaseAdminController {
         renderJxls("routing.xlsx", Kv.by("rows", rows), "工艺路线_" + DateUtil.today() + ".xlsx");
     }
 
+    @CheckPermission(PermissionKey.ROUTING_VERSION_EXPORT)
     public void exportVersionExcel() throws Exception {
         List<Record> routingVersion = service.findRoutingVersionExport(getKv());
         if (notOk(routingVersion)) {

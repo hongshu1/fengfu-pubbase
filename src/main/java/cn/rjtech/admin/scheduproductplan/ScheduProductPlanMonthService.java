@@ -1448,6 +1448,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         int iLevel = apsWeekschedule.getILevel();
         String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(), "yyyy-MM-dd");
         String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(), "yyyy-MM-dd");
+        //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+        List<String> scheduDateList = Util.getBetweenDate(startDate, endDate);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(DateUtils.parseDate(startDate));
@@ -1622,16 +1624,23 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
 
                 List<Object> planList = new ArrayList<>();
                 Map<String, Record> planDateMap = invPlanDateMap.get(inv);
-                for (String date : planDateMap.keySet()) {
+
+                for (String date : scheduDateList){
                     Record record = planDateMap.get(date);
+                    BigDecimal shiyong = record != null ? record.getBigDecimal("iQty1") : BigDecimal.ZERO;
+                    BigDecimal one = record != null ? record.getBigDecimal("iQty2") : BigDecimal.ZERO;
+                    BigDecimal two = record != null ? record.getBigDecimal("iQty3") : BigDecimal.ZERO;
+                    BigDecimal three = record != null ? record.getBigDecimal("iQty4") : BigDecimal.ZERO;
+                    BigDecimal zaiku = record != null ? record.getBigDecimal("iQty5") : BigDecimal.ZERO;
+                    BigDecimal tianshu = record != null ? record.getBigDecimal("iQty6") : BigDecimal.ZERO;
 
                     Map<String, Object> dataMap = new HashMap<>();
-                    dataMap.put("shiyong", record.getBigDecimal("iQty1"));
-                    dataMap.put("one", record.getBigDecimal("iQty2"));
-                    dataMap.put("two", record.getBigDecimal("iQty3"));
-                    dataMap.put("three", record.getBigDecimal("iQty4"));
-                    dataMap.put("zaiku", record.getBigDecimal("iQty5"));
-                    dataMap.put("tianshu", record.getBigDecimal("iQty6"));
+                    dataMap.put("shiyong", shiyong);
+                    dataMap.put("one", one);
+                    dataMap.put("two", two);
+                    dataMap.put("three", three);
+                    dataMap.put("zaiku", zaiku);
+                    dataMap.put("tianshu", tianshu);
                     dataMap.put("date", date);
                     dataMap.put("lock", false);//未锁定可编辑
                     dataMap.put("iswork", false);//为休息日

@@ -13,17 +13,20 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.customer.CustomerService;
+import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syssaledeliverplandetail.SysSaledeliverplandetailService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.OrderStatusEnum;
-import cn.rjtech.model.momdata.SysSaledeliverplan;
-import cn.rjtech.model.momdata.SysSaledeliverplandetail;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseSysSaledeliverplandetail;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO.data;
 import cn.rjtech.util.BaseInU8Util;
+import cn.rjtech.util.BillNoUtils;
+import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -37,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +65,10 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     private SysPuinstoreService             puinstoreService;
     @Inject
     private DictionaryService               dictionaryService;
+    @Inject
+    private SaleTypeService saleTypeService;
+    @Inject
+    private CustomerService customerService;
 
     @Override
     protected int systemLogTargetType() {
@@ -642,5 +650,71 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         saledeliverplan.setDupdatetime(date);
         saledeliverplan.setIupdateby(JBoltUserKit.getUserId());
         saledeliverplan.setCupdatename(JBoltUserKit.getUserName());
+    }
+
+    /**
+     * 根据客户订单-委外销售订单生成数据
+     *
+     * @param subcontractsaleorderm
+     * @param subcontractsaleorderds
+     * @return
+     */
+    public Boolean saveBySubcontractSaleOrderDatas(Subcontractsaleorderm subcontractsaleorderm, List<Subcontractsaleorderd> subcontractsaleorderds) {
+        return tx(() -> {
+            Dictionary businessType = dictionaryService.getOptionListByTypeKey("order_business_type").stream().filter(item -> StrUtil.equals(item.getSn(), subcontractsaleorderm.getIBusType().toString())).findFirst().orElse(null);
+            String busName = Optional.ofNullable(businessType).map(Dictionary::getName).orElse("普通销售");
+            String cSTCode = Optional.ofNullable(saleTypeService.findById(subcontractsaleorderm.getISaleTypeId())).map(SaleType::getCSTCode).orElse("普通销售");
+            SysSaledeliverplan sysSaledeliverplan = new SysSaledeliverplan();
+            sysSaledeliverplan.setSourceBillType("委外销售订单");
+            sysSaledeliverplan.setSourceBillID(subcontractsaleorderm.getIAutoId().toString());
+            sysSaledeliverplan.setRdCode(cSTCode);
+            sysSaledeliverplan.setOrganizeCode(getOrgCode());
+            sysSaledeliverplan.setBillNo(BillNoUtils.getcDocNo(getOrgId(), "FH", 6));
+            sysSaledeliverplan.setBillType(busName);
+            sysSaledeliverplan.setBillDate(DateUtils.getDate());
+            sysSaledeliverplan.setDeptCode(Optional.ofNullable(customerService.findById(subcontractsaleorderm.getICustomerId())).map(Customer::getCCusCode).orElse(null));
+            sysSaledeliverplan.setExchName(subcontractsaleorderm.getCCurrency());
+            sysSaledeliverplan.setExchRate(subcontractsaleorderm.getIExchangeRate());
+            sysSaledeliverplan.setTaxRate(subcontractsaleorderm.getITaxRate());
+            sysSaledeliverplan.setCondition(subcontractsaleorderm.getCPaymentTerm());
+            sysSaledeliverplan.setICustomerId(Optional.ofNullable(subcontractsaleorderm.getICustomerId()).map(Object::toString).orElse(null));
+            sysSaledeliverplan.setIsDeleted(false);
+            sysSaledeliverplan.setIcreateby(JBoltUserKit.getUserId());
+            sysSaledeliverplan.setCcreatename(JBoltUserKit.getUserName());
+            sysSaledeliverplan.setDcreatetime(new Date());
+            sysSaledeliverplan.setIupdateby(JBoltUserKit.getUserId());
+            sysSaledeliverplan.setCupdatename(JBoltUserKit.getUserName());
+            sysSaledeliverplan.setDupdatetime(new Date());
+            sysSaledeliverplan.save();
+
+            List<SysSaledeliverplandetail> sysSaledeliverplandetails = new ArrayList<>();
+            for (Subcontractsaleorderd subcontractsaleorderd : subcontractsaleorderds) {
+                for (int i = 1; i <= 31; i++) {
+                    SysSaledeliverplandetail sysSaledeliverplandetail = new SysSaledeliverplandetail();
+
+                    String row = (i > 9 ? i + "" : "0" + i);
+                    String data = subcontractsaleorderm.getIYear() + "-" + subcontractsaleorderm.getIMonth() + "-" + row;
+                    Date predictDeliverDate = DateUtils.parseDate(data);
+                    sysSaledeliverplandetail.setMasID(sysSaledeliverplan.getAutoID());
+                    sysSaledeliverplandetail.setInvCode(subcontractsaleorderd.getCInvCode());
+                    sysSaledeliverplandetail.setQty(subcontractsaleorderd.getBigDecimal("iqty" + i));
+                    sysSaledeliverplandetail.setIsDeleted(false);
+                    sysSaledeliverplandetail.setSourceBillType("委外销售订单");
+                    sysSaledeliverplandetail.setSourceBillNo(subcontractsaleorderm.getCOrderNo());
+                    sysSaledeliverplandetail.setSourceBIllNoRow(subcontractsaleorderm.getCOrderNo() + "-" + row);
+                    sysSaledeliverplandetail.setSourceBillDid(subcontractsaleorderd.getIAutoId().toString());
+                    sysSaledeliverplandetail.setIcreateby(JBoltUserKit.getUserId());
+                    sysSaledeliverplandetail.setCcreatename(JBoltUserKit.getUserName());
+                    sysSaledeliverplandetail.setDcreatetime(new Date());
+                    sysSaledeliverplandetail.setIupdateby(JBoltUserKit.getUserId());
+                    sysSaledeliverplandetail.setCupdatename(JBoltUserKit.getUserName());
+                    sysSaledeliverplandetail.setDupdatetime(new Date());
+                    sysSaledeliverplandetail.setPredictDeliverDate(predictDeliverDate);
+                    sysSaledeliverplandetails.add(sysSaledeliverplandetail);
+                }
+            }
+            syssaledeliverplandetailservice.batchSave(sysSaledeliverplandetails);
+            return true;
+        });
     }
 }

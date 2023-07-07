@@ -121,6 +121,20 @@
           </div>
         </div>
         #end
+
+        <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
+          </button>
+          <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+            <button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds"
+                    onclick="warehousePositionPrint('check')"><i class="fa fa-download"></i> 打印勾选行
+            </button>
+            <button class="btn dropdown-item" onclick="warehousePositionPrint('page')"><i class="fa fa-download"></i> 打印当前页
+            </button>
+          </div>
+
+        </div>
       </div>
 
 
@@ -130,6 +144,7 @@
 
 
     <table class="jbolt_table jbolt_main_table table-center"
+           id="jbolt_table_#(pageId)"
            data-jbolttable
            data-height="fill"
            data-ajax="true"
@@ -140,8 +155,6 @@
            data-rowtpl="warehousePositionRowtpl_#(pageId)"
            data-page="warehousePositionPage_#(pageId)"
            data-toolbar="warehousePosition_toolbar_#(pageId)"
-
-
            data-fixed-columns-left="1,2,3"
     >
       <thead class="fw-normal">
@@ -170,73 +183,26 @@
 
 #define js()
 <script type="text/javascript">
-
-  function getDbSource() {
-    var jdbc_url = "";
-    var print_url = "";
-    var OrganizeCode = "";
-    var reportName = "bdwarehouseposition";
-
-    /*Ajax.post("admin/organize/getDbSource", {}, function (ret) {
-      if (ret.state === 'ok') {
-        var data = ret.data;
-
-        jdbc_url = data.jdbc_url;
-        print_url = data.print_url;
-        OrganizeCode = data.OrganizeCode;
-        reportName = "bdwarehouseposition";
-
-        console.log("jdbc_url:" + jdbc_url);
-        console.log("print_url:" + print_url);
-        console.log("OrganizeCode:" + OrganizeCode);
-        console.log("reportName:" + reportName);
-
-        if (jdbc_url  && OrganizeCode) {
-          printAll(jdbc_url, OrganizeCode, print_url,reportName);
-        }
-      } else {
-        LayerMsgBox.alert(ret.msg, 2);
+  //打印
+  function warehousePositionPrint(mark) {
+    let rows;
+    if (mark == 'check') {
+      rows = jboltTableGetCheckedDatas();
+      if (rows == null) {
+        return;
       }
-    });*/
-  }
-
-  function printAll(jdbc_url, OrganizeCode, print_url, reportName) {
-    let rows = jboltTableGetCheckedDatas();
-    console.log(rows);
-
+    } else {
+      rows = jboltTableGetAllDatas();
+    }
     let code = [];
     for (let i in rows) {
       let rowdata = rows[i];
       var ccode = rowdata.iautoid;
       code.push(ccode);
-      console.log(code);
     }
-    let url = print_url + "reportName=" + reportName + "&OrganizeCode=" + OrganizeCode + "&code=" + code.join(",");
-    console.log(url);
-
-
-    LayerMsgBox.loading("正在执行请稍后...", 20000);
-
-    $.ajax({
-      url: url,
-      success: function (ret) {
-        LayerMsgBox.closeLoadingNow();
-
-        if (ret.code === '200') {
-          LayerMsgBox.alert(ret.message, 1);
-        } else {
-          LayerMsgBox.alert(ret.message, 2);
-        }
-      },
-      error: function (e) {
-        console.log("error:" + e.status + e.readyState + e.response);
-        LayerMsgBox.closeLoadingNow();
-        LayerMsgBox.alert('打印失败,请检查打印服务是否正常！<a href="#globalConfig(MomConfigKey.GRID_REPORT_DOWNLOAD_URL)">下载插件</a>', 2);
-      },
-    })
+    jboltHiprintWebPrint('warehouseposition', 'url', 'admin/warehouseposition/printData?ids=' + code.join(",") + "&&mark=" + mark);
 
   }
-
 </script>
 #end
 

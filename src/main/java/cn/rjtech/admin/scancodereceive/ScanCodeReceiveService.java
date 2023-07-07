@@ -27,7 +27,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -522,7 +521,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 			return dbTemplate("scancodereceive.getResource",kv).findFirst();*/
 			return firstRecord;
 		} else {
-		    ValidationUtils.isTrue(false, "未查找到该物料的双单位，请先维护物料的形态对照表");
+		    ValidationUtils.error( "未查找到该物料的双单位，请先维护物料的形态对照表");
         }
 		return null;
 	}

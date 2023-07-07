@@ -14,12 +14,13 @@ SELECT
 FROM Bd_Inventory i
 inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
 left join Bd_Uom uom on i.iInventoryUomId1 = uom.iautoid
-WHERE 1=1
+WHERE
+    i.isDeleted = '0'
 #if(iInventoryClassId)
  AND i.iInventoryClassId = #para(iInventoryClassId)
 #end
 #if(iInventoryClassCode)
- OR ic.cInvCCode like CONCAT(#para(iInventoryClassCode), '%')
+ AND ic.cInvCCode like CONCAT(#para(iInventoryClassCode), '%')
 #end
 #if(isEnabled)
  AND i.isenabled = #para(isEnabled)

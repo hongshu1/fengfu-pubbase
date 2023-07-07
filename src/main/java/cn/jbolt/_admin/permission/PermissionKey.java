@@ -3193,4 +3193,44 @@ public class PermissionKey {
 	 * 复制
 	 */
 	public static final String BOMMASTER_VERSION_COPY = "bommaster_version_copy";
+	/**
+	 * 新增
+	 */
+	public static final String BOMMASTER_ADD = "bommaster_add";
+	/**
+	 * 导出
+	 */
+	public static final String BOMMASTER_EXPORT = "bommaster_export";
+	/**
+	 * 导入
+	 */
+	public static final String BOMMASTER_IMPORT = "bommaster_import";
+	/**
+	 * 保存
+	 */
+	public static final String BOMMASTER_SUBMIT = "bommaster_submit";
+	/**
+	 * 新增物料清单
+	 */
+	public static final String BOMCOMPARE_ADD = "bomcompare_add";
+	/**
+	 * 导入查看-查看
+	 */
+	public static final String BOMMASTER_BOMCOMPARE_FILEINFO = "bommaster_bomcompare_fileinfo";
+	/**
+	 * 导入查看-删除
+	 */
+	public static final String BOMMASTER_BOMM_DEL = "bommaster_bomm_del";
+	/**
+	 * 导出
+	 */
+	public static final String ROUTING_EXPORT = "routing_export";
+	/**
+	 * 版本记录-导出
+	 */
+	public static final String ROUTING_VERSION_EXPORT = "routing_version_export";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_AREA_PRINT = "warehouse_area_print";
 }
