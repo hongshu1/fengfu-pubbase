@@ -1126,7 +1126,8 @@ public class InventoryService extends BaseService<Inventory> {
         InventoryStockConfig inventorystockconfig = inventoryWorkRegionJboltTable.getFormBean(InventoryStockConfig.class, "inventorystockconfig");
         InventoryPlan inventoryPlan = inventoryWorkRegionJboltTable.getFormBean(InventoryPlan.class, "inventoryplan");
         InventoryAddition inventoryAddition = inventoryWorkRegionJboltTable.getFormBean(InventoryAddition.class, "inventoryaddition");
-        InventoryMfgInfo inventoryMfgInfo = inventoryWorkRegionJboltTable.getFormBean(InventoryMfgInfo.class, "inventorymfginfo");
+        InventoryMfgInfo inventoryMfgInfo = inventoryWorkRegionJboltTable.getFormModel(InventoryMfgInfo.class, "inventorymfginfo");
+        ValidationUtils.notNull(inventoryMfgInfo, "质检开关");
         // 判断当前存货是否存在
         Inventory byId = findById(inventory.getIAutoId());
         // 新增
