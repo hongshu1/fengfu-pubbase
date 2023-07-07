@@ -233,8 +233,6 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 
 				String autoID = sysPureceive.getAutoID();
 
-
-
 //				新增 根据供应商分组
 				if (notOk(autoID)) {
 					ValidationUtils.isTrue(jBoltTable.saveIsNotBlank(), "行数据为空，不允许保存！");
@@ -310,8 +308,6 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 						sysPureceive.setCupdatename(user.getName());
 						sysPureceive.update();
 
-						headerId.set(sysPureceive.getAutoID());
-
 						saveModelList.forEach(sysPureceivedetail -> {
 							sysPureceivedetail.setMasID(sysPureceive.getAutoID());
 							sysPureceivedetail.setIcreateby(user.getId());
@@ -324,6 +320,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 						});
 						scanCodeReceiveDetailService.batchSave(saveModelList, saveModelList.size());
 					}
+
+                    headerId.set(autoID);
 				}
 			}
 

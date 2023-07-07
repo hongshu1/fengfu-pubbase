@@ -60,9 +60,9 @@
 <td>${data.cdepname}</td>
 <td>${data.imaxstock}</td>
 <td>${data.imaxspace}</td>
-<td>${data.isstockwarnenabled=='0'?'是':'否'}</td>
-<!--<td><img data-switchbtn data-confirm="确定切换是否库存预警？" data-value="${data.isstockwarnenabled}"-->
-<!--         data-handler="refreshJBoltTable" data-url="admin/warehouse/isStockWarnEnabled/${data.iautoid}"/></td>-->
+<!--<td>${data.isstockwarnenabled=='0'?'是':'否'}</td>-->
+<td><img data-switchbtn data-confirm="确定切换是否库存预警？" data-value="${data.isstockwarnenabled}"
+         data-handler="refreshJBoltTable" data-url="admin/warehouse/isStockWarnEnabled/${data.iautoid}"/></td>
 <td><img data-switchbtn data-confirm="确定切换是否启动？" data-value="${data.isenabled}" data-handler="refreshJBoltTable"
          data-url="admin/warehouse/isEnabled/${data.iautoid}"/></td>
 <td>${data.cwhmemo}</td>

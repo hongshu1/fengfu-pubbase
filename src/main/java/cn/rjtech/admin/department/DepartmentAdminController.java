@@ -94,6 +94,7 @@ public class DepartmentAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.DEPARTMENT_ADD)
     public void add() {
         render("add.html");
     }
@@ -109,6 +110,7 @@ public class DepartmentAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.DEPARTMENT_EDIT)
     public void edit() {
         Department department = service.findById(getLong(0));
         if (department == null) {

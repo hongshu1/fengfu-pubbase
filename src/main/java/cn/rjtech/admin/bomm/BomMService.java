@@ -671,13 +671,13 @@ public class BomMService extends BaseService<BomM> {
 			
 			}
 		}*/
-		
 		// 校验日期 和 版本号
 		List<Record> invBomList = findByInvId(getOrgId(), bomM.getIInventoryId(), bomM.getIAutoId());
 		if (CollUtil.isNotEmpty(invBomList)){
 			invBomList.forEach(record -> {
 				boolean overlapping = isOverlapping(bomM, record);
-				ValidationUtils.isTrue(overlapping, "母件不可重复创建版本，启用日期停用日期重叠！");
+				String format = String.format("母件【%s】不可重复创建版本，启用日期停用日期重叠！", bomM.getCInvCode());
+				ValidationUtils.isTrue(overlapping, format);
 				String version = record.getStr(BomM.CVERSION);
 				if (StrUtil.isNotBlank(cVersion)){
 					ValidationUtils.isTrue(!cVersion.equals(version), "该版本号已存在！");
@@ -716,7 +716,7 @@ public class BomMService extends BaseService<BomM> {
 		long bomMasterId = JBoltSnowflakeKit.me.nextId();
 		bomMaster.setIAutoId(bomMasterId);
 		Map<BomM, List<BomD>> bomMListMap = getBomMasterMap(bomMaster, tableData);
-		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
+//		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
 		bommTrl.setIBomMid(bomMasterId);
 		tx(() -> {
 			
