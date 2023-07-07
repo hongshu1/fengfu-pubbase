@@ -23,7 +23,7 @@
             #if(syssaledeliverplan.autoid??)
             #include("/_view/_common/_approval_btns.html", formSn="T_Sys_SaleDeliverPlan", o=syssaledeliverplan,
             primaryKeyName="AutoID",
-            className="cn.rjtech.admin.syssaledeliverplan.syssaledeliverplanService",permissionKeyPrefix="syssaledeliverplan")
+            className="cn.rjtech.admin.syssaledeliverplan.SysSaledeliverplanService",permissionKeyPrefix="syssaledeliverplan")
             #end
 
             <button onclick="closeHandler()" class="btn btn-outline-secondary btn-sx">
@@ -47,6 +47,7 @@
             <input type="hidden" id="endtime" name="endtime" value="#(syssaledeliverplan.endtime??)"/>
             <input type="hidden" id="ccusabbname_page" name="ccusabbname" value="#(syssaledeliverplan.ccusabbname??)"/>
             <input type="hidden" id="corderno2" name="corderno" value="#(syssaledeliverplan.corderno??)"/>
+            <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
 
             <div class="row">
               <div class="col">
@@ -54,28 +55,23 @@
                   <label class="col-sm-3 col-form-label">发货单号</label>
                   <div class="col-9">
                     <input type="text" data-rule="required" data-tips="请输入发货单号" class="form-control" name="billno"
-                           placeholder="请输入发货单号" maxlength="40" value="#(billno??)"/>
+                           placeholder="请输入发货单号" maxlength="40" value="#(syssaledeliverplan.billno??)"/>
                   </div>
                 </div>
 
                 <div class="form-group row">
-                  <input type="hidden" name="rdcode" value="#(syssaledeliverplan.rdcode??)" id="cstcode" data-value-attr="cstcode"/>
                   <label class="col-sm-3 col-form-label">销售类型</label>
                   <div class="col-9">
-                    <input type="text"
-                           name=""
-                           class="form-control"
-                           data-autocomplete
-                           data-url="admin/salesShipmentList/saletype"
-                           data-rule="required"
-                           data-hidden-input="cstcode"
-                           data-text-attr="cstname"
-                           data-column-attr="cstcode,cstname"
-                           placeholder="请选择销售类型"
-                           data-tips="请选择销售类型"
-                           data-header="销售类型编码,销售类型名称"
-                           maxlength="40"
-                           value="#(syssaledeliverplan.cstname??)">
+                    <select class="form-control"
+                            data-rule="required"
+                            name="rdcode"
+                            data-select-type="select"
+                            data-autoload
+                            data-url="admin/rdstyle/options1"
+                            data-text="=销售类型="
+                            data-value-attr="cvrscode"
+                            data-text-attr="vrsname"
+                            data-select="#(syssaledeliverplan.rdcode??)"></select>
                   </div>
                 </div>
 
@@ -88,24 +84,18 @@
                 </div>
 
                 <div class="form-group row">
-                  <input type="hidden" name="shipaddress" value="#(shipaddress??)"
-                         id="cdistrictcode" data-value-attr="cdistrictcode"/>
                   <label class="col-sm-3 col-form-label">发货地址</label>
                   <div class="col-9">
-                    <input type="text"
-                           name="shipaddress"
-                           class="form-control"
-                           data-autocomplete
-                           data-url="admin/salesShipmentList/customeraddr"
-                           data-rule="required"
-                           data-hidden-input="cdistrictcode"
-                           data-text-attr="cdistrictname"
-                           data-column-attr="cdistrictcode,cdistrictname"
-                           placeholder="请选择发货地址"
-                           data-tips="请选择发货地址"
-                           data-header="发货地址编码,发货地址名称"
-                           maxlength="40"
-                           value="#(shipaddress??)">
+                    <select class="form-control"
+                            data-rule="required"
+                            name="shipaddress"
+                            data-select-type="select"
+                            data-autoload
+                            data-url="admin/salesShipmentList/customeraddr"
+                            data-text="=发货地址="
+                            data-value-attr="iautoid"
+                            data-text-attr="cdistrictname"
+                            data-select="#(syssaledeliverplan.shipaddress??)"></select>
                   </div>
                 </div>
 
@@ -147,43 +137,34 @@
                 </div>
 
                 <div class="form-group row">
-                  <input type="hidden" id="cdepcode" name="deptcode" value="#(syssaledeliverplan.deptcode??)"
-                         data-value-attr="cdepcode"/>
                   <label class="col-sm-3 col-form-label">销售部门</label>
                   <div class="col-9">
-                    <input type="text"
-                           class="form-control"
-                           data-autocomplete
-                           data-url="admin/salesShipmentList/department"
-                           data-rule="required"
-                           data-hidden-input="cdepcode"
-                           data-text-attr="cdepname"
-                           data-column-attr="cdepcode,cdepname"
-                           placeholder="请选择销售部门"
-                           data-tips="请选择销售部门"
-                           data-header="销售部门编码,销售部门名称"
-                           maxlength="40"
-                           value="#(cdepname??)">
+                    <select class="form-control"
+                            data-rule="required"
+                            name="deptcode"
+                            data-select-type="select"
+                            data-autoload
+                            data-url="admin/department/list"
+                            data-text="=销售部门="
+                            data-value-attr="cdepcode"
+                            data-text-attr="cdepname"
+                            data-select="#(syssaledeliverplan.deptcode??)"></select>
                   </div>
                 </div>
 
                 <div class="form-group row">
-                  <input type="hidden" name="issue" value="#(syssaledeliverplan.issue??)" id="crdcode" data-value-attr="crdcode"/>
                   <label class="col-sm-3 col-form-label">发运方式</label>
                   <div class="col-9">
-                    <input type="text"
-                           class="form-control"
-                           data-autocomplete
-                           data-url="admin/salesShipmentList/rdstyle"
-                           data-rule="required"
-                           data-hidden-input="crdcode"
-                           data-text-attr="crdname"
-                           data-column-attr="crdcode,crdname"
-                           placeholder="请选择发运方式"
-                           data-tips="请选择发运方式"
-                           data-header="发运方式编码,发运方式名称"
-                           maxlength="40"
-                           value="#(issue??)">
+                    <select class="form-control"
+                            data-rule="required"
+                            name="issue"
+                            data-select-type="select"
+                            data-autoload
+                            data-url="admin/salesShipmentList/rdstyle"
+                            data-text="=发运方式="
+                            data-value-attr="crdcode"
+                            data-text-attr="crdname"
+                            data-select="#(syssaledeliverplan.issue??)"></select>
                   </div>
                 </div>
 
@@ -216,12 +197,14 @@
                     <select class="form-control"
                             data-rule="required"
                             name="billtype"
+                            data-select-type="select"
                             data-autoload
                             data-url="admin/dictionary/options?key=purchase_service_type"
                             data-text="=业务类型="
-                            data-value-attr="name"
+                            data-value-attr="sn"
                             data-text-attr="name"
-                            data-select="#(purchasem.billtype??)"></select>
+                            data-value=""
+                            data-select="#(syssaledeliverplan.billtype??)"></select>
                   </div>
                 </div>
 
@@ -243,30 +226,26 @@
                 </div>
 
                 <div class="form-group row">
-                  <input type="hidden" id="csscode" name="condition" value="#(syssaledeliverplan.condition??)" data-value-attr="csscode"/>
                   <label class="col-sm-3 col-form-label">付款条件</label>
                   <div class="col-9">
-                    <input type="text"
-                           name="condition"
-                           class="form-control"
-                           data-autocomplete
-                           data-url="admin/salesShipmentList/settlestyle"
-                           data-hidden-input="csscode"
-                           data-value-attr="csscode"
-                           data-text-attr="cssname"
-                           data-column-attr="csscode,cssname"
-                           placeholder="请选择付款条件"
-                           data-tips="请选择付款条件"
-                           data-header="付款编码,付款名称"
-                           maxlength="40"
-                           value="#(condition??)">
+                    <select class="form-control"
+                            data-rule="required"
+                            name="condition"
+                            data-select-type="select"
+                            data-autoload
+                            data-url="admin/salesShipmentList/settlestyle"
+                            data-text="=付款条件="
+                            data-value-attr="csscode"
+                            data-text-attr="cssname"
+                            data-select="#(syssaledeliverplan.condition??)"></select>
                   </div>
                 </div>
 
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">汇率</label>
                   <div class="col-9">
-                    <input type="text"  name="exchrate" data-tips="请输汇率" class="form-control" placeholder="请输汇率" maxlength="40"
+                    <input type="text"  name="exchrate" data-tips="请输汇率" placeholder="请输汇率" maxlength="40"
+                           class="form-control"
                            value="#(syssaledeliverplan.exchrate??)"/>
                   </div>
                 </div>
@@ -302,7 +281,7 @@
       <td title="${data.cinvstd}">${data.cinvstd}</td>
       <td title="${data.cuomcode}">${data.cuomcode}</td>
       <td title="${data.cuomname}">${data.cuomname}</td>
-      <td title="${data.predictdeliverdate}">${data.predictdeliverdate}</td>
+      <td title="${data.predictdeliverdate}">${data.predictdeliverdate|date_ymd}</td>
     </tr>
     {@/each}
   </script>
@@ -338,7 +317,7 @@
        data-jbolttable
        #if(syssaledeliverplan.AutoID??)
        data-ajax="true"
-       data-url="admin/syssaledeliverplandetail/findEditTableDatas?masid=#(syssaledeliverplan.AutoID??)"
+       data-url="admin/salesShipmentList/findTableDatas?masid=#(syssaledeliverplan.AutoID??)"
        #end
        data-column-resize="true"
        data-tfoot-fixed="true"
@@ -376,8 +355,54 @@
   hideParentLayerDialogBtn(0);
   hideParentLayerDialogBtn(1);
 
-  var submit = false;
+  function checkBarcode() {
+    LayerMsgBox.loading("执行中......", 2000);
+    var data = $("#barcode").val();
+    var barcode = data.trim();
+    if(barcode=='' || barcode == undefined || barcode == null){
+      LayerMsgBox.alert("现品票不能为空")
+      return;
+    }
+    /*let sourcebillno = $("#sourcebillno").val();
+    if(sourcebillno=='' || sourcebillno == undefined || sourcebillno == null){
+      LayerMsgBox.alert("请先选择订单号")
+      return;
+    }*/
+    var data = getJboltTableAllDatas("jbolt_Table_#(pageId)", ["barcode"]);
+    let array = new Array();
+    if (null != data) {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].barcode == barcode) {
+          LayerMsgBox.alert("条码已重复")
+          return;
+        }
+        array.push("'" + data[i].barcode + "'");
+      }
+    } else {
+      $("#detailHidden").val('');
+    }
 
+    if (barcode) {
+      Ajax.post("admin/salesShipmentList/getBarcodeDatas", {"barcode": barcode.trim()}, function (res) {
+        //扫描的现品票必须归属于同一张采购订单
+        let data = res.data;
+        /*let sourcebillno = $("#sourcebillno").val();
+        if (data.sourcebillno != sourcebillno) {
+          LayerMsgBox.alert("现品票的订单号是: " + data.sourcebillno+"，与选择的订单号 "+ sourcebillno +"不同", 2);
+          return;
+        }*/
+        jboltTableInsertRow("jbolt_Table_#(pageId)", res.data, false, true, true)
+        $("#barcode").val('');
+        let codes = array.join(',');
+        $("#detailHidden").val(codes);
+      }, function (err) {
+      })
+    } else {
+      LayerMsgBox.alert("请输入条码")
+    }
+  }
+
+  var submit = false;
   function submitThisForm_#(pageId)(ele){
     // 保存并提交
     submit = ele;
@@ -392,7 +417,7 @@
   function successHandler(msg, autoid) {
     LayerMsgBox.success(msg, 600, function () {
       // 新增/修改，均跳转到详情页
-      location.href = '/admin/pickupPlanManage/edit?autoid=' + autoid + '&_jb_rqtype_=dialog';
+      location.href = '/admin/salesShipmentList/edit?autoid=' + autoid + '&_jb_rqtype_=dialog';
       parent.refreshPjaxContainer();
     });
   }
@@ -407,13 +432,13 @@
         url: "/admin/salesShipmentList/submitAll", success: function (res) {
           var state = res.state;
           if (state === 'ok') {
+            var data = res.data;
             if (submit) {
-              let data = res.data;
               submit_#(pageId)(data.autoid, function () {
                 successHandler('提交审核成功', data.autoid);
               });
             } else {
-              successHandler(ret.msg, autoid);
+              successHandler(res.msg, data.autoid);
             }
           } else {
             LayerMsgBox.error(res.msg);

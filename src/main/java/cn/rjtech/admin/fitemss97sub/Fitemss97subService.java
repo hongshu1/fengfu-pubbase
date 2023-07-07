@@ -50,13 +50,24 @@ public class Fitemss97subService extends BaseService<Fitemss97sub> {
 			List<Record> fitemss00list = dbTemplate("fitemss97sub.fitemss00list", para).find();
 			list=Stream.of(fitemss00list,fitemss98list, fitemss03list,fitemssZFlist ).flatMap(Collection::stream).collect(Collectors.toList());
 		}else{
-			Record first = dbTemplate("fitemss97.findfitemss97List", Kv.by("fitemss97subid", para.getStr("fitemss97subid"))).findFirst();
+			String sn=null;
+			Record first = dbTemplate("fitemss97.findsub", Kv.by("iautoid", para.getStr("fitemss97subid"))).findFirst();
+
+			if (ObjUtil.isNull(first)){
+				Record first1 = dbTemplate("fitem.selectFitem", Kv.by("iautoid", para.getStr("fitemss97subid"))).findFirst();
+				sn=first1.getStr("citem_class");
+				if(ObjUtil.isNull(first1)){
+                    sn="";
+				}
+			}else {
+				sn=first.getStr("sn");
+			}
 			/**
 			 * 查找子项
 			 */
 			String fitemss97subid = selectSub(para.getStr("fitemss97subid"));
 			para.set("fitemss97subid",fitemss97subid);
-				switch (first.getStr("citemccode")){
+				switch (sn){
 					case "00":
 						List<Record> fitemss00list = dbTemplate("fitemss97sub.fitemss00list", para).find();
 						list=Stream.of(fitemss00list).flatMap(Collection::stream).collect(Collectors.toList());
@@ -96,11 +107,11 @@ public class Fitemss97subService extends BaseService<Fitemss97sub> {
 
 	//判断是否有有子项，有的话把子项全找出来
     public String selectSub(String fitemss97subid) {
-		List<Record> list = dbTemplate("fitemss97.findfitemss97sub", Kv.by("isourceid", fitemss97subid)).find();
+		List<Record> list = dbTemplate("fitemss97.findsub", Kv.by("IPid", fitemss97subid)).find();
 		if(list.size()!=0){
 			StringJoiner stringJoiner=new StringJoiner(",");
 			for (Record record: list){
-				List<Record> subList = dbTemplate("fitemss97.findfitemss97sub", Kv.by("isourceid",  record.get("iautoid"))).find();
+				List<Record> subList = dbTemplate("fitemss97.findsub", Kv.by("IPid",  record.get("iautoid"))).find();
 				if(subList.size()!=0){
 					for (Record sub :subList) {
 						String iautoid = sub.getStr("iautoid");
@@ -123,21 +134,24 @@ public class Fitemss97subService extends BaseService<Fitemss97sub> {
 	 *
 	 * @param openLevel 打开级别
 	 */
-	public List<JsTreeBean> getMgrTree(int openLevel, String sn) {
-
+	public List<JsTreeBean> getMgrTree( int openLevel,String sn) {
+		/**
+		 * 项目大类目录
+		 */
+		List<Record> records = dbTemplate("fitem.selectFitem",Kv.by("sn",sn)).find();
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
-
-			List<Record> subRecords = dbTemplate("fitemss97.findfitemss97List",Kv.by("citemccode",sn)).find();
-			for (Record subRecord : subRecords) {
-				Long id = subRecord.getLong("iAutoId");
-				Object pid = subRecord.getStr("iSourceId");
-				String text = "[" + subRecord.getStr("citemcode") + "]" + subRecord.getStr("citemname");
-				String type = subRecord.getStr("citemcode");
-				JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
-				jsTreeBeanList.add(jsTreeBean);
+		for (Record record:records){
+			JsTreeBean parent = new JsTreeBean(record.getLong("iautoid"), "#", record.getStr("citem_name"), null, "", false);
+			jsTreeBeanList.add(parent);}
+		List<Record> subRecords = dbTemplate("fitemss97.findsub",Kv.by("sn",sn)).find();
+		for (Record subRecord : subRecords) {
+			Long id = subRecord.getLong("iAutoId");
+			Object pid = subRecord.getStr("Ipid");
+			String text = "[" + subRecord.getStr("citemcCode") + "]" + subRecord.getStr("citemCname");
+			String type = subRecord.getStr("citemCcode");
+			JsTreeBean jsTreeBean = new JsTreeBean(id, pid, text, type, "", false);
+			jsTreeBeanList.add(jsTreeBean);
 		}
-
-
 		return jsTreeBeanList;
 	}
 
