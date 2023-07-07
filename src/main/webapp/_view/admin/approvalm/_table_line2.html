@@ -9,10 +9,10 @@
             <td>${data.cname}</td>
             <td>${data.way}</td>
            <td>
-               <a href="admin/approvald/up/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="moveUp"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
-    <a href="admin/approvald/down/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="moveDown"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
+               <a href="admin/approvald/up/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="上移" data-handler="refreshJBoltTable"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
+    <a href="admin/approvald/down/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="下移" data-handler="refreshJBoltTable"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
 
-	<a href="admin/approvald/edit/${data.iautoid}" data-area="95%,95%"  tooltip data-title="修改"
+	<a href="admin/approvald/editView?autoid=${data.iautoid}&iseq=${index}" data-area="95%,95%"  tooltip data-title="修改"
        data-handler="refreshJBoltTable" data-dialog-title="修改审批节点" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
     <a href="admin/approvald/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
        data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>

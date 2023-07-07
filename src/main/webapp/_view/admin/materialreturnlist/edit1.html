@@ -187,6 +187,7 @@
                                                 <th data-width="100" data-column="puunitname">采购单位</th>
                                                 <th data-width="100" data-column="qty">现存数</th>
                                                 <th data-width="100" data-column="memo">备注</th>
+                                                <th hidden data-width="100" data-column="iqty">现存数</th>
                                                 <th hidden data-width="100" data-column="whcode">仓库</th>
                                                 <th hidden data-width="100" data-column="poscode">库位</th>
                                                 <th hidden data-width="100" data-column="puunitcode"></th>
@@ -227,34 +228,46 @@
 <!-- 定义JBoltTable使用的数据渲染模板-->
 <!--<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">-->
 <script id="inventorySplit_tpl_#(pageId)" type="text/template">
-   {@each datas as data,index}
-        <tr data-id="${data.autoid}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
-    <td>
-        <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
-    </td>
-    <td>${data.barcode}</td>
-    <td>${data.invcode}</td>
-    <td>${data.cinvname}</td>
-    <td>${data.cinvcode1}</td>
-    <td>${data.cinvname1}</td>
-    <td>${data.cinvstd}</td>
-    <td>品牌</td>
-    <td >${data.puunitname}</td> //采购单位名称
-<!--    <td>${data.inventorycuomname}</td>-->
-    <td>${data.qty}</td>
-    <td>${data.memo}</td><td hidden>${data.whcode}</td> //仓库
-    <td hidden>${data.poscode}</td> //库位
-    <td hidden>${data.iqty}</td>
-    <td hidden>${data.puunitcode}</td> //采购单位编码
-    <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
-    <td hidden>${data.sourcebillid}</td> //来源单据ID(订单id)
-    <td hidden>${data.sourcebilltype}</td> //采购PO  委外OM（采购类型）
-    <td hidden>${data.sourcebilldid}</td> //来源单据DID;采购或委外单身ID
-    <td hidden>${data.sourcebillnorow}</td> //来源单号+行号
-    <td hidden>${data.rowno}</td> //行号
+    {@each datas as data,index}
+    <tr data-id="${data.autoid}">
+        <td>${pageNumber,pageSize,index | rownum}</td>
+        <td>
+            <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip
+               data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
+        </td>
+        <td>${data.barcode}</td>
+        <td>${data.invcode}</td>
+        <td>${data.cinvname}</td>
+        <td>${data.cinvcode1}</td>
+        <td>${data.cinvname1}</td>
+        <td>${data.cinvstd}</td>
+        <td>品牌</td>
+        <td>${data.puunitname}</td>
+        //采购单位名称
+        <!--    <td>${data.inventorycuomname}</td>-->
+        <td>${data.qty}</td>
+        <td>${data.memo}</td>
+        <td hidden>${data.iqty}</td>
+        <td hidden>${data.whcode}</td>
+        //仓库
+        <td hidden>${data.poscode}</td>
+        //库位
+        <td hidden>${data.puunitcode}</td>
+        //采购单位编码
+        <td hidden>${data.sourcebillno}</td>
+        //来源单号（订单号）
+        <td hidden>${data.sourcebillid}</td>
+        //来源单据ID(订单id)
+        <td hidden>${data.sourcebilltype}</td>
+        //采购PO 委外OM（采购类型）
+        <td hidden>${data.sourcebilldid}</td>
+        //来源单据DID;采购或委外单身ID
+        <td hidden>${data.sourcebillnorow}</td>
+        //来源单号+行号
+        <td hidden>${data.rowno}</td>
+        //行号
 
-  </tr>
+    </tr>
     {@/each}
 </script>
 <!--</textarea>-->
@@ -310,7 +323,7 @@
         if (barcode) {
             Ajax.post("admin/materialreturnlist/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden},
                 function (res) {
-                        jboltTableInsertRow("Puinstoreform_TableId_#(pageId)", res.data, false, true, true)
+                        jboltTableInsertRow("Puinstoreform_TableId_#(pageId)", res.data, false, false, true)
                         $("#barcode").val('');
                 }, function (err) {
                 })
@@ -382,7 +395,7 @@
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "barcode,invcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
+                    columnAttr: "barcode,invcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,iqty",
                     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
                     changeColumns: [{column: "barcode", use: "barcode"},
                         {column: "invcode", use: "invcode"},
@@ -393,7 +406,8 @@
                         // {column: "pingpai", use: "cinvname1"},
                         {column: "puunitname", use: "puunitname"},
                         {column: "puunitcode", use: "puunitcode"},
-                        {column: "iqty", use: "qty"},
+                        {column: "qty", use: "qty"},
+                        {column: "iqty", use: "iqty"},
                         {column: "sourcebillno", use: "sourcebillno"},
                         {column: "sourcebillid", use: "sourcebillid"},
                         {column: "sourcebilltype", use: "sourcebilltype"},
@@ -441,6 +455,7 @@
                         {column: "cinvstd", use: "cinvstd"},
                         {column: "pingpai", use: "cinvname1"},
                         {column: "iqty", use: "qty"},
+                        {column: "qty", use: "qty"},
                         {column: "inventorycuomname", use: "inventorycuomname"}]
                 },
                 qty: {
@@ -465,8 +480,8 @@
                         }
                     }
                 },
-                qtys: {
-                    submitAttr:"qtys",
+                iqty: {
+                    submitAttr:"iqty",
                 },
                 memo: {
                     type:"input",

@@ -21,8 +21,15 @@
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">审批顺序</label>
 		<div class="col">
+			#if(iseq??)
+			<input type="hidden"
+				   placeholder="请输入审批顺序"  maxlength="10" name="approvalD.iseq" value="#(approvalD.iseq??)"/>
+			<input type="text" readonly="readonly" data-with-clearbtn="true"  autocomplete="off"  class="form-control"
+				   data-rule="pnumber" placeholder="请输入审批顺序"  maxlength="10" value="#(iseq??)"/>
+			#else
 			<input type="text" readonly="readonly" data-with-clearbtn="true"  autocomplete="off"  class="form-control"
 				   data-rule="pnumber" placeholder="请输入审批顺序"  maxlength="10" name="approvalD.iseq" value="#(approvalD.iseq??)"/>
+			#end
 		</div>
 	</div>
 
@@ -188,13 +195,13 @@
 				if (res.state === 'ok') {
 					LayerMsgBox.success(res.msg, 1000, function () {
 					console.log('res',res)
-					location.href = '/admin/approvald/edit/' + res.iautoid + '-_jb_rqtype_dialog';
+					// location.href = '/admin/approvald/edit/' + res.iautoid + '-_jb_rqtype_dialog';
 
-                        parent.RefreshJboltTable();
+                        // parent.RefreshJboltTable();
 
-						// refreshPjaxContainer();
-						// parent.LayerMsgBox.closeAll();
-						// parent.refreshPjaxContainer();
+						refreshPjaxContainer();
+						parent.LayerMsgBox.closeAll();
+						parent.refreshPjaxContainer();
 					});
 				} else {
 					LayerMsgBox.alert(res.msg, 2);

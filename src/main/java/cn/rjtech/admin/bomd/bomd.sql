@@ -28,10 +28,10 @@ FROM
 WHERE
 	d.isDeleted = '0'
 	#if(iBomMid)
-	AND d.iPid = #para(iBomMid)
+	    AND d.iPid = #para(iBomMid)
 	#end
 	#if(invCode)
-      AND d.cInvCode LIKE CONCAT('%',#para(invCode),'%')
+        AND d.cInvCode LIKE CONCAT('%',#para(invCode),'%')
 	#end
 	#if(invName)
         AND d.cInvName LIKE CONCAT('%',#para(invName),'%')
@@ -41,28 +41,30 @@ WHERE
 
 #sql("getEffectiveBomCompare")
 SELECT
-	*
+	d.*
 FROM
-	Bd_BomD
+	Bd_BomD d
+	INNER JOIN (
+        SELECT
+        a.iAutoId,
+        a.iInventoryId
+    FROM
+        Bd_BomM a
+        INNER JOIN ( SELECT iInventoryId, MAX ( cVersion ) cversion FROM Bd_BomM b WHERE b.isDeleted = '0' AND b.iOrgId = #para(orgId) GROUP BY b.iInventoryId ) v ON a.iInventoryId = v.iInventoryId
+        AND a.cVersion = v.cversion
+    WHERE
+        a.isDeleted = '0'
+        AND a.iOrgId = #para(orgId)
+	) v ON v.iAutoId = d.iPid
 WHERE
 	isDeleted = '0'
-	AND EXISTS (
-	SELECT
-		1
-	FROM
-		Bd_BomM a
-	WHERE
-		a.isDeleted = '0'
-		AND a.iOrgId = #para(orgId)
-		AND a.iAutoId = iPid
-		#if(invIds)
-            AND iInventoryId NOT IN (
-                #for(id:invIds)
-                    '#(id)' #(for.last?'':',')
-                #end
-            )
-        #end
-	)
+    #if(invIds)
+        AND v.iInventoryId IN (
+            #for(id:invIds)
+                '#(id)' #(for.last?'':',')
+            #end
+        )
+    #end
 #end
 
 #sql("getParentBomList")

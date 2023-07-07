@@ -664,8 +664,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 						"and Barcode is not null");
 
 				Kv para = new Kv();
-				para.set("keywords",first.getBarcode());
-				List<Record> resource = getResource(para);
+				para.set("barcode",first.getBarcode());
+				Record resource = dbTemplate("scancodereceive.getOrder", para).findFirst();
 
 				SysPuinstore sysPuinstore = new SysPuinstore();
 
@@ -691,10 +691,10 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                 sysPuinstore.setDeptCode(sysPureceive.getDeptCode());
                 sysPuinstore.setIBusType(1);
                 sysPuinstore.setRdCode(sysPureceive.getRdCode());
-				sysPuinstore.setBillType(resource.get(0).getStr("ipurchasetypeid"));
-				sysPuinstore.setDeptCode(resource.get(0).getStr("cdepcode"));
-				sysPuinstore.setIBusType(Integer.valueOf(resource.get(0).getStr("orderibustype")));
-				sysPuinstore.setRdCode(resource.get(0).getStr("scrdcode"));
+				sysPuinstore.setBillType(resource.getStr("ipurchasetypeid"));
+				sysPuinstore.setDeptCode(resource.getStr("cdepcode"));
+				sysPuinstore.setIBusType(Integer.valueOf(resource.getStr("orderibustype")));
+				sysPuinstore.setRdCode(resource.getStr("scrdcode"));
                 sysPuinstore.save();
 
                 String autoID = sysPuinstore.getAutoID();

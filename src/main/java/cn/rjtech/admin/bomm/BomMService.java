@@ -716,8 +716,9 @@ public class BomMService extends BaseService<BomM> {
 		long bomMasterId = JBoltSnowflakeKit.me.nextId();
 		bomMaster.setIAutoId(bomMasterId);
 		Map<BomM, List<BomD>> bomMListMap = getBomMasterMap(bomMaster, tableData);
-//		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
+		checkBomDateOrVersion(bomMaster.getCVersion(), bomMaster);
 		bommTrl.setIBomMid(bomMasterId);
+		Long orgId = getOrgId();
 		tx(() -> {
 			
 			for (BomM bomM : bomMListMap.keySet()){
@@ -732,9 +733,11 @@ public class BomMService extends BaseService<BomM> {
 				bomM.setDEnableDate(bomMaster.getDEnableDate());
 				bomM.setDDisableDate(bomMaster.getDDisableDate());
 				// 校验生成的bom日期是否会出现重叠
-				checkBomDateOrVersion(bomMaster.getCVersion(), bomM);
-				save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
-				bomDService.batchSave(bomDList);
+				boolean bomFlag = checkInventoryIsNotExistence(orgId, bomM.getIInventoryId());
+				if (!bomFlag){
+					save(bomM, userId, userName, now, AuditStatusEnum.NOT_AUDIT.getValue());
+					bomDService.batchSave(bomDList);
+				}
 			}
 			
 			bommTrlService.save(bommTrl);
@@ -1638,8 +1641,8 @@ public class BomMService extends BaseService<BomM> {
 	
 	public JBoltExcel exportExcelTpl(List<Record> datas) {
 		//2、创建JBoltExcel
-		//3、返回生成的excel文件
-		return JBoltExcel.create()//创建JBoltExcel 从模板加载创建
+		//3、返回生成的excel文件 //创建JBoltExcel 从模板加载创建
+		return JBoltExcel.create()
 				.addSheet(createJboltExcelSheetTpl().setDataChangeHandler((data, index) -> {
 					String isEffective = data.getStr(BomM.ISEFFECTIVE.toLowerCase());
 					if (StrUtil.isNotBlank(isEffective)) {
@@ -1697,5 +1700,11 @@ public class BomMService extends BaseService<BomM> {
 						data.change(BomM.DCREATETIME.toLowerCase(), DateUtil.formatDate(dDisableDate));
 					}
 				}).setRecordDatas(2, recordList)).setFileName("物料清单明细" + "_" + DateUtil.today());
+	}
+	
+	private boolean checkInventoryIsNotExistence(Long orgId, Long inventoryId){
+		Sql sql = selectSql().eq(BomM.IORGID, orgId).set(BomM.ISDELETED, "0").eq(BomM.IINVENTORYID, inventoryId);
+		BomM bomM = findFirst(sql);
+		return isOk(bomM);
 	}
 }
