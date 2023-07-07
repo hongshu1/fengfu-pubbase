@@ -157,12 +157,14 @@ public class SubcontractOrderDService extends BaseService<SubcontractOrderD> {
 		SubcontractOrderD subcontractOrderD = new SubcontractOrderD();
 		subcontractOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		subcontractOrderD.setISubcontractOrderMid(iSubcontractOrderMid);
-		subcontractOrderD.setIVendorAddrId(iVendorAddrId);
 		subcontractOrderD.setIInventoryId(iInventoryId);
 		subcontractOrderD.setIsDeleted(false);
 		subcontractOrderD.setIsPresent(isPresent);
 		subcontractOrderD.setCMemo(cMemo);
-		subcontractOrderD.setCAddress(cAddress);
+		if(!"".equals(cAddress) && iVendorAddrId!=null){
+			subcontractOrderD.setCAddress(cAddress);
+			subcontractOrderD.setIVendorAddrId(iVendorAddrId);
+		}
 		Integer pkgQty = 0;
 		if (StrUtil.isNotBlank(iPkgQty)){
 			pkgQty = Integer.valueOf(iPkgQty);

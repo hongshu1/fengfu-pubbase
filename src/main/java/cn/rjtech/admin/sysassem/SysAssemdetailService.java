@@ -1,5 +1,6 @@
 package cn.rjtech.admin.sysassem;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -7,6 +8,8 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
+import cn.rjtech.admin.syspureceive.SysPureceivedetailService;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.SysAssem;
 import cn.rjtech.model.momdata.SysAssemdetail;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
@@ -42,6 +45,9 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 
     @Inject
     private SysAssemService sysassemservice;
+
+    @Inject
+    private SysPureceivedetailService pureceivedetailService;
 
     @Override
     protected int systemLogTargetType() {
@@ -250,28 +256,50 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         return SUCCESS;
     }
 
-    public SysAssemdetail saveSysAssemdetailModel(SysPuinstoredetail puinstoredetail, String masId) {
-        SysAssemdetail first = findFirst("select * from T_Sys_AssemDetail where barcode = ?", puinstoredetail.getBarCode());
+    public SysAssemdetail saveSysAssemdetailModel(SysPuinstoredetail detail, String masId) {
+        SysAssemdetail first = findFirst("select * from T_Sys_AssemDetail where barcode = ?", detail.getBarCode());
         Date date = new Date();
         SysAssemdetail sysAssemdetail = new SysAssemdetail();
         sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         sysAssemdetail.setMasID(masId);
-        sysAssemdetail.setBarcode(puinstoredetail.getBarCode());
-        sysAssemdetail.setSourceType(puinstoredetail.getSourceBillType());
-        sysAssemdetail.setSourceBillNo(puinstoredetail.getSourceBillNo());
-        sysAssemdetail.setSourceBillNoRow(puinstoredetail.getSourceBillNoRow());
-        sysAssemdetail.setSourceBillID(puinstoredetail.getSourceBillID());
-        sysAssemdetail.setSourceBillDid(puinstoredetail.getSourceBillDid());
+        sysAssemdetail.setBarcode(detail.getBarCode());
+        sysAssemdetail.setSourceType(detail.getSourceBillType());
+        sysAssemdetail.setSourceBillNo(detail.getSourceBillNo());
+        sysAssemdetail.setSourceBillNoRow(detail.getSourceBillNoRow());
+        sysAssemdetail.setSourceBillID(detail.getSourceBillID());
+        sysAssemdetail.setSourceBillDid(detail.getSourceBillDid());
+        if (StrUtil.isNotBlank(detail.getSourceBillNo())){
+            sysAssemdetail.setAssemType("转换前");//转换状态;转换前 及转换后
+        }else {
+            sysAssemdetail.setAssemType("转换后");//转换状态;转换前 及转换后
+        }
+        List<SysPureceivedetail> pureceives = pureceivedetailService
+            .findBySourceBillNoAndId(detail.getSourceBillNo(), detail.getSourceBillID());
+        if (!pureceives.isEmpty()){
+            sysAssemdetail.setCombination(Integer.parseInt(pureceives.get(0).getCombination()));
+        }
+        sysAssemdetail.setWhCode(detail.getWhcode());
+        sysAssemdetail.setPosCode(detail.getPosCode());
+        sysAssemdetail.setRowNo(detail.getRowNo());
+        sysAssemdetail.setQty(detail.getQty());
+        sysAssemdetail.setTrackType(detail.getTrackType());
+        sysAssemdetail.setMemo(detail.getMemo());
+        sysAssemdetail.setBarcode(detail.getBarCode());
+        sysAssemdetail.setSourceType(detail.getSourceBillType());
+        sysAssemdetail.setSourceBillNo(detail.getSourceBillNo());
+        sysAssemdetail.setSourceBillNoRow(detail.getSourceBillNoRow());
+        sysAssemdetail.setSourceBillID(detail.getSourceBillID());
+        sysAssemdetail.setSourceBillDid(detail.getSourceBillDid());
         if(Objects.nonNull(first)){
             sysAssemdetail.setAssemType(first.getAssemType());
             sysAssemdetail.setCombination(first.getCombination());
         }
-        sysAssemdetail.setWhCode(puinstoredetail.getWhcode());
-        sysAssemdetail.setPosCode(puinstoredetail.getPosCode());
-        sysAssemdetail.setRowNo(puinstoredetail.getRowNo());
-        sysAssemdetail.setQty(puinstoredetail.getQty());
-        sysAssemdetail.setTrackType(puinstoredetail.getTrackType());
-        sysAssemdetail.setMemo(puinstoredetail.getMemo());
+        sysAssemdetail.setWhCode(detail.getWhcode());
+        sysAssemdetail.setPosCode(detail.getPosCode());
+        sysAssemdetail.setRowNo(detail.getRowNo());
+        sysAssemdetail.setQty(detail.getQty());
+        sysAssemdetail.setTrackType(detail.getTrackType());
+        sysAssemdetail.setMemo(detail.getMemo());
         sysAssemdetail.setCcreatename(JBoltUserKit.getUserName());
         sysAssemdetail.setDcreatetime(date);
         sysAssemdetail.setIcreateby(JBoltUserKit.getUserId());

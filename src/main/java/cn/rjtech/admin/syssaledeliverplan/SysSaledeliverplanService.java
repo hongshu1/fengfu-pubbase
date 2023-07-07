@@ -18,6 +18,7 @@ import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syssaledeliverplandetail.SysSaledeliverplandetailService;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.enums.OrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseSysSaledeliverplandetail;
@@ -263,6 +264,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
                 sysotherin.setSourceBillType("手工新增");
                 sysotherin.setSourceBillID(formRecord.getStr("sourcebillid"));//来源id
                 sysotherin.setIsDeleted(false);
+                sysotherin.setIAuditWay(AuditWayEnum.STATUS.getValue());
                 sysotherin.setICustomerId(formRecord.getStr("icustomerid"));
                 saveSaleDeliverPlanModel(sysotherin, formRecord, now, user);
                 //主表新增
@@ -309,7 +311,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
             sysdetail.setDcreatetime(now);
             sysdetail.setSourceBillID(sysotherin.getSourceBillID());
             saveSaleDeliverPlanDetailModel(sysdetail, row, now, user, i);
-
+            //
             sysproductindetail.add(sysdetail);
         }
         syssaledeliverplandetailservice.batchSave(sysproductindetail);
@@ -339,7 +341,6 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
             sysotherin.setCupdatename(user.getName());
             sysotherin.setDupdatetime(now);
             sysproductindetail.add(sysdetail);
-
         }
         syssaledeliverplandetailservice.batchUpdate(sysproductindetail);
     }
@@ -463,7 +464,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
      * */
     public List<Record> getDatasByInvcode(String q, Kv kv) {
         List<Record> recordList = new ArrayList<>();
-        /*if (kv.get("sourcebillid") != null) {
+        if (kv.get("sourcebillid") != null) {
             kv.set("sourcebillid", kv.get("sourcebillid"));
             List<Record> list = dbTemplate("syssaledeliverplan.selectInvocodeByMaskid", kv).find();
             String cinvcodes = list.stream().map(e -> e.getStr("cinvcode")).collect(Collectors.joining(","));
@@ -472,9 +473,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         } else {
             recordList = dbTemplate("syssaledeliverplan.scanInvcode",
                 Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
-        }*/
-        recordList = dbTemplate("syssaledeliverplan.scanInvcode",
-            Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        }
         return recordList;
     }
 
@@ -508,56 +507,6 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         }
         return null;
     }
-
-    /*
-     * 反审批
-     * */
-    public String commonReverseApproveFunc(String autoid) {
-        Date date = new Date();
-        SysSaledeliverplan saledeliverplan = findById(autoid);
-        List<SysSaledeliverplan> saledeliverplanList = new ArrayList<>();
-        //打u8接口，通知u8删除单据，然后更新mom平台的数据
-        String json = getSysPuinstoreDeleteDTO(saledeliverplan.getU8BillNo());
-        try {
-            String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
-            LOG.info(post);
-        } catch (Exception ex) {
-            return ex.getMessage();
-        }
-        //
-        User user = JBoltUserKit.getUser();
-        saledeliverplan.setU8BillNo(null);//将u8的单据号置为空
-        saledeliverplan.setDAuditTime(date);
-        saledeliverplan.setIAuditby(user.getId());
-        saledeliverplan.setCAuditname(user.getUsername());
-        comonApproveMethods(saledeliverplan, date);
-        saledeliverplanList.add(saledeliverplan);
-        //更新
-        batchUpdate(saledeliverplanList);
-        return null;
-    }
-
-    /*
-     * 获取删除的json
-     * */
-    public String getSysPuinstoreDeleteDTO(String u8billno) {
-        User user = JBoltUserKit.getUser();
-
-        Record userRecord = puinstoreService.findU8UserByUserCode(user.getUsername());
-        Record u8Record = puinstoreService.findU8RdRecord01Id(u8billno);
-
-        SysPuinstoreDeleteDTO deleteDTO = new SysPuinstoreDeleteDTO();
-        data data = new data();
-        data.setAccid(getOrgCode());
-        data.setPassword(userRecord.get("u8_pwd"));
-        data.setUserID(userRecord.get("u8_code"));
-        Long id = u8Record.getLong("id");
-        data.setVouchId(String.valueOf(id));//u8单据id
-        deleteDTO.setData(data);
-
-        return JSON.toJSONString(deleteDTO);
-    }
-
 
     /*提审前业务，如有异常返回错误信息*/
     @Override
@@ -612,10 +561,15 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         ArrayList<SysSaledeliverplan> sysSaledeliverplans = new ArrayList<>();
         for (Long autoid : formAutoIds) {
             SysSaledeliverplan saledeliverplan = findById(autoid);
-            comonApproveMethods(saledeliverplan, date);
-            sysSaledeliverplans.add(saledeliverplan);
+            try {
+                commonApproveFunc(saledeliverplan, date);
+            } catch (Exception ex) {
+                return ex.getMessage();
+            }
 
             //todo 审核通过，获取u8单号
+
+            sysSaledeliverplans.add(saledeliverplan);
         }
         ValidationUtils.isTrue(batchUpdate(sysSaledeliverplans).length > 0, "批量审批通过失败！");
         return null;
@@ -644,12 +598,90 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     }
 
     /*
+     * 公共审批通过方法
+     * */
+    public String commonApproveFunc(SysSaledeliverplan saledeliverplan, Date date) throws Exception {
+        comonApproveMethods(saledeliverplan, date);
+        String u8Billno = "";
+        //2、同步于U8
+        String json = getSysPuinstoreDto();
+        try {
+            u8Billno = new BaseInU8Util().base_in(json);
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+        //3、如果成功，给u8的单据号；不成功，把单据号置为空，状态改为审核不通过
+        saledeliverplan.setU8BillNo(u8Billno);
+        if (!saledeliverplan.update()) {
+            return "审核通过失败！！!";
+        }
+        return null;
+    }
+
+    /*
      * 公共方法
      * */
     public void comonApproveMethods(SysSaledeliverplan saledeliverplan, Date date) {
         saledeliverplan.setDupdatetime(date);
         saledeliverplan.setIupdateby(JBoltUserKit.getUserId());
         saledeliverplan.setCupdatename(JBoltUserKit.getUserName());
+    }
+
+    /*
+     * 公共反审批的方法
+     * */
+    public String commonReverseApproveFunc(String autoid) {
+        Date date = new Date();
+        SysSaledeliverplan saledeliverplan = findById(autoid);
+        List<SysSaledeliverplan> saledeliverplanList = new ArrayList<>();
+        //打u8接口，通知u8删除单据，然后更新mom平台的数据
+        String json = getSysPuinstoreDeleteDTO(saledeliverplan.getU8BillNo());
+        try {
+            String post = new BaseInU8Util().deleteVouchProcessDynamicSubmitUrl(json);
+            LOG.info(post);
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+        //
+        User user = JBoltUserKit.getUser();
+        saledeliverplan.setU8BillNo(null);//将u8的单据号置为空
+        saledeliverplan.setDAuditTime(date);
+        saledeliverplan.setIAuditby(user.getId());
+        saledeliverplan.setCAuditname(user.getUsername());
+        comonApproveMethods(saledeliverplan, date);
+        saledeliverplanList.add(saledeliverplan);
+        //更新
+        batchUpdate(saledeliverplanList);
+        return null;
+    }
+
+    /*
+     * 获取请求u8的json
+     * */
+    public String getSysPuinstoreDto() {
+
+        return "";
+    }
+
+    /*
+     * 获取删除的json
+     * */
+    public String getSysPuinstoreDeleteDTO(String u8billno) {
+        User user = JBoltUserKit.getUser();
+
+        Record userRecord = puinstoreService.findU8UserByUserCode(user.getUsername());
+        Record u8Record = puinstoreService.findU8RdRecord01Id(u8billno);
+
+        SysPuinstoreDeleteDTO deleteDTO = new SysPuinstoreDeleteDTO();
+        data data = new data();
+        data.setAccid(getOrgCode());
+        data.setPassword(userRecord.get("u8_pwd"));
+        data.setUserID(userRecord.get("u8_code"));
+        Long id = u8Record.getLong("id");
+        data.setVouchId(String.valueOf(id));//u8单据id
+        deleteDTO.setData(data);
+
+        return JSON.toJSONString(deleteDTO);
     }
 
     /**
@@ -701,7 +733,7 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
                     sysSaledeliverplandetail.setIsDeleted(false);
                     sysSaledeliverplandetail.setSourceBillType("委外销售订单");
                     sysSaledeliverplandetail.setSourceBillNo(subcontractsaleorderm.getCOrderNo());
-                    sysSaledeliverplandetail.setSourceBIllNoRow(subcontractsaleorderm.getCOrderNo() + "-" + row);
+                    sysSaledeliverplandetail.setSourceBIllNoRow(subcontractsaleorderm.getCOrderNo() + "-" + (i * 10));
                     sysSaledeliverplandetail.setSourceBillDid(subcontractsaleorderd.getIAutoId().toString());
                     sysSaledeliverplandetail.setIcreateby(JBoltUserKit.getUserId());
                     sysSaledeliverplandetail.setCcreatename(JBoltUserKit.getUserName());
