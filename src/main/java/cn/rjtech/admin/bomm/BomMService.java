@@ -1703,7 +1703,7 @@ public class BomMService extends BaseService<BomM> {
 	}
 	
 	private boolean checkInventoryIsNotExistence(Long orgId, Long inventoryId){
-		Sql sql = selectSql().eq(BomM.IORGID, orgId).set(BomM.ISDELETED, "0").eq(BomM.IINVENTORYID, inventoryId);
+		Sql sql = selectSql().eq(BomM.IORGID, orgId).eq(BomM.ISDELETED, "0").eq(BomM.IINVENTORYID, inventoryId);
 		BomM bomM = findFirst(sql);
 		return isOk(bomM);
 	}

@@ -1390,8 +1390,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
    */
   @Override
   public String withdrawFromAuditting(long formAutoId) {
-    ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.SAVED.getValue()).isOk(), JBoltMsg.FAIL);
-    return null;
+   return null;
   }
 
   /**
@@ -1428,9 +1427,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
    */
   @Override
   public String postBatchReject(List<Long> formAutoIds) {
-    for (Long formAutoId:formAutoIds) {
-      ValidationUtils.isTrue(updateColumn(formAutoId, "iOrderStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
-    }
     return null;
   }
 

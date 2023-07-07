@@ -155,12 +155,14 @@ public class PurchaseOrderDService extends BaseService<PurchaseOrderD> {
 		PurchaseOrderD purchaseOrderD = new PurchaseOrderD();
 		purchaseOrderD.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		purchaseOrderD.setIPurchaseOrderMid(purchaseOrderMid);
-		purchaseOrderD.setIVendorAddrId(iVendorAddrId);
 		purchaseOrderD.setIInventoryId(iInventoryId);
 		purchaseOrderD.setIsDeleted(false);
 		purchaseOrderD.setIsPresent(isPresent);
 		purchaseOrderD.setCMemo(cMemo);
-		purchaseOrderD.setCAddress(cAddress);
+		if(!"".equals(cAddress) && iVendorAddrId!=null){
+			purchaseOrderD.setCAddress(cAddress);
+			purchaseOrderD.setIVendorAddrId(iVendorAddrId);
+		}
 		Integer pkgQty = 0;
 		if (StrUtil.isNotBlank(iPkgQty)){
 			pkgQty = Integer.valueOf(iPkgQty);
