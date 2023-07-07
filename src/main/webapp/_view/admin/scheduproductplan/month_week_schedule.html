@@ -804,8 +804,12 @@
                             let Z = 10;//在库天数公式嵌入起始列
                             let jihuaRow = 8;//计划在库公式嵌入起始行
                             let jihuaCol = 10;//计划在库公式嵌入起始列
+                            let valArr = [];
                             for (let k = 0; k < parms['scheduplanmonth'][i].childList[j].day.length; k++) {
                                 sheet.setValue(shiyongRow, shiyongCol+k, parms['scheduplanmonth'][i].childList[j].day[k].shiyong);
+                                //
+                                // sheet.setValue(shiyongRow, 16, 120);
+                                //
                                 sheet.setValue(1 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
                                 sheet.setValue(2 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].two));
                                 sheet.setValue(3 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].three));
@@ -836,11 +840,24 @@
                                 sheet.setFormula(shiyongRow+5-1,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //判断当天是否为工作日
                                 if(parms['scheduplanmonth'][i].childList[j].day[k].iswork){
-                                    // console.log(parms['scheduplanmonth'][i].childList[j].day[k].iswork,'----------'+k)
                                     //嵌入在库天数公式
                                     sheet.setFormula(AS,Z+k,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
                                 }else{
+                                    parms['colArr'] = [];
+                                    var col = Z+k; // 初始列值
+                                    parms['cols'] = col;
+                                    var row = AS-5; // 初始行值
+                                    let value = 0;
 
+                                    for (let l = 0; l < Num; l++) {
+                                        if(parms['scheduplanmonth'][i].childList[j].day.length<=parms['scheduplanmonth'][i].childList[j].day.length-1){
+                                            console.log(parms['scheduplanmonth'][i].childList[j].day[parms['cols']-10])
+                                        }
+                                        findColumns(parms['cols'],row,true);
+                                    }
+                                    // console.log(parms['colArr'],"3333333333333")
+                                    // console.log(`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})`)
+                                    sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})/R${AS+1}C10`);
                                 }
                                 //控制小数位为1位
                                 sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
@@ -883,12 +900,23 @@
             }
         })
     }
-    // let workI = 0;
-    // function setFormula(row,col,index){
-    //     debugger
-    //
-    //     // console.log(sheet.getValue(row-5,workCell+workI))
-    // }
+
+    function findColumns(col,row,isWork){
+        let value = 0;
+        value = sheet.getValue(row, parms['cols']);
+        if(value==0){
+            ++parms['cols'];
+            if(isWork){
+                parms['colArr'].push(parms['cols']+1);
+                ++parms['cols'];
+            }else{
+                findColumns(parms['cols'],row)
+            }
+        }else {
+            parms['colArr'].push(parms['cols']+1);
+            ++parms['cols'];
+        }
+    }
     // 订阅 valueChanged 事件
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let {row,col} = info;
