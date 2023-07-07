@@ -65,6 +65,13 @@
 
 #define js()
 <script>
+    console.log(1111);
+    
+    window.func = {
+        parentFunction: function (message) {
+            console.log('Parent function received message:', message);
+        }
+    }
 
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="approvalMForm")

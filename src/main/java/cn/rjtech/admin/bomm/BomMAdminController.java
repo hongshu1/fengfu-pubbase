@@ -1,6 +1,8 @@
 package cn.rjtech.admin.bomm;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.bomd.BomDService;
 import cn.rjtech.admin.bomdata.BomDataService;
@@ -135,11 +137,12 @@ public class BomMAdminController extends BaseAdminController {
 	public void audit(@Para(value = "bomMasterId") Long bomMasterId, @Para(value = "status") Integer status) {
 		renderJson(service.audit(bomMasterId, status));
 	}
-	
+	@CheckPermission(PermissionKey.BOMMASTER_VERSION_DELETE)
 	public void del() {
 		renderJson(service.del(getLong(0)));
 	}
-	
+
+	@CheckPermission(PermissionKey.BOMMASTER_BOMM_DEL)
 	public void delFile() {
 		renderJson(service.delFile(getLong(0)));
 	}
@@ -148,7 +151,8 @@ public class BomMAdminController extends BaseAdminController {
 	public void saveCopy(@Para(value = "cversion") String cVersion, @Para(value = "dDisableDate") String dDisableDate, @Para(value = "dEnableDate") String dEnableDate,  @Para(value = "oldId") Long oldId) {
 		renderJson(service.saveCopy(oldId, dEnableDate, dDisableDate, cVersion));
 	}
-	
+
+	@CheckPermission(PermissionKey.BOMMASTER_SUBMIT)
 	public void submitForm(@Para(value = "formJsonData") String formJsonData, @Para(value = "tableJsonData") String tableJsonData) {
 		
 		renderJsonData(service.submitForm(formJsonData, tableJsonData));
@@ -166,7 +170,7 @@ public class BomMAdminController extends BaseAdminController {
     public void getTreeTableDatas(){
 		renderJsonData(bomDService.getTreeTableDatas(getKv()));
 	}
- 
+	@CheckPermission(PermissionKey.BOMMASTER_VERSION_EXPORT)
 	public void exportExcelByIds() throws Exception {
 		String ids = get("ids");
 		if (notOk(ids)) {
@@ -180,7 +184,8 @@ public class BomMAdminController extends BaseAdminController {
 		}
 		renderBytesToExcelXlsFile(service.exportExcelTpl(data));
 	}
-	
+
+	@CheckPermission(PermissionKey.BOMMASTER_VERSION_EXPORT)
 	public void exportExcelAll() throws Exception {
 		List<Record> rows = service.getVersionRecordList(getKv());
 		if (notOk(rows)) {
@@ -189,7 +194,7 @@ public class BomMAdminController extends BaseAdminController {
 		}
 		renderBytesToExcelXlsFile(service.exportExcelTpl(rows));
 	}
-	
+	@CheckPermission(PermissionKey.BOMCOMPARE_IMPORT)
 	public void exportExcelByForm() throws Exception {
 		List<Record> tableDatas = bomDService.getTreeTableDatas(getKv());
 		if (notOk(tableDatas)) {
