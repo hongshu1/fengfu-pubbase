@@ -86,8 +86,4 @@ public class SysSaledeliverplandetailAdminController extends BaseAdminController
         renderJson(service.deleteById(getLong(0)));
     }
 
-    @UnCheck
-    public void findEditTableDatas() {
-        renderJsonData(service.findEditTableDatas(getKv()));
-    }
 }
