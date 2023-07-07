@@ -54,8 +54,6 @@ WHERE
 	WHERE
 		a.isDeleted = '0'
 		AND a.iOrgId = #para(orgId)
-		AND a.dEnableDate <= CONVERT ( DATE, GETDATE( ) )
-		AND a.dDisableDate >= CONVERT ( DATE, GETDATE( ) )
 		AND a.iAutoId = iPid
 		#if(invIds)
             AND iInventoryId NOT IN (

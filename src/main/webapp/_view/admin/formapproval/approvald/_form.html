@@ -164,6 +164,7 @@
 <script>
 
 	hideParentLayerDialogBtn(0);
+    
 	addParentLayerDialogBtn("保存","lay_primary",function () {
 		submitThisForm_approval_d();
 	})
@@ -202,7 +203,7 @@
 	    data.way = way;
 	    data.object = object;*/
 
-		var data = new Object();
+		var data = {};
 		data.stepname = "stepname";
 		data.iseq = "iseq";
 		data.cname = "cname";
@@ -210,11 +211,10 @@
 		data.object = {"name":"name"};
 
 		console.log('data',data)
-
-        parent.returnDatas(data)
+        parent.insertRows(data);
 
 	    // var jboltId2 = '#(tableId??)';
-	    parent.jboltTableInsertRow('#(tableId??)',data);
+        // parent.jboltTableInsertRow('#(tableId??)', data);x
 		parent.LayerMsgBox.close();
 	    console.log('data',data);
 	}

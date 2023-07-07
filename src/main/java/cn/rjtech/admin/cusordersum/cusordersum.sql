@@ -241,7 +241,10 @@ FROM (
     LEFT JOIN Bd_Customer AS d ON a.iCustomerId = d.iAutoId
     LEFT JOIN Bd_Inventory AS e ON b.iInventoryId = e.iAutoId
     WHERE a.isDeleted = '0' AND b.isDeleted = '0' AND a.iAuditStatus = 2
-    AND a.iYear >= #para(year)
+    AND a.iYear >= #para(year) AND a.iAutoId IN (SELECT MAX(iAutoId) AS iAutoId
+                                                 FROM Co_AnnualOrderM
+                                                 WHERE isDeleted = '0' AND iAuditStatus = 2 AND iYear >= #para(year)
+                                                 GROUP BY iCustomerId,iYear )
     ) AS t
 GROUP BY iCustomerId,cCusCode,cCusName,
     iInventoryId,cInvCode,cInvCode1,cInvName1,
@@ -266,7 +269,10 @@ FROM Co_MonthOrderM AS a
     LEFT JOIN Bd_Customer AS d ON a.iCustomerId = d.iAutoId
     LEFT JOIN Bd_Inventory AS e ON b.iInventoryId = e.iAutoId
 WHERE a.IsDeleted = 0 AND a.iAuditStatus = 2
-  AND a.iYear >= #para(year)
+  AND a.iYear >= #para(year) AND a.iAutoId IN (SELECT MAX(iAutoId) AS iAutoId
+                                               FROM Co_MonthOrderM
+                                               WHERE isDeleted = '0' AND iAuditStatus = 2 AND iYear >= #para(year)
+                                               GROUP BY iCustomerId,iYear,iMonth )
 GROUP BY a.iCustomerId,d.cCusCode,d.cCusName,
     b.iInventoryId,e.cInvCode,e.cInvCode1,e.cInvName1,
     a.iYear,a.iMonth
