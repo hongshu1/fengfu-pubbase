@@ -69,6 +69,7 @@ public class VendorAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.VENDOR_ADD)
     public void add() {
         render("add.html");
     }
@@ -92,6 +93,7 @@ public class VendorAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.VENDOR_EDIT)
     public void edit() {
         Vendor vendor = service.findById(getLong(0));
         if (vendor == null) {
