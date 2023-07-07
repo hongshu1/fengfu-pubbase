@@ -115,12 +115,6 @@ public class SysSaledeliverplandetailService extends BaseService<SysSaledeliverp
         return null;
     }
 
-    public List<Record> findEditTableDatas(Kv kv) {
-        ValidationUtils.notNull(kv.getLong("masid"), JBoltMsg.PARAM_ERROR);
-        List<Record> records = dbTemplate("syssaledeliverplan.dList", kv).find();
-        return records;
-    }
-
     public List<SysSaledeliverplandetail> findListByMasid(String masid) {
         return find("select * from T_Sys_SaleDeliverPlanDetail where masid=?", masid);
     }

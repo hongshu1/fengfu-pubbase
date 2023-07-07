@@ -963,7 +963,16 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 	public void saveOrUpdatePurachseD(Long purchaseOrderMId, List<Record> recordList, int type){
 		List<SubcontractOrderD> subcontractOrderDList = new ArrayList<>();
 		List<SubcontractorderdQty> subcontractorderdQtyList = new ArrayList<>();
-		List<Long> vendorAdIds = recordList.stream().map(record -> record.getLong(PurchaseOrderD.IVENDORADDRID)).collect(Collectors.toList());
+		List<Long> vendorAdIds = recordList.stream()
+				.map(record -> {
+					Long vendorAdId ;
+					if( "".equals(record.get(SubcontractOrderD.IVENDORADDRID))  || record.get(SubcontractOrderD.IVENDORADDRID) == null){
+						return 0L;// 如果为null，返回0L
+					}
+					vendorAdId=record.getLong(SubcontractOrderD.IVENDORADDRID);
+					return vendorAdId;
+				})
+				.collect(Collectors.toList());
 		List<Warehouse> warehouseList = warehouseService.findByIds(vendorAdIds);
 		Map<Long, Warehouse> warehouseMap = warehouseList.stream()
 				.collect(Collectors.toMap(Warehouse::getIAutoId, warehouse -> warehouse));
@@ -972,18 +981,30 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 
 			String isPresentStr = record.getStr(PurchaseOrderD.ISPRESENT);
 			Warehouse warehouse = warehouseMap.get(record.getLong(PurchaseOrderD.IVENDORADDRID));
-			ValidationUtils.notNull(warehouse, "仓库不存在!");
+			if(warehouse==null){
+				type=3;
+			}
 			int isPresent = 0;
 			if (BoolCharEnum.YES.getText().equals(isPresentStr)){
 				isPresent = 1;
 			}
 			SubcontractOrderD subcontractOrderD = null;
+			Long ivendorAddrId=null;
 			switch (type){
 				case 1:
 					subcontractOrderD = subcontractOrderDService.create(purchaseOrderMId,
 							record.getLong(PurchaseOrderD.IVENDORADDRID),
 							record.getLong(PurchaseOrderD.IINVENTORYID),
 							warehouse.getCWhName(),
+							record.getStr(PurchaseOrderD.CMEMO),
+							record.getStr(PurchaseOrderD.IPKGQTY),
+							IsOkEnum.toEnum(isPresent).getText());
+					break;
+				case 3:
+					subcontractOrderD = subcontractOrderDService.create(purchaseOrderMId,
+							ivendorAddrId,
+							record.getLong(PurchaseOrderD.IINVENTORYID),
+							"",
 							record.getStr(PurchaseOrderD.CMEMO),
 							record.getStr(PurchaseOrderD.IPKGQTY),
 							IsOkEnum.toEnum(isPresent).getText());
@@ -1041,6 +1062,9 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		if (CollUtil.isNotEmpty(subcontractOrderDList)){
 			switch (type){
 				case 1:
+					subcontractOrderDService.batchSave(subcontractOrderDList, 500);
+					break;
+				case 3:
 					subcontractOrderDService.batchSave(subcontractOrderDList, 500);
 					break;
 				default:
