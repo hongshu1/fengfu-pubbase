@@ -78,26 +78,27 @@
     function addApprovalD(ele) {
         var getAllDatas = jboltTableGetAllDatas(getJboltId2());
         let index = isNotEmpty(getAllDatas)?getAllDatas.length:1;
-        var temp =
-            $(ele).data('url','/admin/formapproval/addApprovalD?iseq='+index).data('area','80%,80%').data('title','新增审批节点');
-        // DialogUtil.openBy(temp);
+        // var temp = $(ele).data('url','/admin/formapproval/addApprovalD?iseq='+index).data('area','80%,80%').data('title','新增审批节点');
 
-
-
-        parent.DialogUtil.openNewDialog({
+        DialogUtil.openNewDialog({
             title: "新增审批节点",
             optionsEle: ele,
             width: "100%",
             height: "100%",
             offset: "auto",
             zIndex: 20220610,
-            url: "/admin/formapproval/addApprovalD?iseq="+index +"&tableId="+getJboltId2()
+            url: "/admin/formapproval/addApprovalD?iseq=" + index + "&tableId=" + getJboltId2()
         });
 
     }
 
     function returnDatas(data) {
         console.log('returnDatas',data)
+    }
+
+    function insertRows(data) {
+        console.log('insertRows', data);
+        jboltTableInsertRow('#jbolt_table_pheDeliveryLines2_#(pageId)', data)
     }
 
     /**
@@ -114,9 +115,6 @@
     function tableDataSuccess2() {
     }
 
-</script>
-
-<script>
     function getEditableTableOptions2_#(pageId)() {
         var editableTableOptions = {
             trigger: "click",
