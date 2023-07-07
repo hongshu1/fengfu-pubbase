@@ -14,6 +14,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
@@ -24,7 +25,6 @@ import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -53,11 +53,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     @Inject
     private FormApprovalService formApprovalService;
     @Inject
+    private SysPuinstoreService syspuinstoreservice;
+    @Inject
     private RcvDocQcFormMService rcvdocqcformmservice;
     @Inject
-    private SysPureceivedetailService syspureceivedetailservice;
+    private InventoryMfgInfoService inventoryMfgInfoService;
     @Inject
-    private SysPuinstoreService syspuinstoreservice;
+    private SysPureceivedetailService syspureceivedetailservice;
     @Inject
     private SysPuinstoredetailService syspuinstoredetailservice;
 
@@ -133,11 +135,11 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     }
 
 
-
     public String getVenName(String vencode) {
         Vendor first = vendorservice.findFirst("select * from  Bd_Vendor where cVenCode = ?", vencode);
         return first.getCVenName();
     }
+
     /**
      * 检测是否可以删除
      *
@@ -176,10 +178,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + ids + ")");
             for (SysPureceive s : sysPureceives) {
                 if (!"0".equals(String.valueOf(s.getIAuditStatus())) && !"3".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
+                    ValidationUtils.error("收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
-                if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-                    ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
+                if (!s.getIcreateby().equals(JBoltUserKit.getUser().getId())) {
+                    ValidationUtils.error("当前登录人:" + JBoltUserKit.getUser().getName() + ",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
             String[] split = ids.split(",");
@@ -199,10 +201,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         tx(() -> {
             SysPureceive byId = findById(id);
             if (!"0".equals(String.valueOf(byId.getIAuditStatus())) && !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
-                ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+                ValidationUtils.error("收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
-            if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-                ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
+            if (!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())) {
+                ValidationUtils.error("当前登录人:" + JBoltUserKit.getUser().getName() + ",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
             delete("DELETE T_Sys_PUReceiveDetail   where  MasID = ?", id);
@@ -266,7 +268,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                 rcvDocQcFormM.setIStatus(1);
                 //设变号
                 rcvDocQcFormM.setCDcNo(iq.get("cDcCode"));
-            }else {
+            } else {
                 rcvDocQcFormM.setIStatus(0);
             }
         } else {
@@ -300,7 +302,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
      * 通过关键字匹配
      * autocomplete组件使用
      */
-    public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String vencode,String whcode1) {
+    public List<Record> getBarcodeDatas(String q, Integer limit, String orgCode, String vencode, String whcode1) {
         return dbTemplate("syspureceive.getBarcodeDatas", Kv.by("q", q).set("limit", limit).set("orgCode", orgCode).set("vencode", vencode)).find();
     }
 
@@ -318,7 +320,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         //先查询条码是否已添加
         Record first = dbTemplate("syspureceive.barcodeDatas", kv).findFirst();
         if (null != first) {
-            ValidationUtils.isTrue(false, "条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
+            ValidationUtils.error("条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
         }
         first = dbTemplate("syspureceive.barcode", kv).findFirst();
         ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
@@ -341,20 +343,19 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         String operationType = jBoltTable.getFormRecord().getStr("operationType");
 
         if ("submit".equals(operationType)) {
-            if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null
-                    && jBoltTable.getUpdateRecordList() == null) {
+            if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
                 return fail("行数据不能为空");
             }
         }
         // 采购订单推u8才可以添加
         List<Record> list = jBoltTable.getSaveRecordList();
-        if(null != list) {
+        if (null != list) {
             for (Record record : list) {
                 ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
             }
         }
         List<Record> list1 = jBoltTable.getUpdateRecordList();
-        if(null != list1) {
+        if (null != list1) {
             for (Record record : list1) {
                 ValidationUtils.isTrue(this.existSourcebillno(record.getStr("sourcebillno")), "订单编号：" + record.getStr("sourcebillno") + " 没有推U8");
             }
@@ -388,8 +389,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return Ret.ok().set("autoid", sysPureceive.getAutoID());
     }
 
-    private void saveData(JBoltTable jBoltTable, SysPureceive sysPureceive, String operationType, User user,
-                          HashMap<String, String> map) {
+    private void saveData(JBoltTable jBoltTable, SysPureceive sysPureceive, String operationType, User user, HashMap<String, String> map) {
         List<Record> list = jBoltTable.getSaveRecordList();
         if (CollUtil.isEmpty(list)) {
             return;
@@ -606,9 +606,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
      */
     public void determineQty(Record row, int i) {
         Record first = dbTemplate("syspureceive.paginateAdminDatas", Kv.by("careacode", row.getStr("poscode"))).findFirst();
-        if(null != first && !"".equals(first)){
+        if (null != first && !"".equals(first)) {
             Integer imaxcapacity = first.getInt("imaxcapacity");
-            if(null != imaxcapacity && !"".equals(imaxcapacity)){
+            if (null != imaxcapacity && !"".equals(imaxcapacity)) {
                 BigDecimal bigDecimal = new BigDecimal(imaxcapacity);
                 BigDecimal qty = row.getBigDecimal("qty");
                 if (ObjUtil.isNotNull(imaxcapacity)) {
@@ -787,20 +787,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
         return sysPuinstore.getAutoID();
     }
 
-    //查询初物按钮是否打开
-    public boolean button(String cinvcode) {
-        Kv kv = new Kv();
-        kv.set("cinvcode", cinvcode);
-        Record records = dbTemplate("syspureceive.inventoryMfgInfo", kv).findFirst();
-        if (null == records) {
-            return false;
-        }
-        if (records.getStr("isiqc1").equals("0")) {
-            return false;
-        }
-        return true;
-    }
-
     public void check(String ids) {
         String[] split = ids.split(",");
         for (String p : split) {
@@ -836,7 +822,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                         SysPuinstore byId = syspuinstoreservice.findById(firstByBarcode.getMasID());
                         if (null != byId) {
                             if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
-                                ValidationUtils.isTrue(false, "采购入库编号：" + byId.getBillNo() + " 单据，不是未审核状态！！");
+                                ValidationUtils.error( "采购入库编号：" + byId.getBillNo() + " 单据，不是未审核状态！！");
                             }
                         }
                     }
@@ -846,15 +832,16 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                 if (null != firstBycRcvDocNo) {
                     for (RcvDocQcFormM r : firstBycRcvDocNo) {
                         if (!"0".equals(String.valueOf(r.getIStatus()))) {
-                            ValidationUtils.isTrue(false, "来料检 收料单号为：" + r.getCRcvDocNo() + " 单据，已生成下游单据，无法反审！！");
+                            ValidationUtils.error( "来料检 收料单号为：" + r.getCRcvDocNo() + " 单据，已生成下游单据，无法反审！！");
                         }
                     }
                 }
             }
         }
     }
+
     //实现反审之前的操作
-    public String  checkbelowtwo(long formAutoId) {
+    public String checkbelowtwo(long formAutoId) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + formAutoId + ")");
         for (SysPureceive s : sysPureceives) {
             if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
@@ -926,6 +913,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             }
         }
     }
+
     //反审后的操作
     public void delectbelowtwo(long formAutoId) {
         List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + formAutoId + ")");
@@ -964,7 +952,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
 
     //反审后的操作
     public void delectbelowtwo(List<Long> formAutoId) {
-        for(Long q : formAutoId) {
+        for (Long q : formAutoId) {
             List<SysPureceive> sysPureceives = find("select *  from T_Sys_PUReceive where AutoID in (" + q + ")");
             for (SysPureceive s : sysPureceives) {
                 //查出从表
@@ -1012,7 +1000,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
 
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s);
-                HashMap<String, Integer> hashMap = new HashMap<>();
                 boolean once = true;
                 String autoID = "";
                 int i = 1;
@@ -1022,14 +1009,13 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                     Kv kv = new Kv();
                     kv.set("barcode", f.getBarcode());
                     Record row = dbTemplate("syspureceive.tuibarcode", kv).findFirst();
-                    //判断存货开关是否打开,开 推来料检验单，
-                    boolean button = this.button(row.getStr("cinvcode"));
+                    // 判断存货开关是否打开,开 推来料检验单，
+                    boolean button = inventoryMfgInfoService.getIsIqc1(row.getStr("cinvcode"));
                     List<RcvDocQcFormM> tempForms = new ArrayList<>();
                     Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
                     if (button) {
-                        if (rcvDocQcFormM != null && !rcvDocQcFormM.isEmpty()) {
-                            for (int t = 0; t < rcvDocQcFormM.size(); t++) {
-                                RcvDocQcFormM formM = rcvDocQcFormM.get(t);
+                        if (!rcvDocQcFormM.isEmpty()) {
+                            for (RcvDocQcFormM formM : rcvDocQcFormM) {
                                 if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
                                     formM.setIQty(this.add(formM.getIQty(), f.getQty()));
                                 } else {
@@ -1077,9 +1063,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                             syspuinstoredetailservice.save(sysPuinstoredetail);
                             i++;
                         } else {
-                            if (rcvDocQcFormM != null && !rcvDocQcFormM.isEmpty()) {
-                                for (int t = 0; t < rcvDocQcFormM.size(); t++) {
-                                    RcvDocQcFormM formM = rcvDocQcFormM.get(t);
+                            if (!rcvDocQcFormM.isEmpty()) {
+                                for (RcvDocQcFormM formM : rcvDocQcFormM) {
                                     if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
                                         formM.setIQty(this.add(formM.getIQty(), f.getQty()));
                                     } else {
@@ -1135,10 +1120,10 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
      */
     @Override
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
-        String checkbelowtwo =null;
+        String checkbelowtwo = null;
         //最后一个节点才判断下游单据状态
         if (isLast) {
-          checkbelowtwo = this.checkbelowtwo(formAutoId);
+            checkbelowtwo = this.checkbelowtwo(formAutoId);
         }
         return checkbelowtwo;
     }
@@ -1187,7 +1172,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     }
 
     /**
-     *  todo 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
+     * todo 从已审核，撤回到已保存，前置业务实现，如有异常返回错误信息
      */
     @Override
     public String preWithdrawFromAuditted(long formAutoId) {
@@ -1245,7 +1230,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                 SysPureceive byId = findById(s);
                 //查从表数据
                 List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.toString());
-                HashMap<String, Integer> hashMap = new HashMap<>();
                 boolean once = true;
                 String autoID = "";
                 int i = 1;
@@ -1256,13 +1240,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                     kv.set("barcode", f.getBarcode());
                     Record row = dbTemplate("syspureceive.tuibarcode", kv).findFirst();
                     //判断存货开关是否打开,开 推来料检验单，
-                    boolean button = this.button(row.getStr("cinvcode"));
+                    boolean button = inventoryMfgInfoService.getIsIqc1(row.getStr("cinvcode"));
                     List<RcvDocQcFormM> tempForms = new ArrayList<>();
                     Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
                     if (button) {
-                        if (rcvDocQcFormM != null && !rcvDocQcFormM.isEmpty()) {
-                            for (int t = 0; t < rcvDocQcFormM.size(); t++) {
-                                RcvDocQcFormM formM = rcvDocQcFormM.get(t);
+                        if (!rcvDocQcFormM.isEmpty()) {
+                            for (RcvDocQcFormM formM : rcvDocQcFormM) {
                                 if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
                                     formM.setIQty(this.add(formM.getIQty(), f.getQty()));
                                 } else {
@@ -1310,9 +1293,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                             syspuinstoredetailservice.save(sysPuinstoredetail);
                             i++;
                         } else {
-                            if (rcvDocQcFormM != null && !rcvDocQcFormM.isEmpty()) {
-                                for (int t = 0; t < rcvDocQcFormM.size(); t++) {
-                                    RcvDocQcFormM formM = rcvDocQcFormM.get(t);
+                            if (!rcvDocQcFormM.isEmpty()) {
+                                for (RcvDocQcFormM formM : rcvDocQcFormM) {
                                     if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
                                         formM.setIQty(this.add(formM.getIQty(), f.getQty()));
                                     } else {
@@ -1345,7 +1327,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             SysPureceive byId = findById(formAutoId);
             //查从表数据
             List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(formAutoId.toString());
-            HashMap<String, Integer> hashMap = new HashMap<>();
             boolean once = true;
             String autoID = "";
             int i = 1;
@@ -1356,13 +1337,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                 kv.set("barcode", f.getBarcode());
                 Record row = dbTemplate("syspureceive.tuibarcode", kv).findFirst();
                 //判断存货开关是否打开,开 推来料检验单，
-                boolean button = this.button(row.getStr("cinvcode"));
+                boolean button = inventoryMfgInfoService.getIsIqc1(row.getStr("cinvcode"));
                 List<RcvDocQcFormM> tempForms = new ArrayList<>();
                 Record barcode = dbTemplate("syspureceive.purchaseOrderD", Kv.by("barcode", f.getBarcode())).findFirst();
                 if (button) {
-                    if (rcvDocQcFormM != null && !rcvDocQcFormM.isEmpty()) {
-                        for (int t = 0; t < rcvDocQcFormM.size(); t++) {
-                            RcvDocQcFormM formM = rcvDocQcFormM.get(t);
+                    if (!rcvDocQcFormM.isEmpty()) {
+                        for (RcvDocQcFormM formM : rcvDocQcFormM) {
                             if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
                                 formM.setIQty(this.add(formM.getIQty(), f.getQty()));
                             } else {
@@ -1410,9 +1390,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                         syspuinstoredetailservice.save(sysPuinstoredetail);
                         i++;
                     } else {
-                        if (rcvDocQcFormM != null && !rcvDocQcFormM.isEmpty()) {
-                            for (int t = 0; t < rcvDocQcFormM.size(); t++) {
-                                RcvDocQcFormM formM = rcvDocQcFormM.get(t);
+                        if (!rcvDocQcFormM.isEmpty()) {
+                            for (RcvDocQcFormM formM : rcvDocQcFormM) {
                                 if (String.valueOf(formM.getIInventoryId()).equals(barcode.getStr("iinventoryId"))) {
                                     formM.setIQty(this.add(formM.getIQty(), f.getQty()));
                                 } else {
