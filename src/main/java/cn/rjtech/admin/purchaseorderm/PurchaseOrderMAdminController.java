@@ -399,7 +399,7 @@ public class PurchaseOrderMAdminController extends BaseAdminController {
     @SuppressWarnings("unchecked")
     public void purchaseordermOne(@Para(value = "iautoid") Long iautoid,@Para(value = "page") Integer page,
     @Para(value = "type") Integer type) throws Exception {
-        Kv data = service.pageOnePdf(iautoid, page,type);
+        Kv data = service.pageOnePdf(iautoid, page,type,getKv());
         String Version="";
         if(type==0){
             Version="purchaseOrderDBatch.xlsx";

@@ -10,26 +10,35 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.rcvpland.RcvPlanDService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.OrderStatusEnum;
+import cn.rjtech.model.momdata.GoodsPaymentD;
+import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.RcvPlanD;
 import cn.rjtech.model.momdata.RcvPlanM;
 import cn.rjtech.model.momdata.base.BaseRcvPlanD;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +70,10 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
     private RcvPlanDService     planDService;
     @Inject
     private FormApprovalService formApprovalService;
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingdService;
+    @Inject
+    private InventoryService inventoryservice;
 
 
     /**
@@ -329,6 +342,66 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
 
         }
         return null;
+    }
+
+    /**
+     * 读取excel文件
+     * @param file
+     * @return
+     */
+    public Ret importExcel(File file, String cformatName) {
+        StringBuilder errorMsg=new StringBuilder();
+        //使用字段配置维护
+        Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
+//		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
+        String docInfoRelaStrings= JSON.toJSONString(importData);
+        List<RcvPlanD> rcvPlanDS = JSON.parseArray(docInfoRelaStrings, RcvPlanD.class);
+        System.out.println("===="+rcvPlanDS);
+        if(notOk(rcvPlanDS)) {
+            if(errorMsg.length()>0) {
+                return fail(errorMsg.toString());
+            }else {
+                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+            }
+        }
+
+//        List<Record> lines = new ArrayList<>();
+//        for (RcvPlanD rcvPlanD:rcvPlanDS){
+//            String cInvCode = rcvPlanD.getCInvCode();
+//            Record record = new Record();
+//            Inventory inventory = inventoryservice.findFirst("select * from bd_inventory where cInvCode= ? ", cInvCode);
+//            record.set("cinvcode1",inventory.get("cinvcode1"));
+//            record.set("cinvname1",inventory.get("cinvname1"));
+//            lines.add(record);
+//        }
+//        rcvPlanDS.add(lines);
+
+        //执行批量操作
+        boolean success=tx(new IAtom() {
+            @Override
+            public boolean run() throws SQLException {
+                return true;
+            }
+        });
+
+        if(!success) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL);
+        }
+        return SUCCESS.data(rcvPlanDS);
+    }
+
+    /**
+     * 设置参数
+     * @param goodsPaymentDModel
+     * @return
+     */
+    private GoodsPaymentD setGoodsPaymentDModel(GoodsPaymentD goodsPaymentDModel){
+        String cInvCode = goodsPaymentDModel.getCInvCode();
+        Inventory inventory = inventoryservice.findFirst("select * from bd_inventory where cInvCode= ? ", cInvCode);
+        System.out.println("cInvCode===="+cInvCode);
+        goodsPaymentDModel.setIAutoId(JBoltSnowflakeKit.me.nextId());
+        goodsPaymentDModel.setIInventoryId(StrUtil.toString(inventory.getIAutoId()));
+        return goodsPaymentDModel;
     }
 
     /*处理审批通过的其他业务操作，如有异常返回错误信息*/
