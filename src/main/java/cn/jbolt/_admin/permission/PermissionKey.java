@@ -3093,4 +3093,20 @@ public class PermissionKey {
 	 * 计量单位档案
 	 */
 	public static final String UOM = "uom";
+	/**
+	 * 新增
+	 */
+	public static final String EQUIPMENTMODEL_ADD = "equipmentmodel_add";
+	/**
+	 * 修改
+	 */
+	public static final String EQUIPMENTMODEL_EDIT = "equipmentmodel_edit";
+	/**
+	 * 删除
+	 */
+	public static final String EQUIPMENTMODEL_DELETE = "equipmentmodel_delete";
+	/**
+	 * 导出
+	 */
+	public static final String EQUIPMENTMODEL_EXPORT = "equipmentmodel_export";
 }
