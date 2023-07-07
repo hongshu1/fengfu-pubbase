@@ -647,7 +647,7 @@ public abstract class BaseSysSaledeliverplan<M extends BaseSysSaledeliverplan<M>
 	/**
 	 * U8单据号
 	 */
-	public M setU8BillNo(java.lang.Boolean U8BillNo) {
+	public M setU8BillNo(java.lang.String U8BillNo) {
 		set("U8BillNo", U8BillNo);
 		return (M)this;
 	}

@@ -32,7 +32,7 @@
     <!-- 定义JBoltTable使用的数据渲染模板 -->
     <textarea class="jb_tpl_box" id="SysSaledeliverplan_tpl_#(pageId)">
 		{@each datas as data,index}
-		<tr data-id="${data.AutoID}">
+		<tr data-id="${data.autoid}">
 			<td>${pageNumber,pageSize,index | rownum}</td>
       <td>
         {@if data.iauditstatus==0}
@@ -90,7 +90,7 @@
       <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <button data-dialogbtn data-area="95%,95%" data-handler="jboltTablePageToFirst"
                 id="toolbar_addBtn_#(pageId)" data-title="新增销售出货(计划)" data-url="admin/salesShipmentList/addConfirm"
-                class="btn btn-outline-secondary btn-sm"><!--addConfirm-->
+                class="btn btn-outline-secondary btn-sm">
           新增
         </button>
 

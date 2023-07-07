@@ -58,6 +58,7 @@ public class WarehouseAdminController extends BaseAdminController {
   /**
    * 新增
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_ADD)
   public void add() {
     render("add.html");
   }
@@ -65,6 +66,7 @@ public class WarehouseAdminController extends BaseAdminController {
   /**
    * 保存
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_ADD)
   public void save() {
     renderJson(service.save(getModel(Warehouse.class, "warehouse")));
   }
@@ -72,6 +74,7 @@ public class WarehouseAdminController extends BaseAdminController {
   /**
    * 编辑
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_EDIT)
   public void edit() {
     Warehouse warehouse = service.findById(getLong(0));
     if (warehouse == null) {
@@ -85,6 +88,7 @@ public class WarehouseAdminController extends BaseAdminController {
   /**
    * 更新
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_EDIT)
   public void update() {
     renderJson(service.update(getModel(Warehouse.class, "warehouse")));
   }
@@ -92,6 +96,7 @@ public class WarehouseAdminController extends BaseAdminController {
   /**
    * 批量删除
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_DELETE)
   public void deleteByIds() {
     renderJson(service.deleteByBatchIds(get("ids")));
   }
@@ -144,6 +149,7 @@ public class WarehouseAdminController extends BaseAdminController {
    * 导出
    */
   @SuppressWarnings("unchecked")
+  @CheckPermission(PermissionKey.WAREHOUSE_EXPORT)
   public void dataExport() throws Exception {
     List<Record> rows = service.list(getKv());
 
@@ -159,6 +165,7 @@ public class WarehouseAdminController extends BaseAdminController {
    * 数据导入
    */
   @SuppressWarnings("unchecked")
+  @CheckPermission(PermissionKey.WAREHOUSE_IMPORT)
   public void importExcelClass() {
     UploadFile uploadFile = getFile("file");
     ValidationUtils.notNull(uploadFile, "上传文件不能为空");

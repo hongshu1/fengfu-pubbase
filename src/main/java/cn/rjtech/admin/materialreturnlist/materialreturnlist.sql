@@ -105,6 +105,7 @@ SELECT
     t1.VenCode,
     t6.cVenName,
     t2.Whcode,
+    t2.PosCode,
     t9.cWhName
 FROM
     T_Sys_PUInStoreDetail t2
@@ -211,6 +212,8 @@ select t1.AutoID,
        t1.SourceBillNo,
        t1.RdCode,
        t1.BillDate,
+       t1.WhCode,
+       t1.WhName,
        t5.cRdName,
        t3.cDepName,
        t4.cPTName,
@@ -236,6 +239,8 @@ where 1 =1
         AND t1.sourcebillno = #para(sourcebillno)
     #end
 GROUP BY
+    t1.WhCode,
+    t1.WhName,
     t1.BillType,
     t1.DeptCode,
     t1.VenCode,
@@ -259,7 +264,8 @@ ORDER BY t1.dCreateTime DESC
 SELECT
     ( SELECT SUM ( Qty ) FROM T_Sys_PUInStoreDetail WHERE BarCode = pd.BarCode ) AS qtys,
     0 - pd.Qty AS qty,
-    a.cCompleteBarcode AS BarCode,
+    pd.BarCode,
+    pd.PosCode,
     b.cInvCode ,
     b.cInvName ,
     b.cInvCode1,
@@ -398,7 +404,7 @@ select top #(limit)
        b.cInvName1,
        a.dPlanDate AS plandate,
        b.cInvStd AS cinvstd,
-       a.iQty AS qty,
+       0 - a.iQty AS qty,
        a.iQty,
        m.cOrderNo AS SourceBillNo,
        m.iBusType AS SourceBillType,
@@ -464,6 +470,7 @@ WHERE isDeleted = 0
 
 #sql("getBarcodes")
 select
+    pd.PosCode,
     a.cCompleteBarcode as barcode,
     b.cInvCode ,
     b.cInvName ,
@@ -471,7 +478,7 @@ select
     b.cInvName1,
     a.dPlanDate as plandate,
     b.cInvStd as cinvstd,
-    a.iQty as qty,
+    0 - a.iQty AS qty,
     a.iQty,
     m.cOrderNo as SourceBillNo,
     m.iBusType as SourceBillType,

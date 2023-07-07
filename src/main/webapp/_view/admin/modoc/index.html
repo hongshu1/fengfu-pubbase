@@ -14,6 +14,7 @@
                     <input type="text" autocomplete="off" class="form-control" placeholder="=存货编码=" name="cinvcode" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=客户部番=" name="cInvCode1" value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="=部品名称=" name="cInvName1" value=""/>
+                    
                     <!--<input type="text" autocomplete="off" class="form-control" placeholder="=生产部门=" name="cDepName" value=""/>-->
                     <select class="form-control"
                             data-autoload
@@ -22,7 +23,6 @@
                             data-url="admin/department/getTreeTableDatas?isApsInvoled="
                             data-text="=生产部门="
                             data-text-attr="cdepname"
-                            data-value-attr="iautoid"
                             data-value=""
                             data-value-attr="iautoid">
                     </select>
@@ -39,31 +39,33 @@
             </div>
         </div>
     </div>
+    
     <div class="jbolt_page_content" >
+        
         <!-- JBoltTable的数据模板定义-->
         <textarea class="jb_tpl_box" id="moDocRowtpl_#(pageId)">
-{@each datas as data,index}
-<tr data-id="${data.iautoid}" >
-<td>${pageNumber,pageSize,index | rownum}</td>
-<td>
-    {@if data.istatus != 0 || data.iauditstatus!=0}
-        <a href="admin/modoc/details/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn" data-btn="no">查看</a>
-    {@/if}
-    {@if data.istatus == 0 && data.itype == 2 && data.iauditstatus == 0}
-        <a href="admin/modoc/updatas/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
-    {@/if}
-    {@if data.istatus == 0 && data.iauditstatus == 0 || data.iauditstatus == 3}
-        <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
-    {@/if}
-    {@if data.istatus == 4 || data.istatus == 5 }
-        <a href="admin/modoc/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定关闭此数据？" class="jbolt_table_delbtn">关闭</a>
-    {@/if}
-    {@if data.istatus == 4  || data.istatus== 5 || data.istatus== 6 ||  data.istatus==7}
-        <button data-openpage="dialog"  data-handler="jboltTablePageToFirst"
-             data-title="" data-url="admin/modoc/edit/${data.iautoid}"  data-area="100%,100%" data-fs="true"  class="btn btn-outline-primary btn-sm">现品票
-        </button>
-    {@/if}
-</td>
+        {@each datas as data,index}
+        <tr data-id="${data.iautoid}" >
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                {@if data.istatus != 0 || data.iauditstatus!=0}
+                    <a href="admin/modoc/details/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单详情"  data-handler="refreshJBoltTable" data-dialog-title="查看" class="jbolt_table_editbtn" data-btn="no">查看</a>
+                {@/if}
+                {@if data.istatus == 0 && data.itype == 2 && data.iauditstatus == 0}
+                    <a href="admin/modoc/updatas/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
+                {@/if}
+                {@if data.istatus == 0 && data.iauditstatus == 0 || data.iauditstatus == 3}
+                    <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+                {@/if}
+                {@if data.istatus == 4 || data.istatus == 5 }
+                    <a href="admin/modoc/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定关闭此数据？" class="jbolt_table_delbtn">关闭</a>
+                {@/if}
+                {@if data.istatus == 4  || data.istatus== 5 || data.istatus== 6 ||  data.istatus==7}
+                    <button data-openpage="dialog"  data-handler="jboltTablePageToFirst"
+                         data-title="" data-url="admin/modoc/edit/${data.iautoid}"  data-area="100%,100%" data-fs="true"  class="btn btn-outline-primary btn-sm">现品票
+                    </button>
+                {@/if}
+            </td>
             <td hidden>${data.iautoid}</td>
              {@if data.iauditstatus == 1  || data.iauditstatus== 2 || data.iauditstatus== 3 }
              <td >${data.iauditstatus | cOrderStatusDescByAuditStatus}</td>
@@ -82,32 +84,24 @@
             <td>${data.iqty}</td>
             <td>${data.icompqty}</td>
             <td>${data.dcreatetime}</td>
-
-</tr>
-{@/each}
-</textarea>
+        </tr>
+        {@/each}
+        </textarea>
 
         <!-- 工具条 toolbar -->
         <div class="jbolt_table_toolbar" id="moDoc_toolbar_#(pageId)">
             <div class="" role="group" aria-label="btn-group">
-                <button data-openpage="dialog"  data-handler="jboltTablePageToFirst"
-                        data-title="新增工单" data-url="admin/modoc/add" data-fs="true"  class="btn btn-outline-primary btn-sm"><i
-                        class="fa fa-plus"></i> 新增
-                </button>
-                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i
-                        class="fa fa-refresh"></i> 刷新
-                </button>
-                #include("/_view/_common/_batch_approval_btns.html", formSn="Mo_MoDoc", uri="admin/modoc",
-                primaryKeyName="iAutoId", className="cn.rjtech.admin.modoc.MoDocService", permissionKeyPrefix="modoc")
+                <button data-openpage="dialog"  data-handler="jboltTablePageToFirst" data-title="新增工单" data-url="admin/modoc/add" data-fs="true"  class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新</button>
+                
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Mo_MoDoc", uri="admin/modoc", primaryKeyName="iAutoId", className="cn.rjtech.admin.modoc.MoDocService", permissionKeyPrefix="modoc")
             </div>
-
             <div class="clearfix"></div>
         </div>
-
-
+        
         <table class="jbolt_table jbolt_main_table table-center hover_info"
                data-jbolttable
-               id="modoctable"
+               id="jbolt_table_#(pageId)"
                data-height="fill"
                data-ajax="true"
                data-url="admin/modoc/datas"
@@ -143,7 +137,6 @@
             <tbody>
             </tbody>
         </table>
-
 
     </div>
 </div>

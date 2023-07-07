@@ -11,7 +11,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.sysscandeliver.SysScandeliverService;
-import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.SysScandeliver;
 import cn.rjtech.model.momdata.SysScandeliverdetail;
 import cn.rjtech.util.ValidationUtils;
@@ -284,7 +283,7 @@ public class SysScandeliverOneService extends BaseService<SysScandeliver> {
 				}
 
 			} else {
-				ValidationUtils.isTrue(false, "该客户未配置出货单据类型");
+				ValidationUtils.error( "该客户未配置出货单据类型");
 			}
 		}
 			return true;

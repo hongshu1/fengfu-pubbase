@@ -7,8 +7,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
-import cn.rjtech.model.momdata.SysPureceive;
-import cn.rjtech.model.momdata.SysPureceivedetail;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -144,10 +142,10 @@ public class SysProductindetailService extends BaseService<SysProductindetail> {
                 SysProductindetail byId1 = findById(s);
                 SysProductin byId = sysproductinservice.findById(byId1.getMasID());
                 if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+                    ValidationUtils.error( "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
                 }
                 if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-                    ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+                    ValidationUtils.error( "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
                 }
             }
             deleteByIds(ids);
@@ -169,10 +167,10 @@ public class SysProductindetailService extends BaseService<SysProductindetail> {
         SysProductindetail byId1 = findById(id);
         SysProductin byId = sysproductinservice.findById(byId1.getMasID());
         if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
-            ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+            ValidationUtils.error( "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
         }
         if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-            ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+            ValidationUtils.error( "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
         }
         deleteById(id);
 //        updateColumn(id, "isdeleted", true);

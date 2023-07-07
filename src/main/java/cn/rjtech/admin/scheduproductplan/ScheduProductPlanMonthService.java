@@ -798,6 +798,9 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int seq = 1;
                 //计算每一天各物料的计划在库
                 for (String inv : invArrar) {
+                    Record info = invInfoMap.get(inv);
+                    //内作在库天数
+                    int iInnerInStockDays = info.get("iInnerInStockDays") != null ? info.getInt("iInnerInStockDays") : 2;
                     //期初库存
                     int stockQty = inventory_originalMap.get(inv);
                     //计划使用
@@ -808,12 +811,31 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int PPQty = ppArray[i];
 
 
-                    //明天计划使用
+                    //明后两天计划使用(若为休息日且计划使用数为0，那么则依次往后取)
+                    int afterPPQty = 0;
+                    int num = i + 1; //当天+1
+                    for (int x = 0; x < iInnerInStockDays; x++) {
+                        for (int j = num; j < scheduDateList.size(); j++) {
+                            //那天为休息日且计划使用数为0则往后推
+                            if (workdayCal[num] == 0 && ppArray[num] == 0){
+                                num++;
+                                continue;
+                            }
+                            break;
+                        }
+                        if (num >= ppArray.length){
+                            afterPPQty = afterPPQty + avgQty;
+                        }else {
+                            afterPPQty = afterPPQty + ppArray[num];
+                        }
+                        num = num + 1; //明天+1
+                    }
+                    /*//明天计划使用
                     int twoDayQty;
                     int num = i + 1; //当天+1
                     for (int j = num; j < scheduDateList.size(); j++) {
                         //那天为休息日且计划使用数为0则往后推
-                        if (workdayCal[j] == 0 && ppArray[j] == 0){
+                        if (workdayCal[num] == 0 && ppArray[num] == 0){
                             num++;
                             continue;
                         }
@@ -841,17 +863,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         threeDayQty = ppArray[num];
                     }
                     //明后两天计划使用(若为休息日且计划使用数为0，那么则依次往后取)
-                    int afterTwoPPQty = twoDayQty + threeDayQty;
+                    int afterPPQty = twoDayQty + threeDayQty;*/
 
-                    /*//明后两天计划使用
-                    int afterTwoPPQty;
-                    if (i == ppArray.length - 2){
-                        afterTwoPPQty = ppArray[i + 1] + avgQty;
-                    }else if (i == ppArray.length - 1){
-                        afterTwoPPQty = avgQtySum;
-                    }else {
-                        afterTwoPPQty = ppArray[i + 1] + ppArray[i + 2];
-                    }*/
 
                     //自动在库数
                     int planZaiKu;
@@ -864,7 +877,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     }
 
                     //差异
-                    int chaYi = planZaiKu - afterTwoPPQty;
+                    int chaYi = planZaiKu - afterPPQty;
                     if (chaYi >= 0){
                         isFlag = false;
                     }
@@ -872,7 +885,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     Map<String,Object> map = new HashMap<>();
                     map.put("inv",inv);
                     map.put("planZaiKu",planZaiKu);
-                    map.put("afterTwoPPQty",afterTwoPPQty);
+                    map.put("afterTwoPPQty",afterPPQty);
                     map.put("chaYi",chaYi);
                     map.put("seq",seq++);
                     planZaiKuList.add(map);
@@ -1287,7 +1300,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 int[] invPlan2S = invPlanMap2S.get(inv);
                 int[] invPlan3S = invPlanMap3S.get(inv);
                 BigDecimal qiChuZaiKu = BigDecimal.valueOf(inventory_originalMap.get(inv));
-                int iInnerInStockDays = info.get("iInnerInStockDays") != null ? info.getInt("iInnerInStockDays") : 1;
+                //内作在库天数
+                int iInnerInStockDays = info.get("iInnerInStockDays") != null ? info.getInt("iInnerInStockDays") : 2;
 
                 for (int i = 0; i < scheduDateList.size(); i++) {
                     String date = scheduDateList.get(i);
@@ -1448,6 +1462,8 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         int iLevel = apsWeekschedule.getILevel();
         String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(), "yyyy-MM-dd");
         String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(), "yyyy-MM-dd");
+        //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
+        List<String> scheduDateList = Util.getBetweenDate(startDate, endDate);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(DateUtils.parseDate(startDate));
@@ -1602,9 +1618,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         qiChuThreeS = iCapacity;
                     }
                 }
-                int iInnerInStockDays = 2;//isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 1;
+                //内作在库天数
+                int iInnerInStockDays = isOk(info.getInt("iInnerInStockDays")) ? info.getInt("iInnerInStockDays") : 2;
                 //期初库存
                 int qiChuZaiKu = lastDateZKQtyMap.get(info.getStr("cInvCode")) != null ? lastDateZKQtyMap.get(info.getStr("cInvCode")) : 800;
+                //下个月平均计划使用数
+                int avgQty = 200;
 
 
                 Map<String, Object> invObjMap = new HashMap<>();
@@ -1619,19 +1638,27 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 invObjMap.put("qiChuThreeS", qiChuThreeS);
                 invObjMap.put("dayNum", iInnerInStockDays);
                 invObjMap.put("qiChuZaiKu", qiChuZaiKu);
+                invObjMap.put("nextAvgQty", avgQty);
 
                 List<Object> planList = new ArrayList<>();
                 Map<String, Record> planDateMap = invPlanDateMap.get(inv);
-                for (String date : planDateMap.keySet()) {
+
+                for (String date : scheduDateList){
                     Record record = planDateMap.get(date);
+                    BigDecimal shiyong = record != null ? record.getBigDecimal("iQty1") : BigDecimal.ZERO;
+                    BigDecimal one = record != null ? record.getBigDecimal("iQty2") : BigDecimal.ZERO;
+                    BigDecimal two = record != null ? record.getBigDecimal("iQty3") : BigDecimal.ZERO;
+                    BigDecimal three = record != null ? record.getBigDecimal("iQty4") : BigDecimal.ZERO;
+                    BigDecimal zaiku = record != null ? record.getBigDecimal("iQty5") : BigDecimal.ZERO;
+                    BigDecimal tianshu = record != null ? record.getBigDecimal("iQty6") : BigDecimal.ZERO;
 
                     Map<String, Object> dataMap = new HashMap<>();
-                    dataMap.put("shiyong", record.getBigDecimal("iQty1"));
-                    dataMap.put("one", record.getBigDecimal("iQty2"));
-                    dataMap.put("two", record.getBigDecimal("iQty3"));
-                    dataMap.put("three", record.getBigDecimal("iQty4"));
-                    dataMap.put("zaiku", record.getBigDecimal("iQty5"));
-                    dataMap.put("tianshu", record.getBigDecimal("iQty6"));
+                    dataMap.put("shiyong", shiyong);
+                    dataMap.put("one", one);
+                    dataMap.put("two", two);
+                    dataMap.put("three", three);
+                    dataMap.put("zaiku", zaiku);
+                    dataMap.put("tianshu", tianshu);
                     dataMap.put("date", date);
                     dataMap.put("lock", false);//未锁定可编辑
                     dataMap.put("iswork", false);//为休息日

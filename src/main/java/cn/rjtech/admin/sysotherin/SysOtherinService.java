@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -154,10 +153,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         tx(() -> {
             SysOtherin s = findFirst("select *  from T_Sys_OtherIn where AutoID in (" + id + ")");
             if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
-                ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
+                ValidationUtils.error( "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-                ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
+                ValidationUtils.error( "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
             delete("DELETE T_Sys_OtherInDetail   where  MasID = ?", id);
@@ -174,10 +173,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             List<SysOtherin> sysOtherins = find("select *  from T_Sys_OtherIn where AutoID in (" + ids + ")");
             for (SysOtherin s : sysOtherins) {
                 if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
+                    ValidationUtils.error( "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
                 if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-                    ValidationUtils.isTrue(false, "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
+                    ValidationUtils.error( "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
                 }
             }
             deleteByIds(ids);
@@ -600,10 +599,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             List<SysOtherin> sysOtherins = find("select *  from T_Sys_OtherIn where AutoID in (" + p + ")");
             for (SysOtherin s : sysOtherins) {
                 if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + "单据未提交审核或审批！！");
                 }
                 if ("2".equals(String.valueOf(s.getIAuditStatus())) || "3".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "流程已结束！！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + "流程已结束！！");
                 }
             }
         }
@@ -629,10 +628,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             List<SysOtherin> sysOtherins = find("select *  from T_Sys_PUReceive where AutoID in (" + p + ")");
             for (SysOtherin s : sysOtherins) {
                 if ("0".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + " 单据，流程未开始，不可反审！！");
                 }
                 if ("1".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
+                    ValidationUtils.error( "收料编号：" + s.getBillNo() + " 单据，流程未结束，不可反审！！");
                 }
 
             }
@@ -775,7 +774,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         //先查询条码是否已添加
         Record first = dbTemplate("sysotherin.barcodeDatas", kv).findFirst();
         if (null != first) {
-            ValidationUtils.isTrue(false, "条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
+            ValidationUtils.error( "条码为：" + kv.getStr("barcode") + "的数据已经存在，请勿重复录入。");
         }
         first = dbTemplate("sysotherin.barcode", kv).findFirst();
         ValidationUtils.notNull(first, "未查到条码为：" + kv.getStr("barcode") + "的数据,请核实再录入。");
