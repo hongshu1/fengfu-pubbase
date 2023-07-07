@@ -3233,4 +3233,24 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String OPERATION_IMPORT = "operation_import";
+	/**
+	 * 新增
+	 */
+	public static final String FORMUPLOADCATEGORY_ADD = "formuploadcategory_add";
+	/**
+	 * 修改
+	 */
+	public static final String FORMUPLOADCATEGORY_EDIT = "formuploadcategory_edit";
+	/**
+	 * 删除
+	 */
+	public static final String FORMUPLOADCATEGORY_DELETE = "formuploadcategory_delete";
+	/**
+	 * 导出
+	 */
+	public static final String FORMUPLOADCATEGORY_EXPORT = "formuploadcategory_export";
+	/**
+	 * 导入
+	 */
+	public static final String FORMUPLOADCATEGORY_IMPORT = "formuploadcategory_import";
 }
