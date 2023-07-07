@@ -1,23 +1,20 @@
 package cn.jbolt._admin.post;
 
-import com.jfinal.aop.Before;
-import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.tx.Tx;
-
-import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.model.Post;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.tx.Tx;
 /**
  * 
  * @ClassName: PostAdminController   
  * @author: JFinal学院-小木
  * @date: 2021-02-11 12:12  
  */
-@CheckPermission(PermissionKey.POST)
+//@CheckPermission(PermissionKey.POST)
 @UnCheckIfSystemAdmin
 public class PostAdminController extends JBoltBaseController {
 

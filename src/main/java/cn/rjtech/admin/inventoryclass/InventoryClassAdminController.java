@@ -58,6 +58,7 @@ public class InventoryClassAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.INVENTORYCLASS_ADD)
     public void save() {
         renderJson(service.save(getModel(InventoryClass.class, "inventoryClass")));
     }
@@ -78,6 +79,7 @@ public class InventoryClassAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.INVENTORYCLASS_EDIT)
     public void update() {
         renderJson(service.update(getModel(InventoryClass.class, "inventoryClass")));
     }
@@ -85,6 +87,7 @@ public class InventoryClassAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.INVENTORYCLASS_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
     }
@@ -126,6 +129,7 @@ public class InventoryClassAdminController extends BaseAdminController {
     /**
      * 执行导出excel 所有数据
      */
+    @CheckPermission(PermissionKey.INVENTORYCLASS_EXPORT)
     public void exportExcelAll() {
         List<InventoryClass> datas = service.findAll();
         if (notOk(datas)) {
@@ -151,6 +155,7 @@ public class InventoryClassAdminController extends BaseAdminController {
     }
 
 
+    @CheckPermission(PermissionKey.INVENTORYCLASS_IMPORT)
     public void importExcelClass() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

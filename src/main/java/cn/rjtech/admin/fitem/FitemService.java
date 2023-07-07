@@ -40,12 +40,12 @@ public class FitemService extends BaseService<Fitem> {
 	 * @param pageSize   每页几条数据
 	 * @return
 	 */
-	public Page<Fitem> getAdminDatas(int pageNumber, int pageSize, Kv paras) {
-	    //创建sql对象
-	    Sql sql = selectSql().eq("iautoid",paras.getLong("fitemid"))
-				.like("citem_name",paras.getStr("citemname"))
-				.like("citem_class",paras.getStr("citemclass")).page(pageNumber,pageSize);
-		return paginate(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv paras) {
+
+          Kv kv= Kv.by("iautoid",paras.getLong("fitemid"))
+				.set("citem_name",paras.getStr("citemname"))
+				.set("citem_class",paras.getStr("citemclass"));
+		return  dbTemplate("fitem.selectFitem", kv).paginate(pageNumber,pageSize);
 	}
 
 
@@ -65,12 +65,12 @@ public class FitemService extends BaseService<Fitem> {
 	public List<JsTreeBean> getMgrTree(int openLevel, String sn) {
 
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
-		Sql sql = selectSql().eq("citem_class",sn);
-		List<Fitem> fitems = find(sql);
-		for (Fitem fitem : fitems) {
-			Long id = fitem.getIAutoId();
-			String text = fitem.getCitemName();
-			String type = fitem.getCitemName();
+		List<Record> records = dbTemplate("fitem.selectFitem", Kv.by("sn", sn)).find();
+
+		for (Record record : records) {
+			Long id = record.getLong("iautoid");
+			String text = record.getStr("citem_name");
+			String type =  record.getStr("citem_name");
 			JsTreeBean jsTreeBean = new JsTreeBean(id, "#", text, type, "", false);
 			jsTreeBeanList.add(jsTreeBean);
 		}

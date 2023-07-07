@@ -4,9 +4,11 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -57,6 +59,8 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
     private SysSaledeliverplandetailService syssaledeliverplandetailservice;
     @Inject
     private SysPuinstoreService             puinstoreService;
+    @Inject
+    private DictionaryService               dictionaryService;
 
     @Override
     protected int systemLogTargetType() {
@@ -67,12 +71,32 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         Page<Record> paginate = dbTemplate("syssaledeliverplan.syssaledeliverplanList", kv).paginate(pageNumber, pageSize);
         for (Record record : paginate.getList()) {
             if (ObjUtil.equal(record.getStr("sourcebilltype"), "手工新增")) {
-                Record cordernoRecord =
-                    dbTemplate("syssaledeliverplan.findCOrderNoBySourceBillId",Kv.by("iautoid",record.get("sourcebillid"))).findFirst();
-                record.set("corderno",cordernoRecord.getStr("corderno"));
+                Record corderReocrd = findCOrderNoBySourceBillId(Kv.by("iautoid", record.get("sourcebillid")));
+                record.set("corderno", corderReocrd.getStr("corderno"));
+                record.set("billtype", findIBusTypeKey(record.getStr("billtype"), "purchase_service_type"));
             }
         }
         return paginate;
+    }
+
+    public Record findCOrderNoBySourceBillId(Kv kv) {
+        return dbTemplate("syssaledeliverplan.findCOrderNoBySourceBillId", kv)
+            .findFirst();
+    }
+
+    /*
+     * 字典维护的数据
+     * */
+    public String findIBusTypeKey(String billtype, String key) {
+        if (StrUtil.isNotBlank(billtype)) {
+            List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey(key);
+            Dictionary dictionary = dictionaryList.stream().filter(e -> e.getSn().equals(billtype))
+                .findFirst()
+                .orElse(new Dictionary());
+            return dictionary.getName();
+
+        }
+        return "";
     }
 
     /**
@@ -212,11 +236,10 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
      * 执行JBoltTable表格整体提交
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-        if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null
-            && jBoltTable.getUpdateRecordList() == null) {
-            return fail("行数据不能为空");
-        }
         SysSaledeliverplan sysotherin = jBoltTable.getFormModel(SysSaledeliverplan.class, "syssaledeliverplan");
+        if (null == sysotherin) {
+            return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
+        }
         Record formRecord = jBoltTable.getFormRecord();
         //获取当前用户信息？
         User user = JBoltUserKit.getUser();
@@ -361,13 +384,16 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         detail.setInvCode(row.getStr("invcode"));
     }
 
-    public List<Record> getorder(Kv kv) {
-        return dbTemplate("syssaledeliverplan.order", kv).find();
+    public Record findRecordByAutoid(Kv kv) {
+        return dbTemplate("syssaledeliverplan.findRecordByAutoid", kv).findFirst();
     }
 
-    public List<Record> saletype(Kv kv) {
-        return dbTemplate("syssaledeliverplan.saletype", kv).find();
+    public Page<Record> findTableDatas(int pageNumber, int pageSize, Kv kv) {
+        Page<Record> paginate = dbTemplate("syssaledeliverplan.findTableDatas", kv.set("orgcode", getOrgCode()))
+            .paginate(pageNumber, pageSize);
+        return paginate;
     }
+
 
     public List<Record> department(Kv kv) {
         return dbTemplate("syssaledeliverplan.department", kv).find();
@@ -412,6 +438,15 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         }*/
         recordList = dbTemplate("syssaledeliverplan.scanBarcode",
             Kv.by("q", q).set("limit", 20).set("orgCode", getOrgCode())).find();
+        return recordList;
+    }
+
+    public List<Record> scanBarcode(Kv kv) {
+        List<SysSaledeliverplandetail> listByBarcode = syssaledeliverplandetailservice.findListByBarcode(kv.getStr("barcode"));
+        ValidationUtils.isTrue(listByBarcode.isEmpty(), kv.getStr("barcode") + "：已在其他单维护，不需要重复维护");
+        List<Record> recordList = dbTemplate("syssaledeliverplan.scanBarcode", kv.set("orgCode", getOrgCode())).find();
+        ValidationUtils.isTrue(!recordList.isEmpty(), "现品票不存在");
+
         return recordList;
     }
 

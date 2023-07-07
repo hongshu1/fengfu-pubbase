@@ -28,7 +28,7 @@
                     ></select>
                 </div>
             </div>
-            #if(!isManager)
+            #if(!isManager||!JBoltUserKit.isSystemAdmin())
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">部门档案</label>
                 <div class="col">
@@ -63,8 +63,7 @@
                                    data-value-attr="iautoid"
                                    data-column-attr="cpsn_num,cpsn_name,cdepcode,cdepname"
                                    data-sync-ele="#ipersonid_#(pageId),#name_#(pageId),#sn_#(pageId),#sex_#(pageId),#phone_#(pageId)"
-                                   data-rule="required" 
-                                   data-tips="请选择申请人" 
+                                   ###data-rule="required" 
                                    maxlength="50"
                                    value="#(person.cpsn_name??)"
                             >

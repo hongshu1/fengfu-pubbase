@@ -25,8 +25,8 @@
 {@each datas as data,index}
 <tr data-id="${data.iautoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.citemclass}</td>
-<td>${data.citemname}</td>
+<td>${data.citem_class}</td>
+<td>${data.citem_name}</td>
 <td>${data.ctable}</td>
 <td>${data.cclasstable}</td>
 </tr>
@@ -62,8 +62,8 @@
       <thead>
       <tr>
         <th data-width="60">序号</th>
-        <th data-width="150" data-column="citemclass">项目大类编码</th>
-        <th data-width="150" data-column="citemname">项目大类名称</th>
+        <th data-width="150" data-column="citem_class">项目大类编码</th>
+        <th data-width="150" data-column="citem_name">项目大类名称</th>
         <th data-width="150" data-column="ctable">目录表名称</th>
         <th data-width="150" data-column="cclasstable">对应分类表名</th>
       </tr>
