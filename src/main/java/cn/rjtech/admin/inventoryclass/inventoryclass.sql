@@ -14,7 +14,8 @@ SELECT
 FROM Bd_Inventory i
 inner join Bd_InventoryClass ic on i.iInventoryClassId = ic.iautoid
 left join Bd_Uom uom on i.iInventoryUomId1 = uom.iautoid
-WHERE 1=1
+WHERE
+    i.isDeleted = '0'
 #if(iInventoryClassId)
  AND i.iInventoryClassId = #para(iInventoryClassId)
 #end

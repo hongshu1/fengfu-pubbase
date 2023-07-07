@@ -3221,4 +3221,12 @@ public class PermissionKey {
 	 * 导入查看-删除
 	 */
 	public static final String BOMMASTER_BOMM_DEL = "bommaster_bomm_del";
+	/**
+	 * 导出
+	 */
+	public static final String ROUTING_EXPORT = "routing_export";
+	/**
+	 * 版本记录-导出
+	 */
+	public static final String ROUTING_VERSION_EXPORT = "routing_version_export";
 }
