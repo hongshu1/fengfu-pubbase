@@ -324,26 +324,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String OPERATION_ADD = "operation_add";
-	/**
-	 * 编辑
-	 */
-	public static final String OPERATION_EDIT = "operation_edit";
-	/**
-	 * 删除
-	 */
-	public static final String OPERATION_DELETE = "operation_delete";
-	/**
-	 * 导出
-	 */
-	public static final String OPERATION_EXPORT = "operation_export";
-	/**
-	 * 导入
-	 */
-	public static final String OPERATION_IMPORT = "operation_import";
-	/**
-	 * 新增
-	 */
 	public static final String EQUIPMENT_ADD = "equipment_add";
 	/**
 	 * 编辑
@@ -3233,4 +3213,24 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String WORKCLASS_IMPORT = "workclass_import";
+	/**
+	 * 新增
+	 */
+	public static final String OPERATION_ADD = "operation_add";
+	/**
+	 * 修改
+	 */
+	public static final String OPERATION_EDIT = "operation_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OPERATION_DELETE = "operation_delete";
+	/**
+	 * 导出
+	 */
+	public static final String OPERATION_EXPORT = "operation_export";
+	/**
+	 * 导入
+	 */
+	public static final String OPERATION_IMPORT = "operation_import";
 }
