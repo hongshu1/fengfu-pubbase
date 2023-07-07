@@ -1257,13 +1257,13 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         //ValidationUtils.isTrue(updateColumn(formAutoId, "iPushTo", 1).isOk(), JBoltMsg.FAIL);
         // ValidationUtils.isTrue(updateColumn(formAutoId, "cDocNo", cDocNo).isOk(), JBoltMsg.FAIL);
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.APPROVED.getValue()).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 2).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
     @Override
     public String postRejectFunc(long formAutoId, boolean isWithinBatch) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 3).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
@@ -1276,15 +1276,15 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
     public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         // 只有一个审批人
         if (isFirst && isLast) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 0).isOk(), JBoltMsg.FAIL);
         }
         // 反审回第一个节点，回退状态为“已保存”
         else if (isFirst) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus",0).isOk(), JBoltMsg.FAIL);
         }
         // 最后一步通过的，反审，回退状态为“待审核”
         else if (isLast) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 1).isOk(), JBoltMsg.FAIL);
         }
         return null;
     }
@@ -1296,19 +1296,19 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
 
     @Override
     public String postSubmitFunc(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.AWAIT_AUDIT.getValue()).isOk(), "提审失败");
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 1).isOk(), "提审失败");
         return null;
     }
 
     @Override
     public String postWithdrawFunc(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), "撤回失败");
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 0).isOk(), "撤回失败");
         return null;
     }
 
     @Override
     public String withdrawFromAuditting(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 0).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
@@ -1319,7 +1319,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
 
     @Override
     public String postWithdrawFromAuditted(long formAutoId) {
-        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", WeekOrderStatusEnum.NOT_AUDIT.getValue()).isOk(), JBoltMsg.FAIL);
+        ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 0).isOk(), JBoltMsg.FAIL);
         return null;
     }
 
@@ -1331,7 +1331,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
     @Override
     public String postBatchReject(List<Long> formAutoIds) {
         for (Long formAutoId:formAutoIds) {
-            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", MonthOrderStatusEnum.REJECTED.getValue()).isOk(), JBoltMsg.FAIL);
+            ValidationUtils.isTrue(updateColumn(formAutoId, "iAuditStatus", 3).isOk(), JBoltMsg.FAIL);
         }
         return null;
     }
@@ -1339,9 +1339,9 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
         List<ApsAnnualplanm> weekOrderMS = getListByIds(cn.rjtech.wms.utils.StringUtils.join(formAutoIds, COMMA));
-        Boolean algorithmSum = weekOrderMS.stream().anyMatch(item -> item.getIAuditStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
+        Boolean algorithmSum = weekOrderMS.stream().anyMatch(item -> item.getIAuditStatus().equals(2));
         weekOrderMS.stream().map(item -> {
-            item.setIAuditStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
+            item.setIAuditStatus(0);
             return item;
         }).collect(Collectors.toList());
         batchUpdate(weekOrderMS);
