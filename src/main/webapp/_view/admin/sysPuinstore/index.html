@@ -109,12 +109,9 @@
     </textarea>
     <div class="jbolt_table_toolbar" id="SysPuinstore_toolbar_#(pageId)">
       <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <!--<button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst"
-                id="toolbar_addBtn_#(pageId)" data-title="新增采购入库单" data-url="admin/purchaseReceiptList/addConfirmForm"
-                class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增-->
           <button data-dialogbtn data-area="30%,40%" data-handler="jboltTablePageToFirst"
                   id="toolbar_addBtn_#(pageId)" data-title="选择订单" data-url="admin/purchaseReceiptList/addConfirmForm"
-                  class="jbolt_table_addbtn btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
+                  class="btn btn-outline-secondary btn-sm"> 新增
         </button>
         #include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUInStore",primaryKeyName="AutoID", className="cn.rjtech.admin.syspuinstore.SysPuinstoreService", permissionKeyPrefix="syspuinstore")
         ### 参数列表

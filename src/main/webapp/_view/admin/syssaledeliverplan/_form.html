@@ -115,7 +115,6 @@
                               type="text" maxlength="300" value="#(memo??)">#(syssaledeliverplan.memo??)</textarea>
                   </div>
                 </div>
-
               </div>
 
               <div class="col">
@@ -342,8 +341,8 @@
     <th data-width="180" data-column="cinvname1">部品名称</th>
     <th data-width="100" data-column="qty">数量</th>
     <th data-width="180" data-column="cinvstd">规格型号</th>
-    <th data-width="100" data-column="cuomcode">主计量单位编码</th>
-    <th data-width="100" data-column="cuomname">主计量单位名称</th>
+    <th data-width="100" data-column="cuomcode">单位编码</th>
+    <th data-width="100" data-column="cuomname">单位名称</th>
     <th data-width="150" data-column="predictdeliverdate">预计发货日期</th>
   </tr>
   </thead>
@@ -383,7 +382,7 @@
     }
 
     if (barcode) {
-      Ajax.post("admin/salesShipmentList/getBarcodeDatas", {"barcode": barcode.trim()}, function (res) {
+      Ajax.post("admin/salesShipmentList/scanBarcode", {"barcode": barcode.trim()}, function (res) {
         //扫描的现品票必须归属于同一张采购订单
         let data = res.data;
         /*let sourcebillno = $("#sourcebillno").val();
@@ -424,7 +423,9 @@
 
   function getJBoltTableEditableColsOpton() {
     var editableTableOptions = {
-
+      trigger: "click",
+      initRowCount: 0,
+      maxRowCount: 20,
       submit: {
         withForm: ["syssaledeliverplan_#(pageId)"],
         name: 'syssaledeliverplan',
@@ -515,10 +516,10 @@
           width: 800,
           sync: "",
           // linkPara:"#cunameiautoid",
-          linkPara:"input[name='sourcebillid']",
+          linkPara:"input[name='sourcebillid'],input[name='corderno']",
           valueAttr: "barcode",
           columnAttr: "ccompletebarcode,cinvcode,cinvcode1,cinvname1,qty,cinvstd,cuomcode,cuomname",
-          header: '现品票,存货编码,客户部番,部品名称,数量,规格型号,主计量单位编码,主计量单位名称',
+          header: '现品票,存货编码,客户部番,部品名称,数量,规格型号,单位编码,单位名称',
           changeColumns: [{column: "barcode", use: "ccompletebarcode"},
             {column: "invcode", use: "cinvcode"},
             {column: "cinvcode1", use: "cinvcode1"},
@@ -540,7 +541,7 @@
           width: 1100,
           valueAttr: "invcode",
           columnAttr: "cinvcode,cinvname,cinvcode1,cinvname1,cinvstd,cuomcode,cuomname",
-          header: '存货编码,存货名称,客户部番,部品名称,规格型号,主计量单位编码,主计量单位',
+          header: '存货编码,存货名称,客户部番,部品名称,规格型号,单位编码,单位名称',
           changeColumns: [{column: "invcode", use: "cinvcode"},
             {column: "cinvname", use: "cinvname"},
             {column: "cinvcode1", use: "cinvcode1"},

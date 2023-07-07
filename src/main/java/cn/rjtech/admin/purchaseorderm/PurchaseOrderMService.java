@@ -973,8 +973,16 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
     public void saveOrUpdatePurachseD(Long purchaseOrderMId, List<Record> recordList, int type) {
         List<PurchaseOrderD> purchaseOrderDList = new ArrayList<>();
         List<PurchaseorderdQty> purchaseOrderQtyList = new ArrayList<>();
-        List<Long> vendorAdIds = recordList.stream().map(record -> record.getLong(PurchaseOrderD.IVENDORADDRID))
-            .collect(Collectors.toList());
+        List<Long> vendorAdIds = recordList.stream()
+                .map(record -> {
+                    Long vendorAdId ;
+                    if( "".equals(record.getStr(PurchaseOrderD.IVENDORADDRID))  || record.get(PurchaseOrderD.IVENDORADDRID) == null){
+                        return 0L;// 如果为null，返回0L
+                    }
+                    vendorAdId=record.getLong(PurchaseOrderD.IVENDORADDRID);
+                    return vendorAdId;
+                })
+                .collect(Collectors.toList());
         List<Warehouse> warehouseList = warehouseService.findByIds(vendorAdIds);
         Map<Long, Warehouse> warehouseMap = warehouseList.stream()
             .collect(Collectors.toMap(Warehouse::getIAutoId, warehouse -> warehouse));
@@ -982,13 +990,16 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
         for (Record record : recordList) {
 
             String isPresentStr = record.getStr(PurchaseOrderD.ISPRESENT);
-            Warehouse warehouse = warehouseMap.get(record.getLong(PurchaseOrderD.IVENDORADDRID));
-            ValidationUtils.notNull(warehouse, "仓库不存在!");
+            Warehouse warehouse = warehouseMap.get(record.get(PurchaseOrderD.IVENDORADDRID));
+            if(warehouse==null){
+                type=3;
+            }
             int isPresent = 0;
             if (BoolCharEnum.YES.getText().equals(isPresentStr)) {
                 isPresent = 1;
             }
             PurchaseOrderD purchaseOrderD = null;
+            Long ivendorAddrId=null;
             switch (type) {
                 case 1:
                     purchaseOrderD = purchaseOrderDService.create(purchaseOrderMId,
@@ -998,6 +1009,15 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
                         record.getStr(PurchaseOrderD.CMEMO),
                         record.getStr(PurchaseOrderD.IPKGQTY),
                         IsOkEnum.toEnum(isPresent).getText());
+                    break;
+                case 3:
+                    purchaseOrderD = purchaseOrderDService.create(purchaseOrderMId,
+                            ivendorAddrId,
+                            record.getLong(PurchaseOrderD.IINVENTORYID),
+                            "",
+                            record.getStr(PurchaseOrderD.CMEMO),
+                            record.getStr(PurchaseOrderD.IPKGQTY),
+                            IsOkEnum.toEnum(isPresent).getText());
                     break;
                 default:
                     purchaseOrderD = purchaseOrderDService.create(record.getLong(PurchaseOrderD.IAUTOID),
@@ -1009,6 +1029,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
                         record.getStr(PurchaseOrderD.IPKGQTY),
                         IsOkEnum.toEnum(isPresent).getText());
             }
+
 
             purchaseOrderDList.add(purchaseOrderD);
             // 删除qty里的数据重新添加
@@ -1056,6 +1077,9 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
         if (CollUtil.isNotEmpty(purchaseOrderDList)) {
             switch (type) {
                 case 1:
+                    purchaseOrderDService.batchSave(purchaseOrderDList, 500);
+                    break;
+                case 3:
                     purchaseOrderDService.batchSave(purchaseOrderDList, 500);
                     break;
                 default:

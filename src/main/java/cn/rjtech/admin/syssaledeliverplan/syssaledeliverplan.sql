@@ -85,42 +85,6 @@ where a.IsDeleted = '0'
 	#end
 #end
 
-
-
-
-
-#sql("dList")
-SELECT  a.*, t1.Barcode,
-       t1.SourceID as SourceBIllNoRow,
-       t1.SourceBillType as SourceBillType,
-       t1.SourceBillNo,t1.Qty,t1.BarcodeDate,
-       t1.BarcodeID as SourceBillID,
-       t1.MasID as SourceBillDid,
-       t1.pat,
-       i.*,
-
-       (SELECT cUomName FROM Bd_Uom WHERE i.iInventoryUomId1 = iautoid) as InventorycUomName,
-       (SELECT cUomName FROM Bd_Uom WHERE i.iPurchaseUomId = iautoid) as PurchasecUomName,
-       (SELECT cContainerCode FROM Bd_Container WHERE i.iContainerClassId = iautoid) as cContainerCode,
-       u.cUomClassName,
-       t3.cInvCCode,
-       t3.cInvCName,
-       t4.cEquipmentModelName,
-        wh.cWhName as whname
-FROM T_Sys_SaleDeliverPlanDetail a
-LEFT JOIN  V_Sys_BarcodeDetail t1 on t1.Barcode = a.Barcode
-LEFT JOIN bd_inventory i ON i.cinvcode = t1.Invcode
-LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
-LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
-LEFT JOIN Bd_EquipmentModel t4 ON i.iEquipmentModelId = t4.iautoid
-LEFT JOIN Bd_Warehouse wh on wh.cWhCode = a.WhCode
-where 1=1
-	#if(masid)
-		and a.MasID = #para(masid)
-	#end
-ORDER BY a.dupdatetime DESC
-#end
-
 #sql("getSaleDeliverBillNoList")
 select
 t1.*
@@ -153,6 +117,7 @@ and t1.cCusCode like concat('%',#para(ccuscode),'%')
 #sql("scanBarcode")
 select
     t1.*,
+    t1.cCompleteBarcode as barcode,
     t2.cinvcode as invcode,
     t2.cinvname,
     t2.cInvCode ,
@@ -167,7 +132,7 @@ from
     UNION ALL
     SELECT iAutoId,iSubcontractOrderDid,iinventoryId,cBarcode,iQty,cSourceld,cCompleteBarcode from PS_SubcontractOrderDBatch
 ) t1
-LEFT JOIN Bd_Inventory t2 on t1.iinventoryId = t2.iautoid
+LEFT JOIN Bd_Inventory t2 on t1.iinventoryId = t2.iAutoId
 LEFT JOIN Bd_Uom t3 on t2.iSalesUomId = t3.iAutoId
 where 1=1
 #if(barcode)
@@ -190,7 +155,7 @@ where 1=1
 #if(q)
     and (
       t1.cinvcode like concat('%',#para(q),'%') or t1.cinvcode1 like concat('%',#para(q),'%')
-    or t2.cinvname1 like concat('%',#para(q),'%')
+    or t1.cinvname1 like concat('%',#para(q),'%')
         )
 #end
 #if(invcode)
