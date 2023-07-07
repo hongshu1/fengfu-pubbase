@@ -7,12 +7,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <button onclick="closeHandler()" class="btn btn-outline-secondary"">关闭
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary">关闭
                         </button>
-                        <button onclick="printSysPuinstore()" class="btn btn-outline-secondary""> 打印
+                        <button onclick="printSysPuinstore()" class="btn btn-outline-secondary"> 打印
                         </button>
+                        <!--#if(sysPuinstore.autoid??)
                         #include("/_view/_common/_approval_btns.html", formSn="T_Sys_PUInStore", o=sysPuinstore, primaryKeyName="AutoID",
                         className="cn.rjtech.admin.syspuinstore.SysPuinstoreService",permissionKeyPrefix="syspuinstore")
+                        #end-->
                     </div>
                 </div>
             </div>

@@ -117,6 +117,7 @@ and t1.cCusCode like concat('%',#para(ccuscode),'%')
 #sql("scanBarcode")
 select
     t1.*,
+    t1.cCompleteBarcode as barcode,
     t2.cinvcode as invcode,
     t2.cinvname,
     t2.cInvCode ,
@@ -131,7 +132,7 @@ from
     UNION ALL
     SELECT iAutoId,iSubcontractOrderDid,iinventoryId,cBarcode,iQty,cSourceld,cCompleteBarcode from PS_SubcontractOrderDBatch
 ) t1
-LEFT JOIN Bd_Inventory t2 on t1.iinventoryId = t2.iautoid
+LEFT JOIN Bd_Inventory t2 on t1.iinventoryId = t2.iAutoId
 LEFT JOIN Bd_Uom t3 on t2.iSalesUomId = t3.iAutoId
 where 1=1
 #if(barcode)
@@ -154,7 +155,7 @@ where 1=1
 #if(q)
     and (
       t1.cinvcode like concat('%',#para(q),'%') or t1.cinvcode1 like concat('%',#para(q),'%')
-    or t2.cinvname1 like concat('%',#para(q),'%')
+    or t1.cinvname1 like concat('%',#para(q),'%')
         )
 #end
 #if(invcode)

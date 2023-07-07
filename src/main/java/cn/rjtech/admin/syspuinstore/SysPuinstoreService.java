@@ -215,7 +215,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             SysAssemdetail sysAssemdetail = sysAssemdetailService
                 .saveSysAssemdetailModel(puinstoredetail, sysAssem.getAutoID());//从表
             sysAssemdetailList.add(sysAssemdetail);
-        }
+    }
     }
 
     /*
@@ -556,14 +556,14 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         //双单位扫码，只需要推送转换前的数据
         SysPureceive pureceive = pureceiveService.findByBillNo(puinstore.getSourceBillNo());
         boolean special = checkPUReceiveSpecial(pureceive);
-        if (special){
+        if (special) {
             List<SysPureceivedetail> pureceivedetails = pureceivedetailService.findFirstBy(pureceive.getAutoID());
             List<String> invcodes = pureceivedetails.stream()
                 .filter(e -> ObjUtil.equal(e.getBarcodeType(), "转换前"))
                 .map(BaseSysPureceivedetail::getInvcode)
                 .collect(Collectors.toList());
             for (SysPuinstoredetail detail : detailList) {
-                if (invcodes.contains(detail.getInvcode())){
+                if (invcodes.contains(detail.getInvcode())) {
                     receiveSpecialList.add(detail);
                 }
             }
@@ -677,7 +677,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
                 //2、采购订单，如果是双单位收货，需要生成形态转换单
                 SysPureceive pureceive = pureceiveService.findByBillNo(puinstore.getSourceBillNo());
                 boolean special = checkPUReceiveSpecial(pureceive);
-                if (special){
+                if (special) {
                     List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
                     SysAssem sysAssem = new SysAssem();
                     List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
@@ -812,7 +812,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         //2、采购订单，如果是双单位收货，需要生成形态转换单
         SysPureceive pureceive = pureceiveService.findByBillNo(sysPuinstore.getSourceBillNo());
         boolean special = checkPUReceiveSpecial(pureceive);
-        if (special){
+        if (special) {
             List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(sysPuinstore.getAutoID());
             SysAssem sysAssem = new SysAssem();
             List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
