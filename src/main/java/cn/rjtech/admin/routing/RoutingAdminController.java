@@ -9,8 +9,10 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
+import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.base.controller.BaseAdminController;
 
+import cn.rjtech.model.momdata.InvPart;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -42,6 +44,8 @@ public class RoutingAdminController extends BaseAdminController {
     private EquipmentModelService equipmentModelService;
     @Inject
     private InventoryRoutingConfigService inventoryRoutingConfigService;
+    @Inject
+    private InvPartService invPartService;
 
     /**
      * 首页
@@ -70,6 +74,16 @@ public class RoutingAdminController extends BaseAdminController {
         render("edit.html");
     }
 
+    public void info(){
+        InvPart invPart = invPartService.findById(getLong(0));
+        if (invPart == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        Record routing = service.findByIdRoutingVersion(invPart.getIInventoryRoutingId());
+        set("routing", routing);
+        render("edit.html");
+    }
 
     /**
      * 批量删除
