@@ -4,6 +4,8 @@ import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.rjtech.admin.formuploadcategory.FormUploadCategoryService;
 import com.jfinal.aop.Inject;
+import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 
 /**
  * @author yjllzy
@@ -19,7 +21,7 @@ public class FormUploadCategoryApiService extends JBoltApiBaseService {
      * @param q
      * @return
      */
-    public JBoltApiRet options(String q) {
-        return  JBoltApiRet.successWithData(formUploadCategoryService.options(q));
+    public JBoltApiRet options(String q,Long iworkregionmid) {
+        return  JBoltApiRet.successWithData(formUploadCategoryService.options(Kv.by("q",q).set("iworkregionmid",iworkregionmid)));
     }
 }

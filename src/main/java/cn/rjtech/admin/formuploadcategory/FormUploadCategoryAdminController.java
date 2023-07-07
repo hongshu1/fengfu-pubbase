@@ -146,7 +146,7 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	 */
 	@UnCheck
 	public void options() {
-		renderJsonData(service.options(get("q")));
+		renderJsonData(service.options(getKv()));
 	}
 
 	/**

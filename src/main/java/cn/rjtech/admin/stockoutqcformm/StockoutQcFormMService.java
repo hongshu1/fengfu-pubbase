@@ -554,4 +554,51 @@ public class StockoutQcFormMService extends BaseService<StockoutQcFormM> {
         }
         return null;
     }
+
+    /**
+     * 根据手配订单生成出货检
+     * @param manualOrderM
+     * @param manualOrderD
+     * @return
+     */
+    public boolean saveByManualOrderDatas(ManualOrderM manualOrderM, ManualOrderD manualOrderD) {
+        return tx(() -> {
+            Integer status = 0;
+            Long iQcFormId = null;
+            String format = JBoltSnowflakeKit.me.nextIdStr();
+            // 根据存货查询质检表格ID
+            InventoryQcForm inventoryQcForm = inventoryQcFormService.findByIInventoryId(manualOrderD.getIInventoryId());
+            if (notNull(inventoryQcForm)) {
+                status = 1;
+                iQcFormId = inventoryQcForm.getIAutoId();
+            }
+            List<StockoutQcFormM> stockoutQcFormMS = new ArrayList<>();
+            for (int i = 1; i <= 31; i++) {
+                StockoutQcFormM stockoutQcFormM = new StockoutQcFormM();
+                stockoutQcFormM.setIOrgId(getOrgId());
+                stockoutQcFormM.setCOrgCode(getOrgCode());
+                stockoutQcFormM.setCOrgName(getOrgName());
+                stockoutQcFormM.setICreateBy(JBoltUserKit.getUserId());
+                stockoutQcFormM.setCCreateName(JBoltUserKit.getUserName());
+                stockoutQcFormM.setDCreateTime(new Date());
+                stockoutQcFormM.setIUpdateBy(JBoltUserKit.getUserId());
+                stockoutQcFormM.setCUpdateName(JBoltUserKit.getUserName());
+                stockoutQcFormM.setDUpdateTime(new Date());
+                stockoutQcFormM.setCStockoutQcFormNo(format);
+                stockoutQcFormM.setCBatchNo(format);
+                stockoutQcFormM.setIManualOrderMid(manualOrderM.getIAutoId());
+                stockoutQcFormM.setIsDeleted(false);
+                stockoutQcFormM.setIsCpkSigned(true);
+                stockoutQcFormM.setICustomerId(manualOrderM.getICustomerId());
+                stockoutQcFormM.setIQcFormId(iQcFormId);
+                stockoutQcFormM.setIInventoryId(manualOrderD.getIInventoryId());
+                stockoutQcFormM.setIQty(manualOrderD.getBigDecimal("iqty" + i));
+                stockoutQcFormM.setIStatus(status);
+                stockoutQcFormM.setIsCompleted(false);
+                stockoutQcFormMS.add(stockoutQcFormM);
+            }
+            batchSave(stockoutQcFormMS);
+            return true;
+        });
+    }
 }

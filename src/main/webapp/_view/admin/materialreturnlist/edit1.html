@@ -40,20 +40,20 @@
                            maxlength="30" name="puinstore.billdate"
                            value="#datetime(puinstore.billdate??,'yyyy-MM-dd')">
                 </div>
+
                 <label class="col-sm-2 col-form-label">仓库名称：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control"
-                            name="puinstore.whcode"
-                            data-autoload
-                            data-url="admin/SysEnumeration/wareHouse"
-                            data-select-type="select2"
-                            data-text="=请选择仓库名称="
-                            data-value=""
-                            data-sync-ele="#cwhname"
-                            data-value-attr="whcode"
-                            data-text-attr="whname"
-                            data-select="#(puinstore.whcode??)"></select>
-                    <input type="hidden" data-sync-attr="whname" id="cwhname" name="puinstore.whname"  value="#(puinstore.whname??)" />
+                    <input id="whcode" type="hidden" name="puinstore.whcode" value="#(puinstore.whcode??)"
+                           data-value-attr="whcode"/>
+                        <input type="text" class="form-control" data-autocomplete
+                               id="whname"
+                               data-url="admin/materialReceiptList/Whcode" data-rule="required"
+                               data-hidden-input="whcode"
+                               data-sync-ele="#whcode,whcode1"
+                               data-text-attr="whname" name="puinstore.whname"
+                               data-column-attr="whcode,whname" placeholder="请选择仓库名称"
+                               data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
+                               value="#(puinstore.whname??)">
                 </div>
             </div>
 
@@ -177,6 +177,7 @@
                                             <tr>
                                                 <th data-width="60" data-column="index">序号</th>
                                                 <th data-width="100">操作</th>
+                                                <th data-width="150" data-column="poscode">库区编码</th>
                                                 <th data-width="100" data-column="barcode">现品票</th>
                                                 <th data-width="100" data-column="invcode">存货编码</th>
                                                 <th data-width="100" data-column="cinvname">存货名称</th>
@@ -189,7 +190,6 @@
                                                 <th data-width="100" data-column="memo">备注</th>
                                                 <th hidden data-width="100" data-column="iqty">现存数</th>
                                                 <th hidden data-width="100" data-column="whcode">仓库</th>
-                                                <th hidden data-width="100" data-column="poscode">库位</th>
                                                 <th hidden data-width="100" data-column="puunitcode"></th>
                                                 <th hidden data-width="100" data-column="sourcebillno"></th>
                                                 <th hidden data-width="100" data-column="sourcebillid"></th>
@@ -235,6 +235,7 @@
             <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip
                data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
         </td>
+        <td>${data.poscode}</td>
         <td>${data.barcode}</td>
         <td>${data.invcode}</td>
         <td>${data.cinvname}</td>
@@ -249,8 +250,6 @@
         <td>${data.memo}</td>
         <td hidden>${data.iqty}</td>
         <td hidden>${data.whcode}</td>
-        //仓库
-        <td hidden>${data.poscode}</td>
         //库位
         <td hidden>${data.puunitcode}</td>
         //采购单位编码
@@ -366,6 +365,8 @@
         $("#vencode").val(data.vencode);
         $("#cvenname").val(data.cvenname);
         $("#cptname").val(data.cptname);
+        $("#whcode").val(data.whcode);
+        $("#whname").val(data.whname);
         $("#createperson").val(data.createperson);
     }
 
@@ -437,6 +438,22 @@
 
 
     },
+                poscode:{
+                    placeholder: "库区",
+                    tooltip: "库区",
+                    type: "autocomplete",
+                    url: "admin/warehousearea/options",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择库区编码",
+                    textAttr: "careacode",
+                    width: 500,
+                    valueAttr: "careacode",//选择赋值的字段
+                    columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
+                    header: '库区编码,库区名称',
+                    changeColumns: [
+                        {column: "poscode", use: "careacode"}]
+                },
                 invcode: {
                     type: "autocomplete",
                     url: "admin/materialreturnlist/barcodeDatas",

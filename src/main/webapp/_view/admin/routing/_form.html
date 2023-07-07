@@ -10,10 +10,12 @@
 			<div class="card">
 				<div class="card-body">
 					<div class="col">
-						#if(routing.iautoid??)
-						#include("/_view/_common/_approval_btns.html", uri="/admin/routing", formSn="Bd_BomMaster",
-						o=routing, primaryKeyName="iAutoId", className="cn.rjtech.admin.routing.RoutingService",
-						permissionKeyPrefix="routing")
+						#if(isView??0 !=1)
+							#if(routing.iautoid??)
+								#include("/_view/_common/_approval_btns.html", uri="/admin/routing", formSn="Bd_BomMaster",
+								o=routing, primaryKeyName="iAutoId", className="cn.rjtech.admin.routing.RoutingService",
+								permissionKeyPrefix="routing")
+							#end
 						#end
 						<button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
 					</div>

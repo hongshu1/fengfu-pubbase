@@ -94,7 +94,7 @@ public class FormUploadDAdminController extends BaseAdminController {
 	 */
 	public void deletePicture(@Para(value = "iautoid") Long iautoid,@Para(value = "url") String url){
 		ValidationUtils.validateId(iautoid, "记录上传附件ID");
-		renderJson(service.deletePicture(iautoid,url));
+		renderJsonData(service.deletePicture(iautoid,url));
 
 	}
 }
