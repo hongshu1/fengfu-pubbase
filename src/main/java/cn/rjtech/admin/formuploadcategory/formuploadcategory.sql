@@ -41,8 +41,8 @@ where
     #if(cCategoryName)
      and cCategoryName LIKE CONCAT('%', #para(cCategoryName), '%')
     #end
-    #if(iWorkRegionMid)
-     and iWorkRegionMid=#para(iWorkRegionMid)
+    #if(iworkregionmid)
+     and iWorkRegionMid=#para(iworkregionmid)
     #end
         #if(ids)
         AND iautoid IN #(ids)

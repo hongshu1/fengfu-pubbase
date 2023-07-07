@@ -142,7 +142,11 @@ public class FormUploadDService extends BaseService<FormUploadD> {
 			}else {
 				formUploadD.setCAttachments(replace);
 			}
-			formUploadD.update();
+			if (formUploadD.getCAttachments().contains(".jpg")) {
+				formUploadD.update();
+			}else {
+				formUploadD.delete();
+			}
 		return true;
 		});
 		return SUCCESS;

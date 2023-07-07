@@ -24,8 +24,9 @@ public class FormUploadCategoryApiController extends BaseApiController {
      */
     @UnCheck
     @ApiDoc(result = FormUploadCategoryVo.class)
-    public void options(@Para(value = "q") String q) {
-        renderJBoltApiRet(service.options(q));
+    public void options(@Para(value = "p")String q,
+                        @Para(value = "iworkregionmid")Long iworkregionmid) {
+        renderJBoltApiRet(service.options(q,iworkregionmid));
     }
 
 }
