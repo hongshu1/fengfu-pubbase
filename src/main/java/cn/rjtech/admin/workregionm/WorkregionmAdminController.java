@@ -82,6 +82,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.WORKREGIONM_ADD)
     public void add() {
         render("add.html");
     }
@@ -89,6 +90,7 @@ public class WorkregionmAdminController extends JBoltBaseController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.WORKREGIONM_EDIT)
     public void edit() {
         Workregionm workregionm = service.findById(getLong(0));
         if (workregionm == null) {

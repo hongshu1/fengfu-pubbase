@@ -61,6 +61,7 @@ public class CustomerAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.CUSTOMER_ADD)
     public void add() {
         set("centityname", "customerm");
 
@@ -72,6 +73,7 @@ public class CustomerAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.CUSTOMER_EDIT)
     public void edit() {
         Customer customerm = service.findById(getLong(0));
         if (customerm == null) {

@@ -3109,4 +3109,36 @@ public class PermissionKey {
 	 * 导出
 	 */
 	public static final String EQUIPMENTMODEL_EXPORT = "equipmentmodel_export";
+	/**
+	 * 新增
+	 */
+	public static final String INVENTORYCLASS_ADD = "inventoryclass_add";
+	/**
+	 * 修改
+	 */
+	public static final String INVENTORYCLASS_EDIT = "inventoryclass_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INVENTORYCLASS_DELETE = "inventoryclass_delete";
+	/**
+	 * 导出
+	 */
+	public static final String INVENTORYCLASS_EXPORT = "inventoryclass_export";
+	/**
+	 * 导入
+	 */
+	public static final String INVENTORYCLASS_IMPORT = "inventoryclass_import";
+	/**
+	 * 保存
+	 */
+	public static final String INVENTORYCLASS_SUBLIT = "inventoryclass_sublit";
+	/**
+	 * 复制
+	 */
+	public static final String INVENTORYCLASS_COPY = "inventoryclass_copy";
+	/**
+	 * 添加
+	 */
+	public static final String PERSON_SUBMIT = "person_submit";
 }
