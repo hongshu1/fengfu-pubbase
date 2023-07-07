@@ -87,7 +87,7 @@ public class PadAdminController extends BaseAdminController {
    * 删除
    */
   public void delete() {
-    renderJson(service.deleteById(getLong(0)));
+    renderJson(service.deleteByid(getLong(0)));
   }
 
   /**
