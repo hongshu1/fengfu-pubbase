@@ -3137,4 +3137,8 @@ public class PermissionKey {
 	 * 复制
 	 */
 	public static final String INVENTORYCLASS_COPY = "inventoryclass_copy";
+	/**
+	 * 添加
+	 */
+	public static final String PERSON_SUBMIT = "person_submit";
 }
