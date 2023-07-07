@@ -18,6 +18,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 组装拆卸及形态转换单明细
@@ -169,26 +170,27 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
                             "         from Bd_Inventory t3\n" +
                             "         LEFT JOIN Bd_Uom uom on t3.iInventoryUomId1 = uom.iAutoId\n" +
                             "         where t3.cInvCode = '" + invcode + "'");
-                    record.set("cinvcode", invcode);
-                    record.set("cinvcode1", firstRecord.getStr("cinvcode1"));
-                    record.set("cinvname1", firstRecord.getStr("cinvname1"));
-                    record.set("cinvstd", firstRecord.getStr("cinvstd"));
-                    record.set("cuomname", firstRecord.getStr("cuomname"));
-                    Record whcode = findFirstRecord(
-                        "select * from Bd_Warehouse where cWhCode = '" + record.getStr("whcodeh") + "'");
-                    record.set("whcode", whcode.getStr("cwhcode"));
-                    record.set("whname", whcode.getStr("cwhname"));
-                    Record poscode = findFirstRecord(
-                        "select * from Bd_Warehouse_Area where cAreaCode = '" + record.getStr("poscodeh") + "'");
-                    if(null != poscode && !"".equals(poscode)){
-                        record.set("poscode", poscode.getStr("careacode"));
-                        record.set("posname", poscode.getStr("careaname"));
-                    }else {
-                        record.set("poscode", "");
-                        record.set("posname", "");
+                    if(Objects.nonNull(firstRecord)) {
+                        record.set("cinvcode", invcode);
+                        record.set("cinvcode1", firstRecord.getStr("cinvcode1"));
+                        record.set("cinvname1", firstRecord.getStr("cinvname1"));
+                        record.set("cinvstd", firstRecord.getStr("cinvstd"));
+                        record.set("cuomname", firstRecord.getStr("cuomname"));
+                        Record whcode = findFirstRecord(
+                                "select * from Bd_Warehouse where cWhCode = '" + record.getStr("whcodeh") + "'");
+                        record.set("whcode", whcode.getStr("cwhcode"));
+                        record.set("whname", whcode.getStr("cwhname"));
+                        Record poscode = findFirstRecord(
+                                "select * from Bd_Warehouse_Area where cAreaCode = '" + record.getStr("poscodeh") + "'");
+                        if (null != poscode && !"".equals(poscode)) {
+                            record.set("poscode", poscode.getStr("careacode"));
+                            record.set("posname", poscode.getStr("careaname"));
+                        } else {
+                            record.set("poscode", "");
+                            record.set("posname", "");
+                        }
+
                     }
-
-
                     //查出转换的生成条码的数量
                     Record number = findFirstRecord("select count(1) as number  from PS_PurchaseOrderDBatch where iPurchaseOrderdQtyId = '"+ record.getStr("autoid")+"'");
                     if(number != null && !"".equals(number)){

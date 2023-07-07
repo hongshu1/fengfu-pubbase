@@ -56,6 +56,7 @@ public class VendorClassAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.VENDOR_ADD)
     public void add() {
         if (isOk(get("iautoid"))) {
             VendorClass vendorClass = service.findById(get("iautoid"));

@@ -154,6 +154,15 @@ public class RoutingAdminController extends BaseAdminController {
             return;
         }
 
-        renderJxls("routing.xlsx", Kv.by("rows", rows), "计量单位_" + DateUtil.today() + ".xlsx");
+        renderJxls("routing.xlsx", Kv.by("rows", rows), "工艺路线_" + DateUtil.today() + ".xlsx");
+    }
+
+    public void exportVersionExcel() throws Exception {
+        List<Record> routingVersion = service.findRoutingVersionExport(getKv());
+        if (notOk(routingVersion)) {
+            renderJsonFail("无有效数据导出");
+            return;
+        }
+        renderJxls("versionrouting.xlsx", Kv.by("rows", routingVersion), "版本记录_" + DateUtil.today() + ".xlsx");
     }
 }

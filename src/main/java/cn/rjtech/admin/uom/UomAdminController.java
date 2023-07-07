@@ -72,6 +72,7 @@ public class UomAdminController extends JBoltBaseController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.UOMCLASS_ADD)
     public void add() {
         render("add.html");
     }
@@ -79,6 +80,7 @@ public class UomAdminController extends JBoltBaseController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.UOMCLASS_EDIT)
     public void edit() {
         Uom uom = service.findById(getLong(0));
         if (uom == null) {
@@ -92,6 +94,7 @@ public class UomAdminController extends JBoltBaseController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.UOMCLASS_ADD)
     public void save() {
         renderJson(service.save(getModel(Uom.class, "uom")));
     }
@@ -99,6 +102,7 @@ public class UomAdminController extends JBoltBaseController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.UOMCLASS_EDIT)
     public void update() {
         renderJson(service.update(getModel(Uom.class, "uom")));
     }
@@ -106,6 +110,7 @@ public class UomAdminController extends JBoltBaseController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.UOMCLASS_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -138,6 +143,7 @@ public class UomAdminController extends JBoltBaseController {
     }
 
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.UOMCLASS_EXPORT)
     public void exportExcelByIds() throws Exception {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -156,6 +162,7 @@ public class UomAdminController extends JBoltBaseController {
     }
 
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.UOMCLASS_EXPORT)
     public void exportExcelAll() throws Exception {
         String uomclassid = get("uomclassid");
         if (notOk(uomclassid)) {
@@ -198,6 +205,7 @@ public class UomAdminController extends JBoltBaseController {
         renderJsonData(service.getOptions(Kv.of("iUomClassId", pid)));
     }
 
+    @CheckPermission(PermissionKey.UOMCLASS_IMPORT)
     public void importExcelClass() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

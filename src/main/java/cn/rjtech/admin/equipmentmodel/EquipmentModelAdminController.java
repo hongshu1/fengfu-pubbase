@@ -55,6 +55,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_ADD)
     public void add() {
         render("add.html");
     }
@@ -62,6 +63,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_ADD)
     public void save() {
         renderJson(service.save(getModel(EquipmentModel.class, "equipmentModel")));
     }
@@ -69,6 +71,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_EDIT)
     public void edit() {
         EquipmentModel equipmentModel = service.findById(getLong(0));
         if (equipmentModel == null) {
@@ -82,6 +85,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_EDIT)
     public void update() {
         renderJson(service.update(getModel(EquipmentModel.class, "equipmentModel")));
     }
@@ -89,6 +93,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -134,6 +139,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 执行导出excel 根据查询form表单
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_EXPORT)
     public void exportExcelByForm() {
         Page<Record> pageData = service.getAdminDatas(getPageNumber(), getPageSize(), getKv());
         if (notOk(pageData.getTotalRow())) {
@@ -146,6 +152,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 执行导出excel 根据表格选中数据
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_EXPORT)
     public void exportExcelByCheckedIds() {
         String ids = get("ids");
         Kv kv = getKv();
@@ -170,6 +177,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 执行导出excel 所有数据
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_EXPORT)
     public void exportExcelAll() {
         List<Record> datas = service.getAdminDataNoPage(getKv());
         if (notOk(datas)) {

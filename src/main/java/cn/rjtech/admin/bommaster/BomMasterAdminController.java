@@ -75,6 +75,7 @@ public class BomMasterAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.BOMMASTER_ADD)
     public void add() {
         render("add.html");
     }
@@ -197,6 +198,7 @@ public class BomMasterAdminController extends BaseAdminController {
         ok();
     }
 
+    @CheckPermission(PermissionKey.BOMMASTER_VERSION_COPY)
     public void copyForm() {
         ValidationUtils.notNull(get(0), "未获取到指定产品id");
         set("oldId", get(0));
@@ -213,6 +215,7 @@ public class BomMasterAdminController extends BaseAdminController {
         renderJson(service.saveCopy(oldId, cVersion));
     }
 
+    @CheckPermission(PermissionKey.BOMMASTER_IMPORT)
     public void importExcelFile() throws IOException {
         //上传到今天的文件夹下
         String uploadFile = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);

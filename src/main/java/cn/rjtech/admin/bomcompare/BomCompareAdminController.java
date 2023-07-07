@@ -80,6 +80,7 @@ public class BomCompareAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.BOMMASTER_VERSION_EDIT)
 	public void edit() {
 		BomM bomM = bomMService.findById(getLong(0));
 		ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
@@ -90,7 +91,7 @@ public class BomCompareAdminController extends BaseAdminController {
 //		getBomMaster(bomM);
 //		render("/_view/admin/bommaster/edit.html");
 	}
-	
+	@CheckPermission(PermissionKey.BOMMASTER_VERSION_EDIT)
 	public void info(){
 		BomM bomM = bomMService.findById(getLong(0));
 		ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
@@ -113,7 +114,7 @@ public class BomCompareAdminController extends BaseAdminController {
 		setAttrs(kv);
 		render("/_view/admin/bommaster/edit.html");*/
 	}
-	
+	@CheckPermission(PermissionKey.BOMMASTER_BOMCOMPARE_FILEINFO)
 	public void fileInfo(){
 		
 		BommTrl bommTrl = bommTrlService.findById(getLong(0));
@@ -166,7 +167,7 @@ public class BomCompareAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
-	
+	@CheckPermission(PermissionKey.BOMCOMPARE_ADD)
 	public void manualForm(@Para(value = "pid") Long pid, @Para(value = "isChildren") Boolean isChildren){
 		Kv kv = getKv();
 		bomMService.setBomRecord(pid, isChildren, false, kv);
@@ -190,7 +191,8 @@ public class BomCompareAdminController extends BaseAdminController {
 	public void resourceList(){
 		renderJsonData(inventoryService.resourceList(getPageNumber(), getPageSize(), getKv()));
 	}
-	
+
+	@CheckPermission(PermissionKey.BOMMASTER_VERSION_SUBMIT)
 	public void submitForm(){
 		renderJsonData(service.submitForm(getJBoltTable()));
 	}

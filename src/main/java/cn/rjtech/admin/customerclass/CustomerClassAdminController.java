@@ -54,6 +54,7 @@ public class CustomerClassAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.CUSTOMER_ADD)
     public void add() {
         if (isOk(get("autoid"))) {
             CustomerClass customerclass = service.findById(get("autoid"));
@@ -65,6 +66,7 @@ public class CustomerClassAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.CUSTOMER_EDIT)
     public void edit() {
         CustomerClass customerclass = service.findById(getLong(0));
         if (customerclass == null) {
