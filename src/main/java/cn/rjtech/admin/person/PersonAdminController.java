@@ -56,6 +56,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.PERSON_ADD)
     public void add() {
         render("add.html");
     }
@@ -162,7 +163,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 表格提交
      */
-    @CheckPermission(PermissionKey.PERSON_ADD)
+    @CheckPermission(PermissionKey.PERSON_SUBMIT)
     public void submitTable() {
         renderJson(service.submitTable(getJBoltTable()));
     }

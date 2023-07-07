@@ -1,6 +1,7 @@
 package cn.rjtech.admin.sysassem;
 
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
@@ -22,6 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -86,27 +88,28 @@ public class SysAssemAdminController extends BaseAdminController {
 		Kv kv = new Kv();
 		kv.set("id",sysAssem.getBillType());
 		List<Record> getdictionary = service.getdictionary(kv);
-		if(!ArrayUtil.isEmpty(getdictionary)){
+		if(CollectionUtil.isNotEmpty(getdictionary)){
 			set("zhname",getdictionary.get(0).get("name")==null ? "":getdictionary.get(0).get("name"));
 		}
 
 		Kv kv1 = new Kv();
 		kv1.set("crdcode",sysAssem.getIRdCode());
 		List<Record> style = service.style(kv1);
-		if(!ArrayUtil.isEmpty(style)){
+		if(CollectionUtil.isNotEmpty(style)){
 			set("rkname",style.get(0).get("crdname"));
 		}
 
 		Kv kv2 = new Kv();
 		kv2.set("crdcode",sysAssem.getORdCode());
 		List<Record> style1 = service.style(kv2);
-		if(!ArrayUtil.isEmpty(style1)){
+		if(CollectionUtil.isNotEmpty(style)){
 			set("ckname",style1.get(0).get("crdname"));
 		}
 
 		Department first1 = departmentservice.findFirst("select * from Bd_Department where cDepCode =?", sysAssem.getDeptCode());
-		set("cdepname",first1.getCDepName());
-
+		if(Objects.nonNull(first1)) {
+			set("cdepname", first1.getCDepName());
+		}
 		set("sysAssem",sysAssem);
 		render("edit.html");
 	}
