@@ -354,6 +354,11 @@ public class RoutingService extends BaseService<BomMaster> {
 		kv.set("orgId", getOrgId());
 		return dbTemplate("routing.findRoutingVersion", kv).find();
 	}
+
+	public List<Record> Versiondetail (Kv kv){
+		kv.set("orgId", getOrgId());
+		return dbTemplate("routing.findRoutingVersion", kv).find();
+	}
 	
 	public Record findByIdRoutingVersion(Long id){
 		Okv okv = Okv.by("orgId", getOrgId()).set("id", id);

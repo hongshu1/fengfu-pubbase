@@ -678,6 +678,8 @@
                         for (var j = 0; j < parms['scheduplanmonth'].data[i].day.length; j++) {
                             if(i==0){
                                 sheet.setValue(shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
+                                //控制小数位为1位
+                                sheet.setFormatter(shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'].data[i].day[j].xuqiu))?"0.00":"0.00");
                                 sheet.setValue(shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
                                 sheet.setValue(shiyongRow+2,shiyongCol-1,parms['scheduplanmonth'].data[i].qiChuZaiKu);
                                 sheet.setValue(shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
@@ -693,6 +695,8 @@
                                 sheet.setFormula(B,Z++,`=IF(SUM(R[-1]C,R[-1]C[1],R[-1]C[2])-R[1]C[-1]>0,SUM(R[-1]C,R[-1]C[1],R[-1]C[2])-R[1]C[-1],0)`);
                             }else{
                                 sheet.setValue(3*i+shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
+                                //控制小数位为1位
+                                sheet.setFormatter(3*i+shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'].data[i].day[j].xuqiu))?"0.00":"0.00");
                                 sheet.setValue(3*i+shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
                                 sheet.setValue(3*i+shiyongRow+2,shiyongCol-1,parms['scheduplanmonth'].data[i].qiChuZaiKu);
                                 sheet.setValue(3*i+shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
@@ -876,7 +880,7 @@
                                        LayerMsgBox.closeLoading();
                                        layer.closeAll();
                                    }else{
-                                       LayerMsgBox.error(res.msg,10000);
+                                       LayerMsgBox.error(res.msg,2000);
                                    }
                                },error: function(error) {
                                    console.log(error);

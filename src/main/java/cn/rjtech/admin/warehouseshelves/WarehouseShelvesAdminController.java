@@ -159,4 +159,11 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
         renderJson(service.selectPrint(null));
     }
 
+
+    /**
+     * 货架打印数据
+     */
+    public void printData() {
+        renderJsonData(service.getPrintDataCheck(getKv()));
+    }
 }

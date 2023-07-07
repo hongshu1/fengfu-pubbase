@@ -167,4 +167,11 @@ public class WarehousePositionAdminController extends JBoltBaseController {
 	public void selectPrint(){
 		renderJson(service.selectPrint(null));
 	}
+
+	/**
+	 * 库区打印数据
+	 */
+	public void printData() {
+		renderJsonData(service.getPrintDataCheck(getKv()));
+	}
 }
