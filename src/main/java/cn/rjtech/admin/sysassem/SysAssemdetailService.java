@@ -7,9 +7,10 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.SysAssem;
+import cn.rjtech.model.momdata.SysAssemdetail;
+import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -178,8 +179,14 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
                         record.set("cuomname", firstRecord.getStr("cuomname"));
                         Record whcode = findFirstRecord(
                                 "select * from Bd_Warehouse where cWhCode = '" + record.getStr("whcodeh") + "'");
-                        record.set("whcode", whcode.getStr("cwhcode"));
-                        record.set("whname", whcode.getStr("cwhname"));
+                        if(Objects.nonNull(whcode)){
+                            record.set("whcode", whcode.getStr("cwhcode"));
+                            record.set("whname", whcode.getStr("cwhname"));
+                        }else {
+                            record.set("whcode", "");
+                            record.set("whname", "");
+                        }
+
                         Record poscode = findFirstRecord(
                                 "select * from Bd_Warehouse_Area where cAreaCode = '" + record.getStr("poscodeh") + "'");
                         if (null != poscode && !"".equals(poscode)) {
@@ -216,11 +223,11 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         for (String s : split) {
             SysAssemdetail byId1 = findById(s);
             SysAssem byId = sysassemservice.findById(byId1.getMasID());
-            if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
+            if ("2".equals(String.valueOf(byId.getIAuditStatus())) || "1".equals(String.valueOf(byId.getIAuditStatus()))) {
                 ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
             if (!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())) {
-                ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+                ValidationUtils.error( "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
             }
         }
         deleteByIds(ids);
@@ -233,17 +240,18 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
     public Ret delete(Long id) {
         SysAssemdetail byId1 = findById(id);
         SysAssem byId = sysassemservice.findById(byId1.getMasID());
-        if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
+        if ("2".equals(String.valueOf(byId.getIAuditStatus())) || "1".equals(String.valueOf(byId.getIAuditStatus()))) {
             ValidationUtils.isTrue(false, "编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
         }
         if (!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())) {
-            ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+            ValidationUtils.error( "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
         }
         deleteById(id);
         return SUCCESS;
     }
 
     public SysAssemdetail saveSysAssemdetailModel(SysPuinstoredetail puinstoredetail, String masId) {
+        SysAssemdetail first = findFirst("select * from T_Sys_AssemDetail where barcode = ?", puinstoredetail.getBarCode());
         Date date = new Date();
         SysAssemdetail sysAssemdetail = new SysAssemdetail();
         sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
@@ -254,10 +262,12 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         sysAssemdetail.setSourceBillNoRow(puinstoredetail.getSourceBillNoRow());
         sysAssemdetail.setSourceBillID(puinstoredetail.getSourceBillID());
         sysAssemdetail.setSourceBillDid(puinstoredetail.getSourceBillDid());
-//        sysAssemdetail.setAssemType("转换状态;转换前 及转换后");
+        if(Objects.nonNull(first)){
+            sysAssemdetail.setAssemType(first.getAssemType());
+            sysAssemdetail.setCombination(first.getCombination());
+        }
         sysAssemdetail.setWhCode(puinstoredetail.getWhcode());
         sysAssemdetail.setPosCode(puinstoredetail.getPosCode());
-        //sysAssemdetail.setCombinationNo("组号");
         sysAssemdetail.setRowNo(puinstoredetail.getRowNo());
         sysAssemdetail.setQty(puinstoredetail.getQty());
         sysAssemdetail.setTrackType(puinstoredetail.getTrackType());

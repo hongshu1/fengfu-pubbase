@@ -333,3 +333,47 @@ from Bd_InventoryChange t1
          LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
 where t2.cInvCode = '#(itemCode)'
 #end
+
+#sql("getOrder")
+select t.*, s.cRdName as scrdname, s.cRdCode as scrdcode, dep.cdepcode, dep.cdepname
+from (select 'PO'                                   as SourceBillType,
+             m.cOrderNo                             as SourceBillNo,
+             m.iAutoId                              as SourceBillID,
+             m.idepartmentid,
+             m.iPurchaseTypeId,
+             m.iBusType                             as orderibustype,
+             d.iAutoId                              as SourceBillDid,
+             a.cBarcode                             as oldBarcode,
+             a.cCompleteBarcode                     as barcode,
+             CONVERT(VARCHAR(10), a.dPlanDate, 120) as dPlanDate
+      from PS_PurchaseOrderDBatch a
+               left join PS_PurchaseOrderD d on a.iPurchaseOrderDid = d.iAutoId
+               left join PS_PurchaseOrderM m on m.iAutoId = d.iPurchaseOrderMid
+      where a.isEffective = '1'
+        and m.IsDeleted = '0'
+        and d.isDeleted = '0'
+        and a.cCompleteBarcode = '#(barcode)'
+      union all
+      select 'OM'                                   as SourceBillType,
+             m.cOrderNo                             as SourceBillNo,
+             m.iAutoId                              as SourceBillID,
+             m.idepartmentid,
+             m.iPurchaseTypeId,
+             m.iBusType                             as orderibustype,
+             d.iAutoId                              as SourceBillDid,
+             a.cBarcode                             as oldBarcode,
+             a.cCompleteBarcode                     as barcode,
+             CONVERT(VARCHAR(10), a.dPlanDate, 120) as dPlanDate
+      from PS_SubcontractOrderDBatch a
+               left join PS_SubcontractOrderD d on a.iSubcontractOrderDid = d.iAutoId
+               left join PS_SubcontractOrderM m on m.iAutoId = d.iSubcontractOrderMid
+      where a.isEffective = '1'
+        and m.IsDeleted = '0'
+        and d.isDeleted = '0'
+        and a.cCompleteBarcode = '#(barcode)'
+     ) t
+         LEFT JOIN Bd_PurchaseType p on p.iAutoId = t.iPurchaseTypeId
+         LEFT JOIN Bd_Rd_Style s ON s.cRdCode = p.cRdCode
+         left join Bd_Department dep on t.idepartmentid = dep.iautoid
+where 1 = 1
+#end
