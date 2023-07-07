@@ -61,6 +61,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.WORKCLASS_ADD)
     public void add() {
         render("add.html");
     }
@@ -68,6 +69,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.WORKCLASS_EDIT)
     public void edit() {
         Workclass workclass = service.findById(getLong(0));
         if (workclass == null) {
@@ -81,6 +83,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.WORKCLASS_ADD)
     public void save() {
         renderJson(service.save(getModel(Workclass.class, "workclass")));
     }
@@ -88,6 +91,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.WORKCLASS_EDIT)
     public void update() {
         renderJson(service.update(getModel(Workclass.class, "workclass")));
     }
@@ -95,6 +99,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.WORKCLASS_DELETE)
     public void deleteByIds() {
         String[] ids = get("ids").split(",");
         for (String id : ids) {
@@ -137,6 +142,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 导出选中的数据
      */
+    @CheckPermission(PermissionKey.WORKCLASS_EXPORT)
     public void exportExcelByIds() {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -157,6 +163,7 @@ public class WorkclassAdminController extends JBoltBaseController {
     /**
      * 导出所有数据
      */
+    @CheckPermission(PermissionKey.WORKCLASS_EXPORT)
     public void exportExcelAll() {
         List<Workclass> datas = service.findAllIsDeletedFalse();
         if (notOk(datas)) {
@@ -191,6 +198,7 @@ public class WorkclassAdminController extends JBoltBaseController {
         renderJsonData(service.options());
     }
 
+    @CheckPermission(PermissionKey.WORKCLASS_IMPORT)
     public void importExcelClass() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

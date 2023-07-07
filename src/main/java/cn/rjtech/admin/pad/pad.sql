@@ -11,25 +11,24 @@ where iw.iPadId = #para(ipadid)
 #end
 
 #sql("list")
-select * from (
-select DISTINCT p.*,pwr2.iWorkRegionMid iworkregionmid,
-        stuff((
-        SELECT ',' + wr.cWorkName
-        FROM Bd_PadWorkRegion pwr
-				left join Bd_WorkRegionM wr on pwr.iWorkRegionMid = wr.iAutoId
-        WHERE pwr.iPadId = p.iAutoId
-        FOR XML path('')
-    ), 1, 1, '') workregions
-from Bd_Pad p
-LEFT JOIN Bd_PadWorkRegion pwr2 on p.iAutoId = pwr2.iPadId
-where p.IsDeleted = 0
-) a where 1=1
+SELECT
+	iAutoId,
+	cPadName,
+	cPadCode,
+	cMac,
+	isEnabled,
+	cCreateName,
+	dCreateTime
+FROM
+	Bd_Pad
+WHERE
+	IsDeleted =0
 
 #if(cpadcode)
-and a.cPadCode = #para(cpadcode)
+and a.cPadCode LIKE CONCAT('%',#para(cpadcode),'%')
 #end
 #if(cpadname)
-and a.cPadName = #para(cpadname)
+and a.cPadName LIKE CONCAT('%',#para(cpadname),'%')
 #end
 #if(iworkregionmid)
 and a.iWorkRegionMid = #para(iworkregionmid)

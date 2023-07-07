@@ -1,5 +1,6 @@
 package cn.rjtech.admin.pad;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -16,6 +17,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,7 +52,12 @@ public class PadService extends BaseService<Pad> {
    * @return
    */
   public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-    return dbTemplate("pad.list", kv).paginate(pageNumber, pageSize);
+    Page<Record> page = dbTemplate("pad.list", kv).paginate(pageNumber, pageSize);
+//    List<String> strings=new ArrayList<>();
+//    page.getList().forEach(record -> {
+//      strings.add(record.getStr("iautoid"));
+//    });
+    return page;
   }
 
   /**
@@ -154,6 +161,7 @@ public class PadService extends BaseService<Pad> {
     AtomicReference<Ret> res = new AtomicReference<>();
     res.set(SUCCESS);
     tx(() -> {
+      int qty = 0;
       setPad(pad);
       pad.setIsEnabled(true);
       pad.setIsDeleted(false);
@@ -167,8 +175,14 @@ public class PadService extends BaseService<Pad> {
         for (PadWorkRegion region : saveBeanList) {
           region.setIPadId(pad.getIAutoId());
           region.setIsDeleted(false);
+          if (region.getIsDefault()) {
+            qty++;
+          }
+          region.save();
         }
-        padWorkRegionService.batchSave(saveBeanList);
+      }
+      if (qty > 1) {
+        ValidationUtils.error("所属生产线列表的【是否默认】只能存在一个是");
       }
       return true;
     });
@@ -182,27 +196,50 @@ public class PadService extends BaseService<Pad> {
       update(pad);
       int qty = 0;
       List<PadWorkRegion> saveBeanList = jBoltTable.getSaveBeanList(PadWorkRegion.class);
-      if (saveBeanList != null && saveBeanList.size() > 0) {
-        for (int i = 0; i < saveBeanList.size(); i++) {
-          saveBeanList.get(i).setIPadId(pad.getIAutoId());
-          saveBeanList.get(i).setIsDeleted(false);
-          if (saveBeanList.get(i).getIsDefault()) {
+      if (saveBeanList != null) {
+        for (PadWorkRegion padWorkRegion : saveBeanList) {
+          padWorkRegion.setIPadId(pad.getIAutoId());
+          padWorkRegion.setIsDeleted(false);
+          if (padWorkRegion.getIsDefault()) {
             qty++;
           }
+          padWorkRegion.save();
         }
-        padWorkRegionService.batchSave(saveBeanList);
       }
+
       List<PadWorkRegion> updateBeanList = jBoltTable.getUpdateBeanList(PadWorkRegion.class);
-      if (updateBeanList != null && updateBeanList.size() > 0) {
-        for (int i = 0; i < updateBeanList.size(); i++) {
-          updateBeanList.get(i).setIPadId(pad.getIAutoId());
-          if (updateBeanList.get(i).getIsDefault()) {
+      if (updateBeanList != null) {
+        for (PadWorkRegion padWorkRegion : updateBeanList) {
+          padWorkRegion.setIPadId(pad.getIAutoId());
+          if (padWorkRegion.getIsDefault()) {
             qty++;
           }
+          padWorkRegion.update();
         }
-        padWorkRegionService.batchUpdate(updateBeanList);
       }
-      ValidationUtils.isTrue(qty > 1, "所属生产线列表的【是否默认】只能存在一个是");
+      //      if (saveBeanList != null && saveBeanList.size() > 0) {
+//        for (int i = 0; i < saveBeanList.size(); i++) {
+//          saveBeanList.get(i).setIPadId(pad.getIAutoId());
+//          saveBeanList.get(i).setIsDeleted(false);
+//          if (saveBeanList.get(i).getIsDefault()) {
+//            qty++;
+//          }
+//        }
+//        padWorkRegionService.batchSave(saveBeanList);
+//      }
+
+//      if (updateBeanList != null && updateBeanList.size() > 0) {
+//        for (int i = 0; i < updateBeanList.size(); i++) {
+//          updateBeanList.get(i).setIPadId(pad.getIAutoId());
+//          if (updateBeanList.get(i).getIsDefault()) {
+//            qty++;
+//          }
+//        }
+//        padWorkRegionService.batchUpdate(updateBeanList);
+//      }
+      if (qty > 1) {
+        ValidationUtils.error("所属生产线列表的【是否默认】只能存在一个是");
+      }
       Object[] delete = jBoltTable.getDelete();
       // 删除
       if (ArrayUtil.isNotEmpty(delete)) {
@@ -226,5 +263,15 @@ public class PadService extends BaseService<Pad> {
    */
   public Record getPadWorkRegionByCmac(String cmac) {
     return dbTemplate("pad.getPadWorkRegionByCmac", Kv.by("cmac", cmac)).findFirst();
+  }
+
+  public Ret deleteByid(Long id) {
+    Pad pad = findById(id);
+    pad.setIsDeleted(true);
+    pad.setIUpdateBy(JBoltUserKit.getUserId());
+    pad.setCUpdateName(JBoltUserKit.getUserName());
+    pad.setDUpdateTime(new DateTime());
+    boolean success = pad.update();
+    return ret(success);
   }
 }
