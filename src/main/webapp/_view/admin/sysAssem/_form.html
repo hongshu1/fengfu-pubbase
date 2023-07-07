@@ -356,7 +356,7 @@
                         Ajax.post("admin/formConversionList/getBarCodeData",
                             {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
                                 "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,
-                                "ibeforeinventoryid":trJsonData.ibeforeinventoryid},
+                                "ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty},
                             function(rres) {
                                 console.log('rres', rres)
                                 if (rres.state==='ok'){
