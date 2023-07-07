@@ -1,236 +1,236 @@
 <div>
-  <div class="py-2" style="padding:.5rem 0rem;">
-    <!--<span class="py-1"><strong>信息</strong></span>-->
-  </div>
-  <input type="hidden" name="inventorymfginfo.iAutoId" value="#(inventorymfginfo.iautoid??)"/>
-  <div class="row">
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">生产单价</label>
-        <div class="col">
-          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
-                 placeholder="0.00" maxlength="24" name="inventorymfginfo.iMfgPrice"
-                 value="#(inventorymfginfo.imfgprice??)"/>
-        </div>
-      </div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <!--<span class="py-1"><strong>信息</strong></span>-->
     </div>
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">生产提前期(天)</label>
-        <div class="col">
-          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
-                 maxlength="255" name="inventorymfginfo.cProdAdvance" value="#(inventorymfginfo.cprodadvance??)"/>
+    <input type="hidden" name="inventorymfginfo.iAutoId" value="#(inventorymfginfo.iautoid??)"/>
+    <div class="row">
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">生产单价</label>
+                <div class="col">
+                    <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                           placeholder="0.00" maxlength="24" name="inventorymfginfo.iMfgPrice"
+                           value="#(inventorymfginfo.imfgprice??)"/>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">生产提前期(天)</label>
+                <div class="col">
+                    <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
+                           maxlength="255" name="inventorymfginfo.cProdAdvance" value="#(inventorymfginfo.cprodadvance??)"/>
+                </div>
+            </div>
+        </div>
 
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">生产工作日历</label>
-        <div class="col">
-          <select class="form-control" data-tips="请选择生产日历" data-url="admin/dictionary/options?key=prodcalendar_type"
-                  name="inventorymfginfo.cProdCalendarTypeSn" data-autoload data-text="=请选择生产日历=" data-value-attr="sn"
-                  data-value=""
-                  data-select="#(inventorymfginfo.cprodcalendartypesn??)"></select>
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">生产工作日历</label>
+                <div class="col">
+                    <select class="form-control" data-tips="请选择生产日历" data-url="admin/dictionary/options?key=prodcalendar_type"
+                            name="inventorymfginfo.cProdCalendarTypeSn" data-autoload data-text="=请选择生产日历=" data-value-attr="sn"
+                            data-value=""
+                            data-select="#(inventorymfginfo.cprodcalendartypesn??)"></select>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">出货工作日历</label>
-        <div class="col">
-          <select class="form-control" data-tips="请选择出货日历" data-url="admin/dictionary/options?key=prodcalendar_type"
-                  name="inventorymfginfo.cSupplyCalendarTypeSn" data-autoload data-text="=请选择出货日历=" data-value-attr="sn"
-                  data-value=""
-                  data-select="#(inventorymfginfo.csupplycalendartypesn??)"></select>
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">出货工作日历</label>
+                <div class="col">
+                    <select class="form-control" data-tips="请选择出货日历" data-url="admin/dictionary/options?key=prodcalendar_type"
+                            name="inventorymfginfo.cSupplyCalendarTypeSn" data-autoload data-text="=请选择出货日历=" data-value-attr="sn"
+                            data-value=""
+                            data-select="#(inventorymfginfo.csupplycalendartypesn??)"></select>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">质量等级</label>
-        <div class="col">
-          <select class="form-control" data-tips="请选择质量等级" data-url="admin/dictionary/options?key=itemimpstate_type"
-                  name="inventorymfginfo.iQualityLevel" data-autoload data-text="=请选择质量等级=" data-value-attr="sn"
-                  data-value=""
-                  data-select="#(inventorymfginfo.iQualityLevel??)"></select>
+    <div class="row">
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">质量等级</label>
+                <div class="col">
+                    <select class="form-control" data-tips="请选择质量等级" data-url="admin/dictionary/options?key=itemimpstate_type"
+                            name="inventorymfginfo.iQualityLevel" data-autoload data-text="=请选择质量等级=" data-value-attr="sn"
+                            data-value=""
+                            data-select="#(inventorymfginfo.iQualityLevel??)"></select>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">SPM(计划时间)</label>
-        <div class="col">
-          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
-                 maxlength="255" name="inventorymfginfo.cSpm" value="#(inventorymfginfo.cspm??)"/>
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">SPM(计划时间)</label>
+                <div class="col">
+                    <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
+                           maxlength="255" name="inventorymfginfo.cSpm" value="#(inventorymfginfo.cspm??)"/>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">采购周期</label>
-        <div class="col">
-          <!--                    <select class="form-control" data-tips="请选择采购周期" data-url="admin/dictionary/options?key=purchase_period"-->
-          <!--                            name="inventorymfginfo.iPurchasePeriod" data-autoload data-text="=请选择采购周期=" data-value-attr="sn" data-value=""-->
-          <!--                            data-select="#(inventorymfginfo.ipurchaseperiod??)" ></select>-->
-          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
-                 maxlength="255" name="inventorymfginfo.iPurchasePeriod" value="#(inventorymfginfo.ipurchaseperiod??)"/>
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">采购周期</label>
+                <div class="col">
+                    <!--                    <select class="form-control" data-tips="请选择采购周期" data-url="admin/dictionary/options?key=purchase_period"-->
+                    <!--                            name="inventorymfginfo.iPurchasePeriod" data-autoload data-text="=请选择采购周期=" data-value-attr="sn" data-value=""-->
+                    <!--                            data-select="#(inventorymfginfo.ipurchaseperiod??)" ></select>-->
+                    <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
+                           maxlength="255" name="inventorymfginfo.iPurchasePeriod" value="#(inventorymfginfo.ipurchaseperiod??)"/>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">加工时间(CT/秒)</label>
-        <div class="col">
-          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
-                 maxlength="255" name="inventorymfginfo.cProcessTime" value="#(inventorymfginfo.cProcessTime??)"/>
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">加工时间(CT/秒)</label>
+                <div class="col">
+                    <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="0"
+                           maxlength="255" name="inventorymfginfo.cProcessTime" value="#(inventorymfginfo.cProcessTime??)"/>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-  </div>
+    </div>
 </div>
 <div>
-  <div class="py-2" style="padding:.5rem 0rem;">
-    <span class="py-1"><strong>生产控制</strong></span>
-  </div>
-  <div class="row">
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">生产部门</label>
-        <div class="col">
-          <select class="form-control" id="idepid" data-tips="请选择生产部门" data-url="admin/dept/datas"
-                  data-text-attr="name" data-value-attr="id"
-                  name="inventorymfginfo.iDepId" data-autoload data-text="=请选择生产部门=" data-value=""
-                  data-select="#(inventorymfginfo.iDepId??)"></select>
-        </div>
-      </div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong>生产控制</strong></span>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">生产部门</label>
+                <div class="col">
+                    <select class="form-control" id="idepid" data-tips="请选择生产部门" data-url="admin/dept/datas"
+                            data-text-attr="name" data-value-attr="id"
+                            name="inventorymfginfo.iDepId" data-autoload data-text="=请选择生产部门=" data-value=""
+                            data-select="#(inventorymfginfo.iDepId??)"></select>
+                </div>
+            </div>
 
-    </div>
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">超量完工类型</label>
-        <div class="col">
-          <select class="form-control" data-tips="请选择超量完工类型" data-url="admin/dictionary/options?key=overfinish_type"
-                  name="inventorymfginfo.cOverFinishSn" data-autoload data-text="=请选择超量完工类型=" data-value-attr="sn"
-                  data-value=""
-                  data-select="#(inventorymfginfo.coverfinishsn??)"></select>
         </div>
-      </div>
-    </div>
-    <div class="col-3">
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">完工超额量</label>
-        <div class="col">
-          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
-                 placeholder="0.00" maxlength="24" name="inventorymfginfo.iOverQty"
-                 value="#(inventorymfginfo.iOverQty??)"/>
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">超量完工类型</label>
+                <div class="col">
+                    <select class="form-control" data-tips="请选择超量完工类型" data-url="admin/dictionary/options?key=overfinish_type"
+                            name="inventorymfginfo.cOverFinishSn" data-autoload data-text="=请选择超量完工类型=" data-value-attr="sn"
+                            data-value=""
+                            data-select="#(inventorymfginfo.coverfinishsn??)"></select>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-3">
+        <div class="col-3">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">完工超额量</label>
+                <div class="col">
+                    <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                           placeholder="0.00" maxlength="24" name="inventorymfginfo.iOverQty"
+                           value="#(inventorymfginfo.iOverQty??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
 
-      <div class="form-group row">
-        <label class="col-sm-3 col-form-label">完工超额比例</label>
-        <div class="col">
-          <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
-                 placeholder="0.00%" maxlength="24" name="inventorymfginfo.iOverRate"
-                 value="#(inventorymfginfo.iOverRate??)"/>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">完工超额比例</label>
+                <div class="col">
+                    <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                           placeholder="0.00%" maxlength="24" name="inventorymfginfo.iOverRate"
+                           value="#(inventorymfginfo.iOverRate??)"/>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-3">
+    <div class="row">
+        <div class="col-3">
 
-      <div class="col">
+            <div class="col">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">最少生产数量</label>
+                    <div class="col">
+                        <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
+                               placeholder="0" maxlength="24" name="inventorymfginfo.iMinProdQty"
+                               value="#(inventorymfginfo.iMinProdQty??)"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="form-group row">
-          <label class="col-sm-3 col-form-label">最少生产数量</label>
-          <div class="col">
-            <input type="number" data-with-clearbtn="true" autocomplete="off" class="form-control" data-notnull="false"
-                   placeholder="0" maxlength="24" name="inventorymfginfo.iMinProdQty"
-                   value="#(inventorymfginfo.iMinProdQty??)"/>
-          </div>
+
+            <div class="col" style="padding-left: 30px">
+                <label class="col-form-label">所属生产线</label>
+            </div>
+            <div class="col">
+                #render("_table_split.html")
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="form-group row">
+    <div class="row">
+        <div class="form-group row">
+            <div class="col" style="padding-left: 60px">
+                <label class="col-form-label">产能</label>
+            </div>
 
-      <div class="col" style="padding-left: 30px">
-        <label class="col-form-label">所属生产线</label>
-      </div>
-      <div class="col">
-        #render("_table_split.html")
-      </div>
+            <div class="col">
+                #render("_capacity_table.html")
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="form-group row">
-      <div class="col" style="padding-left: 60px">
-        <label class="col-form-label">产能</label>
-      </div>
-
-      <div class="col">
-        #render("_capacity_table.html")
-      </div>
-    </div>
-  </div>
 </div>
 <div>
-  <div class="py-2" style="padding:.5rem 0rem;">
-    <span class="py-1"><strong>质检开关</strong></span>
-  </div>
-  <div class="row">
-    <div class="col">
-      <div class="form-group row"
-           data-radio
-           data-rule="radio"
-           data-value="#(inventorymfginfo.isIQC1??)"
-           data-name="inventorymfginfo.isIQC1"
-           data-default="options_first"
-           data-width="col-sm-2,col"
-      >
-        <label class="col-sm-3 col-form-label">是否来料质检</label>
-        <div class="col" style="padding-top: 1px;">
-          <div class="radio radio-primary  radio-inline">
-            <input id="r_isiqc1_true" type="radio" name="inventorymfginfo.isIQC1" value="true"/>
-            <label for="r_isiqc1_true">是</label>
-          </div>
-          <div class="radio radio-primary  radio-inline">
-            <input id="r_isiqc1_false" type="radio" name="inventorymfginfo.isIQC1" value="false"/>
-            <label for="r_isiqc1_false">否</label>
-          </div>
-        </div>
-      </div>
+    <div class="py-2" style="padding:.5rem 0rem;">
+        <span class="py-1"><strong>质检开关</strong></span>
     </div>
-    <div class="col">
-      <div class="form-group row"
-           data-radio
-           data-rule="radio"
-           data-value="#(inventorymfginfo.isIQC2??)"
-           data-name="inventorymfginfo.isIQC2"
-           data-default="options_first"
-           data-width="col-sm-2,col"
-      >
-        <label class="col-sm-4 col-form-label">是否出货质检</label>
-        <div class="col" style="padding-top: 1px;">
-          <div class="radio radio-primary  radio-inline">
-            <input id="r_isiqc5_true" type="radio" name="inventorymfginfo.isIQC2" value="true"/>
-            <label for="r_isiqc5_true">是</label>
-          </div>
-          <div class="radio radio-primary  radio-inline">
-            <input id="r_isiqc5_false" type="radio" name="inventorymfginfo.isIQC2" value="false"/>
-            <label for="r_isiqc5_false">否</label>
-          </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group row"
+                 data-radio
+                 data-rule="radio"
+                 data-value="#(inventorymfginfo.isIQC1??)"
+                 data-name="inventorymfginfo.isIQC1"
+                 data-default="options_first"
+                 data-width="col-sm-2,col"
+            >
+                <label class="col-sm-3 col-form-label is_required">是否来料质检</label>
+                <div class="col" style="padding-top: 1px;">
+                    <div class="radio radio-primary  radio-inline">
+                        <input id="r_isiqc1_true" type="radio" name="inventorymfginfo.isIQC1" value="true"/>
+                        <label for="r_isiqc1_true">是</label>
+                    </div>
+                    <div class="radio radio-primary  radio-inline">
+                        <input id="r_isiqc1_false" type="radio" name="inventorymfginfo.isIQC1" value="false"/>
+                        <label for="r_isiqc1_false">否</label>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+        <div class="col">
+            <div class="form-group row"
+                 data-radio
+                 data-rule="radio"
+                 data-value="#(inventorymfginfo.isIQC2??)"
+                 data-name="inventorymfginfo.isIQC2"
+                 data-default="options_first"
+                 data-width="col-sm-2,col"
+            >
+                <label class="col-sm-4 col-form-label is_required">是否完工质检</label>
+                <div class="col" style="padding-top: 1px;">
+                    <div class="radio radio-primary  radio-inline">
+                        <input id="r_isiqc5_true" type="radio" name="inventorymfginfo.isIQC2" value="true"/>
+                        <label for="r_isiqc5_true">是</label>
+                    </div>
+                    <div class="radio radio-primary  radio-inline">
+                        <input id="r_isiqc5_false" type="radio" name="inventorymfginfo.isIQC2" value="false"/>
+                        <label for="r_isiqc5_false">否</label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>

@@ -9,6 +9,7 @@
             #end
             <input type="hidden" name="dBeginDate" value="#(purchaseOrderM.dbegindate??)"/>
             <input type="hidden" name="dEndDate" value="#(purchaseOrderM.denddate??)"/>
+            <input type="hidden" id="isEnabled_type" name="isEnabled_type" value="#(purchaseOrderM.hideinvalid??)"/>
             <div class="row">
 
                 <div class="col">
@@ -313,6 +314,7 @@
     }
     function updateIsEnabled(ele) {
         $("#isEnabled_#(pageId)").val(ele.data("value"));
+        $("#isEnabled_type").val(ele.data("value"));
         Ajax.post('/admin/purchaseorderm/updateHideInvalid', {
             hideInvalid: ele.data("value"),
             id: '#(purchaseOrderM.iautoid??)'

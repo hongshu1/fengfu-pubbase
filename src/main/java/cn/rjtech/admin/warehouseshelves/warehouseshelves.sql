@@ -33,21 +33,26 @@ FROM
 
 #sql("selectPrint")
 SELECT
-ws.*,
-(ISNULL(wh.cWhCode, '')+'|'+ISNULL(wa.cAreaCode, '')+'|'+ISNULL(ws.cShelvesCode,'')) cbarcode,
-wh.cWhCode,
-wh.cWhName,
-wa.cAreaCode,
-wa.cAreaName
+	ws.*,
+	(
+		ISNULL( wh.cWhCode, '' ) + '|' + ISNULL( wa.cAreaCode, '' ) + '|' + ISNULL( ws.cShelvesCode, '' )
+	) shelvescode,
+	(
+		ISNULL( wh.cWhCode, '' ) + '|' + ISNULL( wa.cAreaCode, '' ) + '|' + ISNULL( ws.cShelvesCode, '' ) + '-' + ws.cShelvesName
+	) barname,
+	wh.cWhCode,
+	wh.cWhName,
+	wa.cAreaCode,
+	wa.cAreaName
 FROM
-Bd_Warehouse_Shelves ws
-LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = ws.iWarehouseId
-LEFT JOIN Bd_Warehouse_Area wa ON wa.iAutoId = ws.iWarehouseAreaId
-WHERE 1 = 1
-AND ws.isDeleted = '0'
-AND ws.iAutoId IN #(str)
-ORDER BY
-ws.dCreateTime DESC
+	Bd_Warehouse_Shelves ws
+	LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = ws.iWarehouseId
+	LEFT JOIN Bd_Warehouse_Area wa ON wa.iAutoId = ws.iWarehouseAreaId
+WHERE
+	1 = 1
+	AND ws.isDeleted = '0'
+    AND ws.iAutoId IN (#(ids))
+    ORDER BY ws.dCreateTime DESC
 #end
 
 #sql("verifyDuplication")

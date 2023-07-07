@@ -50,24 +50,29 @@ ORDER BY wp.dCreateTime
 ###打印
 #sql("printwarehouseposition")
 SELECT
-    wp.*,
-    wh.cWhCode,
-  (ISNULL(wh.cWhCode, '')+'|'+ISNULL(wa.cAreaCode, '')+'|'+ISNULL(ws.cShelvesCode,'')+'|'+ISNULL(wp.cPositionCode,'')) cbarcode,
-  (ISNULL(wh.cWhName,'')+'|'+ISNULL(wa.cAreaName,'')+'|'+ISNULL(ws.cShelvesName,'')+ISNULL(wp.cPositionName,'')) cbarname,
-    wa.cAreaCode,
-    wa.cAreaName,
-    ws.cShelvesCode,
-    ws.cShelvesName
+	wp.*,
+	wh.cWhCode,
+	wh.cWhName,
+	(
+		ISNULL( wh.cWhCode, '' ) + '|' + ISNULL( wa.cAreaCode, '' ) + '|' + ISNULL( ws.cShelvesCode, '' ) + '|' + ISNULL( wp.cPositionCode, '' )
+	) cbarcode,
+	(
+		ISNULL( wh.cWhCode, '' ) + '|' + ISNULL( wa.cAreaCode, '' ) + '|' + ISNULL( ws.cShelvesCode, '' ) + '|' + ISNULL( wp.cPositionCode, '' ) + '-' + wp.cCreateName
+	) cbarname,
+	wa.cAreaCode,
+	wa.cAreaName,
+	ws.cShelvesCode,
+	ws.cShelvesName
 FROM
-    Bd_Warehouse_Position wp
-LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = wp.iWarehouseId
-LEFT JOIN Bd_Warehouse_Area wa ON wa.iAutoId = wp.iWarehouseAreaId
-LEFT JOIN Bd_Warehouse_Shelves ws ON ws.iAutoId = wp.iWarehouseShelvesId
+	Bd_Warehouse_Position wp
+	LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = wp.iWarehouseId
+	LEFT JOIN Bd_Warehouse_Area wa ON wa.iAutoId = wp.iWarehouseAreaId
+	LEFT JOIN Bd_Warehouse_Shelves ws ON ws.iAutoId = wp.iWarehouseShelvesId
 WHERE
-    1 = 1
-AND wp.isDeleted = '0'
-AND wp.iautoid IN #(str)
-ORDER BY wp.dCreateTime DESC
+	1 = 1
+	AND wp.isDeleted = '0'
+    AND wp.iautoid IN (#(ids))
+    ORDER BY wp.dCreateTime DESC
 #end
 
 #sql("verifyDuplication")
