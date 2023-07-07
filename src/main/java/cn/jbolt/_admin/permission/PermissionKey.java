@@ -3229,4 +3229,8 @@ public class PermissionKey {
 	 * 版本记录-导出
 	 */
 	public static final String ROUTING_VERSION_EXPORT = "routing_version_export";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_AREA_PRINT = "warehouse_area_print";
 }
