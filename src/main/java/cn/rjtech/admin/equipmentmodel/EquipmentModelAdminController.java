@@ -55,6 +55,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_ADD)
     public void add() {
         render("add.html");
     }
@@ -70,6 +71,7 @@ public class EquipmentModelAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_EDIT)
     public void edit() {
         EquipmentModel equipmentModel = service.findById(getLong(0));
         if (equipmentModel == null) {

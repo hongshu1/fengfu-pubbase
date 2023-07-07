@@ -59,6 +59,7 @@ public class UomclassAdminController extends JBoltBaseController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.UOMCLASS_ADD)
     public void add() {
         render("add.html");
     }
@@ -66,6 +67,7 @@ public class UomclassAdminController extends JBoltBaseController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.UOMCLASS_EDIT)
     public void edit() {
         Uomclass uomclass = service.findById(getLong(0));
         if (uomclass == null) {
