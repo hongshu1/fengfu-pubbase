@@ -324,26 +324,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String WORKCLASS_ADD = "workclass_add";
-	/**
-	 * 编辑
-	 */
-	public static final String WORKCLASS_EDIT = "workclass_edit";
-	/**
-	 * 导出
-	 */
-	public static final String WORKCLASS_EXPORT = "workclass_export";
-	/**
-	 * 导入
-	 */
-	public static final String WORKCLASS_IMPORT = "workclass_import";
-	/**
-	 * 删除
-	 */
-	public static final String WORKCLASS_DELETE = "workclass_delete";
-	/**
-	 * 新增
-	 */
 	public static final String OPERATION_ADD = "operation_add";
 	/**
 	 * 编辑
@@ -693,10 +673,6 @@ public class PermissionKey {
 	 * 容器分类
 	 */
 	public static final String CONTAINERCLASS = "containerclass";
-	/**
-	 * 平板端管理
-	 */
-	public static final String PAD_CONFIG = "pad_config";
 	/**
 	 * 平板端配置
 	 */
@@ -3237,4 +3213,24 @@ public class PermissionKey {
 	 * 打印
 	 */
 	public static final String WAREHOUSE_POSITION_PRINT = "warehouse_position_print";
+	/**
+	 * 新增
+	 */
+	public static final String WORKCLASS_ADD = "workclass_add";
+	/**
+	 * 修改
+	 */
+	public static final String WORKCLASS_EDIT = "workclass_edit";
+	/**
+	 * 删除
+	 */
+	public static final String WORKCLASS_DELETE = "workclass_delete";
+	/**
+	 * 导出
+	 */
+	public static final String WORKCLASS_EXPORT = "workclass_export";
+	/**
+	 * 导入
+	 */
+	public static final String WORKCLASS_IMPORT = "workclass_import";
 }
