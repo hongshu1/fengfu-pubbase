@@ -32,7 +32,7 @@
 	<td>
 		<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bomcompare/info/${data.iautoid}" tooltip data-title="查看" >查看</a>
 		<a class="ml-1"  data-dialogbtn='' data-area='90%,90%' href="admin/bomcompare/edit/${data.iautoid}" onclick="" tooltip data-title="编辑" >编辑</a>
-		<a class="text-warning" tooltip='' data-area='28%,70%' data-title='复制版本提示' data-dialogbtn='' href='admin/bommaster/copyForm/${data.iautoid}' data-handler='refreshPjaxContainer'>复制</a>
+		<a class="text-info" tooltip='' data-area='28%,70%' data-title='复制版本提示' data-dialogbtn='' href='admin/bommaster/copyForm/${data.iautoid}' data-handler='refreshPjaxContainer'>复制</a>
 		<a class="text-danger" data-ajaxbtn href="admin/bomM/del/${data.iautoid}" data-handler='refreshJBoltTable'  tooltip data-confirm='确定要执行此操作？' data-title="删除" >删除</a>
 		<!--{@if data.iauditstatus==0 || data.iauditstatus==3}
 			<a data-ajaxbtn href='admin/bomM/audit?bomMasterId=${data.iautoid}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>

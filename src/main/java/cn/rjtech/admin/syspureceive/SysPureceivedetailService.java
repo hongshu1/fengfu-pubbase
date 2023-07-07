@@ -119,8 +119,7 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
 
     public List<Record> findEditTableDatas(Kv para) {
         ValidationUtils.notNull(para.getLong("masid"), JBoltMsg.PARAM_ERROR);
-        List<Record> records = dbTemplate("syspureceive.dList", para).find();
-        return records;
+        return dbTemplate("syspureceive.dList", para).find();
     }
 
     /**
@@ -132,10 +131,10 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
             SysPureceivedetail byId1 = findById(s);
             SysPureceive byId = syspureceiveservice.findById(byId1.getMasID()) ;
             if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
-                ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+                ValidationUtils.error( "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-                ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+                ValidationUtils.error( "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
             }
         }
         deleteByIds(ids);
@@ -149,10 +148,10 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
         SysPureceivedetail byId1 = findById(id);
         SysPureceive byId = syspureceiveservice.findById(byId1.getMasID()) ;
         if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
-            ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+            ValidationUtils.error( "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
         }
         if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
-            ValidationUtils.isTrue(false, "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
+            ValidationUtils.error( "单据创建人为：" + byId.getCcreatename() + " 不可删除!!!");
         }
         deleteById(id);
         return SUCCESS;
@@ -177,5 +176,9 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
 
     public List<SysPureceivedetail> findDetailByMasIdAndInvcode(String masId,String invcode) {
         return find("select * from  T_Sys_PUReceiveDetail where MasID = ? and invcdoe=? and isDeleted = '0'", masId,invcode);
+    }
+
+    public List<SysPureceivedetail> findBySourceBillNoAndId(String sourceBillNo,String sourceBillId) {
+        return find("select *  from T_Sys_PUReceiveDetail where SourceBillNo = ? and sourceBillId = ?", sourceBillNo,sourceBillId);
     }
 }

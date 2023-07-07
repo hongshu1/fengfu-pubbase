@@ -40,20 +40,20 @@
                            maxlength="30" name="puinstore.billdate"
                            value="#datetime(puinstore.billdate??,'yyyy-MM-dd')">
                 </div>
+
                 <label class="col-sm-2 col-form-label">仓库名称：</label>
                 <div class="col-sm-2 col-form-label">
-                    <select class="form-control"
-                            name="puinstore.whcode"
-                            data-autoload
-                            data-url="admin/SysEnumeration/wareHouse"
-                            data-select-type="select2"
-                            data-text="=请选择仓库名称="
-                            data-value=""
-                            data-sync-ele="#cwhname"
-                            data-value-attr="whcode"
-                            data-text-attr="whname"
-                            data-select="#(puinstore.whcode??)"></select>
-                    <input type="hidden" data-sync-attr="whname" id="cwhname" name="puinstore.whname"  value="#(puinstore.whname??)" />
+                    <input id="whcode" type="hidden" name="puinstore.whcode" value="#(puinstore.whcode??)"
+                           data-value-attr="whcode"/>
+                        <input type="text" class="form-control" data-autocomplete
+                               id="whname"
+                               data-url="admin/materialReceiptList/Whcode" data-rule="required"
+                               data-hidden-input="whcode"
+                               data-sync-ele="#whcode,whcode1"
+                               data-text-attr="whname" name="puinstore.whname"
+                               data-column-attr="whcode,whname" placeholder="请选择仓库名称"
+                               data-tips="请选择仓库名称" data-header="仓库编码,仓库名称" maxlength="40"
+                               value="#(puinstore.whname??)">
                 </div>
             </div>
 
@@ -177,6 +177,7 @@
                                             <tr>
                                                 <th data-width="60" data-column="index">序号</th>
                                                 <th data-width="100">操作</th>
+                                                <th data-width="150" data-column="poscode">库区编码</th>
                                                 <th data-width="100" data-column="barcode">现品票</th>
                                                 <th data-width="100" data-column="invcode">存货编码</th>
                                                 <th data-width="100" data-column="cinvname">存货名称</th>
@@ -187,8 +188,8 @@
                                                 <th data-width="100" data-column="puunitname">采购单位</th>
                                                 <th data-width="100" data-column="qty">现存数</th>
                                                 <th data-width="100" data-column="memo">备注</th>
+                                                <th hidden data-width="100" data-column="iqty">现存数</th>
                                                 <th hidden data-width="100" data-column="whcode">仓库</th>
-                                                <th hidden data-width="100" data-column="poscode">库位</th>
                                                 <th hidden data-width="100" data-column="puunitcode"></th>
                                                 <th hidden data-width="100" data-column="sourcebillno"></th>
                                                 <th hidden data-width="100" data-column="sourcebillid"></th>
@@ -227,34 +228,45 @@
 <!-- 定义JBoltTable使用的数据渲染模板-->
 <!--<textarea class="jb_tpl_box" id="inventorySplit_tpl_#(pageId)">-->
 <script id="inventorySplit_tpl_#(pageId)" type="text/template">
-   {@each datas as data,index}
-        <tr data-id="${data.autoid}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
-    <td>
-        <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
-    </td>
-    <td>${data.barcode}</td>
-    <td>${data.invcode}</td>
-    <td>${data.cinvname}</td>
-    <td>${data.cinvcode1}</td>
-    <td>${data.cinvname1}</td>
-    <td>${data.cinvstd}</td>
-    <td>品牌</td>
-    <td >${data.puunitname}</td> //采购单位名称
-<!--    <td>${data.inventorycuomname}</td>-->
-    <td>${data.qty}</td>
-    <td>${data.memo}</td><td hidden>${data.whcode}</td> //仓库
-    <td hidden>${data.poscode}</td> //库位
-    <td hidden>${data.iqty}</td>
-    <td hidden>${data.puunitcode}</td> //采购单位编码
-    <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
-    <td hidden>${data.sourcebillid}</td> //来源单据ID(订单id)
-    <td hidden>${data.sourcebilltype}</td> //采购PO  委外OM（采购类型）
-    <td hidden>${data.sourcebilldid}</td> //来源单据DID;采购或委外单身ID
-    <td hidden>${data.sourcebillnorow}</td> //来源单号+行号
-    <td hidden>${data.rowno}</td> //行号
+    {@each datas as data,index}
+    <tr data-id="${data.autoid}">
+        <td>${pageNumber,pageSize,index | rownum}</td>
+        <td>
+            <a href="admin/materialreturnlist/deleteList/${data.autoid}" data-ajaxbtn data-loading="执行中 " tooltip
+               data-title="删除" data-handler="removeTr" data-confirm="确定删除这个顶部导航？" class="jbolt_table_delbtn">删除</a>
+        </td>
+        <td>${data.poscode}</td>
+        <td>${data.barcode}</td>
+        <td>${data.invcode}</td>
+        <td>${data.cinvname}</td>
+        <td>${data.cinvcode1}</td>
+        <td>${data.cinvname1}</td>
+        <td>${data.cinvstd}</td>
+        <td>品牌</td>
+        <td>${data.puunitname}</td>
+        //采购单位名称
+        <!--    <td>${data.inventorycuomname}</td>-->
+        <td>${data.qty}</td>
+        <td>${data.memo}</td>
+        <td hidden>${data.iqty}</td>
+        <td hidden>${data.whcode}</td>
+        //库位
+        <td hidden>${data.puunitcode}</td>
+        //采购单位编码
+        <td hidden>${data.sourcebillno}</td>
+        //来源单号（订单号）
+        <td hidden>${data.sourcebillid}</td>
+        //来源单据ID(订单id)
+        <td hidden>${data.sourcebilltype}</td>
+        //采购PO 委外OM（采购类型）
+        <td hidden>${data.sourcebilldid}</td>
+        //来源单据DID;采购或委外单身ID
+        <td hidden>${data.sourcebillnorow}</td>
+        //来源单号+行号
+        <td hidden>${data.rowno}</td>
+        //行号
 
-  </tr>
+    </tr>
     {@/each}
 </script>
 <!--</textarea>-->
@@ -310,7 +322,7 @@
         if (barcode) {
             Ajax.post("admin/materialreturnlist/barcode", {"barcode": barcode,"autoid":autoid,"detailHidden":detailHidden},
                 function (res) {
-                        jboltTableInsertRow("Puinstoreform_TableId_#(pageId)", res.data, false, true, true)
+                        jboltTableInsertRow("Puinstoreform_TableId_#(pageId)", res.data, false, false, true)
                         $("#barcode").val('');
                 }, function (err) {
                 })
@@ -353,6 +365,8 @@
         $("#vencode").val(data.vencode);
         $("#cvenname").val(data.cvenname);
         $("#cptname").val(data.cptname);
+        $("#whcode").val(data.whcode);
+        $("#whname").val(data.whname);
         $("#createperson").val(data.createperson);
     }
 
@@ -382,7 +396,7 @@
                     width: 800,
                     sync: "",
                     valueAttr: "barcode",
-                    columnAttr: "barcode,invcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,qty",
+                    columnAttr: "barcode,invcode,cinvname,cinvcode1,cinvname1,cinvstd,cinvname1,puunitname,iqty",
                     header: '条码,存货编码,存货名称,客户部番,部品名称,规格型号,品牌,采购单位,数量',
                     changeColumns: [{column: "barcode", use: "barcode"},
                         {column: "invcode", use: "invcode"},
@@ -393,7 +407,8 @@
                         // {column: "pingpai", use: "cinvname1"},
                         {column: "puunitname", use: "puunitname"},
                         {column: "puunitcode", use: "puunitcode"},
-                        {column: "iqty", use: "qty"},
+                        {column: "qty", use: "qty"},
+                        {column: "iqty", use: "iqty"},
                         {column: "sourcebillno", use: "sourcebillno"},
                         {column: "sourcebillid", use: "sourcebillid"},
                         {column: "sourcebilltype", use: "sourcebilltype"},
@@ -423,6 +438,22 @@
 
 
     },
+                poscode:{
+                    placeholder: "库区",
+                    tooltip: "库区",
+                    type: "autocomplete",
+                    url: "admin/warehousearea/options",
+                    maxLength: 100,
+                    required: true,
+                    placeholder: "请选择库区编码",
+                    textAttr: "careacode",
+                    width: 500,
+                    valueAttr: "careacode",//选择赋值的字段
+                    columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
+                    header: '库区编码,库区名称',
+                    changeColumns: [
+                        {column: "poscode", use: "careacode"}]
+                },
                 invcode: {
                     type: "autocomplete",
                     url: "admin/materialreturnlist/barcodeDatas",
@@ -441,6 +472,7 @@
                         {column: "cinvstd", use: "cinvstd"},
                         {column: "pingpai", use: "cinvname1"},
                         {column: "iqty", use: "qty"},
+                        {column: "qty", use: "qty"},
                         {column: "inventorycuomname", use: "inventorycuomname"}]
                 },
                 qty: {
@@ -465,8 +497,8 @@
                         }
                     }
                 },
-                qtys: {
-                    submitAttr:"qtys",
+                iqty: {
+                    submitAttr:"iqty",
                 },
                 memo: {
                     type:"input",

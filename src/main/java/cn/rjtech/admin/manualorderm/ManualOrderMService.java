@@ -13,6 +13,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
 import cn.rjtech.admin.saletype.SaleTypeService;
@@ -73,6 +74,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     private DictionaryService dictionaryService;
     @Inject
     private SaleTypeService saleTypeService;
+    @Inject
+    private InventoryMfgInfoService inventoryMfgInfoService;
 
     @Override
     protected ManualOrderM dao() {
@@ -430,11 +433,21 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     @Override
     public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
         ManualOrderM manualOrderM = findById(formAutoId);
+        List<ManualOrderD> manualOrderDS = manualOrderDService.findByMId(formAutoId);
         // 订单状态校验
 //        ValidationUtils.equals(manualOrderM.getIOrderStatus(), MonthOrderStatusEnum.AWAIT_AUDITED.getValue(), "订单非待审核状态");
 
+        // 生成出货检
+        for (ManualOrderD manualOrderD : manualOrderDS) {
+            Boolean isIqc2 = inventoryMfgInfoService.getIsIqc2(manualOrderD.getIInventoryId());
+            if (isIqc2) {
+                Ret ret = createStockoutQcFormM(manualOrderD.getIInventoryId(), manualOrderM.getIAutoId());
+                ValidationUtils.isTrue(ret.isOk(), "生成出货检失败!");
+            }
+        }
+
+
         // 推送U8订单
-        List<ManualOrderD> manualOrderDS = manualOrderDService.findByMId(formAutoId);
         String cDocNo = pushOrder(manualOrderM, manualOrderDS);
         ValidationUtils.notNull(cDocNo, "推单失败");
 

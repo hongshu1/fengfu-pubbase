@@ -763,3 +763,7 @@
 #namespace("fitem")
 #include("fitem/fitem.sql")
 #end
+
+#namespace("inventorymfginfo")
+#include("inventorymfginfo/inventorymfginfo.sql")
+#end

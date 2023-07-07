@@ -20,12 +20,12 @@
                 <tr data-id="${data.iautoid}">
                     <td>${pageNumber,pageSize,index | rownum}</td>
                     <td>
-                        <a class="ml-1"  data-dialogbtn='close' data-area='90%,90%' href="admin/routing/edit/${data.iautoid}" onclick="" tooltip data-title="查看" >查看</a>
-                         {@if data.iauditstatus==0 || data.iauditstatus==3}
+                        <a class="ml-1 text-info" data-btn="no" data-dialogbtn='close' data-area='90%,90%' href="admin/routing/edit/${data.iautoid}" onclick="" tooltip data-title="查看" >查看</a>
+                        <!-- {@if data.iauditstatus==0 || data.iauditstatus==3}
                             <a data-ajaxbtn href='admin/routing/audit?routingId=${data.iautoid}&status=1' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="提审">提审</a>
                          {@else if data.iauditstatus==1 }
                             <a data-ajaxbtn href='admin/routing/audit?routingId=${data.iautoid}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
-                        {@/if}
+                        {@/if}-->
                     </td>
                     <td>${data.cauditstatustext}</td>
                     <td>${data.cinvcode}</td>

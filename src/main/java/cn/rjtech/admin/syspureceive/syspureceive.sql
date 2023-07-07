@@ -615,21 +615,6 @@ where 1=1
 	#end
 #end
 
-
-#sql("inventoryMfgInfo")
-select top 1 o.*
-from Bd_InventoryMfgInfo o
-LEFT JOIN Bd_Inventory y on y.iAutoId = o.iInventoryId
-where 1=1
-   	#if(cinvcode)
-		and y.cInvCode = #para(cinvcode)
-	#end
-
-order by o.iAutoId DESC
-
-#end
-
-
 #sql("InventoryQcForm")
 SELECT  qc.iAutoId,qc.cQcFormName,
 inv.cInvCode, inv.cInvCode1, inv.cInvName, inv.cInvName1, inv.cInvStd, uom.cUomName,t1.cDcCode,

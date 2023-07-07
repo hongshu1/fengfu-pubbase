@@ -108,11 +108,12 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
             return;
         }
         Record record = service.findRecordByAutoid(Kv.by("autoid", getLong("autoid")));
-        if (ObjUtil.equal(record.getStr("sourcebilltype"),"手工新增")){
+        if (ObjUtil.equal(record.getStr("sourcebilltype"), "手工新增")) {
             Record corderReocrd = service.findCOrderNoBySourceBillId(Kv.by("iautoid", record.get("sourcebillid")));
-            record.set("corderno",corderReocrd.getStr("corderno"));
+            record.set("corderno", corderReocrd.getStr("corderno"));
         }
         set("syssaledeliverplan", record);
+        keepPara();
         render("edit.html");
     }
 
@@ -188,8 +189,8 @@ public class SysSaledeliverplanAdminController extends BaseAdminController {
         renderJsonData(recordList);
     }
 
-    public void scanBarcode(){
-        List<Record> recordList = service.getBarcodeDatas(get("q"), getKv());
+    public void scanBarcode() {
+        List<Record> recordList = service.scanBarcode(getKv());
         renderJsonData(recordList);
     }
 

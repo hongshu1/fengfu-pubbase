@@ -182,16 +182,21 @@ WHERE
 
 #sql("getEffectiveBomM")
 SELECT
-	*
+	a.*
 FROM
-	Bd_BomM
+	Bd_BomM a
+	inner join (
+	SELECT iInventoryId, MAX ( cVersion ) cversion
+	FROM Bd_BomM b
+	 WHERE b.isDeleted = '0'
+	 AND b.iOrgId = #para(orgId)
+	 group by iInventoryId
+	) v on a.iInventoryId = v.iInventoryId and a.cVersion = v.cversion
 WHERE
-	isDeleted = '0'
-	AND iOrgId = #para(orgId)
-	AND dEnableDate  <= CONVERT(DATE,  GETDATE())
-	AND dDisableDate >= CONVERT(DATE,  GETDATE())
+	a.isDeleted = '0'
+	AND a.iOrgId = #para(orgId)
     #if(invIds)
-        AND iInventoryId NOT IN (
+        AND a.iInventoryId IN (
             #for(id:invIds)
                 '#(id)' #(for.last?'':',')
             #end
