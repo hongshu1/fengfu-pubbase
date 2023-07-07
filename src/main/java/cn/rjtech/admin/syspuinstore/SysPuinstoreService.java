@@ -547,6 +547,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     public String getSysPuinstoreDto(SysPuinstore puinstore) {
 
         //主数据
+        int i = 1;
         ArrayList<Main> MainData = new ArrayList<>();
         User user = JBoltUserKit.getUser();
         List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
