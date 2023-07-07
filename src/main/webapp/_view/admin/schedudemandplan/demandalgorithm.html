@@ -3,7 +3,7 @@
 #define css()
 <link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
-<link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
+
 <style>
     .spread-container {
         height:63vh;
@@ -556,8 +556,8 @@
      * @param initDate
      */
     function initDate(searchData) {
-        let url = searchData!=undefined?Api+`admin/scheduproductplanmonth/getTableHead?startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
-            :`admin/scheduproductplanmonth/getTableHead?startDate=&endDate=`;
+        let url = searchData!=undefined?Api+`admin/schedudemandplan/getTableHead?startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
+            :`admin/schedudemandplan/getTableHead?startDate=&endDate=`;
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
@@ -857,7 +857,7 @@
                                 <label class="col-form-label" >截止日期：</label>
                                 <input type="date" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">
                                 <div class="layui-form-item" style="margin-top:20px;width:20%;">
-                                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="demo-login">保存</button>
+                                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="demo-login">确定</button>
                                 </div>
                             </div></div>`,
                     success: ()=>{
@@ -878,9 +878,10 @@
                                success:function (res){
                                    if(res.data.msg=="操作成功"){
                                        LayerMsgBox.closeLoading();
+                                       initData();
                                        layer.closeAll();
                                    }else{
-                                       LayerMsgBox.error(res.msg,2000);
+                                       LayerMsgBox.error("请选择截止日期",2000);
                                    }
                                },error: function(error) {
                                    console.log(error);
