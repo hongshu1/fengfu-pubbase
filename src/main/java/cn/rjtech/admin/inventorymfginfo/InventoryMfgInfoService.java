@@ -11,6 +11,8 @@ import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 
+import java.util.Optional;
+
 /**
  * 料品生产档案
  *
@@ -153,4 +155,11 @@ public class InventoryMfgInfoService extends BaseService<InventoryMfgInfo> {
         return bool;
     }
 
+    /**
+     * 查询初物按钮是否打开，出货质检开关
+     */
+    public Boolean getIsIqc2(Long iInventoryId) {
+        InventoryMfgInfo inventoryMfgInfo = findFirst(selectSql().eq("iInventoryId", iInventoryId));
+        return Optional.ofNullable(inventoryMfgInfo).map(InventoryMfgInfo::getIsIQC2).orElse(false);
+    }
 }
