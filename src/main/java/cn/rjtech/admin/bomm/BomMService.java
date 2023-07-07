@@ -1278,9 +1278,6 @@ public class BomMService extends BaseService<BomM> {
 		
 		// 把 1-1下的子件去除
 		for (String code : codeBomCompareMap.keySet()){
-			if ("1-1-1".equals(code)){
-				System.out.println(111);
-			}
 			BomD bomD = codeBomCompareMap.get(code);
 			// 判断下面是否存在父栏目（1）
 			String perCode = getPerCode(code);
