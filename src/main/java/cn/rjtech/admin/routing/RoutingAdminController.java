@@ -81,6 +81,7 @@ public class RoutingAdminController extends BaseAdminController {
             return;
         }
         Record routing = service.findByIdRoutingVersion(invPart.getIInventoryRoutingId());
+        set("isView", 1);
         set("routing", routing);
         render("edit.html");
     }
