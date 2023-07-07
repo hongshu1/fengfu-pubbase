@@ -66,6 +66,7 @@ public class WorkshiftmAdminController extends JBoltBaseController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.WORKSHIFTM_ADD)
 	public void add() {
 		render("add.html");
 	}
@@ -73,6 +74,7 @@ public class WorkshiftmAdminController extends JBoltBaseController {
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.WORKSHIFTM_EDIT)
 	public void edit() {
 		Workshiftm workshiftm=service.findById(getLong(0));
 		if(workshiftm == null){

@@ -809,6 +809,17 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         if (!sysPuinstore.update()) {
             return "审核通过失败！！!";
         }
+        //2、采购订单，如果是双单位收货，需要生成形态转换单
+        SysPureceive pureceive = pureceiveService.findByBillNo(sysPuinstore.getSourceBillNo());
+        boolean special = checkPUReceiveSpecial(pureceive);
+        if (special){
+            List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(sysPuinstore.getAutoID());
+            SysAssem sysAssem = new SysAssem();
+            List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
+            createSysAssem(sysAssem, detailList, sysPuinstore, sysAssemdetailList);
+            ValidationUtils.isTrue(sysAssem.save(), "生成形态转换单失败！！！");
+            sysAssemdetailService.batchSave(sysAssemdetailList);
+        }
         return null;
     }
 
