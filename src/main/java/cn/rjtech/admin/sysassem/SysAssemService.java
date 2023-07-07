@@ -219,8 +219,8 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         tx(() -> {
             List<SysAssem> sysAssems = find("select *  from T_Sys_Assem where AutoID in (" + ids + ")");
             for (SysAssem s : sysAssems) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
-                    ValidationUtils.error( "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
+                if ("1".equals(String.valueOf(s.getIAuditStatus())) || "2".equals(String.valueOf(s.getIAuditStatus()))) {
+                    ValidationUtils.isTrue(false, "收料编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
                 if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                     ValidationUtils.error( "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + s.getCcreatename() + " 不可删除!!!");
@@ -242,8 +242,8 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     public Ret delete(Long id) {
         tx(() -> {
             SysAssem byId = findById(id);
-            if (!"0".equals(String.valueOf(byId.getIAuditStatus())) || !"3".equals(String.valueOf(byId.getIAuditStatus()))) {
-                ValidationUtils.error( "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
+            if ("2".equals(String.valueOf(byId.getIAuditStatus())) || "1".equals(String.valueOf(byId.getIAuditStatus()))) {
+                ValidationUtils.isTrue(false, "收料编号：" + byId.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!byId.getIcreateby().equals(JBoltUserKit.getUser().getId())){
                 ValidationUtils.error( "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
