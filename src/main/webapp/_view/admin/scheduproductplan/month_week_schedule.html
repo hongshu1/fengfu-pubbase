@@ -451,8 +451,8 @@
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
-        RowCount:100,           //一列多少单元格
-        ColumnCount:41,         //一行多少单元格
+        RowCount:24,           //一列多少单元格
+        ColumnCount:10,         //一行多少单元格
         rowindex:0,				//x轴索引
         columnindex:0,			//y轴索引
         data: [],				//当月时间数据
@@ -623,8 +623,8 @@
         //设置全局的列宽行高
         sheet.defaults.colWidth = 80;
         sheet.defaults.rowHeight = 25;
-        spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
-        spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
+        // spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
+        // spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
         sheet.frozenRowCount(4); // 将第一行冻结
         //设置单元格内容的对齐方式
         var style = new GC.Spread.Sheets.Style();
@@ -667,6 +667,12 @@
         //获取接口数据
         Ajax.get(url,(res)=>{
             spreadSuspend();//暂停绘制
+            var addCol = res.data.day.length;
+            var addRow = 30;
+            parms.RowCount = parms.RowCount+addRow;
+            parms.ColumnCount = parms.ColumnCount+addCol;
+            spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
+            spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
             spread.getActiveSheet().setRowVisible(1, false);//隐藏第2行
             let date = 1;
             let dateCol = 10;
@@ -804,8 +810,12 @@
                             let Z = 10;//在库天数公式嵌入起始列
                             let jihuaRow = 8;//计划在库公式嵌入起始行
                             let jihuaCol = 10;//计划在库公式嵌入起始列
+                            let valArr = [];
                             for (let k = 0; k < parms['scheduplanmonth'][i].childList[j].day.length; k++) {
                                 sheet.setValue(shiyongRow, shiyongCol+k, parms['scheduplanmonth'][i].childList[j].day[k].shiyong);
+                                //
+                                // sheet.setValue(shiyongRow, 16, 120);
+                                //
                                 sheet.setValue(1 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
                                 sheet.setValue(2 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].two));
                                 sheet.setValue(3 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].three));
@@ -820,10 +830,11 @@
                                 parms.activeSheet.setStyle(5 + shiyongRow, shiyongCol + k,style_2S);
 
                                 //
-                                sheet.setValue(1 + shiyongRow, 9, 2);
+                                sheet.setValue(1 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuOneS);
                                 sheet.setValue(2 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuTwoS);
                                 sheet.setValue(3 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuThreeS);
                                 sheet.setValue(4 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuZaiKu);
+                                // sheet.setValue(5 + shiyongRow, 9, 1);
                                 sheet.setValue(5 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].dayNum);
                                 //
                                 let AS= shiyongRow+5;
@@ -836,11 +847,31 @@
                                 sheet.setFormula(shiyongRow+5-1,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //判断当天是否为工作日
                                 if(parms['scheduplanmonth'][i].childList[j].day[k].iswork){
-                                    // console.log(parms['scheduplanmonth'][i].childList[j].day[k].iswork,'----------'+k)
                                     //嵌入在库天数公式
                                     sheet.setFormula(AS,Z+k,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
                                 }else{
-
+                                    // parms['colArr'] = [];
+                                    // var col = Z+k; // 初始列值
+                                    // // parms['cols'] = col+1;
+                                    // var row = AS-5; // 初始行值
+                                    // let value = 0;
+                                    // // console.log(parms['scheduplanmonth'][i].childList[j].day[col-10])
+                                    // for (let l = 0; l < Num; l++) {
+                                    //     /**
+                                    //      * @param parms['cols'] {number} 当前公式所在列
+                                    //      * @param row {number} 当前公式所在行
+                                    //      * @param parms['scheduplanmonth'][i].childList[j].day[parms['cols']-10] 当天数据对象
+                                    //      */
+                                    //     findColumns(col,row,parms['scheduplanmonth'][i].childList[j].day[col-10]);
+                                    //     console.log(col)
+                                    //     // ++col;
+                                    // }
+                                    // setTimeout(()=>{
+                                    //     // console.log(parms['colArr'],"3333333333333")
+                                    //     sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})/R${AS+1}C10`);
+                                    //     parms['colArr'].length=0;
+                                    // },0);
+                                    // console.log(`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})`)
                                 }
                                 //控制小数位为1位
                                 sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
@@ -883,12 +914,29 @@
             }
         })
     }
-    // let workI = 0;
-    // function setFormula(row,col,index){
-    //     debugger
-    //
-    //     // console.log(sheet.getValue(row-5,workCell+workI))
-    // }
+    /**
+     * @param col {number} 当前公式所在列
+     * @param row {number} 当前公式所在行
+     * @param obj 当天数据对象
+     */
+    function findColumns(col,row,obj){
+        let value = 0;
+        setTimeout(()=>{
+            // console.log(col)
+            value = sheet.getValue(row, col);//17
+            if(value==0){
+                if(obj.iswork){//false
+                    parms['colArr'].push(col);
+                    ++col;
+                }else{
+                    findColumns(++col,row);
+                    ++col;
+                }
+            }else {
+                parms['colArr'].push(col);//17
+            }
+        },0)
+    }
     // 订阅 valueChanged 事件
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let {row,col} = info;
@@ -1042,7 +1090,7 @@
         initDate(searchData);
         loadInit();
     }
-    //排场确定事件
+    //排产确定事件
     function savePopup(){
         //获取用户选择的时间
         const datetimeLocalInput = document.getElementById('datetime-local');
@@ -1057,6 +1105,13 @@
                 let {msg,state} = res.data;
                 state=='ok'?LayerMsgBox.success(msg):LayerMsgBox.error(msg)
                 closePopup();//隐藏弹出层
+                var json = sheet.toJSON();//储存表单数据
+                sheet.fromJSON(json);//清空表单数据
+                sheet.reset();//重置表单
+                //从新赋值到原始渲染位置
+                parms.planListRowIndex=4;
+                parms.dayRow=10;
+                parms.weekRow=10;
                 initData(level);
                 parms.level=level;
                 initDate();
@@ -1158,7 +1213,7 @@
             success:function (res){
                 myAlert.style.display = "none";
                 mybg.style.display = "none";
-                res.msg=="操作成功"?LayerMsgBox.success(res.msg):LayerMsgBox.error(res.msg,500);
+                res.msg=="操作成功"?LayerMsgBox.success(res.msg):LayerMsgBox.error(res.msg,4000);
             },error: function(error) {
                 console.log(error);
             }

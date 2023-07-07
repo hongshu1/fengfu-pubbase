@@ -12,7 +12,6 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.syssaledeliverplandetail.SysSaledeliverplandetailService;
 import cn.rjtech.admin.transvouchdetail.TransVouchDetailService;
-import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -22,7 +21,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -288,7 +286,7 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 				}
 
 			} else {
-				ValidationUtils.isTrue(false, "该客户未配置出货单据类型");
+				ValidationUtils.error( "该客户未配置出货单据类型");
 			}
 		}
 			return true;

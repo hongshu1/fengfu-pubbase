@@ -81,6 +81,22 @@ public class ApprovalDAdminController extends BaseAdminController {
     }
 
     /**
+     * 编辑
+     */
+    public void editView() {
+        String autoid = get("autoid");
+        Integer iseq = getInt("iseq");
+        ApprovalD approvalD = service.findById(autoid);
+        if (approvalD == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("iseq", isOk(iseq)?iseq+1:1);
+        set("approvalD", approvalD);
+        render("edit.html");
+    }
+
+    /**
      * 保存
      */
     public void save() {

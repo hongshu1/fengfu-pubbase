@@ -2,10 +2,10 @@
 
 #默认-主服务端 名字不要修改
 [jbolt_cache]
-enable      = false
-host        = 39.112.213.32
+enable      = true
+host        = 127.0.0.1
 port        = 6379
-password    = jbolt
+password    = 9d178F3JpN&7mYIn
 timeout     = 2000
 #database   = 0
 #clientName = clientname

@@ -99,9 +99,31 @@
         var data=jboltTableGetCheckedDatas("chooseDataTable_#(pageId)");
         console.log('souurcedata===>',data)
         if(data){
-            var success=jboltTablePrependRow('#jbolt_orderItemTable_otherreturn_#(pageId)_dia',data);
-            if (success) {
-                console.log('true')
+
+            var dialogData = jboltTableGetAllDatas("#jbolt_orderItemTable_otherreturn_#(pageId)_dia",['iuserid']);
+
+            var existArr = [];
+
+            $.each(dialogData,function (inx, row) {
+                existArr.push(row.iuserid);
+            });
+
+            //是否继续往下走
+            var each = true;
+
+            $.each(data,function (idx, row) {
+                if ($.inArray(row.iuserid,existArr) !== -1){
+                    LayerMsgBox.error("人员：["+row.cpsnname+"]已存在，不要重复选择",1500);
+                    each = false;
+                    return false;
+                }
+            });
+
+            if (each){
+                var success=jboltTablePrependRow('#jbolt_orderItemTable_otherreturn_#(pageId)_dia',data);
+                if (success) {
+                    console.log('true')
+                }
             }
         }
     }

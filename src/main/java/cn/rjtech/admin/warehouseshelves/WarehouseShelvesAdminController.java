@@ -61,6 +61,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_ADD)
     public void add() {
         render("add.html");
     }
@@ -68,6 +69,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_EDIT)
     public void edit() {
         WarehouseShelves warehouseShelves=service.findById(getLong(0));
         if(warehouseShelves == null){
@@ -81,6 +83,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_ADD)
     public void save() {
         renderJson(service.save(getModel(WarehouseShelves.class, "warehouseShelves")));
     }
@@ -88,6 +91,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_EDIT)
     public void update() {
         renderJson(service.update(getModel(WarehouseShelves.class, "warehouseShelves")));
     }
@@ -95,6 +99,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -117,6 +122,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
      * 导出数据
      */
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_EXPORT)
     public void dataExport() throws Exception {
         List<Record> rows = service.list(getKv());
         renderJxls("warehouseshelves.xlsx", Kv.by("rows", rows), "货架列表_" + DateUtil.today() + ".xlsx");
@@ -134,6 +140,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
      * 数据导入
      */
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_IMPORT)
     public void importExcelData() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");
@@ -159,4 +166,11 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
         renderJson(service.selectPrint(null));
     }
 
+
+    /**
+     * 货架打印数据
+     */
+    public void printData() {
+        renderJsonData(service.getPrintDataCheck(getKv()));
+    }
 }

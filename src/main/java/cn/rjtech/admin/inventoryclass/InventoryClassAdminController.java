@@ -49,6 +49,7 @@ public class InventoryClassAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.INVENTORYCLASS_ADD)
     public void add() {
         Long aLong = getLong(0);
         set("pid", aLong);
@@ -66,6 +67,7 @@ public class InventoryClassAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.INVENTORYCLASS_EDIT)
     public void edit() {
         InventoryClass inventoryClass = service.findById(getLong(0));
         if (inventoryClass == null) {

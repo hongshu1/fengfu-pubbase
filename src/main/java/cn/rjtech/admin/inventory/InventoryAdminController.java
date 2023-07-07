@@ -95,7 +95,8 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
-	public void add() {
+   @CheckPermission(PermissionKey.INVENTORYCLASS_ADD)
+   public void add() {
 		Long inventoryclassid = getLong("inventoryclassid");
 		Inventory inventory = new Inventory();
 		inventory.setIInventoryClassId(inventoryclassid);
@@ -147,7 +148,8 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
+   @CheckPermission(PermissionKey.INVENTORYCLASS_EDIT)
+   public void edit() {
 		Inventory inventory=service.findById(getLong(0));
 		if(inventory == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);

@@ -61,6 +61,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
   /**
    * 新增
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_AREA_ADD)
   public void add() {
     render("add.html");
   }
@@ -68,6 +69,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
   /**
    * 编辑
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_AREA_EDIT)
   public void edit() {
     WarehouseArea warehouseArea = service.findById(getLong(0));
     if (warehouseArea == null) {
@@ -81,6 +83,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
   /**
    * 保存
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_AREA_ADD)
   public void save() {
     renderJson(service.save(getModel(WarehouseArea.class, "warehouseArea")));
   }
@@ -88,6 +91,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
   /**
    * 更新
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_AREA_EDIT)
   public void update() {
     renderJson(service.update(getModel(WarehouseArea.class, "warehouseArea")));
   }
@@ -95,6 +99,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
   /**
    * 批量删除
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_AREA_DELETE)
   public void deleteByIds() {
     renderJson(service.deleteByBatchIds(get("ids")));
   }
@@ -117,6 +122,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
    * 导出数据
    */
   @SuppressWarnings("unchecked")
+  @CheckPermission(PermissionKey.WAREHOUSE_AREA_EXPORT)
   public void dataExport() throws Exception {
     renderJxls("warehousearea.xlsx", Kv.by("rows", service.list(getKv())), "库区列表_" + DateUtil.today() + ".xlsx");
   }
@@ -132,6 +138,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
   /**
    * 库区打印数据
    */
+  @CheckPermission(PermissionKey.WAREHOUSE_AREA_PRINT)
   public void printData() {
     renderJsonData(service.getPrintDataCheck(getKv()));
   }
@@ -145,6 +152,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
    * 库区档案excel导入
    */
   @SuppressWarnings("unchecked")
+  @CheckPermission(PermissionKey.WAREHOUSE_AREA_IMPORT)
   public void importExcelClass() {
     UploadFile uploadFile = getFile("file");
     ValidationUtils.notNull(uploadFile, "上传文件不能为空");

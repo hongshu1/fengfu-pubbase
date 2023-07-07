@@ -65,8 +65,8 @@ SELECT
  CONCAT(Qty.iYear,'-',Qty.iMonth,'-',Qty.iDate)dDate,
  per.cPsn_Num cPersonCode,
  '普通采购' cBusType,
- cPTName cPTCode,
- cDepCode cdepcode,
+ cPTcode cPTCode,
+ '' cdepcode,
  	'' inum,
   orderm.cCurrency cexch_name,
 	orderm.iExchangeRate iExchRate,
@@ -112,8 +112,11 @@ FROM
 	INNER JOIN Bd_Inventory inv ON inv.iAutoId = a.iinventoryId
 	INNER JOIN PS_PurchaseOrderM M ON M.iAutoId=d.iPurchaseOrderMid
 WHERE
-	cVersion = 00
+    d.isDeleted = 0
 	and M.iautoid=#para(iautoid)
+	#if(isEnabled_type)
+        AND a.isEffective = #para(isEnabled_type)
+    #end
 #end
 
 #sql("findBycOrderNo2")

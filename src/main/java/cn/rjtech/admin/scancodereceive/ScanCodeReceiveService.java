@@ -27,7 +27,6 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -233,8 +232,6 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 
 				String autoID = sysPureceive.getAutoID();
 
-
-
 //				新增 根据供应商分组
 				if (notOk(autoID)) {
 					ValidationUtils.isTrue(jBoltTable.saveIsNotBlank(), "行数据为空，不允许保存！");
@@ -310,8 +307,6 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 						sysPureceive.setCupdatename(user.getName());
 						sysPureceive.update();
 
-						headerId.set(sysPureceive.getAutoID());
-
 						saveModelList.forEach(sysPureceivedetail -> {
 							sysPureceivedetail.setMasID(sysPureceive.getAutoID());
 							sysPureceivedetail.setIcreateby(user.getId());
@@ -324,6 +319,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 						});
 						scanCodeReceiveDetailService.batchSave(saveModelList, saveModelList.size());
 					}
+
+                    headerId.set(autoID);
 				}
 			}
 
@@ -524,7 +521,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 			return dbTemplate("scancodereceive.getResource",kv).findFirst();*/
 			return firstRecord;
 		} else {
-		    ValidationUtils.isTrue(false, "未查找到该物料的双单位，请先维护物料的形态对照表");
+		    ValidationUtils.error( "未查找到该物料的双单位，请先维护物料的形态对照表");
         }
 		return null;
 	}
@@ -667,8 +664,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 						"and Barcode is not null");
 
 				Kv para = new Kv();
-				para.set("keywords",first.getBarcode());
-				List<Record> resource = getResource(para);
+				para.set("barcode",first.getBarcode());
+				Record resource = dbTemplate("scancodereceive.getOrder", para).findFirst();
 
 				SysPuinstore sysPuinstore = new SysPuinstore();
 
@@ -694,10 +691,10 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                 sysPuinstore.setDeptCode(sysPureceive.getDeptCode());
                 sysPuinstore.setIBusType(1);
                 sysPuinstore.setRdCode(sysPureceive.getRdCode());
-				sysPuinstore.setBillType(resource.get(0).getStr("ipurchasetypeid"));
-				sysPuinstore.setDeptCode(resource.get(0).getStr("cdepcode"));
-				sysPuinstore.setIBusType(Integer.valueOf(resource.get(0).getStr("orderibustype")));
-				sysPuinstore.setRdCode(resource.get(0).getStr("scrdcode"));
+				sysPuinstore.setBillType(resource.getStr("ipurchasetypeid"));
+				sysPuinstore.setDeptCode(resource.getStr("cdepcode"));
+				sysPuinstore.setIBusType(Integer.valueOf(resource.getStr("orderibustype")));
+				sysPuinstore.setRdCode(resource.getStr("scrdcode"));
                 sysPuinstore.save();
 
                 String autoID = sysPuinstore.getAutoID();

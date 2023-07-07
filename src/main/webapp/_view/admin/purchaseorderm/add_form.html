@@ -231,7 +231,7 @@
         <th data-width="150" rowspan="2" data-column="ipkgqty">包装数量</th>
         <th data-width="100" rowspan="2" data-column="ispresent">是否赠品</th>
         <th data-width="150" rowspan="2" data-column="cMemo">备注</th>
-        <th data-width="200" rowspan="2" data-column="ivendoraddrid" class="is_required">参照仓库档案</th>
+        <th data-width="200" rowspan="2" data-column="ivendoraddrid" class="is_required">仓库</th>
         <!--   显示日期 -->
         #for(dateHead:monthHeadList)
             <th data-width="80" colspan="#(dateHead.size)">#(dateHead.dateStr)</th>
@@ -298,7 +298,6 @@
 
                     placeholder: "=请选择=",
                     type:"autocomplete",
-                    required:true,
                     url:"admin/purchaseorderm/getWhcodeAll",
                     valueAttr:"iautoid",
                     textAttr:"cdistrictname",

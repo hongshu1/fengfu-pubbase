@@ -3141,4 +3141,100 @@ public class PermissionKey {
 	 * 添加
 	 */
 	public static final String PERSON_SUBMIT = "person_submit";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String ROUTING_BATCH_APPROVE = "routing_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String ROUTING_BATCH_REJECT = "routing_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String ROUTING_REVERSE_APPROVE = "routing_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String ROUTING_WITHDRAW = "routing_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String ROUTING_SUBMIT = "routing_submit";
+	/**
+	 * 通过
+	 */
+	public static final String ROUTING_APPROVE = "routing_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String ROUTING_REJECT = "routing_reject";
+	/**
+	 * 新增
+	 */
+	public static final String BOMMASTER_VERSION_ADD = "bommaster_version_add";
+	/**
+	 * 修改
+	 */
+	public static final String BOMMASTER_VERSION_EDIT = "bommaster_version_edit";
+	/**
+	 * 删除
+	 */
+	public static final String BOMMASTER_VERSION_DELETE = "bommaster_version_delete";
+	/**
+	 * 导出
+	 */
+	public static final String BOMMASTER_VERSION_EXPORT = "bommaster_version_export";
+	/**
+	 * 保存
+	 */
+	public static final String BOMMASTER_VERSION_SUBMIT = "bommaster_version_submit";
+	/**
+	 * 复制
+	 */
+	public static final String BOMMASTER_VERSION_COPY = "bommaster_version_copy";
+	/**
+	 * 新增
+	 */
+	public static final String BOMMASTER_ADD = "bommaster_add";
+	/**
+	 * 导出
+	 */
+	public static final String BOMMASTER_EXPORT = "bommaster_export";
+	/**
+	 * 导入
+	 */
+	public static final String BOMMASTER_IMPORT = "bommaster_import";
+	/**
+	 * 保存
+	 */
+	public static final String BOMMASTER_SUBMIT = "bommaster_submit";
+	/**
+	 * 新增物料清单
+	 */
+	public static final String BOMCOMPARE_ADD = "bomcompare_add";
+	/**
+	 * 导入查看-查看
+	 */
+	public static final String BOMMASTER_BOMCOMPARE_FILEINFO = "bommaster_bomcompare_fileinfo";
+	/**
+	 * 导入查看-删除
+	 */
+	public static final String BOMMASTER_BOMM_DEL = "bommaster_bomm_del";
+	/**
+	 * 导出
+	 */
+	public static final String ROUTING_EXPORT = "routing_export";
+	/**
+	 * 版本记录-导出
+	 */
+	public static final String ROUTING_VERSION_EXPORT = "routing_version_export";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_AREA_PRINT = "warehouse_area_print";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_POSITION_PRINT = "warehouse_position_print";
 }

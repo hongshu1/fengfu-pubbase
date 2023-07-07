@@ -20,6 +20,7 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.demandplanm.DemandPlanMService;
+import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
@@ -86,6 +87,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
     private InventoryService                  inventoryService;
     @Inject
     private WarehouseService warehouseService;
+    @Inject
+    private DepartmentService departmentService;
 
     @Override
     protected PurchaseOrderM dao() {
@@ -1098,11 +1101,13 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 				jsonObject.put("KL", order.get("KL"));
 				jsonObject.put("iNatDisCount", order.get("iNatDisCount"));
                 jsonObject.put("cPayType", order.get("cPayType"));
-                jsonObject.put("cdepcode",order.get("cdepcode"));
+                //String cdepcode = departmentService.getRefDepId(order.getStr("cdepcode"));
+                jsonObject.put("cdepcode",order.getStr("cdepcode"));
 				jsonArray.add(jsonObject);
 			}
 			JSONObject params = new JSONObject();
 			params.put("data",jsonArray);
+			LOG.info(params.toJSONString());
 			tx(() -> {
 				String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/PODocAdd?dbname=U8Context", params.toString());
 				JSONObject jsonObject = JSONObject.parseObject(result);
@@ -1116,8 +1121,8 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 			});
 			return map;
 	}
-	public List<Record> findByMidxlxs(Long iautoid){
-		return dbTemplate("purchaseorderm.findBycOrderNo",Kv.by("iautoid",iautoid)).find();
+	public List<Record> findByMidxlxs(Kv kv){
+		return dbTemplate("purchaseorderm.findBycOrderNo",kv).find();
 	}
 
 	public List<Record> findByMidxlxs2(Long iautoid){
@@ -1135,18 +1140,23 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
 	 * 导出PDF条码
 	 * @return
 	 */
-	public Kv pageOnePdf(Long iautoid,Integer page,Integer type) throws IOException {
+	public Kv pageOnePdf(Long iautoid,Integer page,Integer type,Kv kv) throws IOException {
+        if (Boolean.parseBoolean(kv.getStr("isEnabled_type"))){
+            kv.remove("isEnabled_type");
+        }else{
+            kv.set("isEnabled_type", "1");
+        }
 		List<Record> rowDatas = new ArrayList<>();
 		List<Record> barcodeDatas = new ArrayList<>();
 		if(type==0){
 			// 采购现品票清单数据
-			rowDatas = findByMidxlxs(iautoid);
+			rowDatas = findByMidxlxs(kv);
 			// 采购现品票条码数据
 			barcodeDatas=findByBarcode(iautoid);
 		}else {
-			// 采购现品票清单数据
+			// 传票更改清单数据
 			rowDatas = findByMidxlxs2(iautoid);
-			// 采购现品票条码数据
+			// 传票清单条码数据
 			barcodeDatas=findByBarcode2(iautoid);
 		}
 

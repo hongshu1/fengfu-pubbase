@@ -5,22 +5,19 @@ import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.instockqcformm.GetExportExcelVo;
-import cn.rjtech.entity.vo.rcvdocqcformm.*;
+import cn.rjtech.entity.vo.rcvdocqcformm.AutoGetCheckOutTableDatasVo;
+import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMApiCheckOutVo;
+import cn.rjtech.entity.vo.rcvdocqcformm.RcvDocQcFormMPageVo;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-
 import io.github.yedaxia.apidocs.ApiDoc;
 
 import java.io.IOException;
 
 /**
- * @version 1.0
- * @Author cc
- * @Create 2023/4/26 18:00
- * @Description 质量管理-来料检api接口
+ * 质量管理-来料检api接口
  */
 @ApiDoc
 public class RcvDocQcFormMApiController extends BaseApiController {
@@ -114,7 +111,8 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * @desc 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
+     * 点击查看按钮，跳转到“查看”页面（该页面只能查看，不能编辑）
+     *
      * @param iautoid
      */
     @ApiDoc(result = RcvDocQcFormMApiCheckOutVo.class)
@@ -126,8 +124,9 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
+     * 进入子页面自动加载table的数据：检验、查看、编辑三个跳转功能
+     *
      * @param ircvdocqcformmid 主表的主键
-     * @desc 进入子页面自动加载table的数据：检验、查看、编辑三个跳转功能
      */
     @ApiDoc(result = AutoGetCheckOutTableDatasVo.class)
     @UnCheck
@@ -138,14 +137,15 @@ public class RcvDocQcFormMApiController extends BaseApiController {
     }
 
     /**
-     * @param cmeasurepurpose:测试目的 cdcno:设变号
-     *                             ircvdocqcformmiautoid: 主页面的iautoid
-     *                             cmeasureunit:测定单位
-     *                             isok:是否合格
-     *                             cmeasurereason:测定理由
-     *                             serializeSubmitList:是一个json，存放在跳转的页面维护的数据（请调用此接口开发的同事，到时候问陈聪json的格式）
-     *                             cmemo:备注
-     * @desc 在检验页面点击“确定”按钮，将数据带到后台保存
+     * 在检验页面点击“确定”按钮，将数据带到后台保存
+     *
+     * @param cmeasurepurpose       测试目的 cdcno:设变号
+     * @param ircvdocqcformmiautoid 主页面的iautoid
+     * @param cmeasureunit          测定单位
+     * @param isok                  是否合格
+     * @param cmeasurereason        测定理由
+     * @param serializeSubmitList   是一个json，存放在跳转的页面维护的数据（请调用此接口开发的同事，到时候问陈聪json的格式）
+     * @param cmemo                 备注
      */
     @ApiDoc(result = NullDataResult.class)
     @UnCheck
@@ -163,8 +163,7 @@ public class RcvDocQcFormMApiController extends BaseApiController {
         ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, ircvdocqcformmiautoid,
-            cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
+        renderJBoltApiRet(apiService.saveCheckOut(cmeasurepurpose, cdcno, ircvdocqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
     }
 
     /**
@@ -195,8 +194,7 @@ public class RcvDocQcFormMApiController extends BaseApiController {
         ValidationUtils.notNull(isok, JBoltMsg.PARAM_ERROR);
         ValidationUtils.notNull(cmeasureunit, JBoltMsg.PARAM_ERROR);
 
-        renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, ircvdocqcformmiautoid, cmeasureunit, isok,
-            cmeasurereason, serializeSubmitList, cmemo));
+        renderJBoltApiRet(apiService.saveEdit(cmeasurepurpose, cdcno, ircvdocqcformmiautoid, cmeasureunit, isok, cmeasurereason, serializeSubmitList, cmemo));
     }
 
     /**

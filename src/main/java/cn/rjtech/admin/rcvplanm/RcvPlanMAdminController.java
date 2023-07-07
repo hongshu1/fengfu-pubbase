@@ -1,7 +1,9 @@
 package cn.rjtech.admin.rcvplanm;
 
+import java.io.File;
 import java.util.List;
 
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -9,11 +11,13 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.rcvpland.RcvPlanDService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Customer;
 import cn.rjtech.model.momdata.RcvPlanM;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -152,6 +156,21 @@ public class RcvPlanMAdminController extends BaseAdminController {
             }
         }
         renderJson(service.importExcelDatas(files));
+    }
+
+    /**
+     * 执行导入excel
+     */
+    public void importExcel() {
+        UploadFile uploadFile = getFile("file");
+        ValidationUtils.notNull(uploadFile, "上传文件不能为空");
+        File file = uploadFile.getFile();
+        List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+        // 截取最后一个“.”之前的文件名，作为导入格式名
+        String cformatName = list.get(0);
+        String extension = list.get(1);
+        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        renderJsonData(service.importExcel(file, cformatName));
     }
 
 }

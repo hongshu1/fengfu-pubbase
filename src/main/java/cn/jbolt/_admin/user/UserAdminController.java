@@ -198,6 +198,7 @@ public class UserAdminController extends BaseAdminController {
 	 */
 	public void add(){
 		set("roles", roleService.findAll());
+        set("isManager", JBoltUserKit.isSystemAdmin() || StrUtil.contains(JBoltUserKit.getUserRoleSns(), "manager"));
 		render("add.html");
 	}
 

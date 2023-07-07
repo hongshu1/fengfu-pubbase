@@ -20,12 +20,12 @@
                 <tr data-id="${data.iautoid}">
                     <td>${pageNumber,pageSize,index | rownum}</td>
                     <td>
-                        <a class="ml-1"  data-dialogbtn='close' data-area='90%,90%' href="admin/routing/edit/${data.iautoid}" onclick="" tooltip data-title="查看" >查看</a>
-                         {@if data.iauditstatus==0 || data.iauditstatus==3}
+                        <a class="ml-1 text-info" data-btn="no" data-dialogbtn='close' data-area='90%,90%' href="admin/routing/edit/${data.iautoid}" onclick="" tooltip data-title="查看" >查看</a>
+                        <!-- {@if data.iauditstatus==0 || data.iauditstatus==3}
                             <a data-ajaxbtn href='admin/routing/audit?routingId=${data.iautoid}&status=1' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="提审">提审</a>
                          {@else if data.iauditstatus==1 }
                             <a data-ajaxbtn href='admin/routing/audit?routingId=${data.iautoid}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
-                        {@/if}
+                        {@/if}-->
                     </td>
                     <td>${data.cauditstatustext}</td>
                     <td>${data.cinvcode}</td>
@@ -44,7 +44,8 @@
         </textarea>
         <div class="jbolt_table_toolbar" id="routingVersion_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-                <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
+                <button class="btn btn-outline-info" data-downloadbtn data-url="admin/routing/exportVersionExcel" data-form="routingVersion_form_#(pageId)" ><i class="fa fa-download"></i> 数据导出</button>
+                #include("/_view/_common/_batch_approval_btns.html", formSn="Bd_BomMaster", primaryKeyName="iAutoId", className="cn.rjtech.admin.routing.RoutingService", permissionKeyPrefix="routing")
                 <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
             </div>
 

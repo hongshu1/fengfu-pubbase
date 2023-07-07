@@ -360,4 +360,14 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 
   }
 
+  /**
+   * 打印数据
+   *
+   * @param kv 查询参数
+   * @return
+   */
+  public Object getPrintDataCheck(Kv kv) {
+    return dbTemplate("warehouseshelves.selectPrint", kv).find();
+  }
+
 }

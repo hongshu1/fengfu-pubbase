@@ -280,30 +280,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
             String CP = "CP";    //计划数量
             String ZK = "ZK";    //计划在库
 
-            //TODO: 所有日历的月份工作日集合  key：日历类型字典值sn，value：<年份，日历每月工作天数>
-            Map<String,Map<String,ScheduProductYearViewDTO>> calendarMonthNumListMapSn = new HashMap<>();
-            //根据日历字典查询出所有类型的工作日历
-            List<Dictionary> calendarTypeList = JBoltDictionaryCache.me.getListByTypeKey("prodcalendar_type",true);
-            for (Dictionary dictionary : calendarTypeList){
-                String sn = dictionary.getSn();
-                //查询查询年度每月的工作天数
-                List<Record> calendarMonthNumList = getCalendarMonthNumList(organizeId,sn,startYear,endYear);
-                Map<String,ScheduProductYearViewDTO> calendarMonthNumListMap = new HashMap<>();
-                for (Record record : calendarMonthNumList) {
-                    String dTakeYear = record.get("dTakeYear");
-                    int month = record.getInt("month");
-                    BigDecimal monthNum = record.getBigDecimal("monthNum");
-                    if (calendarMonthNumListMap.containsKey(dTakeYear)){
-                        ScheduProductYearViewDTO viewDTO = calendarMonthNumListMap.get(dTakeYear);
-                        viewDTO.getClass().getMethod("setNowmonth"+month, new Class[]{BigDecimal.class}).invoke(viewDTO, monthNum);
-                    }else {
-                        ScheduProductYearViewDTO viewDTO = new ScheduProductYearViewDTO();
-                        viewDTO.getClass().getMethod("setNowmonth"+month, new Class[]{BigDecimal.class}).invoke(viewDTO, monthNum);
-                        calendarMonthNumListMap.put(dTakeYear,viewDTO);
-                    }
-                }
-                calendarMonthNumListMapSn.put(sn,calendarMonthNumListMap);
-            }
 
             //TODO: 所有客户的年度每月工作日集合  key：客户id，value：<年份，客户每月工作天数>
             Map<Long,Map<String,Record>> cusWorkMonthNumListMap = new HashMap<>();
