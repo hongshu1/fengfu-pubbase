@@ -17,6 +17,7 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 
@@ -154,6 +155,16 @@ public class RoutingAdminController extends BaseAdminController {
             return;
         }
 
-        renderJxls("routing.xlsx", Kv.by("rows", rows), "计量单位_" + DateUtil.today() + ".xlsx");
+        renderJxls("routing.xlsx", Kv.by("rows", rows), "工艺路线_" + DateUtil.today() + ".xlsx");
+    }
+
+    public void exportVersionExcel() throws Exception {
+        Page<Record> routingVersion = service.findRoutingVersion(getPageNumber(), getPageSize(), getKv());
+        if (notOk(routingVersion)) {
+            renderJsonFail("无有效数据导出");
+            return;
+        }
+
+        renderJxls("versionrouting.xlsx", Kv.by("row", routingVersion), "版本记录_" + DateUtil.today() + ".xlsx");
     }
 }
