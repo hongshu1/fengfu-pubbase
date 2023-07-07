@@ -229,7 +229,7 @@ public class RdStyleService extends BaseService<RdStyle> {
 	 * @param openLevel 打开级别
 	 */
 	public List<JsTreeBean> getMgrTree(Long checkedId, int openLevel) {
-		List<RdStyle> uomclassList = find(" select * from Bd_Rd_Style Order By cRdCode ");
+		List<RdStyle> uomclassList = find(" select * from Bd_Rd_Style  where isDeleted ='0' Order By cRdCode");
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
 		JsTreeBean parent = new JsTreeBean("1", "#", "收发类别", null, "", false);
 		jsTreeBeanList.add(parent);
