@@ -135,6 +135,11 @@ FROM (
                   LEFT JOIN Bd_EquipmentModel AS f ON e.iEquipmentModelId = f.iAutoId
          WHERE a.isDeleted = '0' AND a.iAuditStatus = 2
            AND a.iYear = #para(startyear) AND a.iCustomerId IN (#(customerids))
+           AND a.iAutoId IN (SELECT MAX(iAutoId) AS iAutoId
+                             FROM Co_AnnualOrderM
+                             WHERE isDeleted = '0' AND iAuditStatus = 2
+                             AND iYear >= #para(startyear) AND iCustomerId IN (#(customerids))
+                             GROUP BY iCustomerId,iYear )
      ) AS t
 GROUP BY
     iCustomerId,cCusCode,cCusName,iEquipmentModelId,cEquipmentModelCode,cEquipmentModelName,
