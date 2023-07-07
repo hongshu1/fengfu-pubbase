@@ -56,6 +56,7 @@ public class InventoryChangeAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.INVENTORYCHANGE_ADD)
     public void add() {
         render("add.html");
     }

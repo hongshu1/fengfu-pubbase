@@ -22,14 +22,6 @@ public class PermissionKey {
 	 */
 	public static final String USER = "user";
 	/**
-	 * 部门管理
-	 */
-	public static final String DEPT = "dept";
-	/**
-	 * 岗位管理
-	 */
-	public static final String POST = "post";
-	/**
 	 * 开发管理
 	 */
 	public static final String ROLE_PERMISSION_MENU = "role_permission_menu";
@@ -314,26 +306,6 @@ public class PermissionKey {
 	 */
 	public static final String CUSTOMERD = "customerd";
 	/**
-	 * 新增
-	 */
-	public static final String UOMCLASS_ADD = "uomclass_add";
-	/**
-	 * 编辑
-	 */
-	public static final String UOMCLASS_EDIT = "uomclass_edit";
-	/**
-	 * 删除
-	 */
-	public static final String UOMCLASS_DELETE = "uomclass_delete";
-	/**
-	 * 导出
-	 */
-	public static final String UOMCLASS_EXPORT = "uomclass_export";
-	/**
-	 * 导入
-	 */
-	public static final String UOMCLASS_IMPORT = "uomclass_import";
-	/**
 	 * 新增/编辑
 	 */
 	public static final String BOMCOMPARE_ADDEDIT = "bomcompare_addEdit";
@@ -533,10 +505,6 @@ public class PermissionKey {
 	 * 生产备料单
 	 */
 	public static final String MOPICKLIST = "mopicklist";
-	/**
-	 * 计量单位档案
-	 */
-	public static final String UOM = "uom";
 	/**
 	 * 采购条码管理
 	 */
@@ -1341,10 +1309,6 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
-	/**
-	 * 新增
-	 */
-	public static final String DEPT_ADD = "dept_add";
 	/**
 	 * 新增报修
 	 */
@@ -3077,4 +3041,156 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String VENDOR_SUBMIT = "vendor_submit";
+	/**
+	 * 提审
+	 */
+	public static final String MOMOTASK_SUBMIT = "momotask_submit";
+	/**
+	 * 审核通过
+	 */
+	public static final String MOMOTASK_APPROVE = "momotask_approve";
+	/**
+	 * 审核不通过
+	 */
+	public static final String MOMOTASK_REJECT = "momotask_reject";
+	/**
+	 * 反审核
+	 */
+	public static final String MOMOTASK_REVERSE_APPROVE = "momotask_reverse_approve";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String MOMOTASK_BATCH_APPROVE = "momotask_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String MOMOTASK_BATCH_REJECT = "momotask_batch_reject";
+	/**
+	 * 撤回审核
+	 */
+	public static final String MOMOTASK_WITHDRAW = "momotask_withdraw";
+	/**
+	 * 新增
+	 */
+	public static final String UOMCLASS_ADD = "uomclass_add";
+	/**
+	 * 修改
+	 */
+	public static final String UOMCLASS_EDIT = "uomclass_edit";
+	/**
+	 * 删除
+	 */
+	public static final String UOMCLASS_DELETE = "uomclass_delete";
+	/**
+	 * 导出
+	 */
+	public static final String UOMCLASS_EXPORT = "uomclass_export";
+	/**
+	 * 导入
+	 */
+	public static final String UOMCLASS_IMPORT = "uomclass_import";
+	/**
+	 * 计量单位档案
+	 */
+	public static final String UOM = "uom";
+	/**
+	 * 新增
+	 */
+	public static final String EQUIPMENTMODEL_ADD = "equipmentmodel_add";
+	/**
+	 * 修改
+	 */
+	public static final String EQUIPMENTMODEL_EDIT = "equipmentmodel_edit";
+	/**
+	 * 删除
+	 */
+	public static final String EQUIPMENTMODEL_DELETE = "equipmentmodel_delete";
+	/**
+	 * 导出
+	 */
+	public static final String EQUIPMENTMODEL_EXPORT = "equipmentmodel_export";
+	/**
+	 * 新增
+	 */
+	public static final String INVENTORYCLASS_ADD = "inventoryclass_add";
+	/**
+	 * 修改
+	 */
+	public static final String INVENTORYCLASS_EDIT = "inventoryclass_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INVENTORYCLASS_DELETE = "inventoryclass_delete";
+	/**
+	 * 导出
+	 */
+	public static final String INVENTORYCLASS_EXPORT = "inventoryclass_export";
+	/**
+	 * 导入
+	 */
+	public static final String INVENTORYCLASS_IMPORT = "inventoryclass_import";
+	/**
+	 * 保存
+	 */
+	public static final String INVENTORYCLASS_SUBLIT = "inventoryclass_sublit";
+	/**
+	 * 复制
+	 */
+	public static final String INVENTORYCLASS_COPY = "inventoryclass_copy";
+	/**
+	 * 添加
+	 */
+	public static final String PERSON_SUBMIT = "person_submit";
+	/**
+	 * 批量审核通过
+	 */
+	public static final String ROUTING_BATCH_APPROVE = "routing_batch_approve";
+	/**
+	 * 批量审核不通过
+	 */
+	public static final String ROUTING_BATCH_REJECT = "routing_batch_reject";
+	/**
+	 * 反审
+	 */
+	public static final String ROUTING_REVERSE_APPROVE = "routing_reverse_approve";
+	/**
+	 * 撤回
+	 */
+	public static final String ROUTING_WITHDRAW = "routing_withdraw";
+	/**
+	 * 提审
+	 */
+	public static final String ROUTING_SUBMIT = "routing_submit";
+	/**
+	 * 通过
+	 */
+	public static final String ROUTING_APPROVE = "routing_approve";
+	/**
+	 * 不通过
+	 */
+	public static final String ROUTING_REJECT = "routing_reject";
+	/**
+	 * 新增
+	 */
+	public static final String BOMMASTER_VERSION_ADD = "bommaster_version_add";
+	/**
+	 * 修改
+	 */
+	public static final String BOMMASTER_VERSION_EDIT = "bommaster_version_edit";
+	/**
+	 * 删除
+	 */
+	public static final String BOMMASTER_VERSION_DELETE = "bommaster_version_delete";
+	/**
+	 * 导出
+	 */
+	public static final String BOMMASTER_VERSION_EXPORT = "bommaster_version_export";
+	/**
+	 * 保存
+	 */
+	public static final String BOMMASTER_VERSION_SUBMIT = "bommaster_version_submit";
+	/**
+	 * 复制
+	 */
+	public static final String BOMMASTER_VERSION_COPY = "bommaster_version_copy";
 }

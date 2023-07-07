@@ -95,7 +95,8 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
-	public void add() {
+   @CheckPermission(PermissionKey.INVENTORYCLASS_ADD)
+   public void add() {
 		Long inventoryclassid = getLong("inventoryclassid");
 		Inventory inventory = new Inventory();
 		inventory.setIInventoryClassId(inventoryclassid);
@@ -147,7 +148,8 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
+   @CheckPermission(PermissionKey.INVENTORYCLASS_EDIT)
+   public void edit() {
 		Inventory inventory=service.findById(getLong(0));
 		if(inventory == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
@@ -182,6 +184,7 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 删除
 	*/
+   @CheckPermission(PermissionKey.INVENTORYCLASS_DELETE)
 	public void delete() {
 		Long id = getLong(0);
 		inventoryAdditionService.deleteBy(Okv.by("iInventoryId", id));
@@ -199,6 +202,7 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 复制
 	*/
+   @CheckPermission(PermissionKey.INVENTORYCLASS_COPY)
 	public void copy() {
 		Long id = getLong(0);
 		Inventory inventory=service.findById(id);
@@ -261,6 +265,7 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 执行导入excel
 	*/
+   @CheckPermission(PermissionKey.INVENTORYCLASS_IMPORT)
 	public void importExcel() {
 		String uploadPath=JBoltUploadFolder.todayFolder(JBoltUploadFolder.IMPORT_EXCEL_TEMP_FOLDER);
         UploadFile file=getFile("file",uploadPath);
@@ -274,6 +279,7 @@ public class InventoryAdminController extends BaseAdminController {
    /**
 	* 执行导出excel 根据查询form表单
 	*/
+   @CheckPermission(PermissionKey.INVENTORYCLASS_EXPORT)
 	public void exportExcelByForm() {
 	    Page<Record> pageData = service.getAdminDatas(getPageNumber(), getPageSize(),getKv());
 	    if(notOk(pageData.getTotalRow())){
@@ -286,6 +292,7 @@ public class InventoryAdminController extends BaseAdminController {
     /**
 	* 执行导出excel 根据表格选中数据
 	*/
+	@CheckPermission(PermissionKey.INVENTORYCLASS_EXPORT)
 	public void exportExcelByCheckedIds() {
 		String ids = get("ids");
 		Kv kv = getKv();
@@ -310,6 +317,7 @@ public class InventoryAdminController extends BaseAdminController {
     /**
 	* 执行导出excel 所有数据
 	*/
+	@CheckPermission(PermissionKey.INVENTORYCLASS_EXPORT)
 	public void exportExcelAll() {
 	    List<Record> datas = service.getAdminDatasNoPage(getKv());
 	    if(notOk(datas)){
@@ -414,12 +422,14 @@ public class InventoryAdminController extends BaseAdminController {
         
         renderJson(service.fetchByCinvcode1s(cinvcode1));
     }
-    
+
+	@CheckPermission(PermissionKey.INVENTORYCLASS_SUBLIT)
 	public void submitMulti() {
 		renderJson(service.submitMulti(getJBoltTables()));
 	}
 
 
+	@CheckPermission(PermissionKey.INVENTORYCLASS_IMPORT)
 	public void importExcelClass() {
 		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
 		UploadFile file = getFile("file", uploadPath);

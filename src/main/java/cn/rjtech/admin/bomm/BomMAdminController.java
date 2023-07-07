@@ -1,6 +1,8 @@
 package cn.rjtech.admin.bomm;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.bomd.BomDService;
 import cn.rjtech.admin.bomdata.BomDataService;
@@ -135,7 +137,7 @@ public class BomMAdminController extends BaseAdminController {
 	public void audit(@Para(value = "bomMasterId") Long bomMasterId, @Para(value = "status") Integer status) {
 		renderJson(service.audit(bomMasterId, status));
 	}
-	
+	@CheckPermission(PermissionKey.BOMMASTER_VERSION_DELETE)
 	public void del() {
 		renderJson(service.del(getLong(0)));
 	}
@@ -166,7 +168,7 @@ public class BomMAdminController extends BaseAdminController {
     public void getTreeTableDatas(){
 		renderJsonData(bomDService.getTreeTableDatas(getKv()));
 	}
- 
+	@CheckPermission(PermissionKey.BOMMASTER_VERSION_EXPORT)
 	public void exportExcelByIds() throws Exception {
 		String ids = get("ids");
 		if (notOk(ids)) {
@@ -180,7 +182,8 @@ public class BomMAdminController extends BaseAdminController {
 		}
 		renderBytesToExcelXlsFile(service.exportExcelTpl(data));
 	}
-	
+
+	@CheckPermission(PermissionKey.BOMMASTER_VERSION_EXPORT)
 	public void exportExcelAll() throws Exception {
 		List<Record> rows = service.getVersionRecordList(getKv());
 		if (notOk(rows)) {

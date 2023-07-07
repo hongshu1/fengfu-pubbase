@@ -59,6 +59,7 @@ public class UomclassAdminController extends JBoltBaseController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.UOMCLASS_ADD)
     public void add() {
         render("add.html");
     }
@@ -66,6 +67,7 @@ public class UomclassAdminController extends JBoltBaseController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.UOMCLASS_EDIT)
     public void edit() {
         Uomclass uomclass = service.findById(getLong(0));
         if (uomclass == null) {
@@ -79,6 +81,7 @@ public class UomclassAdminController extends JBoltBaseController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.UOMCLASS_ADD)
     public void save() {
         renderJson(service.save(getModel(Uomclass.class, "uomclass")));
     }
@@ -86,6 +89,7 @@ public class UomclassAdminController extends JBoltBaseController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.UOMCLASS_EDIT)
     public void update() {
         renderJson(service.update(getModel(Uomclass.class, "uomclass")));
     }
@@ -93,6 +97,7 @@ public class UomclassAdminController extends JBoltBaseController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.UOMCLASS_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -133,6 +138,7 @@ public class UomclassAdminController extends JBoltBaseController {
     }
 
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.UOMCLASS_EXPORT)
     public void exportExcelAll() throws Exception {
         List<Record> record = service.findUomClassRecord();
         if (notOk(record)) {
@@ -151,6 +157,7 @@ public class UomclassAdminController extends JBoltBaseController {
         renderJxls("uomclass_import.xlsx", Kv.by("rows", null), "计量单位组导入模板.xlsx");
     }
 
+    @CheckPermission(PermissionKey.UOMCLASS_IMPORT)
     public void importExcel() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");
