@@ -163,8 +163,8 @@ public class FormApprovalApiService extends JBoltApiBaseService {
      * @param className      类名
      * @param isWithinBatch  是否为批量审核调用
      */
-    public JBoltApiRet approveByStatus(String formSn, long formAutoId, String primaryKeyName, String className, boolean isWithinBatch) {
-        Ret ret = service.approveByStatus(formSn, formAutoId, primaryKeyName, className, isWithinBatch);
+    public JBoltApiRet approveByStatus(String formSn, long formAutoId, String primaryKeyName, String className, boolean isWithinBatch, long userId) {
+        Ret ret = service.approveByStatus(formSn, formAutoId, primaryKeyName, className, isWithinBatch, userId);
 
         return ret.isOk() ? JBoltApiRet.API_SUCCESS : JBoltApiRet.API_FAIL(ret.getStr("msg"));
     }
@@ -178,8 +178,8 @@ public class FormApprovalApiService extends JBoltApiBaseService {
      * @param className      类名
      * @param isWithinBatch  是否为批处理
      */
-    public JBoltApiRet rejectByStatus(String formSn, Long formAutoId, String primaryKeyName, String className, boolean isWithinBatch) {
-        Ret ret = service.rejectByStatus(formSn, formAutoId, primaryKeyName, className, isWithinBatch);
+    public JBoltApiRet rejectByStatus(String formSn, Long formAutoId, String primaryKeyName, String className, boolean isWithinBatch, long userId) {
+        Ret ret = service.rejectByStatus(formSn, formAutoId, primaryKeyName, className, isWithinBatch, userId);
 
         return ret.isOk() ? JBoltApiRet.API_SUCCESS : JBoltApiRet.API_FAIL(ret.getStr("msg"));
     }
@@ -192,8 +192,8 @@ public class FormApprovalApiService extends JBoltApiBaseService {
      * @param primaryKeyName 主键名
      * @param className      类名
      */
-    public JBoltApiRet reverseApproveByStatus(String formSn, Long formAutoId, String primaryKeyName, String className) {
-        Ret ret = service.reverseApproveByStatus(formSn, formAutoId, primaryKeyName, className);
+    public JBoltApiRet reverseApproveByStatus(String formSn, Long formAutoId, String primaryKeyName, String className, long userId) {
+        Ret ret = service.reverseApproveByStatus(formSn, formAutoId, primaryKeyName, className, userId);
 
         return ret.isOk() ? JBoltApiRet.API_SUCCESS : JBoltApiRet.API_FAIL(ret.getStr("msg"));
     }
@@ -206,8 +206,8 @@ public class FormApprovalApiService extends JBoltApiBaseService {
      * @param primaryKeyName 主键名
      * @param className      实现审批业务的类名
      */
-    public JBoltApiRet batchApproveByStatus(String ids, String formSn, String primaryKeyName, String className) {
-        Ret ret = service.batchApproveByStatus(ids, formSn, primaryKeyName, className);
+    public JBoltApiRet batchApproveByStatus(String ids, String formSn, String primaryKeyName, String className, long userId) {
+        Ret ret = service.batchApproveByStatus(ids, formSn, primaryKeyName, className, userId);
 
         return ret.isOk() ? JBoltApiRet.API_SUCCESS : JBoltApiRet.API_FAIL(ret.getStr("msg"));
     }
@@ -220,8 +220,8 @@ public class FormApprovalApiService extends JBoltApiBaseService {
      * @param primaryKeyName 主键名
      * @param className      实现审批业务的类名
      */
-    public JBoltApiRet batchRejectByStatus(String ids, String formSn, String primaryKeyName, String className) {
-        Ret ret = service.batchRejectByStatus(ids, formSn, primaryKeyName, className);
+    public JBoltApiRet batchRejectByStatus(String ids, String formSn, String primaryKeyName, String className, long userId) {
+        Ret ret = service.batchRejectByStatus(ids, formSn, primaryKeyName, className, userId);
 
         return ret.isOk() ? JBoltApiRet.API_SUCCESS : JBoltApiRet.API_FAIL(ret.getStr("msg"));
     }

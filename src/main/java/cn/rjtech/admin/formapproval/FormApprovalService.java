@@ -664,7 +664,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         Map<Long, FormApprovalFlowM> flowMMap = flowMList.stream().collect(Collectors.toMap(FormApprovalFlowM::getIApprovalDid, Function.identity(), (key1, key2) -> key2));
 
                         // 判断下一节点
-                        nextNode(formApproval, approvalIautoId, flowMMap, now, primaryKeyName, className, formAutoId, false);
+                        nextNode(formApproval, approvalIautoId, flowMMap, now, primaryKeyName, className, formAutoId, false, user.getId());
 
                     } else {
                         ValidationUtils.error("提交失败，该审批流未配置具体审批节点");
@@ -884,7 +884,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                 // 审批不通过 更新单据状态 时间
                 if (status == 3) {
-                    ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
+                    ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), userId, now), "更新审核状态失败");
 
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
@@ -904,7 +904,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                     // 1、
                     if (finalNodeIsOk) {
                         // 判断下一节点
-                        nextNode(formApproval, mid, flowMMap, now, primaryKeyName, className, formAutoId, isWithinBatch);
+                        nextNode(formApproval, mid, flowMMap, now, primaryKeyName, className, formAutoId, isWithinBatch, userId);
                         // 2、
                     } else {
                         // 判断下一审批人
@@ -966,7 +966,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                                     formApprovalD.update();
 
                                     // 判断下一节点
-                                    nextNode(formApproval, mid, flowMMap, now, primaryKeyName, className, formAutoId, isWithinBatch);
+                                    nextNode(formApproval, mid, flowMMap, now, primaryKeyName, className, formAutoId, isWithinBatch, userId);
                                 }
                             }
                         }
@@ -1132,7 +1132,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                 // 审批不通过 更新单据状态 时间
                 if (status == 3) {
-                    ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
+                    ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), userId, now), "更新审核状态失败");
 
                     // 更新单据审批流主表
                     formApproval.setIsDeleted(true);
@@ -1380,7 +1380,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 下个节点判断
      */
-    public void nextNode(FormApproval formApproval, Long aid, Map<Long, FormApprovalFlowM> flowmMap, Date now, String primaryKeyName, String className, Long formAutoId, boolean isWithinBatch) {
+    public void nextNode(FormApproval formApproval, Long aid, Map<Long, FormApprovalFlowM> flowmMap, Date now, String primaryKeyName, String className, Long formAutoId, boolean isWithinBatch, long userId) {
         /*
          * 找出未审批通过的节点
          */
@@ -1479,7 +1479,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                         formApprovalD.setDAuditTime(now);
                         formApprovalD.update();
                         // 判断下一节点
-                        nextNode(formApproval, aid, flowmMap, now, primaryKeyName, className, formAutoId, isWithinBatch);
+                        nextNode(formApproval, aid, flowmMap, now, primaryKeyName, className, formAutoId, isWithinBatch, userId);
                     }
                 }
             }
@@ -1489,7 +1489,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             Long iFormObjectId = formApproval.getIFormObjectId();
             Form form = formService.findById(iFormId);
             ValidationUtils.notNull(form, "找不到表单配置");
-            ValidationUtils.isTrue(updateAudit(form.getCFormCode(), primaryKeyName, iFormObjectId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), now), "更新审核状态失败");
+            ValidationUtils.isTrue(updateAudit(form.getCFormCode(), primaryKeyName, iFormObjectId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), userId, now), "更新审核状态失败");
 
             // 最后一步审批通过时，调用此方法，用于支持审批状态变更外的业务处理
             String msg = invokeMethod(className, "postApproveFunc", formAutoId, isWithinBatch);
@@ -1521,11 +1521,12 @@ public class FormApprovalService extends BaseService<FormApproval> {
     /**
      * 更新审批状态
      */
-    public boolean updateAudit(String formSn, String primaryKeyName, long formAutoId, int iAfterStatus, int iBeforeStatus, Date now) {
+    public boolean updateAudit(String formSn, String primaryKeyName, long formAutoId, int iAfterStatus, int iBeforeStatus, long userId, Date now) {
         Sql updateSql = updateSql().update(formSn)
                 .set(IAUDITSTATUS, iAfterStatus)
                 .set(DAUDITTIME, now)
                 .eq(primaryKeyName, formAutoId)
+                .set(IAUDITBY, userId)
                 .eq(IAUDITSTATUS, iBeforeStatus);
 
         return update(updateSql) > 0;
@@ -1864,14 +1865,14 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param className      类名
      * @param isWithinBatch  是否为批量审核调用
      */
-    public Ret approveByStatus(String formSn, long formAutoId, String primaryKeyName, String className, boolean isWithinBatch) {
+    public Ret approveByStatus(String formSn, long formAutoId, String primaryKeyName, String className, boolean isWithinBatch, long userId) {
         tx(() -> {
             Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
             ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审核通过”按钮");
             ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
 
             // 更新审核通过
-            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审核状态失败");
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.APPROVED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), userId, new Date()), "更新审核状态失败");
 
             // 后置业务实现
             String msg = invokeMethod(className, "postApproveFunc", formAutoId, isWithinBatch);
@@ -1892,14 +1893,14 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param className      类名
      * @param isWithinBatch  是否为批处理
      */
-    public Ret rejectByStatus(String formSn, Long formAutoId, String primaryKeyName, String className, boolean isWithinBatch) {
+    public Ret rejectByStatus(String formSn, Long formAutoId, String primaryKeyName, String className, boolean isWithinBatch, long userId) {
         tx(() -> {
             Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
             ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“审核不通过”按钮");
             ValidationUtils.equals(formData.getInt(IAUDITSTATUS), AuditStatusEnum.AWAIT_AUDIT.getValue(), "非待审核状态");
 
             // 更新审核不通过
-            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), new Date()), "更新审核状态失败");
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.REJECTED.getValue(), AuditStatusEnum.AWAIT_AUDIT.getValue(), userId, new Date()), "更新审核状态失败");
 
             // 后置业务实现
             String msg = invokeMethod(className, "postRejectFunc", formAutoId, isWithinBatch);
@@ -1919,7 +1920,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param primaryKeyName 主键名
      * @param className      类名
      */
-    public Ret reverseApproveByStatus(String formSn, Long formAutoId, String primaryKeyName, String className) {
+    public Ret reverseApproveByStatus(String formSn, Long formAutoId, String primaryKeyName, String className, long userId) {
         tx(() -> {
             Record formData = getApprovalForm(formSn, primaryKeyName, formAutoId);
             ValidationUtils.equals(formData.getInt(IAUDITWAY), AuditWayEnum.STATUS.getValue(), "审批流审批的单据，不允许操作“反审核”按钮");
@@ -1930,7 +1931,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             ValidationUtils.assertBlank(msg, msg);
 
             // 更新审核通过
-            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), new Date()), "更新审核状态失败");
+            ValidationUtils.isTrue(updateAudit(formSn, primaryKeyName, formAutoId, AuditStatusEnum.NOT_AUDIT.getValue(), AuditStatusEnum.APPROVED.getValue(), userId, new Date()), "更新审核状态失败");
 
             // 后置业务实现
             msg = invokeMethod(className, "postReverseApproveFunc", formAutoId, true, true);
@@ -1950,7 +1951,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param primaryKeyName 主键名
      * @param className      实现审批业务的类名
      */
-    public Ret batchApproveByStatus(String ids, String formSn, String primaryKeyName, String className) {
+    public Ret batchApproveByStatus(String ids, String formSn, String primaryKeyName, String className, long userId) {
         List<Long> formAutoIds = new ArrayList<>();
 
         tx(() -> {
@@ -1960,7 +1961,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 long formAutoId = Long.parseLong(id);
                 formAutoIds.add(formAutoId);
 
-                approveByStatus(formSn, formAutoId, primaryKeyName, className, true);
+                approveByStatus(formSn, formAutoId, primaryKeyName, className, true, userId);
             }
 
             // 批量审核通过，后置业务
@@ -1981,7 +1982,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
      * @param primaryKeyName 主键名
      * @param className      实现审批业务的类名
      */
-    public Ret batchRejectByStatus(String ids, String formSn, String primaryKeyName, String className) {
+    public Ret batchRejectByStatus(String ids, String formSn, String primaryKeyName, String className, long userId) {
         List<Long> formAutoIds = new ArrayList<>();
 
         tx(() -> {
@@ -1990,7 +1991,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
                 long formAutoId = Long.parseLong(id);
                 formAutoIds.add(formAutoId);
 
-                rejectByStatus(formSn, formAutoId, primaryKeyName, className, true);
+                rejectByStatus(formSn, formAutoId, primaryKeyName, className, true, userId);
             }
 
             // 批量审核不通过后置业务处理
