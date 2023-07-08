@@ -40,8 +40,7 @@
 
     .search {
         display: flex;
-        /*justify-content: space-between; !* 水平居中 *!*/
-        flex-direction: row ;
+        /*flex-direction: row ;*/
         align-items: center; /* 垂直居中 */
         padding: 10px 0px;
     }
@@ -343,58 +342,48 @@
 #end
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page" data-key="#(pmkey??)">
-    <div class="jbolt_page_title">
-        <nav>
-            <p class="nav_title">物料需求计划计算</p>
-        </nav>
-        <!-- 头部标题结束 -->
-        <!-- 搜索工具类开始 -->
-        <div class="search">
-            <div class="select">
-                <span class="span">供应商名称:</span>
-                <div class="dropdown">
-                    <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="supplier" style="height:2rem"></button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="supplier_id">
-                    </ul>
+    <nav>
+        <p class="nav_title">物料需求计划计算</p>
+    </nav>
+    <!-- 头部标题结束 -->
+    <!-- 搜索工具类开始 -->
+    <div class="but_box">
+            <span class="span">供应商名称:</span>
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="supplier" style="height:2rem"></button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="supplier_id">
+                </ul>
+            </div>
+            <span>存货编码:</span>
+            <input style="width:150px;height:2rem;" id="cinvcode"/>
+            <span>客户部番:</span>
+            <input style="width:150px;height:2rem;" id="cinvcode1"/>
+            <span>部品名称:</span>
+            <input style="width:150px;height:2rem;" id="cinvname1"/>
+        <div style="margin-left: 20px;margin-right: 20px;display:inline-block;">
+            <div class="row">
+                <span style="margin-top: 5px">日期：</span>
+                <div class="col" style="display:flex;">
+                    <input type="date" id="search_start-time" name="search_start-time" style="height: 2rem">
+                    <p style="width: 30px;text-align: center;line-height:2rem;">至</p>
+                    <input type="date" id="search_end-time" name="search_end-time" style="height: 2rem">
                 </div>
             </div>
-            <div class="select">
-                <span>存货编码:</span>
-                <input style="width:150px;height:2rem;" id="cinvcode"/>
-            </div>
-            <div class="select">
-                <span>客户部番:</span>
-                <input style="width:150px;height:2rem;" id="cinvcode1"/>
-            </div>
-            <div class="select">
-                <span>部品名称:</span>
-                <input style="width:150px;height:2rem;" id="cinvname1"/>
-            </div>
-            <div style="margin-left: 20px;margin-right: 20px">
-                <div class="row">
-                    <span style="margin-top: 5px">日期：</span>
-                    <div class="col" style="display:flex;">
-                        <input type="date" id="search_start-time" name="search_start-time" style="height: 2rem">
-                        <p style="width: 30px;text-align: center;line-height:2rem;">至</p>
-                        <input type="date" id="search_end-time" name="search_end-time" style="height: 2rem">
-                    </div>
-                </div>
-            </div>
-            <div>
-                <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                    </svg>
-                    搜索
-                </button>
-                <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                    </svg>
-                    重置
-                </button>
-            </div>
+        </div>
+        <div style="margin-left: 20px;margin-right: 20px;display:inline-block;">
+            <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+                搜索
+            </button>
+            <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                </svg>
+                重置
+            </button>
         </div>
     </div>
 
@@ -486,16 +475,16 @@
     </div>
     <div id="modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <span class="close-btn" onclick="closeModal()" style="font-size: 2rem">&times</span>
             <div class="layui-form" style="margin: 16px;">
                 <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">
                     <label class="col-form-label">截止日期：</label>
-                    <input type="date" id="datetime-locals" name="datetime-locals" style="display: inline-block; width: 200px">
+                    <input type="date" id="datetime-locals" value="" cname="datetime-locals" style="display: inline-block; width: 200px;height: 2.5rem">
                 </div>
             </div>
             <div class="btn-container">
-                <button onclick="closeModal()">关闭</button>
-                <button onclick="confirmAction()">确定</button>
+                <button class="buttons" onclick="closeModal()">关闭</button>
+                <button class="buttons" onclick="confirmAction()">确定</button>
             </div>
         </div>
     </div>
@@ -889,6 +878,23 @@
     }
     function openModal() {
         var modal = document.getElementById("modal");
+
+        let url =Api+"admin/schedudemandplan/getSwitchDate";
+        $.ajax({
+            url,
+            type:'post',
+            dataType:'json',
+            success:function (res){
+                console.log(res.data)
+                const datetimeLocalInput = document.getElementById('datetime-locals');
+                const now = new Date();
+                const timestamp = now.getTime();
+                const isoString = new Date(timestamp).toISOString();
+                datetimeLocalInput.value = isoString.slice(0, 10);
+            },error: function(error) {
+                console.log(error);
+            }
+        })
         modal.style.display = "flex";
     }
 

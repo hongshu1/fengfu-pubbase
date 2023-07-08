@@ -22,6 +22,7 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
@@ -55,7 +56,7 @@ import java.util.Objects;
 public class PersonService extends BaseService<Person> {
 
     private final Person dao = new Person().dao();
-    
+
     @Inject
     private EquipmentService equipmentService;
     @Inject
@@ -83,7 +84,7 @@ public class PersonService extends BaseService<Person> {
 
         // 是否启用boolean转char
         para.set("isenabled", ObjUtil.defaultIfNull(para.getBoolean("isenabled"), "1"));
-        
+
         Page<Record> pageList = dbTemplate("person.paginateAdminDatas", para).paginate(pageNumber, pageSize);
         for (Record row : pageList.getList()) {
             row.set("cusername", JBoltUserCache.me.getName(row.getLong("iuserid")));
@@ -138,7 +139,18 @@ public class PersonService extends BaseService<Person> {
      * 删除
      */
     public Ret delete(Long id) {
-        return updateColumn(id, "isdeleted", true);
+        Person dbPerson = findById(id);
+        ValidationUtils.notNull(dbPerson, JBoltMsg.DATA_NOT_EXIST);
+        ValidationUtils.isTrue(!dbPerson.getIsDeleted(), "U8同步过来的记录，禁止删除操作！");
+
+        tx(() -> {
+
+            dbPerson.setIsDeleted(true);
+            ValidationUtils.isTrue(dbPerson.update(), ErrorMsg.UPDATE_FAILED);
+
+            return true;
+        });
+        return SUCCESS;
     }
 
     /**
@@ -502,9 +514,10 @@ public class PersonService extends BaseService<Person> {
                 .set("limit", limit)
                 .set("iorgid", getOrgId())
                 .set("cdepcode", cdepcode);
-        
+
         return dbTemplate("person.getAutocompleteListWithDept", para).find();
     }
+
     public List<Record> getAutocompleteDatasContainSubDep(String cdepcode, String q, Integer limit) {
         Okv para = Okv.by("q", q)
                 .set("limit", limit)
@@ -512,10 +525,11 @@ public class PersonService extends BaseService<Person> {
                 .set("cdepcodelike", cdepcode);
         return dbTemplate("person.getAutocompleteListWithDept", para).find();
     }
+
     /**
      * 通过用户组织获取人员
-     * 
-     * @param userId 用户ID 
+     *
+     * @param userId 用户ID
      * @param orgId  组织ID
      */
     public Person getPersonByUserOrg(long userId, long orgId) {
@@ -532,5 +546,5 @@ public class PersonService extends BaseService<Person> {
     public List<Person> findByCpersonName(String cpersonname) {
         return find(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR));
     }
-    
+
 }
