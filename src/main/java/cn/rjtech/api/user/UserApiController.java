@@ -42,10 +42,17 @@ public class UserApiController extends BaseApiController {
     @JBoltApplyJWT
     public void login(@Para(value = "username") String username,
                       @Para(value = "password") String password,
-                      @Para(value = "orgId") Long orgId) {
+                      @Para(value = "orgId") Long orgId
+//        ,
+//                      @Para(value = "mac") String mac,
+//                      @Para(value = "ip") String ip
+                      ) {
         ValidationUtils.notBlank(username, "缺少用户名");
         ValidationUtils.notBlank(password, "缺少密码");
         ValidationUtils.validateId(orgId, "登录组织");
+//        ValidationUtils.notBlank(mac, "未获取到MAC地址");
+//        ValidationUtils.notBlank(ip, "未获取到IP地址");
+//        renderJBoltApiRet(service.login(username, password, orgId,mac,ip));
         renderJBoltApiRet(service.login(username, password, orgId));
     }
 
