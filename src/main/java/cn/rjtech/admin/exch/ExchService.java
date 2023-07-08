@@ -5,6 +5,7 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.model.momdata.Exch;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -197,5 +198,12 @@ public class ExchService extends BaseService<Exch> {
                     "iperiod DESC";
             return findFirst(sqlStr, orgId, name);
         }
+        
+    public Exch findUniqueExch(Long iorgid,String cexchName,Integer itype,String cdate,Integer iyear){
+    	return findFirst(selectSql().eq("iorgid", iorgid).eq("cexch_name", cexchName).eq("itype", itype).eq("cdate", cdate).eq("iyear", iyear).eq("isdeleted", IsEnableEnum.NO.getValue()));
+    }
 
+	public void deleteByCexchName(String cexchName) {
+		delete(deleteSql().eq("cexch_name", cexchName));
+	}
 }
