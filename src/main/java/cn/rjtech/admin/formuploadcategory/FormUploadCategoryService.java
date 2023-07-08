@@ -286,4 +286,8 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	public List<Record> list(Kv kv){
 		return dbTemplate("formuploadcategory.list", kv).find();
 	}
+
+	public List<Record> workregionmOptions(Kv kv) {
+		return dbTemplate("formuploadcategory.workregionmOptions",kv).find();
+	}
 }
