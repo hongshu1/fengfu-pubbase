@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
@@ -16,17 +15,18 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.customeraddr.CustomerAddrService;
-import cn.rjtech.admin.customerclass.CustomerClassService;
 import cn.rjtech.admin.customerworkdays.CustomerWorkDaysService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.SourceEnum;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.Customer;
+import cn.rjtech.model.momdata.CustomerAddr;
+import cn.rjtech.model.momdata.CustomerWorkDays;
+import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -58,8 +58,6 @@ public class CustomerService extends BaseService<Customer> {
     private CustomerAddrService addrService;
     @Inject
     private CustomerWorkDaysService workDaysService;
-    @Inject
-    private CustomerClassService customerclassService;
 
     @Override
     protected int systemLogTargetType() {
@@ -70,7 +68,7 @@ public class CustomerService extends BaseService<Customer> {
      * 后台管理分页查询
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        return dbTemplate("customer.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
+        return dbTemplate("customer.paginateAdminDatas", kv.set("iorgid", getOrgId())).paginate(pageNumber, pageSize);
         //return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
     }
 
