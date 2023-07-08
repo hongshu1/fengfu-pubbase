@@ -167,7 +167,7 @@
                 {@/if}
             </td>
             <td>${data.cmemo}</td>
-            <td  >${data.cattachments2}</td>
+            <td  id="${data.cattachments}2">${data.cattachments2}</td>
         </tr>
         {@/each}
     </script>
@@ -213,6 +213,7 @@
                 elementById.setAttribute("href","admin/formUploadD/deletePicture?iautoid="+iautoid+"&url="+Url);
             }else {
                let element = document.getElementById(cattachments+"2");
+                console.log(element);
                 let innerText = element.innerText;
                 let repeat = innerText.replace(Url);
                 // 修改数据

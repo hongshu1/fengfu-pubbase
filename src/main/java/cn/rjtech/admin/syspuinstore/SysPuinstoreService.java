@@ -623,7 +623,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             main.setVenCode(puinstore.getVenCode());
             main.setVenName(null != vendor ? vendor.getCVenName() : "");
             main.setIndex(String.valueOf(i));
-            main.setIposcode(""); //库区
+            main.setIposcode(detail.getPosCode()); //库区
             main.setIwhcode(detail.getWhcode());
             main.setOrganizeCode(getOrgCode());
             main.setSourceBillDid(detail.getSourceBillDid());
