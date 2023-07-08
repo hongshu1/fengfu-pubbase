@@ -11,7 +11,7 @@ FROM Bd_Customer a
 	LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary dic ON dic.type_key = 'customer_level' AND dic.sn = a.cCustomerLevelSn
 	LEFT JOIN Bd_Person p ON a.iDutyUserId = p.iAutoId
 	LEFT JOIN #(getBaseDbName()).dbo.jb_dept jd ON a.cCusDepart = jd.id
-WHERE a.iOrgId = #para(orgId) AND a.isDeleted = '0'
+WHERE a.iOrgId = #para(iorgid) AND a.isDeleted = '0'
 	#if(icustomerclassid)
         AND a.iCustomerClassId = #para(icustomerclassid)
 	#end
