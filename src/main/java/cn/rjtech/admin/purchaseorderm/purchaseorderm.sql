@@ -144,7 +144,7 @@ WHERE
 
 
 #sql("findByBarcodeOnOrder")
- SELECT
+ SELECT top 1
 	CONCAT(a.cBarcode,'-',cVersion)cBarcode,
 	cInvCode1,
 	cInvName1,

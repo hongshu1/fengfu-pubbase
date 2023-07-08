@@ -24,8 +24,8 @@ WHERE t1.IsDeleted='0'
 #if(cinvcode1)
   and t3.cinvcode1 = #para(cinvcode1)
 #end
-#if(cinvaddcode)
-  and t3.cinvaddcode = #para(cinvaddcode)
+#if(cinvcode)
+  and t3.cinvcode = #para(cinvcode)
 #end
 #if(cinvname1)
   and t3.cinvname1 = #para(cinvname1)

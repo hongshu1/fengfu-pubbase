@@ -808,7 +808,6 @@
                                 sheet.setValue(2 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuTwoS);
                                 sheet.setValue(3 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuThreeS);
                                 sheet.setValue(4 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].qiChuZaiKu);
-                                // sheet.setValue(5 + shiyongRow, 9, 1);
                                 sheet.setValue(5 + shiyongRow, 9, parms['scheduplanmonth'][i].childList[j].dayNum);
                                 //
                                 let AS= shiyongRow+5;
@@ -828,8 +827,6 @@
                                     parms['colArr'] = [];
                                     var col = Z+k; // 初始列值
                                     var row = AS-5; // 初始行值
-                                    // console.log(col)
-                                    // console.log(parms['scheduplanmonth'][i].childList[j].day[col-10])
                                     for (let l = 0; l < Num; l++) {
                                         /**
                                          * @param parms['cols'] {number} 当前公式所在列
@@ -838,10 +835,8 @@
                                          */
                                         // findColumns(col,row);
                                     }
-                                    setTimeout(()=>{
                                         sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})/R${AS+1}C10`);
                                         parms['colArr'].length=0;
-                                    },0);
                                     // console.log(`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})`)
                                     if(parms['scheduplanmonth'][i].childList[j].day.at(-1)||parms['scheduplanmonth'][i].childList[j].day.at(-2)){
                                         // console.log('at')

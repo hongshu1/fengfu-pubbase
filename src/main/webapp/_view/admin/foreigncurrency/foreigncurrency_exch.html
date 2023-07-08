@@ -1,0 +1,268 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)" data-dontchangeleftnav="true" >
+	<div class="jbolt_page_title">
+		<div class="row">
+		<div class="col-md-auto">
+		<h1><i class="fa fa-file-text-o"></i>外币设置</h1>
+		</div>
+		<div class="col">
+		</div>
+		</div>
+	</div>
+	<div class="jbolt_page_content">
+<!-- JBoltTable -->
+<!-- JBoltTable的数据模板定义-->
+<script type="text/template" id="jboltTable_demotpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.foreigncurrencyid}-${data.cdate}-${data.nflattype}">
+<td>${data.cdate}</td>
+<td>${data.nflat1}</td>
+<td {@if(data.nflattype == 1)}data-editable="false"{@/if}>${data.nflat2}</td>
+</tr>
+{@/each}
+</script>	
+		<div class="jbolt_table_toolbar" id="jbolt_table_toolbar_#(pageId)">
+			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+				<button onclick="addForeighCurrencyHandler()" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+				<button onclick="deleteForeighCurrencyHandler()" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
+			</div>
+		</div>	
+	
+		 <table class="table-center" id="jbolt_orderItemTable_#(pageId)"
+		  data-jbolttable
+		  data-ajax="true"
+		  data-autoload="false"
+		  data-column-resize="true"
+		  ###data-bind-elements="#jbolt_righttop_btn_group_#(pageId)>button"
+		  data-url="admin/foreigncurrency/findFlatTableDatas"
+		  data-rowtpl="jboltTable_demotpl_#(pageId)"
+		  data-toolbar="jbolt_table_toolbar_#(pageId)"
+		  data-leftbox="jbolt_table_leftbox_#(pageId)"
+		  data-rightbox="jbolt_table_rightbox_#(pageId)"
+		  data-conditions-form="rightBoxForm_#(pageId)"
+		  ###data-headbox="jbolt_table_headbox_#(pageId)"
+		  ###data-footbox="jbolt_table_footbox_#(pageId)"
+		  ###data-toolbar-alwaysontop="true"
+		  ###data-row-click-handler="changeRightBox_handler__#(pageId)"
+		  ###data-row-click-active="true"
+		  data-editable="true"
+		  data-editable-option="getEditableTableOptions_#(pageId)"
+		 >
+	 	
+		<thead class="fw_normal">
+		<tr>
+			<th colspan="3" >
+	
+ 				<div class="radio radio-primary radio-inline">
+					<input id="cleiflat1" type="radio" name="leixing2" value="1" checked="checked" onclick="nflatType1ClickHandler()"/>
+					<label for="cleiflat1" >固定汇率</label>
+				</div>
+				<div class="radio radio-primary radio-inline">
+					<input id="cleiflat2" type="radio" name="leixing2" value="2" onclick="nflatType2ClickHandler()"/>
+					<label for="cleiflat2">浮动汇率</label>
+				</div>
+				<div class="radio radio-primary radio-inline">
+					<input type="text" data-date class="form-control" style="height:30px;width:100px" maxlength="20" name="nowdate" value="#date(DateUtil.getNow(),'yyyy-MM')" disabled/>
+				</div>
+			</th>
+		</tr>		
+		<tr>
+		<th data-width="100" data-column="cdate">月份</th>
+		<th data-width="60" data-column="nflat1">记账汇率</th>
+		<th data-width="60" data-column="nflat2">调整汇率</th>
+		</thead>
+		<tbody></tbody>
+
+		</table>
+	</div>
+	<!-- lefetbox -->
+	<div class="jbolt_table_leftbox" id="jbolt_table_leftbox_#(pageId)">
+		<div class="jb_header"><i class="fa fa-tree"></i> <span>币种列表</span>
+			<div class="pull-right">
+				<a href="javascript:void(0)" tooltip data-title="刷新" onclick="refreshGoodsBackCategory_#(pageId)()"><i class="fa fa-refresh mr-2"></i></a>
+				<a href="javascript:void(0)"  id="goodsBackCategoryJsTreeBoxClearbtn_#(pageId)" class="d-none" tooltip data-title="清空选择" onclick="clearGoodsBackCategoryJsTreeSelected_#(pageId)()"><i class="fa fa-remove text-danger"></i></a>
+			</div>
+		</div>
+		<div class="jb_body">
+			<div id="jsTree_#(pageId)"
+				data-jstree
+				data-select="#(treedefaultselect)"
+				data-open-level="1"
+				data-read-url="admin/foreigncurrency/findForeigncurrencyRootTressList/"
+				data-change-handler="change_jstree_#(pageId)"
+				></div>
+		</div>
+		
+	</div>
+
+	<!-- rightbox -->
+	<div class="jbolt_table_rightbox" style="width:500px;" id="jbolt_table_rightbox_#(pageId)">
+		<div class="jb_header text-center"><i class="fa fa-cogs"></i> <span>币种明细</span></div>
+		<div class="jb_body" style="padding: 15px">
+			<form onsubmit="return false;" id="rightBoxForm_#(pageId)" method="post">
+				<input type="hidden" name="cexchnamekv"/>
+				<input type="hidden" name="itype" value="2,3"/>
+				<input type="hidden" name="iautoid"/>
+				<div class="form-group row">					
+					<label class="col-8 col-form-label text-left">币符</label>
+	                <div class="col-4">
+	                    <input type="text" autocomplete="off" data-rule="required" class="form-control"  placeholder="请输入币符" maxlength="200" name="cexchcode" value="">
+	                </div>
+                </div>
+                <div class="form-group row">
+					<label class="col-8 col-form-label text-left">币名</label>
+	                <div class="col-4">
+	                    <input type="text" autocomplete="off" data-rule="required" class="form-control"  placeholder="请输入币名" maxlength="200" name="cexchname" value="">
+	                </div>
+                </div>
+                <div class="form-group row">
+					<label class="col-8 col-form-label text-left">汇率小数位</label>
+	                <div class="col-4">
+	                    <input type="text" autocomplete="off" data-rule="pint" class="form-control"  placeholder="请输入汇率小数位" maxlength="200" name="idec" value="">
+	                </div>
+                </div>
+                <div class="form-group row">
+					<label class="col-8 col-form-label text-left">最大误差</label>
+	                <div class="col-4">
+	                    <input type="text" autocomplete="off"  class="form-control" data-rule="number" placeholder="请输入最大误差" maxlength="200" name="nerror" value="">
+	                </div>	 
+                </div>
+				<div class="form-group row"
+				data-radio
+				data-rule="required"
+				id="bcalradio"
+				data-value="true"
+				data-name="bcal"
+				>
+					<label class="col-12 col-form-label text-left" >折算方式</label>
+					<div class="col" style="padding-top: 1px;margin-left:20px!important">
+						<div class="radio radio-primary">
+							<input id="clei11" type="radio" name="bcal" value="true"/>
+							<label for="clei11" >外币 * 汇率 = 本币位</label>
+						</div>
+						<div class="radio radio-primary">
+							<input id="clei22" type="radio" name="bcal" value="false"/>
+							<label for="clei22">外币 / 汇率 = 本币位</label>
+						</div>
+					</div>
+				</div>	                
+			</form>
+		</div>
+		<div class="jb_footer text-center">
+			<div class="btn-group btn-group-sm">
+				<button class="btn btn-primary" onclick="foreignCurrencyUpdate()">确认</button>
+			</div>
+		</div>
+	</div>	
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+var jsTree_#(pageId) = $("#jsTree_#(pageId)");
+var rightBoxForm_#(pageId) = $("#rightBoxForm_#(pageId)");
+function refreshGoodsBackCategory_#(pageId)(){
+	var iautoid = rightBoxForm_#(pageId).find("[name='iautoid']").val();
+	if(!iautoid) return;
+    JSTreeUtil.refresh(jsTree_#(pageId),iautoid);
+}
+/**
+ * 币种竖状列表点击change事件
+ */
+function change_jstree_#(pageId)(tree, treeNode){
+	var datas ={
+		cexch_name:treeNode.text			
+	};
+	Ajax.post("admin/foreigncurrency/findForeignCurrencyForEdit",datas,function(res){
+		var action=getRealJqueryObject("#bcalradio");
+		var foreigncurrency = res.data;
+		if(foreigncurrency){
+			action.data("value",foreigncurrency.bcal);
+			rightBoxForm_#(pageId).find("[name='cexchnamekv']").val(foreigncurrency.cexchname);
+			rightBoxForm_#(pageId).find("[name='iautoid']").val(foreigncurrency.iautoid);
+			rightBoxForm_#(pageId).find("[name='cexchcode']").val(foreigncurrency.cexchcode);
+			rightBoxForm_#(pageId).find("[name='cexchname']").val(foreigncurrency.cexchname);
+			rightBoxForm_#(pageId).find("[name='idec']").val(foreigncurrency.idec);
+			rightBoxForm_#(pageId).find("[name='nerror']").val(foreigncurrency.nerror);
+			RadioUtil.refresh(action);
+			jboltTableRefresh(jsTree_#(pageId));
+		}
+	});
+}
+function nflatType1ClickHandler(ele){
+	rightBoxForm_#(pageId).find("[name='itype']").val("2,3");
+	var cexchnamekv = rightBoxForm_#(pageId).find("[name='cexchnamekv']").val();
+	if(!cexchnamekv) return;
+	jboltTableRefresh(jsTree_#(pageId));
+}
+function nflatType2ClickHandler(ele){
+	rightBoxForm_#(pageId).find("[name='itype']").val("1");
+	var cexchnamekv = rightBoxForm_#(pageId).find("[name='cexchnamekv']").val();
+	if(!cexchnamekv) return;
+	jboltTableRefresh(jsTree_#(pageId));
+}
+function foreignCurrencyUpdate(){
+	if(!FormChecker.check(rightBoxForm_#(pageId))) return;
+	var serializepara = rightBoxForm_#(pageId).serializeJSON();
+	Ajax.post("admin/foreigncurrency/saveOrUpdateForeignCurrency",serializepara,function(res){
+		if(res.state == 'ok'){
+			LayerMsgBox.success(res.msg,500,function(){
+				rightBoxForm_#(pageId).find("[name='cexchnamekv']").val(res.data.cexchname);
+				rightBoxForm_#(pageId).find("[name='iautoid']").val(res.data.iautoid);
+				refreshGoodsBackCategory_#(pageId)();
+			});
+		}else{
+			LayerMsgBox.alert(res.msg,2);
+		}
+	}); 
+}
+function addForeighCurrencyHandler(){
+	formReset(rightBoxForm_#(pageId));
+	rightBoxForm_#(pageId).find("[name='cexchnamekv']").val('');
+	rightBoxForm_#(pageId).find("[name='iautoid']").val('');
+	clearJboltTable("jbolt_orderItemTable_#(pageId)");
+}
+function deleteForeighCurrencyHandler(){
+	var iautoid = rightBoxForm_#(pageId).find("[name='iautoid']").val();
+	Ajax.post("admin/foreigncurrency/deleteForeignCurrencyAndExch",{iautoid : iautoid},function(res){
+		if(res.state == 'ok'){
+			LayerMsgBox.success(res.msg,500,function(){
+				window.location.reload();
+			});
+		}else{
+			LayerMsgBox.alert(res.msg,2);
+		}
+	});
+}
+//获得配置参数
+function getEditableTableOptions_#(pageId)(){
+    var editableTableOptions={
+        trigger:"click",
+        form:"rightBoxForm_#(pageId)",
+        submit:{
+            type:"cell",
+            url:"/admin/foreigncurrency/saveCellTable",
+            success:function(res,table,td){
+            	if(res.state == 'ok'){
+            		jboltTableRefresh(jsTree_#(pageId));
+                }
+            }  
+        },
+        cols: {
+            nflat1: {
+                type:"input",
+                placeholder:"记账汇率"
+            },
+            nflat2: {
+                type:"input",
+                placeholder:"调整汇率"
+            }
+        }
+    };
+    return editableTableOptions;
+}
+
+</script>
+#end

@@ -136,9 +136,9 @@ public class ScheduDemandPlanController extends BaseAdminController {
 	public void getSwitchDate() {
 		Calendar calendarMonth = Calendar.getInstance();
 		calendarMonth.setTime(new Date());
-		calendarMonth.add(Calendar.MONTH, 1);//月份+1
+		calendarMonth.add(Calendar.MONTH, 2);//月份+1
 		//下一个月份
-		renderJsonData(calendarMonth.getTime().getTime());
+		renderJsonData(DateUtils.formatDate(calendarMonth.getTime(),"yyyy-MM-dd"));
 	}
 	/**
 	 * 获取表格表头日期展示

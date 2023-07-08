@@ -350,12 +350,14 @@ SELECT
     d.cInvCode AS invCode,
     a.iInventoryId AS pinvId,
     b.cInvCode AS pinvCode,
-    c.iQty
-FROM Bd_BomMaster AS a
+    c.iBaseQty AS iQty
+FROM Bd_BomM AS a
          LEFT JOIN Bd_Inventory AS b ON a.iInventoryId = b.iAutoId
-         LEFT JOIN Bd_BomCompare AS c ON a.iAutoId = c.iBOMMasterId
+         LEFT JOIN Bd_BomD AS c ON a.iAutoId = c.iPid
          LEFT JOIN Bd_Inventory AS d ON c.iInventoryId = d.iAutoId
-WHERE a.isDeleted = 0 AND isEffective = 1
+WHERE a.isDeleted = 0
+  AND CONVERT(DATE, a.dEnableDate) <= CONVERT(DATE, GETDATE())
+  AND CONVERT(DATE, a.dDisableDate) >= CONVERT(DATE, GETDATE())
   AND c.iInventoryId IN #(ids)
 #end
 
