@@ -205,7 +205,7 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 			// 校验机型编码唯一
 			if(exists(createSql(equipmentModel))) {
 				String cEquipmentModelCode = equipmentModel.getCEquipmentModelCode();
-				String format = String.format("机型编码【%s】%s");=String.format("机型编码【%s】%s", cEquipmentModelCode, JBoltMsg.DATA_SAME_SN_EXIST);
+				String format = String.format("机型编码【%s】%s", cEquipmentModelCode, JBoltMsg.DATA_SAME_SN_EXIST);
 				return fail(format);
 			}
 		}
