@@ -684,9 +684,11 @@
                         parms.activeSheet.addSpan(rowIndex,serialCol,3,1);
                         //供应商名称
                         sheet.setValue(rowIndex, serialCol+1,parms['scheduplanmonth'].data[i].cVenName);
+                        sheet.getCell(rowIndex, serialCol+1).wordWrap(true);
                         parms.activeSheet.addSpan(rowIndex,serialCol+1,3,1);
                         //存货编码
                         sheet.setValue(rowIndex, serialCol+2,parms['scheduplanmonth'].data[i].cInvCode);
+                        sheet.getCell(rowIndex, serialCol+2).wordWrap(true);
                         parms.activeSheet.addSpan(rowIndex,serialCol+2,3,1);
                         //客户部番
                         sheet.setValue(rowIndex, serialCol+3,parms['scheduplanmonth'].data[i].cInvCode1);
@@ -695,10 +697,12 @@
                         parms.activeSheet.setColumnWidth(serialCol+3, 100);//设置指定单元格的width
                         //部品名称
                         sheet.setValue(rowIndex, serialCol+4,parms['scheduplanmonth'].data[i].cInvName1);
+                        sheet.getCell(rowIndex, serialCol+4).wordWrap(true);
                         parms.activeSheet.addSpan(rowIndex,serialCol+4,3,1);
-                        parms.activeSheet.setColumnWidth(serialCol+4, 220);//设置指定单元格的width
+                        parms.activeSheet.setColumnWidth(serialCol+4, 150);//设置指定单元格的width
                         //包装数量
                         sheet.setValue(rowIndex, serialCol+5,parms['scheduplanmonth'].data[i].iPkgQty);
+                        sheet.getCell(rowIndex, serialCol+5).wordWrap(true);
                         parms.activeSheet.addSpan(rowIndex,serialCol+5,3,1);
                         //标准在库天数
                         sheet.setValue(rowIndex, serialCol+6,parms['scheduplanmonth'].data[i].iInnerInStockDays);
