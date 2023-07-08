@@ -27,15 +27,6 @@
         font-weight: bold;
     }
 
-
-    .search {
-        display: flex;
-        /*justify-content: space-between; !* 水平居中 *!*/
-        flex-direction: row;
-        align-items: center; /* 垂直居中 */
-        padding: 10px 0px;
-    }
-
     .span {
         color: #333333;
     }
@@ -102,7 +93,7 @@
         border-radius: 5px;
         float: right;
     }
-/*    */
+    /*    */
     .popup-layer{
         border: 1px solid rgba(215, 215, 215, 1);
         background-color:#fff;
@@ -271,7 +262,7 @@
                         </svg>
                         数据导入
                     </button>
-                    <button onClick="saveLevel()" class="btn-success btn" style="padding: 5px 15px">
+                    <button onClick="saveLevel()" class="btn-success btn" style="padding: 3px 15px">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                             <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
                             <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
@@ -429,6 +420,8 @@
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
     statusBar.bind(spread);//状态栏
+    spread.getSheet(0).setRowCount(50); //设置一列单元格的个数
+    spread.getSheet(0).setColumnCount(100); //设置一行有多少个单元格
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
     // sheet.options.isProtected = true; // 开启工作表保护
     // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
@@ -609,8 +602,6 @@
         //设置全局的列宽行高
         sheet.defaults.colWidth = 80;
         sheet.defaults.rowHeight = 25;
-        // spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
-        // spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
         sheet.frozenRowCount(4); // 将第一行冻结
         //设置单元格内容的对齐方式
         var style = new GC.Spread.Sheets.Style();
