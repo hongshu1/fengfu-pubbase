@@ -56,14 +56,15 @@
         <label class="col-sm-1 col-form-label">分管部门</label>
         <div class="col-2">
             <select class="form-control"
+                    disabled
                     data-autoload
                     name="customerm.ccusdepart"
-                    data-select-type="select2"
-                    data-tips="所属部门"
-                    data-url="admin/dept/datas"
-                    data-text="=所属部门="
+                    data-rule="required"
+                    data-url="admin/department/getTreeTableDatas"
+                    data-text="=请选择部门="
                     data-value=""
-                    data-value-attr="id"
+                    data-value-attr="cdepcode"
+                    data-text-attr="cdepname"
                     data-select="#(customerm.ccusdepart??)">
             </select>
         </div>
