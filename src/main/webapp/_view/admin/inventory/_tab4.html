@@ -28,7 +28,7 @@
 									<td>
 										<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iautoid}','${data.iseq}')"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
 										<a tooltip data-title="下移"  href="javascript:void(0)" onclick="moveDownBtn(this,'${data.iautoid}','${data.iseq}')"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
-										<a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="移除此行" onclick="removeRow(this)" ><i class="fa fa-remove text-danger"></i></a>
+										<a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove text-danger"></i></a>
 										<!--									<a href="admin/inventoryroutingconfig/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中" tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>-->
 									</td>
 									<td>${data.iseq}</td>

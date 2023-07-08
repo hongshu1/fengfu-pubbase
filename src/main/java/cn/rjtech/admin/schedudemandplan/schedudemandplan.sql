@@ -101,12 +101,14 @@ select
     b.iInventoryId as invId,d.cInvCode as invCode,
     c.iAutoId as pInvId,c.cInvCode as pInvCode,
     c.iSaleType AS piSaleType,
-    b.iQty as Realqty
-from Bd_BomMaster as a
-         left join Bd_BomCompare as b on a.iAutoId = b.iBOMMasterId
+    b.iBaseQty as Realqty
+from Bd_BomM as a
+         left join Bd_BomD as b on a.iAutoId = b.iPid
          left join Bd_Inventory as c on a.iInventoryId = c.iAutoId
          left join Bd_Inventory as d on b.iInventoryId = d.iAutoId
-where a.isDeleted = 0 AND a.isEffective = 1
+where a.isDeleted = 0
+  AND CONVERT(DATE, a.dEnableDate) <= CONVERT(DATE, GETDATE())
+  AND CONVERT(DATE, a.dDisableDate) >= CONVERT(DATE, GETDATE())
   AND b.iInventoryId in #(ids)
 #end
 

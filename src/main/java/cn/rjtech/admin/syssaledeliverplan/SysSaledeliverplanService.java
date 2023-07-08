@@ -28,8 +28,7 @@ import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.saledeliverplan.SaleDeliverPlanDTO;
 import cn.rjtech.u9.entity.saledeliverplan.SaleDeliverPlanDTO.Main;
 import cn.rjtech.u9.entity.saledeliverplan.SaleDeliverPlanDTO.PreAllocate;
-import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
-import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO.data;
+import cn.rjtech.u9.entity.saledeliverplan.SaleDeliverPlanDeleteDTO;
 import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
@@ -716,8 +715,8 @@ public class SysSaledeliverplanService extends BaseService<SysSaledeliverplan> i
         Record userRecord = puinstoreService.findU8UserByUserCode(user.getUsername());
         Record u8Record = puinstoreService.findU8RdRecord01Id(u8billno);
 
-        SysPuinstoreDeleteDTO deleteDTO = new SysPuinstoreDeleteDTO();
-        data data = new data();
+        SaleDeliverPlanDeleteDTO deleteDTO = new SaleDeliverPlanDeleteDTO();
+        SaleDeliverPlanDeleteDTO.data data = new SaleDeliverPlanDeleteDTO.data();
         data.setAccid(getOrgCode());
         data.setPassword(userRecord.get("u8_pwd"));
         data.setUserID(userRecord.get("u8_code"));
