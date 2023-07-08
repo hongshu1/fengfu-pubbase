@@ -1,6 +1,8 @@
 package cn.rjtech.admin.equipmentmodel;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
@@ -9,6 +11,7 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.model.momdata.EquipmentModel;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
@@ -61,8 +64,12 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 		if(equipmentModel==null || isOk(equipmentModel.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+		
 		setEquipmentModel(equipmentModel);
-		//if(existsName(equipmentModel.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		// 校验机型编码唯一
+		if(exists(createSql(equipmentModel))) {
+			return fail(JBoltMsg.DATA_SAME_SN_EXIST);
+		}
 		boolean success=equipmentModel.save();
 		if(success) {
 			//添加日志
@@ -71,13 +78,23 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 		return ret(success);
 	}
 
+	private Sql createSql(EquipmentModel equipmentModel){
+		Sql sql = selectSql().eq(EquipmentModel.ISDELETED, IsOkEnum.NO.getValue())
+				.eq(EquipmentModel.IORGID, equipmentModel.getIOrgId())
+				.eq(EquipmentModel.CEQUIPMENTMODELCODE, equipmentModel.getCEquipmentModelCode());
+		if (ObjectUtil.isNotNull(equipmentModel.getIAutoId())){
+			sql.notEq(EquipmentModel.IAUTOID, equipmentModel.getIAutoId());
+		}
+		return sql;
+	}
+	
 	/**
 	 * 设置参数
 	 * @param equipmentModel
 	 * @return
 	 */
 	private EquipmentModel setEquipmentModel(EquipmentModel equipmentModel){
-		equipmentModel.setIAutoId(JBoltSnowflakeKit.me.nextId());
+//		equipmentModel.setIAutoId(JBoltSnowflakeKit.me.nextId());
 		equipmentModel.setIsDeleted(false);
 		equipmentModel.setIOrgId(getOrgId());
 		equipmentModel.setCOrgCode(getOrgCode());
@@ -106,7 +123,10 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 		//更新时需要判断数据存在
 		EquipmentModel dbEquipmentModel=findById(equipmentModel.getIAutoId());
 		if(dbEquipmentModel==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
-		//if(existsName(equipmentModel.getName(), equipmentModel.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
+		// 校验机型编码唯一
+		if(exists(createSql(equipmentModel))) {
+			return fail(JBoltMsg.DATA_SAME_SN_EXIST);
+		}
 		boolean success=equipmentModel.update();
 		if(success) {
 			//添加日志

@@ -30,95 +30,88 @@ import java.util.List;
 @Path(value = "/admin/padworkregion", viewPath = "/_view/admin/padworkregion")
 public class PadWorkRegionAdminController extends BaseAdminController {
 
-    @Inject
-    private PadWorkRegionService service;
+  @Inject
+  private PadWorkRegionService service;
 
-    /**
-     * 首页
-     */
-    public void index() {
-        render("index.html");
-    }
+  /**
+   * 首页
+   */
+  public void index() {
+    render("index.html");
+  }
 
-    /**
-     * 数据源
-     */
-    public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getBoolean("isDefault"), getBoolean("isDeleted")));
-    }
+  /**
+   * 数据源
+   */
+  public void datas() {
+    renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getBoolean("isDefault"), getBoolean("isDeleted")));
+  }
 
-    /**
-     * 新增
-     */
-    public void add() {
-        render("add.html");
-    }
+  /**
+   * 新增
+   */
+  public void add() {
+    render("add.html");
+  }
 
-    /**
-     * 保存
-     */
-    public void save() {
-        renderJson(service.save(getModel(PadWorkRegion.class, "padWorkRegion")));
-    }
+  /**
+   * 保存
+   */
+  public void save() {
+    renderJson(service.save(getModel(PadWorkRegion.class, "padWorkRegion")));
+  }
 
-    /**
-     * 编辑
-     */
-    public void edit() {
-        PadWorkRegion padWorkRegion = service.findById(getLong(0));
-        if (padWorkRegion == null) {
-            renderFail(JBoltMsg.DATA_NOT_EXIST);
-            return;
-        }
-        set("padWorkRegion", padWorkRegion);
-        render("edit.html");
+  /**
+   * 编辑
+   */
+  public void edit() {
+    PadWorkRegion padWorkRegion = service.findById(getLong(0));
+    if (padWorkRegion == null) {
+      renderFail(JBoltMsg.DATA_NOT_EXIST);
+      return;
     }
+    set("padWorkRegion", padWorkRegion);
+    render("edit.html");
+  }
 
-    /**
-     * 更新
-     */
-    public void update() {
-        renderJson(service.update(getModel(PadWorkRegion.class, "padWorkRegion")));
-    }
+  /**
+   * 更新
+   */
+  public void update() {
+    renderJson(service.update(getModel(PadWorkRegion.class, "padWorkRegion")));
+  }
 
-    /**
-     * 批量删除
-     */
-    public void deleteByIds() {
-        renderJson(service.deleteByIds(get("ids")));
-    }
+  /**
+   * 批量删除
+   */
+  public void deleteByIds() {
+    renderJson(service.deleteByIds(get("ids")));
+  }
 
-    /**
-     * 删除
-     */
-    public void delete() {
-        renderJson(service.deleteById(getLong(0)));
-    }
+  /**
+   * 删除
+   */
+  public void delete() {
+    renderJson(service.deleteById(getLong(0)));
+  }
 
-    /**
-     * 切换isDefault
-     */
-    public void toggleIsDefault() {
-        renderJson(service.toggleBoolean(getLong(0), "isDefault"));
-    }
+  /**
+   * 切换isDefault
+   */
+  public void toggleIsDefault() {
+    renderJson(service.toggleBoolean(getLong(0), "isDefault"));
+  }
 
-    /**
-     * 切换isDeleted
-     */
-    public void toggleIsDeleted() {
-        renderJson(service.toggleBoolean(getLong(0), "isDeleted"));
-    }
+  /**
+   * 切换isDeleted
+   */
+  public void toggleIsDeleted() {
+    renderJson(service.toggleBoolean(getLong(0), "isDeleted"));
+  }
 
-    @UnCheck
-    public void options() {
-        Kv kv = getKv();
-        Long ipadid = kv.getLong("ipadid");
-        if (ipadid == null)
-            renderJsonData(new ArrayList<>());
-        else {
-            List<Record> datas = service.getDatasOfSql(kv);
-            renderJsonData(datas);
-        }
-    }
+  @UnCheck
+  public void options() {
+    renderJsonData(service.getDatasOfSql(getKv()));
+  }
 
 }

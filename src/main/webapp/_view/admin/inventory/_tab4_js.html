@@ -114,40 +114,22 @@
                 },
                 iitemroutingid:{
                     type:"input",
-                    required:true,
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
-                    }
+                    required:true
                 },
                 cmergedseq:{
-                    type:"input",
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
-                    }
+                    type:"input"
                 },
                 imergednum: {
-                    type: "input_number",
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
-                    }
+                    type: "input_number"
                 },
                 imergerate:{
-                    type:"input_number",
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
-                    }
+                    type:"input_number"
                 },
                 imergesecs:{
-                    type:"input_number",
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
-                    }
+                    type:"input_number"
                 },
                 isecs:{
-                    type:"input_number",
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
-                    }
+                    type:"input_number"
                 },
                 //iseq:{type:"input", required:true},
                 coperationname:{  //工序名称
@@ -160,9 +142,6 @@
                         area:"60%,70%",
                         title:"选择工序",
                         btn:"选择,关闭"
-                    },
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 irsinventoryid:{  //半成品/成品名称
@@ -177,9 +156,6 @@
                         area:"60%,70%",
                         title:"选择存货",
                         btn:"选择,关闭"
-                    },
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
                     }
                 },
                 itype:{  //工序类型
@@ -189,34 +165,23 @@
                     maxLength:100,
                     placeholder:"请输入",
                     textAttr: "name",
-                    valueAttr:"sn",
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000);
-                    }
+                    valueAttr:"sn"
                 },
                 cproducttechsn:{  //工序类型
                     type:"select",
-                    required: true,
                     url:"admin/dictionary/options?key=product_tech",
                     maxLength:100,
                     placeholder:"请输入",
                     textAttr: "name",
-                    valueAttr:"sn",
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
-                    }
+                    valueAttr:"sn"
                 },
                 cproductsn:{  //生产方式
                     type:"select",
-                    required: true,
                     url:"admin/dictionary/options?key=cproductsn_type",
                     maxLength:100,
                     placeholder:"请输入",
                     textAttr: "name",
-                    valueAttr:"sn",
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},6000)
-                    }
+                    valueAttr:"sn"
                 },
                 invcs:{  //所需物料集
                     type:"dialogbtn",
@@ -235,9 +200,6 @@
                         area:"95%,95%",
                         title:"工序物料集",
                         btn:"确定,关闭"
-                    },
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},1000)
                     }
                 },
                 equipments:{  //所需设备集
@@ -257,9 +219,6 @@
                         area:"95%,95%",
                         title:"选择设备",
                         btn:"确定,关闭"
-                    },
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},1000)
                     }
                 },
                 drawings:{  //工艺文件
@@ -279,9 +238,6 @@
                         area:"95%,95%",
                         title:"工艺文件",
                         btn:"确定,关闭"
-                    },
-                    handler:function(table,td,text,value,trJsonData){
-                        setTimeout(function(){batchSetColumns('#itemroutingconfigid')},1000)
                     }
                 }
             }
@@ -338,28 +294,7 @@
         }
     }
 
-    function batchSetColumns(tableEle,dontExeValueChangeHandler){
-        var table=getJBoltTable(tableEle);
-        if(isOk(table)){
-            var jboltTable=table.jboltTable("inst");
-            if(jboltTable){
-                jboltTable.me.processEditingTds(jboltTable);
-                var trs = jboltTable.tbody.find("tr[data-index]");
-                var seq = Number(0);
-                if(isOk(trs)){
-                    var tr;
-                    trs.each(function(){
-                        tr=$(this);
-                        seq = Number(10+seq);
-                        jboltTable.me.setCell(jboltTable,tr,'iseq',seq,seq,dontExeValueChangeHandler);
-                    });
-                    return;
-                }
-                return;
-            }
-        }
-        LayerMsgBox.alert("表格组件配置异常",2);
-    }
+
 
     function insertRoutingOperationRows(table,tr,insertEmptyData,insertToBefore,forceTrChange){
         var canInsertTr=table.me.checkCanInsertNewTr(table,1);

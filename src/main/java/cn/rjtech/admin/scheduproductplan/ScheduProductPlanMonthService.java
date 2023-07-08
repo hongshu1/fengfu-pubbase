@@ -1,6 +1,7 @@
 package cn.rjtech.admin.scheduproductplan;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -38,6 +39,7 @@ import com.jfinal.plugin.activerecord.Record;
 import org.apache.commons.lang.math.NumberUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.*;
@@ -368,27 +370,31 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         //排产纪录id
         Long iWeekScheduleId = kv.getLong("iWeekScheduleId");
         if (notOk(iWeekScheduleId)) {
-            return fail("排产纪录不能为空！");
+            return fail("排产纪录Id不能为空！");
         }
         
         tx(() -> {
             ApsWeekschedule apsWeekschedule = apsWeekscheduleService.findFirst("SELECT iLevel,dScheduleEndTime,dLockEndTime FROM Aps_WeekSchedule WHERE iAutoId = ? ", iWeekScheduleId);
-            ApsWeekscheduledetails apsWeekscheduledetails = apsWeekscheduledetailsService.findFirst("SELECT iAutoId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ", iWeekScheduleId);
+            List<ApsWeekscheduledetails> apsWeekscheduledetailsList = apsWeekscheduledetailsService.find("SELECT iAutoId FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ", iWeekScheduleId);
+            List<Long> detailIdList = new ArrayList<>();
+            for (ApsWeekscheduledetails detail : apsWeekscheduledetailsList){
+                detailIdList.add(detail.getIAutoId());
+            }
             
             if (apsWeekschedule.getDLockEndTime() == null) {
                 delete("DELETE FROM Aps_WeekSchedule WHERE iAutoId = ? ", iWeekScheduleId);
                 delete("DELETE FROM Aps_WeekScheduleDetails WHERE iWeekScheduleId = ? ", iWeekScheduleId);
-                if (apsWeekscheduledetails != null) {
-                    delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE iWeekScheduleDid = ? ", apsWeekscheduledetails.getIAutoId());
+                if (apsWeekscheduledetailsList.size() > 0) {
+                    delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE iWeekScheduleDid IN (" + ArrayUtil.join(detailIdList.toArray(), COMMA) + ") ");
                 }
             } else {
                 update("UPDATE Aps_WeekSchedule SET dScheduleEndTime = ? WHERE iAutoId = ? ", apsWeekschedule.getDLockEndTime(), iWeekScheduleId);
-                if (apsWeekscheduledetails != null) {
+                if (apsWeekscheduledetailsList.size() > 0) {
                     delete("DELETE FROM Aps_WeekScheduleD_Qty WHERE " +
                             "(CAST(iYear  AS NVARCHAR(30))+'-'+CAST(CASE WHEN iMonth<10 THEN '0'+CAST(iMonth AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iMonth AS NVARCHAR(30) ) END AS NVARCHAR(30)) +'-'+CAST( CASE WHEN iDate<10 THEN '0'+CAST(iDate AS NVARCHAR(30) )\n" +
                             "ELSE CAST(iDate AS NVARCHAR(30) )\n" +
-                            "END AS NVARCHAR(30)) ) > ? AND iWeekScheduleDid = ? ", DateUtils.formatDate(apsWeekschedule.getDLockEndTime(), "yyyy-MM-dd"), apsWeekscheduledetails.getIAutoId());
+                            "END AS NVARCHAR(30)) ) > ? AND iWeekScheduleDid IN (" + ArrayUtil.join(detailIdList.toArray(), COMMA) + ") ", DateUtils.formatDate(apsWeekschedule.getDLockEndTime(), "yyyy-MM-dd"));
                 }
             }
             return true;
@@ -448,18 +454,15 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         List<String> scheduDateList = Util.getBetweenDate(DateUtils.formatDate(startDate, "yyyy-MM-dd"), endDateStr);
 
         //排产日历类型
-        String calendarType = "1";
-        //库存率因子
-        BigDecimal aps_inventoryRate = getConfigValue(Kv.by("configkey", "aps_inventoryRate"));
-        double inventoryRate = aps_inventoryRate != null ? aps_inventoryRate.doubleValue() : 0.7;
-        //加班因子
-        BigDecimal aps_workFactor = getConfigValue(Kv.by("configkey", "aps_workFactor"));
-        double workFactor = aps_workFactor != null ? aps_workFactor.doubleValue() : 0.3;
-
+        String calendarType = getConfigValueStr(Kv.by("configkey", "aps_workCalendarType"));
+        calendarType = calendarType != null ? calendarType : "1";
         //1S 2S上班小时数
-        int workTime = 8;
+        BigDecimal workTime = getConfigValueBig(Kv.by("configkey", "aps_workTime"));
+        workTime = workTime != null ? workTime : new BigDecimal(8);
         //加班小时数
-        int overTime = 3;
+        BigDecimal overTime = getConfigValueBig(Kv.by("configkey", "aps_workOvertime"));
+        overTime = overTime != null ? overTime : new BigDecimal(3);
+
 
         //TODO:根据层级查询本次排产物料集信息
         List<Record> invInfoByLevelList;
@@ -779,7 +782,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 continue;
             }
             //进行APS算法分析
-            //ApsScheduling apsScheduling = ApsUtil.apsCalculation(invArrar, inventory_originalMap, planMap, 2, plan_nextMonthAverageMap, capabilityMap, workday, inventoryRate, workFactor);
+            //ApsScheduling apsScheduling = ApsUtil.apsCalculation(invArrar, inventory_originalMap, planMap, 2, plan_nextMonthAverageMap, capabilityMap, workday, 0.7, 0.3);
 
 
             //纪录3个班次排产纪录
@@ -806,7 +809,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     //计划使用
                     int[] ppArray = planMap.get(inv);
                     //下个月平均计划使用数
-                    int avgQty = 200;
+                    int avgQty = 200;//plan_nextMonthAverageMap.get(inv) != null ? plan_nextMonthAverageMap.get(inv) : 0;
                     //当天计划使用
                     int PPQty = ppArray[i];
 
@@ -918,7 +921,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                     int twoS = capabilityArray[1];
                     int threeS = capabilityArray[2];
                     //第二班次加班数量
-                    int twoOverNum = twoS / workTime * overTime;
+                    int twoOverNum = (new BigDecimal(twoS).divide(workTime,0, RoundingMode.UP).multiply(overTime)).intValue();
 
 
                     //1S排产后数据
@@ -3302,8 +3305,11 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         return dbTemplate("scheduproductplan.getYearMonthQtySumByinvList", kv).find();
     }
 
-    public BigDecimal getConfigValue(Kv kv) {
+    public BigDecimal getConfigValueBig(Kv kv) {
         return dbTemplate("scheduproductplan.getConfigValue", kv).queryBigDecimal();
+    }
+    public String getConfigValueStr(Kv kv) {
+        return dbTemplate("scheduproductplan.getConfigValue", kv).queryStr();
     }
 
     public Ret algorithmSum() {
