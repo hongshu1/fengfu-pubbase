@@ -364,7 +364,7 @@ public class CustomerService extends BaseService<Customer> {
             headers.add(JBoltExcelHeader.create("ccuscode", "客户编码", 50));
             headers.add(JBoltExcelHeader.create("ccusname", "客户名称", 50));
             headers.add(JBoltExcelHeader.create("ccusabbname", "简称", 50));
-            headers.add(JBoltExcelHeader.create("mnemonicCode", "助记码", 50));
+            headers.add(JBoltExcelHeader.create("ccusmnemcode", "助记码", 50));
             headers.add(JBoltExcelHeader.create("carea", "地区", 50));
             headers.add(JBoltExcelHeader.create("ccusdepart", "分管部门编码", 50));
             headers.add(JBoltExcelHeader.create("ccuspperson", "分管人员编码", 50));
@@ -441,7 +441,7 @@ public class CustomerService extends BaseService<Customer> {
             customer.setCCusCode(recordm.getStr("ccuscode"));
             customer.setCCusName(recordm.getStr("ccusname"));
             customer.setCCusAbbName(recordm.getStr("ccusabbname"));
-            customer.setMnemonicCode(recordm.getStr("mnemoniccode"));
+            customer.setCCusMnemCode(recordm.getStr("ccusmnemcode"));
             customer.setCCounty(recordm.getStr("carea"));
             customer.setCCusDepart(recordm.getStr("ccusdepart"));
             String ccuspperson = recordm.getStr("ccuspperson");
