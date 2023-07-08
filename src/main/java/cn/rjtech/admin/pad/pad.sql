@@ -48,3 +48,16 @@ FROM
 WHERE
 	bpad.cMac = #para(cmac)
 #end
+
+#sql("uniqueCheck")
+SELECT ISNULL(COUNT(iAutoId), 0) FROM Bd_Pad WHERE IsDeleted=0
+#if(code)
+AND cPadCode = #para(code)
+#end
+#if(mac)
+AND cMac = #para(mac)
+#end
+#if(iautoid)
+AND iautoid <> #(iautoid)
+#end
+#end

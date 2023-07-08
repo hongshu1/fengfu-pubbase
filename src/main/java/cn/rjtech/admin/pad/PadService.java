@@ -68,11 +68,13 @@ public class PadService extends BaseService<Pad> {
     if (pad == null || isOk(pad.getIAutoId())) {
       return fail(JBoltMsg.PARAM_ERROR);
     }
-    if (exists("cPadCode", pad.getCPadCode())) {
-      return fail(JBoltMsg.DATA_SAME_SN_EXIST);
+    Integer code = dbTemplate("pad.uniqueCheck", Kv.by("code", pad.getCPadCode())).queryInt();
+    if (code > 0) {
+      ValidationUtils.error("【平板编码】已存在，请修改后保存");
     }
-    if (exists("cMac", pad.getCMac())) {
-      return fail("Mac地址已存在");
+    Integer mac = dbTemplate("pad.uniqueCheck", Kv.by("mac", pad.getCMac())).queryInt();
+    if (mac > 0) {
+      ValidationUtils.error("【MAC地址】已存在，请修改后保存");
     }
     boolean success = pad.save();
     if (success) {
@@ -93,9 +95,13 @@ public class PadService extends BaseService<Pad> {
       return fail(JBoltMsg.PARAM_ERROR);
     }
     //更新时需要判断数据存在
-    Pad dbPad = findById(pad.getIAutoId());
-    if (dbPad == null) {
-      return fail(JBoltMsg.DATA_NOT_EXIST);
+    Integer code = dbTemplate("pad.uniqueCheck", Kv.by("code", pad.getCPadCode()).set("iautoid", pad.getIAutoId())).queryInt();
+    if (code > 0) {
+      ValidationUtils.error("【平板编码】已存在，请修改后保存");
+    }
+    Integer mac = dbTemplate("pad.uniqueCheck", Kv.by("mac", pad.getCMac()).set("iautoid", pad.getIAutoId())).queryInt();
+    if (mac > 0) {
+      ValidationUtils.error("【MAC地址】已存在，请修改后保存");
     }
     //if(existsName(pad.getName(), pad.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
     boolean success = pad.update();
@@ -188,11 +194,6 @@ public class PadService extends BaseService<Pad> {
   }
 
   public Ret updateForm(Pad pad, JBoltTable jBoltTable) {
-//    List<Record> records = dbTemplate("pad.workRegions", Kv.by("ipadid", pad.getIAutoId())).find();
-//    Map<String, Object> maps = new HashMap<>();
-//    records.forEach(record -> {
-//      maps.put(record.getStr(""),);
-//    });
     AtomicReference<Ret> res = new AtomicReference<>();
     res.set(SUCCESS);
     tx(() -> {
