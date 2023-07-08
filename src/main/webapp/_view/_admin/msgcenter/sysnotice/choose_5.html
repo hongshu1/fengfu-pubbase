@@ -90,13 +90,13 @@
 	<div class="jb_body">
 		<script type="text/template" id="item_tpl_#(pageId)">
 			{@each datas as data,index}
-			<li class="item d-inline-block border border-primary rounded m-1 px-2 py-1 text-nowrap text-center" data-id="${data.id}"><span>${data.name}</span><a onclick="jboltTableRemoveKeepSelectedItem(this,'${data.id}')" tooltip data-title="移除" class="hand float-right text-danger ml-2"><i class="fa fa-remove"></i></a></li>
+			<li data-json='${data|toJsonStr}' class="item d-inline-block border border-primary rounded m-1 px-2 py-1 text-nowrap text-center" data-id="${data.id}"><span>${data.name}</span><a onclick="jboltTableRemoveKeepSelectedItem(this,'${data.id}')" tooltip data-title="移除" class="hand float-right text-danger ml-2"><i class="fa fa-remove"></i></a></li>
 			{@/each}
 		</script>
 		<!-- 定义选中内容渲染和盛放容器-->
 		<ul class="m-0 p-0" id="selected_items_box_#(pageId)">
 			#for(data:selectedUsers)
-			<li class="item d-inline-block border border-primary rounded m-1 px-2 py-1 text-nowrap text-center" data-id="#(data.id??)"><span>#(data.name??)</span><a onclick="jboltTableRemoveKeepSelectedItem(this,'#(data.id??)')" tooltip data-title="移除" class="hand float-right text-danger ml-2"><i class="fa fa-remove"></i></a></li>
+			<li  data-json='#json(data)' class="item d-inline-block border border-primary rounded m-1 px-2 py-1 text-nowrap text-center" data-id="#(data.id??)"><span>#(data.name??)</span><a onclick="jboltTableRemoveKeepSelectedItem(this,'#(data.id??)')" tooltip data-title="移除" class="hand float-right text-danger ml-2"><i class="fa fa-remove"></i></a></li>
 			#end
 		</ul>
 	</div>
@@ -203,14 +203,25 @@ function submitThisForm(){
 	}
 	_submit_ing=false;
 }
-
+var first_time_ajax_handler_#(pageId) = 0;
 function ajaxSuccessHandler_#(pageId)(table){
-	var ids = "#(ids??)";
-	if(ids){
-		var arr = ids.split(",");
-		table.me.setCheckedIds(table,arr);
-		$("#selected_items_total_#(pageId)").text(arr.length);
+	if (first_time_ajax_handler_#(pageId) ==0){
+		first_time_ajax_handler_#(pageId) == 1;
+
+		var ids = "#(ids??)";
+		if(ids){
+			var arr = ids.split(",");
+			table.me.setCheckedIds(table,arr);
+			$("#selected_items_total_#(pageId)").text(arr.length);
+		}
+
+	}else if (first_time_ajax_handler_#(pageId) ==1){
+		var ids = table.me.getKeepSelectedIds(table);
+		if(ids){
+			table.me.setCheckedIds(table,ids);
+		}
 	}
+
 }
 </script>
 #end

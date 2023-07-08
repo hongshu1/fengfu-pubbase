@@ -1,4 +1,4 @@
-var jbolt_table_js_version="3.5.5";
+var jbolt_table_js_version="3.5.6";
 var hasInitJBoltEditableTableKeyEvent=false;
 var JBoltCurrentEditableAndKeyEventTable=null;
 
@@ -6646,6 +6646,24 @@ function getScrollBarHeight(ele){
 					selectedItemsTotalSpan.text("0");
 					table.selectedItemsTotal = selectedItemsTotalSpan;
 				}
+			}
+
+			if(table.selectedItemsBox){
+				table.selectedItemsIds=[];
+				table.selectedItemsDatas=[];
+				table.selectedItemsBox.find(".item[data-id]").each(function(){
+					var item=$(this);
+					table.selectedItemsIds.push(item.data("id"));
+					var json = item.data("json");
+					var type= typeof(json);
+					if(type==="string"){
+						table.selectedItemsDatas.push(JSON.parse(json));
+					}else if(type==="object"){
+						table.selectedItemsDatas.push(json);
+					}else{
+						table.selectedItemsDatas.push({});
+					}
+				});
 			}
 
 		},
@@ -14059,6 +14077,15 @@ function getScrollBarHeight(ele){
 			}
 			if(table.selectedItemsTotal){
 				table.selectedItemsTotal.text(table.selectedItemsIds.length);
+			}else{
+				var selectedItemsTotalSpanId = table.data("selected-items-total");
+				if(selectedItemsTotalSpanId){
+					var selectedItemsTotalSpan = jboltBody.find("#"+selectedItemsTotalSpanId);
+					if(isOk(selectedItemsTotalSpan)){
+						selectedItemsTotalSpan.text(table.selectedItemsIds.length);
+						table.selectedItemsTotal = selectedItemsTotalSpan;
+					}
+				}
 			}
 		},
 		getCheckboxCheckedCount:function(table){
