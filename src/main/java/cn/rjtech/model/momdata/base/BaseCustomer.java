@@ -118,7 +118,7 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
     /**分类ID*/
     public static final String ICUSTOMERCLASSID = "iCustomerClassId";
     /**助记码*/
-    public static final String MNEMONICCODE = "mnemonicCode";
+    public static final String CCUSMNEMCODE = "cCusMnemCode";
     /**供应商编码*/
     public static final String CVENCODE = "cVenCode";
     /**供应商名称*/
@@ -1053,18 +1053,18 @@ public abstract class BaseCustomer<M extends BaseCustomer<M>> extends JBoltBaseM
 	/**
 	 * 助记码
 	 */
-	public M setMnemonicCode(java.lang.String mnemonicCode) {
-		set("mnemonicCode", mnemonicCode);
+	public M setCCusMnemCode(java.lang.String cCusMnemCode) {
+		set("cCusMnemCode", cCusMnemCode);
 		return (M)this;
 	}
 
 	/**
 	 * 助记码
 	 */
-	@JBoltField(name="mnemoniccode" ,columnName="mnemonicCode",type="String", remark="助记码", required=false, maxLength=255, fixed=0, order=54)
-	@JSONField(name = "mnemoniccode")
-	public java.lang.String getMnemonicCode() {
-		return getStr("mnemonicCode");
+	@JBoltField(name="ccusmnemcode" ,columnName="cCusMnemCode",type="String", remark="助记码", required=false, maxLength=255, fixed=0, order=54)
+	@JSONField(name = "ccusmnemcode")
+	public java.lang.String getCCusMnemCode() {
+		return getStr("cCusMnemCode");
 	}
 
 	/**

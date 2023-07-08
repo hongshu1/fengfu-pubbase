@@ -192,7 +192,7 @@ FROM
 	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
 	LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
 	LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
-	LEFT JOIN T_Sys_AssemDetail ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
+	LEFT JOIN T_Sys_AssemBarcode ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
 	LEFT JOIN T_Sys_OtherInDetail od ON od.Barcode = a.cCompleteBarcode AND od.isDeleted = '0'
 where a.isEffective = '1'
     #if(q)
@@ -249,7 +249,7 @@ FROM
 	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
 	LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
 	LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
-	LEFT JOIN T_Sys_AssemDetail ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
+	LEFT JOIN T_Sys_AssemBarcode ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
 	LEFT JOIN T_Sys_OtherInDetail od ON od.Barcode = a.cCompleteBarcode AND od.isDeleted = '0'
 where a.isEffective = '1'
     #if(q)
@@ -435,7 +435,7 @@ FROM
 		LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
 		LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
 		LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
-        LEFT JOIN T_Sys_AssemDetail ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
+        LEFT JOIN T_Sys_AssemBarcode ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
         LEFT JOIN T_Sys_OtherInDetail od ON od.Barcode = a.cCompleteBarcode AND od.isDeleted = '0'
 	WHERE
 		a.isEffective = '1'
@@ -482,7 +482,7 @@ FROM
 		LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
 		LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
 		LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cCompleteBarcode AND pd.isDeleted = '0'
-        LEFT JOIN T_Sys_AssemDetail ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
+        LEFT JOIN T_Sys_AssemBarcode ad ON ad.Barcode = a.cCompleteBarcode AND ad.isDeleted = '0'
         LEFT JOIN T_Sys_OtherInDetail od ON od.Barcode = a.cCompleteBarcode AND od.isDeleted = '0'
 	WHERE
 	a.isEffective = '1'
