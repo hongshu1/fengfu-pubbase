@@ -6,7 +6,7 @@ from Bd_PadWorkRegion iw
 inner join Bd_WorkRegionM wr on iw.iWorkRegionMid = wr.iAutoId
 left join Bd_Person p on wr.iPersonId = p.iAutoId
 left join Bd_Department d on wr.iDepId = d.iAutoId
-left join #(getBaseDbName()).dbo.jb_dictionary jd on iw.isDefault + 1 = jd.sort_rank and jd.type_key = 'options_boolean'
+left join #(getBaseDbName()).dbo.jb_dictionary jd on iw.isDefault = jd.sn and jd.type_key = 'options_boolean'
 where iw.iPadId = #para(ipadid)
 #end
 

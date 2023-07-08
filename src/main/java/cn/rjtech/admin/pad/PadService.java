@@ -17,9 +17,7 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -190,6 +188,11 @@ public class PadService extends BaseService<Pad> {
   }
 
   public Ret updateForm(Pad pad, JBoltTable jBoltTable) {
+//    List<Record> records = dbTemplate("pad.workRegions", Kv.by("ipadid", pad.getIAutoId())).find();
+//    Map<String, Object> maps = new HashMap<>();
+//    records.forEach(record -> {
+//      maps.put(record.getStr(""),);
+//    });
     AtomicReference<Ret> res = new AtomicReference<>();
     res.set(SUCCESS);
     tx(() -> {
@@ -210,7 +213,6 @@ public class PadService extends BaseService<Pad> {
       List<PadWorkRegion> updateBeanList = jBoltTable.getUpdateBeanList(PadWorkRegion.class);
       if (updateBeanList != null) {
         for (PadWorkRegion padWorkRegion : updateBeanList) {
-          padWorkRegion.setIPadId(pad.getIAutoId());
           if (padWorkRegion.getIsDefault()) {
             qty++;
           }
