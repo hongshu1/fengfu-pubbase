@@ -59,7 +59,7 @@ public class DepartmentAdminController extends BaseAdminController {
      */
     @UnCheck
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv(),getSortColumn("iAutoId"), getSortType("desc")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv(), getSortColumn("iAutoId"), getSortType("desc")));
     }
 
     /**
@@ -69,28 +69,31 @@ public class DepartmentAdminController extends BaseAdminController {
     public void treeDatas() {
         renderJsonData(service.getTreeTableDatas(getKv()));
     }
+
     /**
      * 数据源
      */
     @UnCheck
     public void treeDatasForProposalSystem() {
-    	Kv para = getKv();
-    	String depGrade = globalConfigService.getConfigValue(MesConfigKey.DEP_GRADE);
-    	depGrade = JBoltStringUtil.isBlank(depGrade) ? "3" : depGrade;
-    	para.set("idepgrade",depGrade);
-    	para.set("isEnabled","true");
+        Kv para = getKv();
+        String depGrade = globalConfigService.getConfigValue(MesConfigKey.DEP_GRADE);
+        depGrade = JBoltStringUtil.isBlank(depGrade) ? "3" : depGrade;
+        para.set("idepgrade", depGrade);
+        para.set("isEnabled", "true");
         renderJsonData(service.treeDatasForProposalSystem(para));
     }
+
     /**
      * 数据源
      */
     @UnCheck
     public void treeDatasForProposalReport() {
-    	Kv para = getKv();
-    	para.set("isProposal","true");
-    	para.set("isEnabled","true");
+        Kv para = getKv();
+        para.set("isProposal", "true");
+        para.set("isEnabled", "true");
         renderJsonData(service.treeDatasForProposalSystem(para));
     }
+
     /**
      * 新增
      */
@@ -200,7 +203,7 @@ public class DepartmentAdminController extends BaseAdminController {
     public void toggleIsDeleted() {
         renderJson(service.toggleBoolean(getLong(0), "isDeleted"));
     }
-    
+
     /**
      * 切换isProposal
      */
@@ -221,7 +224,6 @@ public class DepartmentAdminController extends BaseAdminController {
     }
 
 
-
     /**
      * 执行导入
      */
@@ -237,8 +239,6 @@ public class DepartmentAdminController extends BaseAdminController {
 
         renderJson(service.importRecordsFromExcel(file.getFile()));
     }
-
-
 
 
     /**
@@ -276,6 +276,7 @@ public class DepartmentAdminController extends BaseAdminController {
         }
         renderBytesToExcelXlsFile(service.exportExcelTpl(data));
     }
+
     @CheckPermission(PermissionKey.DEPARTMENT_EXPORT)
     public void exportExcelAll() throws Exception {
         List<Record> rows = service.findAll(getKv());
@@ -308,11 +309,10 @@ public class DepartmentAdminController extends BaseAdminController {
      */
     @UnCheck
     public void list() {
-        Okv kv = Okv.create();
-        kv.set("IsEnabled", 1);
-        kv.set("IsDeleted", 0);
-
+        Okv kv = Okv.by("IsEnabled", "1")
+                .set("IsDeleted", "0");
+        
         renderJsonData(service.getCommonList(kv, "dCreateTime", "desc"));
     }
-    
+
 }

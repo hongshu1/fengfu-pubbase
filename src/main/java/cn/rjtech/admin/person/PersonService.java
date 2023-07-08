@@ -141,8 +141,9 @@ public class PersonService extends BaseService<Person> {
     public Ret delete(Long id) {
         Person dbPerson = findById(id);
         ValidationUtils.notNull(dbPerson, JBoltMsg.DATA_NOT_EXIST);
-        ValidationUtils.isTrue(!dbPerson.getIsDeleted(), "U8同步过来的记录，禁止删除操作！");
-
+        ValidationUtils.isTrue(!dbPerson.getIsDeleted(), "该记录已被删除");
+        ValidationUtils.equals(dbPerson.getISource(), SourceEnum.MES.getValue(), "U8同步过来的记录，禁止删除操作！");
+        
         tx(() -> {
 
             dbPerson.setIsDeleted(true);

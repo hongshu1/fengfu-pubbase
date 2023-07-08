@@ -156,6 +156,13 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	}
 
 	/**
+	 * 获取相关产线数据
+	 */
+	public void workregionmOptions(){
+		renderJsonData(service.workregionmOptions(getKv()));
+	}
+
+	/**
 	 * 切换toggleIsenabled
 	 */
 	public void toggleIsenabled() {
