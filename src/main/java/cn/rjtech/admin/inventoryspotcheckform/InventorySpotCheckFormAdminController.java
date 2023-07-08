@@ -49,8 +49,6 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     @Inject
     private InventoryService              inventoryService;        //存货档案
     @Inject
-    private OperationService              operationService;        //工序
-    @Inject
     private EquipmentModelService         equipmentModelService; //机型档案
     @Inject
     private SpotCheckFormService          spotCheckFormService; //点检表格
