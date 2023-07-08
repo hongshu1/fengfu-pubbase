@@ -225,6 +225,30 @@
 #render("_capacity_table_js.html")
 #render("_tab4_js.html")
 <script>
+
+    function batchSetColumns(tableEle,dontExeValueChangeHandler){
+        var table=getJBoltTable(tableEle);
+        if(isOk(table)){
+            var jboltTable=table.jboltTable("inst");
+            if(jboltTable){
+                jboltTable.me.processEditingTds(jboltTable);
+                var trs = jboltTable.tbody.find("tr[data-index]");
+                var seq = Number(0);
+                if(isOk(trs)){
+                    var tr;
+                    trs.each(function(){
+                        tr=$(this);
+                        seq = Number(10+seq);
+                        jboltTable.me.setCell(jboltTable,tr,'iseq',seq,seq,dontExeValueChangeHandler);
+                    });
+                    return;
+                }
+                return;
+            }
+        }
+        LayerMsgBox.alert("表格组件配置异常",2);
+    }
+
     function submitThisForm() {
 
         var datas = getJboltTableAllDatas('#jbolt_table_capacity_#(pageId)');
@@ -249,6 +273,10 @@
                 LayerMsgBox.alert("存在相同的班次产能！");
                 return;
             }
+        }
+
+        if (jboltTableGetSubmitData("#itemroutingconfigid")){
+            batchSetColumns('#itemroutingconfigid');
         }
 
         var tables = ["itemroutingconfigid", "jbolt_table_workshiftd_split_#(pageId)", "jbolt_table_capacity_#(pageId)"];

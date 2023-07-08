@@ -41,7 +41,18 @@
 #render("_table_split_js.html")
 <script>
     function submitThisForm(){
-        jboltTableSubmit("#jbolt_table_workshiftd_split_#(pageId)");
+       let res= getJboltTableAllDatas("jbolt_table_workshiftd_split_#(pageId)");
+       let qty=0;
+       for(let i=0;i< res.length;i++){
+        if (res[i].isdefault=="1"){
+          qty++;
+        }
+       }
+       if(qty>1){
+         LayerMsgBox.error('【是否默认】列只能存在一个是!');
+         throw "【是否默认】列只能存在一个是!";
+       }
+       jboltTableSubmit("#jbolt_table_workshiftd_split_#(pageId)");
     }
 </script>
 <!--#include("/_view/_admin/common/_formjs.html",formId="Pad_Form")-->

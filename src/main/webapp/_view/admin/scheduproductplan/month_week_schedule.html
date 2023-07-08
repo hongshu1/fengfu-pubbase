@@ -27,15 +27,6 @@
         font-weight: bold;
     }
 
-
-    .search {
-        display: flex;
-        /*justify-content: space-between; !* 水平居中 *!*/
-        flex-direction: row;
-        align-items: center; /* 垂直居中 */
-        padding: 10px 0px;
-    }
-
     .span {
         color: #333333;
     }
@@ -102,7 +93,7 @@
         border-radius: 5px;
         float: right;
     }
-/*    */
+    /*    */
     .popup-layer{
         border: 1px solid rgba(215, 215, 215, 1);
         background-color:#fff;
@@ -204,143 +195,46 @@
 <div class="jbolt_page" data-key="#(pmkey)" >
     <div class="jbolt_page_title">
         <!-- 搜索工具类开始 -->
-        <div class="layui-row layui-col-space10">
-            <div class="layui-col-md1">
-                <div class="grid-demo grid-demo-bg1">
-<!--                    <div class="select">-->
-                        <span>产线名称:</span>
-                        <input style="width:150px;height:2rem;" id="cworkname"/>
-<!--                    </div>-->
+        <div class="but_box">
+            <span>产线名称:</span>
+            <input style="width:150px;height:2rem;" id="cworkname"/>
+            <span>存货编码:</span>
+            <input style="width:150px;height:2rem;" id="cinvcode"/>
+            <span>客户部番:</span>
+            <input style="width:150px;height:2rem;" id="cinvcode1"/>
+            <span>部品名称:</span>
+            <input style="width:150px;height:2rem;" id="cinvname1"/>
+            <span>排产层级:</span>
+            <select id="search_level" style="width: 150px;height: 2rem">
+                <option value="1">全部</option>
+                <option value="1">层级1</option>
+                <option value="2">层级2</option>
+                <option value="3">层级3</option>
+                <option value="4">层级4</option>
+                <option value="5">层级5</option>
+            </select>
+            <span>日期：</span>
+            <div style="margin-right: 20px;display:inline-block;">
+                <div style="display:flex;">
+                    <input type="date" id="search_start-time" name="search_start-time" style="height:2rem;">
+                    <p style="width: 30px;text-align: center;margin-top: 5px">至</p>
+                    <input type="date" id="search_end-time" name="search_end-time" style="height:2rem;">
                 </div>
             </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo">
-                    <span>产线名称:</span>
-                    <input style="width:150px;height:2rem;" id="cworkname"/>
-                </div>
-            </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo grid-demo-bg1">
-                    <span>产线名称:</span>
-                    <input style="width:150px;height:2rem;" id="cworkname"/>
-                </div>
-            </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo">
-                    <span>存货编码:</span>
-                    <input style="width:150px;height:2rem;" id="cinvcode"/>
-                </div>
-            </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo">
-                    <span>客户部番:</span>
-                    <input style="width:150px;height:2rem;" id="cinvcode1"/>
-                </div>
-            </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo">
-                    <span>部品名称:</span>
-                    <input style="width:150px;height:2rem;" id="cinvname1"/>
-                </div>
-            </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo">
-                    <span>排产层级：</span>
-                    <select id="search_level" style="width: 150px;height:2rem;">
-                        <option value="1">全部</option>
-                        <option value="1">层级1</option>
-                        <option value="2">层级2</option>
-                        <option value="3">层级3</option>
-                        <option value="4">层级4</option>
-                        <option value="5">层级5</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo">
-                   <div class="row">
-                       <span>日期：</span>
-                       <div style="display:flex;">
-                           <input type="date" id="search_start-time" name="search_start-time" style="height:2rem;">
-                           <p style="width: 30px;text-align: center;margin-top: 5px">至</p>
-                           <input type="date" id="search_end-time" name="search_end-time" style="height:2rem;">
-                       </div>
-                   </div>
-                </div>
-            </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo">
-                   <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                       </svg>
-                       搜索
-                   </button>
-                </div>
-            </div>
-            <div class="layui-col-md1">
-                <div class="grid-demo">
-                   <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                           <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                           <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                       </svg>
-                       重置
-                   </button>
-                </div>
-            </div>
+            <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+                搜索
+            </button>
+            <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                </svg>
+                重置
+            </button>
         </div>
-                    <!--        <div class="search">-->
-<!--            <div class="select">-->
-
-<!--            </div>-->
-<!--            <div class="select">-->
-
-<!--            </div>-->
-<!--            <div class="select">-->
-
-<!--            </div>-->
-<!--            <div class="select">-->
-
-<!--            </div>-->
-<!--            <div class="select" style="margin-right: 15px">-->
-<!--                <span>排产层级：</span>-->
-<!--                <select id="search_level" style="width: 150px;height:2rem;">-->
-<!--                    <option value="1">全部</option>-->
-<!--                    <option value="1">层级1</option>-->
-<!--                    <option value="2">层级2</option>-->
-<!--                    <option value="3">层级3</option>-->
-<!--                    <option value="4">层级4</option>-->
-<!--                    <option value="5">层级5</option>-->
-<!--                </select>-->
-<!--            </div>-->
-<!--            <div class="select" style="display: flex;justify-content: center;align-items: center;">-->
-<!--                <div class="row">-->
-<!--                    <span style="margin-top: 5px">日期：</span>-->
-<!--                    <div class="col" style="display:flex;">-->
-<!--                        <input type="date" id="search_start-time" name="search_start-time" style="height:2rem;">-->
-<!--                        <p style="width: 30px;text-align: center;margin-top: 5px">至</p>-->
-<!--                        <input type="date" id="search_end-time" name="search_end-time" style="height:2rem;">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div style="margin-left:1rem">-->
-<!--                <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">-->
-<!--                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">-->
-<!--                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>-->
-<!--                    </svg>-->
-<!--                    搜索-->
-<!--                </button>-->
-<!--                <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">-->
-<!--                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">-->
-<!--                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>-->
-<!--                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>-->
-<!--                    </svg>-->
-<!--                    重置-->
-<!--                </button>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
     <div class="jbolt_page_content">
         <div class="sample-container">
             <!-- 表格 -->
@@ -368,7 +262,7 @@
                         </svg>
                         数据导入
                     </button>
-                    <button onClick="saveLevel()" class="btn-success btn" style="padding: 5px 15px">
+                    <button onClick="saveLevel()" class="btn-success btn" style="padding: 3px 15px">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                             <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
                             <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
@@ -526,6 +420,8 @@
     var statusBar = new GC.Spread.Sheets.StatusBar.StatusBar(document.getElementById('statusBar'));
     var sheet = spread.getSheet(0);//按照下标获取表单
     statusBar.bind(spread);//状态栏
+    spread.getSheet(0).setRowCount(50); //设置一列单元格的个数
+    spread.getSheet(0).setColumnCount(100); //设置一行有多少个单元格
     spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
     // sheet.options.isProtected = true; // 开启工作表保护
     // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
@@ -706,8 +602,6 @@
         //设置全局的列宽行高
         sheet.defaults.colWidth = 80;
         sheet.defaults.rowHeight = 25;
-        // spread.getSheet(0).setRowCount(parms.RowCount); //设置一列单元格的个数
-        // spread.getSheet(0).setColumnCount(parms.ColumnCount); //设置一行有多少个单元格
         sheet.frozenRowCount(4); // 将第一行冻结
         //设置单元格内容的对齐方式
         var style = new GC.Spread.Sheets.Style();

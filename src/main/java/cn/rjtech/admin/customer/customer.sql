@@ -6,17 +6,12 @@ SELECT
 	dic.name AS dicname,
 	p.cPsn_Name as personName,
 	jd.name AS DepName
-FROM
-	Bd_Customer a
+FROM Bd_Customer a
 	LEFT JOIN Bd_CustomerClass b ON a.iCustomerClassId = b.iAutoId
-	LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary dic ON dic.type_key = 'customer_level'
-	AND dic.sn = a.cCustomerLevelSn
+	LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary dic ON dic.type_key = 'customer_level' AND dic.sn = a.cCustomerLevelSn
 	LEFT JOIN Bd_Person p ON a.iDutyUserId = p.iAutoId
 	LEFT JOIN #(getBaseDbName()).dbo.jb_dept jd ON a.cCusDepart = jd.id
-	WHERE 1=1
-	#if(orgId)
-	    AND a.iOrgId = #para(orgId)
-	#end
+WHERE a.iOrgId = #para(iorgid) AND a.isDeleted = '0'
 	#if(icustomerclassid)
         AND a.iCustomerClassId = #para(icustomerclassid)
 	#end
