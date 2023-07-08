@@ -196,7 +196,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
     moDoc.setDCreateTime(dCreateTime);
     moDoc.setIAuditWay(1);
     moDoc.setIAuditStatus(0);
-    moDoc.setIsDeleted(false );
+    moDoc.setIsDeleted(false);
     tx(() -> {
       moDoc.save();
       // 工艺路线
@@ -649,7 +649,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
   public Integer savelines(JBoltTable jBoltTable, String rowid, Long imoroutingid, Date dCreateTime) {
 
 
-//存工艺路线工序,人员,设备,物料集
+    //存工艺路线工序,人员,设备,物料集
     List<MoDocFormVo> saveModelList1 = jBoltTable.getSaveModelList(MoDocFormVo.class);
     Long iMoRoutingConfigId = null;
     MoMoroutingconfig moMoroutingconfig;
@@ -938,7 +938,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
     }
     return records;
 
-
   }
 
   public Ret checkDoc(MoDoc moDoc) {
@@ -979,6 +978,15 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
     return SUCCESS;
   }
 
+  public Ret deletemodoc(MoDoc modoc) {
+    modoc.setIsDeleted(true);
+    tx(() -> {
+      modoc.update();
+      return true;
+    });
+    return SUCCESS;
+  }
+
   public Ret updateStatus(MoDoc modoc) {
     if (modoc != null && modoc.getIStatus().equals(7)) {
       return fail("已经是关闭状态");
@@ -993,7 +1001,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
     });
     return SUCCESS;
   }
-
     /**
      * 获取工单对应产线关联所属仓库信息
      *
@@ -1324,6 +1331,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
    */
   @Override
   public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+
     return null;
   }
 

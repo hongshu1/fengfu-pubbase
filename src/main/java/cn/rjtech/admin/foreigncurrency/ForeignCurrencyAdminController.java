@@ -1,12 +1,18 @@
 package cn.rjtech.admin.foreigncurrency;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.ForeignCurrency;
+
+import java.util.List;
+
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -31,7 +37,11 @@ public class ForeignCurrencyAdminController extends BaseAdminController {
      * 首页
      */
     public void index() {
-        render("index.html");
+    	List<JsTreeBean> list = service.findForeigncurrencyRootTressList();
+    	if(CollUtil.isNotEmpty(list)) {
+    		set("treedefaultselect",list.get(0).getId());
+    	}
+        render("foreigncurrency_exch.html");
     }
 
     /**
@@ -88,27 +98,49 @@ public class ForeignCurrencyAdminController extends BaseAdminController {
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
-
     /**
      * 切换toggleBcal
      */
+    @UnCheck
     public void toggleBcal() {
         renderJson(service.toggleBcal(getLong(0)));
     }
-
     /**
      * 切换toggleIotherused
      */
+    @UnCheck
     public void toggleIotherused() {
         renderJson(service.toggleIotherused(getLong(0)));
     }
-
     /**
      * 切换toggleIsDeleted
      */
+    @UnCheck
     public void toggleIsDeleted() {
         renderJson(service.toggleIsDeleted(getLong(0)));
     }
-
-
+    @UnCheck
+    public void findForeigncurrencyRootTressList(){
+    	renderJsonData(service.findForeigncurrencyRootTressList());
+    }
+    @UnCheck
+    public void findFlatTableDatas(){
+    	renderJsonData(service.findFlatTableDatas(getKv()));
+    }
+    @UnCheck
+    public void findForeignCurrencyForEdit(){
+    	renderJsonData(service.findModelByExchName(getKv()));
+    }
+    @UnCheck
+    public void saveOrUpdateForeignCurrency(){
+    	renderJson(service.saveOrUpdateForeignCurrency(getKv()));
+    }
+    @UnCheck
+    public void saveCellTable(){
+    	renderJson(service.saveCellTable(getKv()));
+    }
+    @UnCheck
+    public void deleteForeignCurrencyAndExch(){
+    	renderJson(service.deleteForeignCurrencyAndExch(getKv()));
+    }
 }

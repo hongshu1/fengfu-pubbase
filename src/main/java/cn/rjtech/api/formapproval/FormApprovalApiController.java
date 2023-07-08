@@ -299,7 +299,7 @@ public class FormApprovalApiController extends BaseApiController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“审核”权限");
 
-        renderJBoltApiRet(service.approveByStatus(formSn, formAutoId, primaryKeyName, className, false));
+        renderJBoltApiRet(service.approveByStatus(formSn, formAutoId, primaryKeyName, className, false, JBoltUserKit.getUserId()));
     }
 
     /**
@@ -325,7 +325,7 @@ public class FormApprovalApiController extends BaseApiController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“审核”权限");
 
-        renderJBoltApiRet(service.rejectByStatus(formSn, formAutoId, primaryKeyName, className, false));
+        renderJBoltApiRet(service.rejectByStatus(formSn, formAutoId, primaryKeyName, className, false, JBoltUserKit.getUserId()));
     }
 
     /**
@@ -351,7 +351,7 @@ public class FormApprovalApiController extends BaseApiController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“反审核”权限");
 
-        renderJBoltApiRet(service.reverseApproveByStatus(formSn, formAutoId, primaryKeyName, className));
+        renderJBoltApiRet(service.reverseApproveByStatus(formSn, formAutoId, primaryKeyName, className, JBoltUserKit.getUserId()));
     }
 
     /**
@@ -377,7 +377,7 @@ public class FormApprovalApiController extends BaseApiController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少批量“审核通过”的权限");
 
-        renderJBoltApiRet(service.batchApproveByStatus(ids, formSn, primaryKeyName, className));
+        renderJBoltApiRet(service.batchApproveByStatus(ids, formSn, primaryKeyName, className, JBoltUserKit.getUserId()));
     }
 
     /**
@@ -403,7 +403,7 @@ public class FormApprovalApiController extends BaseApiController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少批量“审核不通过”的权限");
 
-        renderJBoltApiRet(service.batchRejectByStatus(ids, formSn, primaryKeyName, className));
+        renderJBoltApiRet(service.batchRejectByStatus(ids, formSn, primaryKeyName, className, JBoltUserKit.getUserId()));
     }
 
     /**

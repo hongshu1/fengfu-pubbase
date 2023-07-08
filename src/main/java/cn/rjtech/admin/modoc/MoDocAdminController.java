@@ -146,6 +146,18 @@ public class MoDocAdminController extends BaseAdminController {
 	}
 
 	/**
+	 * 删除
+	 */
+	public void  deletemodoc(){
+		MoDoc moDoc=service.findById(getLong(0));
+		if(moDoc == null){
+			renderFail(JBoltMsg.DATA_NOT_EXIST);
+			return;
+		}
+		renderJson(service.deletemodoc(moDoc));
+	}
+
+	/**
 	 * 齐料检查界面
 	 */
 	public  void  checkmaterialpage(){
@@ -605,4 +617,6 @@ public class MoDocAdminController extends BaseAdminController {
 		Kv kv = getKv();
 		renderJsonData(service.moDocInventoryRouting(getKv()));
 	}
+
+
 }
