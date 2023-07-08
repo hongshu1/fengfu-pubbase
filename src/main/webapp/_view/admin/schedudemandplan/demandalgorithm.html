@@ -360,7 +360,7 @@
             <input style="width:150px;height:2rem;" id="cinvcode1"/>
             <span>部品名称:</span>
             <input style="width:150px;height:2rem;" id="cinvname1"/>
-        <div style="margin-left: 20px;margin-right: 20px;display:inline-block;">
+        <div style="margin-left: 20px;display:inline-block;">
             <div class="row">
                 <span style="margin-top: 5px">日期：</span>
                 <div class="col" style="display:flex;">
@@ -423,16 +423,6 @@
             </div>
 
         </div>
-
-        <!--计划生成弹框-->
-<!--        <div id="alert">-->
-<!--            <p class="alert_title"><span id="close">X</span></p>-->
-<!--            <p class="alert_but"><button id="alert_save">确定</button></p>-->
-<!--            <div class="select" style="margin-top: 15px;margin-left: 20px;margin-bottom: 15px;">-->
-<!--                <label class="col-form-label" >截止日期：</label>-->
-<!--                <input type="date" id="datetime-local" name="datetime-local" style="display: inline-block; width: 200px">-->
-<!--            </div>-->
-<!--        </div>-->
         <!--预示保存弹框-->
         <div id="indicate_Mode">
             <p class="indicate_title"><span id="indicate_title"></span><span id="close_indicate">X</span></p>
@@ -473,6 +463,7 @@
         </div>
         <!--导出弹出框结束-->
     </div>
+    <!--计划生成弹框-->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()" style="font-size: 2rem">&times</span>
@@ -588,7 +579,7 @@
         parms.activeSheet.setColumnWidth(parms.columnindex+4, 150);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+6, 100);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+7, 120);//设置指定单元格的width
-        parms.activeSheet.setColumnWidth(parms.columnindex+8, 150);//设置指定单元格的width
+        parms.activeSheet.setColumnWidth(parms.columnindex+8, 120);//设置指定单元格的width
         spreadResume();// 恢复绘制
     }
     /**
@@ -699,7 +690,7 @@
                         sheet.setValue(rowIndex, serialCol+4,parms['scheduplanmonth'].data[i].cInvName1);
                         sheet.getCell(rowIndex, serialCol+4).wordWrap(true);
                         parms.activeSheet.addSpan(rowIndex,serialCol+4,3,1);
-                        parms.activeSheet.setColumnWidth(serialCol+4, 150);//设置指定单元格的width
+                        parms.activeSheet.setColumnWidth(serialCol+4, 180);//设置指定单元格的width
                         //包装数量
                         sheet.setValue(rowIndex, serialCol+5,parms['scheduplanmonth'].data[i].iPkgQty);
                         sheet.getCell(rowIndex, serialCol+5).wordWrap(true);
@@ -889,12 +880,16 @@
             type:'post',
             dataType:'json',
             success:function (res){
-                console.log(res.data)
                 const datetimeLocalInput = document.getElementById('datetime-locals');
-                const now = new Date();
-                const timestamp = now.getTime();
-                const isoString = new Date(timestamp).toISOString();
-                datetimeLocalInput.value = isoString.slice(0, 10);
+                const timestamp = res.data;
+                // 将时间戳转换为Date对象
+                const date = new Date(timestamp * 1);
+                // 获取年、月、日
+                const year = date.getFullYear();
+                const month = ('0' + (date.getMonth() + 1)).slice(-2);
+                const day = ('0' + date.getDate()).slice(-2);
+                const formattedDate = year + '-' + month + '-' + day;
+                datetimeLocalInput.value = formattedDate;
             },error: function(error) {
                 console.log(error);
             }
