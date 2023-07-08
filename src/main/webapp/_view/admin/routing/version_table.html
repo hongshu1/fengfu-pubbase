@@ -27,7 +27,7 @@
                             <a data-ajaxbtn href='admin/routing/audit?routingId=${data.iautoid}&status=2' data-handler='refreshJBoltTable' data-confirm='确定要执行此操作？' data-title="审批">审批</a>
                         {@/if}-->
                     </td>
-                    <td>${data.cauditstatustext}</td>
+                    <td>$${data.iauditstatus,1|AuditStatus}</td>
                     <td>${data.cinvcode}</td>
                     <td>${data.cinvcode1}</td>
                     <td>${data.cinvname1}</td>
