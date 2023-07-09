@@ -1,3 +1,6 @@
+#set(pageId=RandomUtil.random(6))
+#set(iYear=DateUtil.getYear())
+#set(precisionConfig1=JBoltGlobalConfigCache.getConfigValue("precision_config1"))
 <div class="jbolt_page_title">
   <div class="row">
     <div class="col-12">
@@ -49,7 +52,7 @@
                          class="form-control"
                          maxlength="40"
                          value="${data.cwhcode}"
-                         data-url="admin/warehouse/options"
+                         data-url="admin/warehousebeginofperiod/wareHouseOptions"
                          data-sync-ele="#cwhcode${data.index},#cwhname${data.index}"
                          data-text-attr="cwhcode"
                          data-column-attr="cwhcode"/>
@@ -78,12 +81,12 @@
                          class="form-control"
                          maxlength="40"
                          data-url="admin/warehousearea/options"
-                         data-sync-ele="#careacode${data.index},#careaname${data.index},#cwhcode${data.index},#icwhcode${data.index}"
+                         data-sync-ele="#careacode${data.index},#careaname${data.index}"
                          data-text-attr="careacode"
                          data-column-attr="careacode"/>
                   <div class="input-group-append">
                       <button class="btn btn-outline-secondary" data-dialogbtn data-area="1280,600" data-title="选择数据（单选）"
-                              data-link-para-ele="#careacode${data.index},#cwhcode${data.index},#icwhcode${data.index}"
+                              data-link-para-ele="#cwhcode${data.index},#cwhname${data.index},#careacode${data.index},#careaname${data.index}"
                               data-url="admin/warehousebeginofperiod/warehouseAreaDialogIndex?index=${data.index}&type=0">
                         <i class="fa fa-search"></i></button>
                   </div>

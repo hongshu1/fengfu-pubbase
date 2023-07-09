@@ -24,9 +24,6 @@
   <td>${pageNumber,pageSize,index | rownum}</td>
   <td>${data.cwhcode}</td>
   <td>${data.cwhname}</td>
-  <td>
-    <a tooltip href="javascript:void(0)" onclick="checkThis(${index})" class="jbolt_table_btn">选择</a>
-  </td>
 </tr>
 {@/each}
 </textarea>
@@ -50,7 +47,6 @@
         <th data-width="60" data-column="index">序号</th>
         <th data-width="300" data-column="cwhcode">仓库编码</th>
         <th data-width="400" data-column="cwhname">仓库名称</th>
-        <th data-column="cOperationName">操作</th>
       </tr>
       </thead>
       <tbody>

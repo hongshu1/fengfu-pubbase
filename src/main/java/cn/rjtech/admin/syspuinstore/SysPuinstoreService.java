@@ -615,7 +615,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             main.setCreatePerson(detail.getCCreateName());
             main.setISsurplusqty(false);
             main.setIcRdCode(puinstore.getRdCode());
-            main.setIsWhpos("1"); //
+            main.setIsWhpos("1");
             main.setNum(0);
             main.setPackRate("0");
             main.setQty(detail.getQty().stripTrailingZeros().toPlainString());
