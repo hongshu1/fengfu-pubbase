@@ -640,7 +640,6 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     }
 
     public Object addPrintData(Kv kv) {
-        kv.set("organizecode", getOrgCode());
         List<Record> recordList = dbTemplate("warehousebeginofperiod.addPrintData", kv).find();
         int i = 1;
         for (Record record : recordList) {
@@ -662,5 +661,13 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         Kv kv = new Kv();
         kv.set("corgcode", getOrgCode());
         return dbTemplate("warehousebeginofperiod.findAreaByWhcode", kv).find();
+    }
+
+    public List<Record> wareHouseOptions(Kv kv) {
+        if (StrUtil.isNotBlank(kv.getStr("q"))){
+            kv.set("cwhcode",kv.getStr("q"));
+        }
+        List<Record> records = dbTemplate("warehousebeginofperiod.wareHouseOptions", kv.of("isenabled", "true")).find();
+        return records;
     }
 }

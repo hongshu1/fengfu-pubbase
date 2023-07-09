@@ -143,9 +143,6 @@ from T_Sys_BarcodeDetail t3
 #if(ids)
          and CHARINDEX(','+cast((select t3.autoid) as nvarchar(20))+',' , ','+#para(ids)+',') > 0
 #end
-#if(organizecode)
-    and t3.organizecode = #para(organizecode)
-#end
 order by t3.CreateDate desc
 #end
 
@@ -182,4 +179,29 @@ and t1.WhCode = #para(whcode)
 and t1.PosCode = #para(poscode)
 and t1.OrganizeCode = #para(organizecode)
 and t1.LockType = #para(locksource)
+#end
+
+#sql("wareHouseOptions")
+SELECT
+    wh.*
+FROM Bd_Warehouse wh
+WHERE wh.isDeleted = 0
+    #if(iautoid)
+	    AND wh.iautoid = #para(iautoid)
+	#end
+	#if(cwhcode)
+	    AND wh.cWhCode = #para(cwhcode)
+	#end
+	#if(cwhname)
+	    AND wh.cWhName = #para(cwhname)
+	#end
+    #if(isenabled)
+        AND wh.isenabled = #para(isenabled == 'true' ? 1 : 0)
+    #end
+    #if(q)
+    AND (
+      wh.cWhCode like concat('%',#para(q),'%') or wh.cWhName like concat('%',#para(q),'%')
+        )
+    #end
+ORDER BY dCreateTime DESC
 #end
