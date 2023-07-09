@@ -13,6 +13,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.enums.IsOkEnum;
 import cn.rjtech.model.momdata.EquipmentModel;
+import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -95,6 +96,7 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 	 */
 	private EquipmentModel setEquipmentModel(EquipmentModel equipmentModel){
 //		equipmentModel.setIAutoId(JBoltSnowflakeKit.me.nextId());
+		ValidationUtils.notBlank(equipmentModel.getCEquipmentModelCode(), "机型编码不能为空");
 		equipmentModel.setIsDeleted(false);
 		equipmentModel.setIOrgId(getOrgId());
 		equipmentModel.setCOrgCode(getOrgCode());
@@ -200,6 +202,12 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 		}
 		for (EquipmentModel equipmentModel : equipmentModels) {
 			setEquipmentModel(equipmentModel);
+			// 校验机型编码唯一
+			if(exists(createSql(equipmentModel))) {
+				String cEquipmentModelCode = equipmentModel.getCEquipmentModelCode();
+				String format = String.format("机型编码【%s】%s", cEquipmentModelCode, JBoltMsg.DATA_SAME_SN_EXIST);
+				return fail(format);
+			}
 		}
 		//执行批量操作
 		boolean success=tx(new IAtom() {

@@ -37,7 +37,7 @@ public class UserApiService extends JBoltApiBaseService {
     }
 
 //    public JBoltApiRet login(String username, String password, Long orgId,String mac,String ip) {
-    public JBoltApiRet login(String username, String password, Long orgId) {
+    public JBoltApiRet login(String username, String password, Long orgId,String ip) {
         Org org = orgService.findById(orgId);
         ValidationUtils.notNull(org, "组织不存在");
         ValidationUtils.isTrue(org.getEnable(), "该组织已被禁用");

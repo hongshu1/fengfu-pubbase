@@ -38,7 +38,7 @@ var qrcode = function (val, hideText) {
     if (!val) {
         return '';
     }
-    
+
     var text = hideText ? '' : val;
 
     var html = '<img data-imgviewer src="/common/qrcode?code=${val}" style="width:30px;height: 30px;" tooltip data-title="点击查看大图" />${text}';
@@ -536,7 +536,7 @@ var isubitem = function(val){
 	        return "是";
 	    default:
 	        return "";
-    }	
+    }
 }
 
 function iPurchaseRefType(val) {
@@ -577,7 +577,7 @@ var icontrastnum = function(val){
 	        return "③";
 	    default:
 	        return "";
-    }	
+    }
 }
 function iPeriodContrastBudgetType(val) {
     switch (val) {
@@ -804,10 +804,10 @@ function showSwitchOrgDialog(showMsg, handler) {
  */
 function postWithCallback(url, para, successCallback, failCallback) {
     var index = parent.LayerMsgBox.loading('正在处理...', 10);
-    
+
     Ajax.post(url, para, function (ret) {
         parent.LayerMsgBox.close(index);
-        
+
         if (ret.state === 'ok') {
             successCallback(ret.data);
         } else {
@@ -834,7 +834,7 @@ function zoomPage() {
 
 function closeHandler() {
     parent.layer.close(parent.layer.getFrameIndex(window.name));
-    window.parent.refreshJBoltTable();
+    parent.refreshPjaxContainer();
 }
 
 ;(function ($) {

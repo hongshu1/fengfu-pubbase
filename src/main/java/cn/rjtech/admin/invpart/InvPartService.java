@@ -162,7 +162,7 @@ public class InvPartService extends BaseService<InvPart> {
 	}
 	
 	public void updateByInvIdIsEffective(Long routingId, Long parentInvId, int effective){
-		update("UPDATE   SET isEffective = ? WHERE iInventoryRoutingId <> ? AND iParentInvId = ?", effective, routingId, parentInvId);
+		update("UPDATE Bd_InvPart SET isEffective = ? WHERE iInventoryRoutingId <> ? AND iParentInvId = ?", effective, routingId, parentInvId);
 	}
 	
 	public void updateByRoutingIdIsEffective(Long routingId, int isEffective) {

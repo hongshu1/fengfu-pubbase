@@ -5,7 +5,9 @@ import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.api.JBoltApplyJWT;
 import cn.jbolt.core.api.httpmethod.JBoltHttpPost;
 import cn.jbolt.core.crossorigin.CrossOrigin;
+import cn.jbolt.core.model.LoginLog;
 import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.service.JBoltLoginLogUtil;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
 import cn.rjtech.entity.vo.user.UserInfoVo;
@@ -43,17 +45,15 @@ public class UserApiController extends BaseApiController {
     public void login(@Para(value = "username") String username,
                       @Para(value = "password") String password,
                       @Para(value = "orgId") Long orgId
-//        ,
-//                      @Para(value = "mac") String mac,
-//                      @Para(value = "ip") String ip
+//                      ,@Para(value = "mac") String mac
                       ) {
         ValidationUtils.notBlank(username, "缺少用户名");
         ValidationUtils.notBlank(password, "缺少密码");
         ValidationUtils.validateId(orgId, "登录组织");
 //        ValidationUtils.notBlank(mac, "未获取到MAC地址");
-//        ValidationUtils.notBlank(ip, "未获取到IP地址");
-//        renderJBoltApiRet(service.login(username, password, orgId,mac,ip));
-        renderJBoltApiRet(service.login(username, password, orgId));
+        LoginLog log= JBoltLoginLogUtil.createLoginLog(getRequest());
+//        renderJBoltApiRet(service.login(username, password, orgId,mac,log.getLoginIp()));
+        renderJBoltApiRet(service.login(username, password, orgId,log.getLoginIp()));
     }
 
     /**
