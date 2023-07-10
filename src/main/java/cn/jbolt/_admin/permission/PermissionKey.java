@@ -324,18 +324,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String SPOTCHECKPARAM_ADD = "spotcheckparam_add";
-	/**
-	 * 导出
-	 */
-	public static final String SPOTCHECKPARAM_EXPORT = "spotcheckparam_export";
-	/**
-	 * 导入
-	 */
-	public static final String SPOTCHECKPARAM_IMPORT = "spotcheckparam_import";
-	/**
-	 * 新增
-	 */
 	public static final String INVENTORYSPOTCHECKFORM_ADD = "inventoryspotcheckform_add";
 	/**
 	 * 导出
@@ -3261,4 +3249,24 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String EQUIPMENT_IMPORT = "equipment_import";
+	/**
+	 * 新增
+	 */
+	public static final String SPOTCHECKPARAM_ADD = "spotcheckparam_add";
+	/**
+	 * 修改
+	 */
+	public static final String SPOTCHECKPARAM_EDIT = "spotcheckparam_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SPOTCHECKPARAM_DELETE = "spotcheckparam_delete";
+	/**
+	 * 导出
+	 */
+	public static final String SPOTCHECKPARAM_EXPORT = "spotcheckparam_export";
+	/**
+	 * 导入
+	 */
+	public static final String SPOTCHECKPARAM_IMPORT = "spotcheckparam_import";
 }
