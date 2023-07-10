@@ -24,6 +24,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -590,7 +591,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             sysPureceive.setIAuditStatus(AuditStatusEnum.NOT_AUDIT.getValue());
         }
         sysPureceive.setDupdatetime(now);
-        sysPureceive.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+        sysPureceive.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
         sysPureceive.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         sysPureceive.setIsDeleted(false);
 

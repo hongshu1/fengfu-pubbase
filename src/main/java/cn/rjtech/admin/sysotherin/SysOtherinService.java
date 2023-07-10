@@ -26,6 +26,7 @@ import cn.rjtech.model.momdata.SysOtherindetail;
 import cn.rjtech.model.momdata.VouchTypeDic;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -315,7 +316,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             User user = JBoltUserKit.getUser();
             Date now = new Date();
 
-            sysOtherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+            sysOtherin.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
             sysOtherin.setSourceBillDid(sysOtherindetail.getSourceBillDid());
             sysOtherin.setVenCode(sysOtherindetail.getVenCode());
             sysOtherin.setOrganizeCode(getOrgCode());
