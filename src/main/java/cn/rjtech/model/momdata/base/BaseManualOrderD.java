@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,86 +10,151 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JBoltBaseModel<M>{
-	/**主键ID*/
-	public static final String IAUTOID = "iAutoId";
-	/**手配订单主表ID*/
-	public static final String IMANUALORDERMID = "iManualOrderMid";
-	/**存货ID*/
-	public static final String IINVENTORYID = "iInventoryId";
-	/**1日数量*/
-	public static final String IQTY1 = "iQty1";
-	/**2日数量*/
-	public static final String IQTY2 = "iQty2";
-	/**3日数量*/
-	public static final String IQTY3 = "iQty3";
-	/**4日数量*/
-	public static final String IQTY4 = "iQty4";
-	/**5日数量*/
-	public static final String IQTY5 = "iQty5";
-	/**6日数量*/
-	public static final String IQTY6 = "iQty6";
-	/**7日数量*/
-	public static final String IQTY7 = "iQty7";
-	/**8日数量*/
-	public static final String IQTY8 = "iQty8";
-	/**9日数量*/
-	public static final String IQTY9 = "iQty9";
-	/**10日数量*/
-	public static final String IQTY10 = "iQty10";
-	/**11日数量*/
-	public static final String IQTY11 = "iQty11";
-	/**12日数量*/
-	public static final String IQTY12 = "iQty12";
-	/**13日数量*/
-	public static final String IQTY13 = "iQty13";
-	/**14日数量*/
-	public static final String IQTY14 = "iQty14";
-	/**15日数量*/
-	public static final String IQTY15 = "iQty15";
-	/**16日数量*/
-	public static final String IQTY16 = "iQty16";
-	/**17日数量*/
-	public static final String IQTY17 = "iQty17";
-	/**18日数量*/
-	public static final String IQTY18 = "iQty18";
-	/**19日数量*/
-	public static final String IQTY19 = "iQty19";
-	/**20日数量*/
-	public static final String IQTY20 = "iQty20";
-	/**21日数量*/
-	public static final String IQTY21 = "iQty21";
-	/**22日数量*/
-	public static final String IQTY22 = "iQty22";
-	/**23日数量*/
-	public static final String IQTY23 = "iQty23";
-	/**24日数量*/
-	public static final String IQTY24 = "iQty24";
-	/**25日数量*/
-	public static final String IQTY25 = "iQty25";
-	/**26日数量*/
-	public static final String IQTY26 = "iQty26";
-	/**27日数量*/
-	public static final String IQTY27 = "iQty27";
-	/**28日数量*/
-	public static final String IQTY28 = "iQty28";
-	/**29日数量*/
-	public static final String IQTY29 = "iQty29";
-	/**30日数量*/
-	public static final String IQTY30 = "iQty30";
-	/**31日数量*/
-	public static final String IQTY31 = "iQty31";
-	/**合计数量*/
-	public static final String ISUM = "iSum";
-	/**删除状态：0. 未删除 1. 已删除*/
-	public static final String ISDELETED = "isDeleted";
-	/**存货编码*/
-	public static final String CINVCODE = "cInvCode";
-	/**客户部番*/
-	public static final String CINVCODE1 = "cInvCode1";
-	/**部品名称*/
-	public static final String CINVNAME1 = "cInvName1";
-	/**规格*/
-	public static final String CINVSTD = "cInvStd";
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
+    /**主键ID*/
+    public static final String IAUTOID = "iAutoId";
+    /**手配订单主表ID*/
+    public static final String IMANUALORDERMID = "iManualOrderMid";
+    /**存货ID*/
+    public static final String IINVENTORYID = "iInventoryId";
+    /**存货编码*/
+    public static final String CINVCODE = "cInvCode";
+    /**客户部番*/
+    public static final String CINVCODE1 = "cInvCode1";
+    /**部品名称*/
+    public static final String CINVNAME1 = "cInvName1";
+    /**规格*/
+    public static final String CINVSTD = "cInvStd";
+    /**1日数量*/
+    public static final String IQTY1 = "iQty1";
+    /**2日数量*/
+    public static final String IQTY2 = "iQty2";
+    /**3日数量*/
+    public static final String IQTY3 = "iQty3";
+    /**4日数量*/
+    public static final String IQTY4 = "iQty4";
+    /**5日数量*/
+    public static final String IQTY5 = "iQty5";
+    /**6日数量*/
+    public static final String IQTY6 = "iQty6";
+    /**7日数量*/
+    public static final String IQTY7 = "iQty7";
+    /**8日数量*/
+    public static final String IQTY8 = "iQty8";
+    /**9日数量*/
+    public static final String IQTY9 = "iQty9";
+    /**10日数量*/
+    public static final String IQTY10 = "iQty10";
+    /**11日数量*/
+    public static final String IQTY11 = "iQty11";
+    /**12日数量*/
+    public static final String IQTY12 = "iQty12";
+    /**13日数量*/
+    public static final String IQTY13 = "iQty13";
+    /**14日数量*/
+    public static final String IQTY14 = "iQty14";
+    /**15日数量*/
+    public static final String IQTY15 = "iQty15";
+    /**16日数量*/
+    public static final String IQTY16 = "iQty16";
+    /**17日数量*/
+    public static final String IQTY17 = "iQty17";
+    /**18日数量*/
+    public static final String IQTY18 = "iQty18";
+    /**19日数量*/
+    public static final String IQTY19 = "iQty19";
+    /**20日数量*/
+    public static final String IQTY20 = "iQty20";
+    /**21日数量*/
+    public static final String IQTY21 = "iQty21";
+    /**22日数量*/
+    public static final String IQTY22 = "iQty22";
+    /**23日数量*/
+    public static final String IQTY23 = "iQty23";
+    /**24日数量*/
+    public static final String IQTY24 = "iQty24";
+    /**25日数量*/
+    public static final String IQTY25 = "iQty25";
+    /**26日数量*/
+    public static final String IQTY26 = "iQty26";
+    /**27日数量*/
+    public static final String IQTY27 = "iQty27";
+    /**28日数量*/
+    public static final String IQTY28 = "iQty28";
+    /**29日数量*/
+    public static final String IQTY29 = "iQty29";
+    /**30日数量*/
+    public static final String IQTY30 = "iQty30";
+    /**31日数量*/
+    public static final String IQTY31 = "iQty31";
+    /**合计数量*/
+    public static final String ISUM = "iSum";
+    /**扩展字段1*/
+    public static final String CDEFINE1 = "cDefine1";
+    /**扩展字段2*/
+    public static final String CDEFINE2 = "cDefine2";
+    /**扩展字段3*/
+    public static final String CDEFINE3 = "cDefine3";
+    /**扩展字段4*/
+    public static final String CDEFINE4 = "cDefine4";
+    /**扩展字段5*/
+    public static final String CDEFINE5 = "cDefine5";
+    /**扩展字段6*/
+    public static final String CDEFINE6 = "cDefine6";
+    /**扩展字段7*/
+    public static final String CDEFINE7 = "cDefine7";
+    /**扩展字段8*/
+    public static final String CDEFINE8 = "cDefine8";
+    /**扩展字段9*/
+    public static final String CDEFINE9 = "cDefine9";
+    /**扩展字段10*/
+    public static final String CDEFINE10 = "cDefine10";
+    /**扩展字段11*/
+    public static final String CDEFINE11 = "cDefine11";
+    /**扩展字段12*/
+    public static final String CDEFINE12 = "cDefine12";
+    /**扩展字段13*/
+    public static final String CDEFINE13 = "cDefine13";
+    /**扩展字段14*/
+    public static final String CDEFINE14 = "cDefine14";
+    /**扩展字段15*/
+    public static final String CDEFINE15 = "cDefine15";
+    /**扩展字段16*/
+    public static final String IDEFINE16 = "iDefine16";
+    /**扩展字段17*/
+    public static final String IDEFINE17 = "iDefine17";
+    /**扩展字段18*/
+    public static final String IDEFINE18 = "iDefine18";
+    /**扩展字段19*/
+    public static final String IDEFINE19 = "iDefine19";
+    /**扩展字段20*/
+    public static final String IDEFINE20 = "iDefine20";
+    /**扩展字段21*/
+    public static final String IDEFINE21 = "iDefine21";
+    /**扩展字段22*/
+    public static final String IDEFINE22 = "iDefine22";
+    /**扩展字段23*/
+    public static final String IDEFINE23 = "iDefine23";
+    /**扩展字段24*/
+    public static final String IDEFINE24 = "iDefine24";
+    /**扩展字段25*/
+    public static final String IDEFINE25 = "iDefine25";
+    /**扩展字段26*/
+    public static final String DDEFINE26 = "dDefine26";
+    /**扩展字段27*/
+    public static final String DDEFINE27 = "dDefine27";
+    /**扩展字段28*/
+    public static final String DDEFINE28 = "dDefine28";
+    /**扩展字段29*/
+    public static final String DDEFINE29 = "dDefine29";
+    /**扩展字段30*/
+    public static final String DDEFINE30 = "dDefine30";
+    /**删除状态;0. 未删除 1. 已删除*/
+    public static final String ISDELETED = "isDeleted";
+    /**含税单价*/
+    public static final String IQUOTEDPRICE = "iQuotedPrice";
+    /**行号*/
+    public static final String IROWNO = "iRowNo";
 	/**
 	 * 主键ID
 	 */
@@ -143,567 +207,6 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	}
 
 	/**
-	 * 1日数量
-	 */
-	public M setIQty1(java.math.BigDecimal iQty1) {
-		set("iQty1", iQty1);
-		return (M)this;
-	}
-
-	/**
-	 * 1日数量
-	 */
-	@JBoltField(name="iqty1" ,columnName="iQty1",type="BigDecimal", remark="1日数量", required=false, maxLength=24, fixed=6, order=4)
-	@JSONField(name = "iqty1")
-	public java.math.BigDecimal getIQty1() {
-		return getBigDecimal("iQty1");
-	}
-
-	/**
-	 * 2日数量
-	 */
-	public M setIQty2(java.math.BigDecimal iQty2) {
-		set("iQty2", iQty2);
-		return (M)this;
-	}
-
-	/**
-	 * 2日数量
-	 */
-	@JBoltField(name="iqty2" ,columnName="iQty2",type="BigDecimal", remark="2日数量", required=false, maxLength=24, fixed=6, order=5)
-	@JSONField(name = "iqty2")
-	public java.math.BigDecimal getIQty2() {
-		return getBigDecimal("iQty2");
-	}
-
-	/**
-	 * 3日数量
-	 */
-	public M setIQty3(java.math.BigDecimal iQty3) {
-		set("iQty3", iQty3);
-		return (M)this;
-	}
-
-	/**
-	 * 3日数量
-	 */
-	@JBoltField(name="iqty3" ,columnName="iQty3",type="BigDecimal", remark="3日数量", required=false, maxLength=24, fixed=6, order=6)
-	@JSONField(name = "iqty3")
-	public java.math.BigDecimal getIQty3() {
-		return getBigDecimal("iQty3");
-	}
-
-	/**
-	 * 4日数量
-	 */
-	public M setIQty4(java.math.BigDecimal iQty4) {
-		set("iQty4", iQty4);
-		return (M)this;
-	}
-
-	/**
-	 * 4日数量
-	 */
-	@JBoltField(name="iqty4" ,columnName="iQty4",type="BigDecimal", remark="4日数量", required=false, maxLength=24, fixed=6, order=7)
-	@JSONField(name = "iqty4")
-	public java.math.BigDecimal getIQty4() {
-		return getBigDecimal("iQty4");
-	}
-
-	/**
-	 * 5日数量
-	 */
-	public M setIQty5(java.math.BigDecimal iQty5) {
-		set("iQty5", iQty5);
-		return (M)this;
-	}
-
-	/**
-	 * 5日数量
-	 */
-	@JBoltField(name="iqty5" ,columnName="iQty5",type="BigDecimal", remark="5日数量", required=false, maxLength=24, fixed=6, order=8)
-	@JSONField(name = "iqty5")
-	public java.math.BigDecimal getIQty5() {
-		return getBigDecimal("iQty5");
-	}
-
-	/**
-	 * 6日数量
-	 */
-	public M setIQty6(java.math.BigDecimal iQty6) {
-		set("iQty6", iQty6);
-		return (M)this;
-	}
-
-	/**
-	 * 6日数量
-	 */
-	@JBoltField(name="iqty6" ,columnName="iQty6",type="BigDecimal", remark="6日数量", required=false, maxLength=24, fixed=6, order=9)
-	@JSONField(name = "iqty6")
-	public java.math.BigDecimal getIQty6() {
-		return getBigDecimal("iQty6");
-	}
-
-	/**
-	 * 7日数量
-	 */
-	public M setIQty7(java.math.BigDecimal iQty7) {
-		set("iQty7", iQty7);
-		return (M)this;
-	}
-
-	/**
-	 * 7日数量
-	 */
-	@JBoltField(name="iqty7" ,columnName="iQty7",type="BigDecimal", remark="7日数量", required=false, maxLength=24, fixed=6, order=10)
-	@JSONField(name = "iqty7")
-	public java.math.BigDecimal getIQty7() {
-		return getBigDecimal("iQty7");
-	}
-
-	/**
-	 * 8日数量
-	 */
-	public M setIQty8(java.math.BigDecimal iQty8) {
-		set("iQty8", iQty8);
-		return (M)this;
-	}
-
-	/**
-	 * 8日数量
-	 */
-	@JBoltField(name="iqty8" ,columnName="iQty8",type="BigDecimal", remark="8日数量", required=false, maxLength=24, fixed=6, order=11)
-	@JSONField(name = "iqty8")
-	public java.math.BigDecimal getIQty8() {
-		return getBigDecimal("iQty8");
-	}
-
-	/**
-	 * 9日数量
-	 */
-	public M setIQty9(java.math.BigDecimal iQty9) {
-		set("iQty9", iQty9);
-		return (M)this;
-	}
-
-	/**
-	 * 9日数量
-	 */
-	@JBoltField(name="iqty9" ,columnName="iQty9",type="BigDecimal", remark="9日数量", required=false, maxLength=24, fixed=6, order=12)
-	@JSONField(name = "iqty9")
-	public java.math.BigDecimal getIQty9() {
-		return getBigDecimal("iQty9");
-	}
-
-	/**
-	 * 10日数量
-	 */
-	public M setIQty10(java.math.BigDecimal iQty10) {
-		set("iQty10", iQty10);
-		return (M)this;
-	}
-
-	/**
-	 * 10日数量
-	 */
-	@JBoltField(name="iqty10" ,columnName="iQty10",type="BigDecimal", remark="10日数量", required=false, maxLength=24, fixed=6, order=13)
-	@JSONField(name = "iqty10")
-	public java.math.BigDecimal getIQty10() {
-		return getBigDecimal("iQty10");
-	}
-
-	/**
-	 * 11日数量
-	 */
-	public M setIQty11(java.math.BigDecimal iQty11) {
-		set("iQty11", iQty11);
-		return (M)this;
-	}
-
-	/**
-	 * 11日数量
-	 */
-	@JBoltField(name="iqty11" ,columnName="iQty11",type="BigDecimal", remark="11日数量", required=false, maxLength=24, fixed=6, order=14)
-	@JSONField(name = "iqty11")
-	public java.math.BigDecimal getIQty11() {
-		return getBigDecimal("iQty11");
-	}
-
-	/**
-	 * 12日数量
-	 */
-	public M setIQty12(java.math.BigDecimal iQty12) {
-		set("iQty12", iQty12);
-		return (M)this;
-	}
-
-	/**
-	 * 12日数量
-	 */
-	@JBoltField(name="iqty12" ,columnName="iQty12",type="BigDecimal", remark="12日数量", required=false, maxLength=24, fixed=6, order=15)
-	@JSONField(name = "iqty12")
-	public java.math.BigDecimal getIQty12() {
-		return getBigDecimal("iQty12");
-	}
-
-	/**
-	 * 13日数量
-	 */
-	public M setIQty13(java.math.BigDecimal iQty13) {
-		set("iQty13", iQty13);
-		return (M)this;
-	}
-
-	/**
-	 * 13日数量
-	 */
-	@JBoltField(name="iqty13" ,columnName="iQty13",type="BigDecimal", remark="13日数量", required=false, maxLength=24, fixed=6, order=16)
-	@JSONField(name = "iqty13")
-	public java.math.BigDecimal getIQty13() {
-		return getBigDecimal("iQty13");
-	}
-
-	/**
-	 * 14日数量
-	 */
-	public M setIQty14(java.math.BigDecimal iQty14) {
-		set("iQty14", iQty14);
-		return (M)this;
-	}
-
-	/**
-	 * 14日数量
-	 */
-	@JBoltField(name="iqty14" ,columnName="iQty14",type="BigDecimal", remark="14日数量", required=false, maxLength=24, fixed=6, order=17)
-	@JSONField(name = "iqty14")
-	public java.math.BigDecimal getIQty14() {
-		return getBigDecimal("iQty14");
-	}
-
-	/**
-	 * 15日数量
-	 */
-	public M setIQty15(java.math.BigDecimal iQty15) {
-		set("iQty15", iQty15);
-		return (M)this;
-	}
-
-	/**
-	 * 15日数量
-	 */
-	@JBoltField(name="iqty15" ,columnName="iQty15",type="BigDecimal", remark="15日数量", required=false, maxLength=24, fixed=6, order=18)
-	@JSONField(name = "iqty15")
-	public java.math.BigDecimal getIQty15() {
-		return getBigDecimal("iQty15");
-	}
-
-	/**
-	 * 16日数量
-	 */
-	public M setIQty16(java.math.BigDecimal iQty16) {
-		set("iQty16", iQty16);
-		return (M)this;
-	}
-
-	/**
-	 * 16日数量
-	 */
-	@JBoltField(name="iqty16" ,columnName="iQty16",type="BigDecimal", remark="16日数量", required=false, maxLength=24, fixed=6, order=19)
-	@JSONField(name = "iqty16")
-	public java.math.BigDecimal getIQty16() {
-		return getBigDecimal("iQty16");
-	}
-
-	/**
-	 * 17日数量
-	 */
-	public M setIQty17(java.math.BigDecimal iQty17) {
-		set("iQty17", iQty17);
-		return (M)this;
-	}
-
-	/**
-	 * 17日数量
-	 */
-	@JBoltField(name="iqty17" ,columnName="iQty17",type="BigDecimal", remark="17日数量", required=false, maxLength=24, fixed=6, order=20)
-	@JSONField(name = "iqty17")
-	public java.math.BigDecimal getIQty17() {
-		return getBigDecimal("iQty17");
-	}
-
-	/**
-	 * 18日数量
-	 */
-	public M setIQty18(java.math.BigDecimal iQty18) {
-		set("iQty18", iQty18);
-		return (M)this;
-	}
-
-	/**
-	 * 18日数量
-	 */
-	@JBoltField(name="iqty18" ,columnName="iQty18",type="BigDecimal", remark="18日数量", required=false, maxLength=24, fixed=6, order=21)
-	@JSONField(name = "iqty18")
-	public java.math.BigDecimal getIQty18() {
-		return getBigDecimal("iQty18");
-	}
-
-	/**
-	 * 19日数量
-	 */
-	public M setIQty19(java.math.BigDecimal iQty19) {
-		set("iQty19", iQty19);
-		return (M)this;
-	}
-
-	/**
-	 * 19日数量
-	 */
-	@JBoltField(name="iqty19" ,columnName="iQty19",type="BigDecimal", remark="19日数量", required=false, maxLength=24, fixed=6, order=22)
-	@JSONField(name = "iqty19")
-	public java.math.BigDecimal getIQty19() {
-		return getBigDecimal("iQty19");
-	}
-
-	/**
-	 * 20日数量
-	 */
-	public M setIQty20(java.math.BigDecimal iQty20) {
-		set("iQty20", iQty20);
-		return (M)this;
-	}
-
-	/**
-	 * 20日数量
-	 */
-	@JBoltField(name="iqty20" ,columnName="iQty20",type="BigDecimal", remark="20日数量", required=false, maxLength=24, fixed=6, order=23)
-	@JSONField(name = "iqty20")
-	public java.math.BigDecimal getIQty20() {
-		return getBigDecimal("iQty20");
-	}
-
-	/**
-	 * 21日数量
-	 */
-	public M setIQty21(java.math.BigDecimal iQty21) {
-		set("iQty21", iQty21);
-		return (M)this;
-	}
-
-	/**
-	 * 21日数量
-	 */
-	@JBoltField(name="iqty21" ,columnName="iQty21",type="BigDecimal", remark="21日数量", required=false, maxLength=24, fixed=6, order=24)
-	@JSONField(name = "iqty21")
-	public java.math.BigDecimal getIQty21() {
-		return getBigDecimal("iQty21");
-	}
-
-	/**
-	 * 22日数量
-	 */
-	public M setIQty22(java.math.BigDecimal iQty22) {
-		set("iQty22", iQty22);
-		return (M)this;
-	}
-
-	/**
-	 * 22日数量
-	 */
-	@JBoltField(name="iqty22" ,columnName="iQty22",type="BigDecimal", remark="22日数量", required=false, maxLength=24, fixed=6, order=25)
-	@JSONField(name = "iqty22")
-	public java.math.BigDecimal getIQty22() {
-		return getBigDecimal("iQty22");
-	}
-
-	/**
-	 * 23日数量
-	 */
-	public M setIQty23(java.math.BigDecimal iQty23) {
-		set("iQty23", iQty23);
-		return (M)this;
-	}
-
-	/**
-	 * 23日数量
-	 */
-	@JBoltField(name="iqty23" ,columnName="iQty23",type="BigDecimal", remark="23日数量", required=false, maxLength=24, fixed=6, order=26)
-	@JSONField(name = "iqty23")
-	public java.math.BigDecimal getIQty23() {
-		return getBigDecimal("iQty23");
-	}
-
-	/**
-	 * 24日数量
-	 */
-	public M setIQty24(java.math.BigDecimal iQty24) {
-		set("iQty24", iQty24);
-		return (M)this;
-	}
-
-	/**
-	 * 24日数量
-	 */
-	@JBoltField(name="iqty24" ,columnName="iQty24",type="BigDecimal", remark="24日数量", required=false, maxLength=24, fixed=6, order=27)
-	@JSONField(name = "iqty24")
-	public java.math.BigDecimal getIQty24() {
-		return getBigDecimal("iQty24");
-	}
-
-	/**
-	 * 25日数量
-	 */
-	public M setIQty25(java.math.BigDecimal iQty25) {
-		set("iQty25", iQty25);
-		return (M)this;
-	}
-
-	/**
-	 * 25日数量
-	 */
-	@JBoltField(name="iqty25" ,columnName="iQty25",type="BigDecimal", remark="25日数量", required=false, maxLength=24, fixed=6, order=28)
-	@JSONField(name = "iqty25")
-	public java.math.BigDecimal getIQty25() {
-		return getBigDecimal("iQty25");
-	}
-
-	/**
-	 * 26日数量
-	 */
-	public M setIQty26(java.math.BigDecimal iQty26) {
-		set("iQty26", iQty26);
-		return (M)this;
-	}
-
-	/**
-	 * 26日数量
-	 */
-	@JBoltField(name="iqty26" ,columnName="iQty26",type="BigDecimal", remark="26日数量", required=false, maxLength=24, fixed=6, order=29)
-	@JSONField(name = "iqty26")
-	public java.math.BigDecimal getIQty26() {
-		return getBigDecimal("iQty26");
-	}
-
-	/**
-	 * 27日数量
-	 */
-	public M setIQty27(java.math.BigDecimal iQty27) {
-		set("iQty27", iQty27);
-		return (M)this;
-	}
-
-	/**
-	 * 27日数量
-	 */
-	@JBoltField(name="iqty27" ,columnName="iQty27",type="BigDecimal", remark="27日数量", required=false, maxLength=24, fixed=6, order=30)
-	@JSONField(name = "iqty27")
-	public java.math.BigDecimal getIQty27() {
-		return getBigDecimal("iQty27");
-	}
-
-	/**
-	 * 28日数量
-	 */
-	public M setIQty28(java.math.BigDecimal iQty28) {
-		set("iQty28", iQty28);
-		return (M)this;
-	}
-
-	/**
-	 * 28日数量
-	 */
-	@JBoltField(name="iqty28" ,columnName="iQty28",type="BigDecimal", remark="28日数量", required=false, maxLength=24, fixed=6, order=31)
-	@JSONField(name = "iqty28")
-	public java.math.BigDecimal getIQty28() {
-		return getBigDecimal("iQty28");
-	}
-
-	/**
-	 * 29日数量
-	 */
-	public M setIQty29(java.math.BigDecimal iQty29) {
-		set("iQty29", iQty29);
-		return (M)this;
-	}
-
-	/**
-	 * 29日数量
-	 */
-	@JBoltField(name="iqty29" ,columnName="iQty29",type="BigDecimal", remark="29日数量", required=false, maxLength=24, fixed=6, order=32)
-	@JSONField(name = "iqty29")
-	public java.math.BigDecimal getIQty29() {
-		return getBigDecimal("iQty29");
-	}
-
-	/**
-	 * 30日数量
-	 */
-	public M setIQty30(java.math.BigDecimal iQty30) {
-		set("iQty30", iQty30);
-		return (M)this;
-	}
-
-	/**
-	 * 30日数量
-	 */
-	@JBoltField(name="iqty30" ,columnName="iQty30",type="BigDecimal", remark="30日数量", required=false, maxLength=24, fixed=6, order=33)
-	@JSONField(name = "iqty30")
-	public java.math.BigDecimal getIQty30() {
-		return getBigDecimal("iQty30");
-	}
-
-	/**
-	 * 31日数量
-	 */
-	public M setIQty31(java.math.BigDecimal iQty31) {
-		set("iQty31", iQty31);
-		return (M)this;
-	}
-
-	/**
-	 * 31日数量
-	 */
-	@JBoltField(name="iqty31" ,columnName="iQty31",type="BigDecimal", remark="31日数量", required=false, maxLength=24, fixed=6, order=34)
-	@JSONField(name = "iqty31")
-	public java.math.BigDecimal getIQty31() {
-		return getBigDecimal("iQty31");
-	}
-
-	/**
-	 * 合计数量
-	 */
-	public M setISum(java.math.BigDecimal iSum) {
-		set("iSum", iSum);
-		return (M)this;
-	}
-
-	/**
-	 * 合计数量
-	 */
-	@JBoltField(name="isum" ,columnName="iSum",type="BigDecimal", remark="合计数量", required=false, maxLength=24, fixed=6, order=35)
-	@JSONField(name = "isum")
-	public java.math.BigDecimal getISum() {
-		return getBigDecimal("iSum");
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	public M setIsDeleted(java.lang.Boolean isDeleted) {
-		set("isDeleted", isDeleted);
-		return (M)this;
-	}
-
-	/**
-	 * 删除状态：0. 未删除 1. 已删除
-	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态：0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=36)
-	@JSONField(name = "isdeleted")
-	public java.lang.Boolean getIsDeleted() {
-		return getBoolean("isDeleted");
-	}
-
-	/**
 	 * 存货编码
 	 */
 	public M setCInvCode(java.lang.String cInvCode) {
@@ -714,7 +217,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 存货编码
 	 */
-	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="存货编码", required=false, maxLength=200, fixed=0, order=37)
+	@JBoltField(name="cinvcode" ,columnName="cInvCode",type="String", remark="存货编码", required=false, maxLength=200, fixed=0, order=4)
 	@JSONField(name = "cinvcode")
 	public java.lang.String getCInvCode() {
 		return getStr("cInvCode");
@@ -731,7 +234,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 客户部番
 	 */
-	@JBoltField(name="cinvcode1" ,columnName="cInvCode1",type="String", remark="客户部番", required=false, maxLength=200, fixed=0, order=38)
+	@JBoltField(name="cinvcode1" ,columnName="cInvCode1",type="String", remark="客户部番", required=false, maxLength=200, fixed=0, order=5)
 	@JSONField(name = "cinvcode1")
 	public java.lang.String getCInvCode1() {
 		return getStr("cInvCode1");
@@ -748,7 +251,7 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 部品名称
 	 */
-	@JBoltField(name="cinvname1" ,columnName="cInvName1",type="String", remark="部品名称", required=false, maxLength=200, fixed=0, order=39)
+	@JBoltField(name="cinvname1" ,columnName="cInvName1",type="String", remark="部品名称", required=false, maxLength=200, fixed=0, order=6)
 	@JSONField(name = "cinvname1")
 	public java.lang.String getCInvName1() {
 		return getStr("cInvName1");
@@ -765,12 +268,1116 @@ public abstract class BaseManualOrderD<M extends BaseManualOrderD<M>> extends JB
 	/**
 	 * 规格
 	 */
-	@JBoltField(name="cinvstd" ,columnName="cInvStd",type="String", remark="规格", required=false, maxLength=200, fixed=0, order=40)
+	@JBoltField(name="cinvstd" ,columnName="cInvStd",type="String", remark="规格", required=false, maxLength=200, fixed=0, order=7)
 	@JSONField(name = "cinvstd")
 	public java.lang.String getCInvStd() {
 		return getStr("cInvStd");
 	}
 
+	/**
+	 * 1日数量
+	 */
+	public M setIQty1(java.math.BigDecimal iQty1) {
+		set("iQty1", iQty1);
+		return (M)this;
+	}
+
+	/**
+	 * 1日数量
+	 */
+	@JBoltField(name="iqty1" ,columnName="iQty1",type="BigDecimal", remark="1日数量", required=false, maxLength=24, fixed=6, order=8)
+	@JSONField(name = "iqty1")
+	public java.math.BigDecimal getIQty1() {
+		return getBigDecimal("iQty1");
+	}
+
+	/**
+	 * 2日数量
+	 */
+	public M setIQty2(java.math.BigDecimal iQty2) {
+		set("iQty2", iQty2);
+		return (M)this;
+	}
+
+	/**
+	 * 2日数量
+	 */
+	@JBoltField(name="iqty2" ,columnName="iQty2",type="BigDecimal", remark="2日数量", required=false, maxLength=24, fixed=6, order=9)
+	@JSONField(name = "iqty2")
+	public java.math.BigDecimal getIQty2() {
+		return getBigDecimal("iQty2");
+	}
+
+	/**
+	 * 3日数量
+	 */
+	public M setIQty3(java.math.BigDecimal iQty3) {
+		set("iQty3", iQty3);
+		return (M)this;
+	}
+
+	/**
+	 * 3日数量
+	 */
+	@JBoltField(name="iqty3" ,columnName="iQty3",type="BigDecimal", remark="3日数量", required=false, maxLength=24, fixed=6, order=10)
+	@JSONField(name = "iqty3")
+	public java.math.BigDecimal getIQty3() {
+		return getBigDecimal("iQty3");
+	}
+
+	/**
+	 * 4日数量
+	 */
+	public M setIQty4(java.math.BigDecimal iQty4) {
+		set("iQty4", iQty4);
+		return (M)this;
+	}
+
+	/**
+	 * 4日数量
+	 */
+	@JBoltField(name="iqty4" ,columnName="iQty4",type="BigDecimal", remark="4日数量", required=false, maxLength=24, fixed=6, order=11)
+	@JSONField(name = "iqty4")
+	public java.math.BigDecimal getIQty4() {
+		return getBigDecimal("iQty4");
+	}
+
+	/**
+	 * 5日数量
+	 */
+	public M setIQty5(java.math.BigDecimal iQty5) {
+		set("iQty5", iQty5);
+		return (M)this;
+	}
+
+	/**
+	 * 5日数量
+	 */
+	@JBoltField(name="iqty5" ,columnName="iQty5",type="BigDecimal", remark="5日数量", required=false, maxLength=24, fixed=6, order=12)
+	@JSONField(name = "iqty5")
+	public java.math.BigDecimal getIQty5() {
+		return getBigDecimal("iQty5");
+	}
+
+	/**
+	 * 6日数量
+	 */
+	public M setIQty6(java.math.BigDecimal iQty6) {
+		set("iQty6", iQty6);
+		return (M)this;
+	}
+
+	/**
+	 * 6日数量
+	 */
+	@JBoltField(name="iqty6" ,columnName="iQty6",type="BigDecimal", remark="6日数量", required=false, maxLength=24, fixed=6, order=13)
+	@JSONField(name = "iqty6")
+	public java.math.BigDecimal getIQty6() {
+		return getBigDecimal("iQty6");
+	}
+
+	/**
+	 * 7日数量
+	 */
+	public M setIQty7(java.math.BigDecimal iQty7) {
+		set("iQty7", iQty7);
+		return (M)this;
+	}
+
+	/**
+	 * 7日数量
+	 */
+	@JBoltField(name="iqty7" ,columnName="iQty7",type="BigDecimal", remark="7日数量", required=false, maxLength=24, fixed=6, order=14)
+	@JSONField(name = "iqty7")
+	public java.math.BigDecimal getIQty7() {
+		return getBigDecimal("iQty7");
+	}
+
+	/**
+	 * 8日数量
+	 */
+	public M setIQty8(java.math.BigDecimal iQty8) {
+		set("iQty8", iQty8);
+		return (M)this;
+	}
+
+	/**
+	 * 8日数量
+	 */
+	@JBoltField(name="iqty8" ,columnName="iQty8",type="BigDecimal", remark="8日数量", required=false, maxLength=24, fixed=6, order=15)
+	@JSONField(name = "iqty8")
+	public java.math.BigDecimal getIQty8() {
+		return getBigDecimal("iQty8");
+	}
+
+	/**
+	 * 9日数量
+	 */
+	public M setIQty9(java.math.BigDecimal iQty9) {
+		set("iQty9", iQty9);
+		return (M)this;
+	}
+
+	/**
+	 * 9日数量
+	 */
+	@JBoltField(name="iqty9" ,columnName="iQty9",type="BigDecimal", remark="9日数量", required=false, maxLength=24, fixed=6, order=16)
+	@JSONField(name = "iqty9")
+	public java.math.BigDecimal getIQty9() {
+		return getBigDecimal("iQty9");
+	}
+
+	/**
+	 * 10日数量
+	 */
+	public M setIQty10(java.math.BigDecimal iQty10) {
+		set("iQty10", iQty10);
+		return (M)this;
+	}
+
+	/**
+	 * 10日数量
+	 */
+	@JBoltField(name="iqty10" ,columnName="iQty10",type="BigDecimal", remark="10日数量", required=false, maxLength=24, fixed=6, order=17)
+	@JSONField(name = "iqty10")
+	public java.math.BigDecimal getIQty10() {
+		return getBigDecimal("iQty10");
+	}
+
+	/**
+	 * 11日数量
+	 */
+	public M setIQty11(java.math.BigDecimal iQty11) {
+		set("iQty11", iQty11);
+		return (M)this;
+	}
+
+	/**
+	 * 11日数量
+	 */
+	@JBoltField(name="iqty11" ,columnName="iQty11",type="BigDecimal", remark="11日数量", required=false, maxLength=24, fixed=6, order=18)
+	@JSONField(name = "iqty11")
+	public java.math.BigDecimal getIQty11() {
+		return getBigDecimal("iQty11");
+	}
+
+	/**
+	 * 12日数量
+	 */
+	public M setIQty12(java.math.BigDecimal iQty12) {
+		set("iQty12", iQty12);
+		return (M)this;
+	}
+
+	/**
+	 * 12日数量
+	 */
+	@JBoltField(name="iqty12" ,columnName="iQty12",type="BigDecimal", remark="12日数量", required=false, maxLength=24, fixed=6, order=19)
+	@JSONField(name = "iqty12")
+	public java.math.BigDecimal getIQty12() {
+		return getBigDecimal("iQty12");
+	}
+
+	/**
+	 * 13日数量
+	 */
+	public M setIQty13(java.math.BigDecimal iQty13) {
+		set("iQty13", iQty13);
+		return (M)this;
+	}
+
+	/**
+	 * 13日数量
+	 */
+	@JBoltField(name="iqty13" ,columnName="iQty13",type="BigDecimal", remark="13日数量", required=false, maxLength=24, fixed=6, order=20)
+	@JSONField(name = "iqty13")
+	public java.math.BigDecimal getIQty13() {
+		return getBigDecimal("iQty13");
+	}
+
+	/**
+	 * 14日数量
+	 */
+	public M setIQty14(java.math.BigDecimal iQty14) {
+		set("iQty14", iQty14);
+		return (M)this;
+	}
+
+	/**
+	 * 14日数量
+	 */
+	@JBoltField(name="iqty14" ,columnName="iQty14",type="BigDecimal", remark="14日数量", required=false, maxLength=24, fixed=6, order=21)
+	@JSONField(name = "iqty14")
+	public java.math.BigDecimal getIQty14() {
+		return getBigDecimal("iQty14");
+	}
+
+	/**
+	 * 15日数量
+	 */
+	public M setIQty15(java.math.BigDecimal iQty15) {
+		set("iQty15", iQty15);
+		return (M)this;
+	}
+
+	/**
+	 * 15日数量
+	 */
+	@JBoltField(name="iqty15" ,columnName="iQty15",type="BigDecimal", remark="15日数量", required=false, maxLength=24, fixed=6, order=22)
+	@JSONField(name = "iqty15")
+	public java.math.BigDecimal getIQty15() {
+		return getBigDecimal("iQty15");
+	}
+
+	/**
+	 * 16日数量
+	 */
+	public M setIQty16(java.math.BigDecimal iQty16) {
+		set("iQty16", iQty16);
+		return (M)this;
+	}
+
+	/**
+	 * 16日数量
+	 */
+	@JBoltField(name="iqty16" ,columnName="iQty16",type="BigDecimal", remark="16日数量", required=false, maxLength=24, fixed=6, order=23)
+	@JSONField(name = "iqty16")
+	public java.math.BigDecimal getIQty16() {
+		return getBigDecimal("iQty16");
+	}
+
+	/**
+	 * 17日数量
+	 */
+	public M setIQty17(java.math.BigDecimal iQty17) {
+		set("iQty17", iQty17);
+		return (M)this;
+	}
+
+	/**
+	 * 17日数量
+	 */
+	@JBoltField(name="iqty17" ,columnName="iQty17",type="BigDecimal", remark="17日数量", required=false, maxLength=24, fixed=6, order=24)
+	@JSONField(name = "iqty17")
+	public java.math.BigDecimal getIQty17() {
+		return getBigDecimal("iQty17");
+	}
+
+	/**
+	 * 18日数量
+	 */
+	public M setIQty18(java.math.BigDecimal iQty18) {
+		set("iQty18", iQty18);
+		return (M)this;
+	}
+
+	/**
+	 * 18日数量
+	 */
+	@JBoltField(name="iqty18" ,columnName="iQty18",type="BigDecimal", remark="18日数量", required=false, maxLength=24, fixed=6, order=25)
+	@JSONField(name = "iqty18")
+	public java.math.BigDecimal getIQty18() {
+		return getBigDecimal("iQty18");
+	}
+
+	/**
+	 * 19日数量
+	 */
+	public M setIQty19(java.math.BigDecimal iQty19) {
+		set("iQty19", iQty19);
+		return (M)this;
+	}
+
+	/**
+	 * 19日数量
+	 */
+	@JBoltField(name="iqty19" ,columnName="iQty19",type="BigDecimal", remark="19日数量", required=false, maxLength=24, fixed=6, order=26)
+	@JSONField(name = "iqty19")
+	public java.math.BigDecimal getIQty19() {
+		return getBigDecimal("iQty19");
+	}
+
+	/**
+	 * 20日数量
+	 */
+	public M setIQty20(java.math.BigDecimal iQty20) {
+		set("iQty20", iQty20);
+		return (M)this;
+	}
+
+	/**
+	 * 20日数量
+	 */
+	@JBoltField(name="iqty20" ,columnName="iQty20",type="BigDecimal", remark="20日数量", required=false, maxLength=24, fixed=6, order=27)
+	@JSONField(name = "iqty20")
+	public java.math.BigDecimal getIQty20() {
+		return getBigDecimal("iQty20");
+	}
+
+	/**
+	 * 21日数量
+	 */
+	public M setIQty21(java.math.BigDecimal iQty21) {
+		set("iQty21", iQty21);
+		return (M)this;
+	}
+
+	/**
+	 * 21日数量
+	 */
+	@JBoltField(name="iqty21" ,columnName="iQty21",type="BigDecimal", remark="21日数量", required=false, maxLength=24, fixed=6, order=28)
+	@JSONField(name = "iqty21")
+	public java.math.BigDecimal getIQty21() {
+		return getBigDecimal("iQty21");
+	}
+
+	/**
+	 * 22日数量
+	 */
+	public M setIQty22(java.math.BigDecimal iQty22) {
+		set("iQty22", iQty22);
+		return (M)this;
+	}
+
+	/**
+	 * 22日数量
+	 */
+	@JBoltField(name="iqty22" ,columnName="iQty22",type="BigDecimal", remark="22日数量", required=false, maxLength=24, fixed=6, order=29)
+	@JSONField(name = "iqty22")
+	public java.math.BigDecimal getIQty22() {
+		return getBigDecimal("iQty22");
+	}
+
+	/**
+	 * 23日数量
+	 */
+	public M setIQty23(java.math.BigDecimal iQty23) {
+		set("iQty23", iQty23);
+		return (M)this;
+	}
+
+	/**
+	 * 23日数量
+	 */
+	@JBoltField(name="iqty23" ,columnName="iQty23",type="BigDecimal", remark="23日数量", required=false, maxLength=24, fixed=6, order=30)
+	@JSONField(name = "iqty23")
+	public java.math.BigDecimal getIQty23() {
+		return getBigDecimal("iQty23");
+	}
+
+	/**
+	 * 24日数量
+	 */
+	public M setIQty24(java.math.BigDecimal iQty24) {
+		set("iQty24", iQty24);
+		return (M)this;
+	}
+
+	/**
+	 * 24日数量
+	 */
+	@JBoltField(name="iqty24" ,columnName="iQty24",type="BigDecimal", remark="24日数量", required=false, maxLength=24, fixed=6, order=31)
+	@JSONField(name = "iqty24")
+	public java.math.BigDecimal getIQty24() {
+		return getBigDecimal("iQty24");
+	}
+
+	/**
+	 * 25日数量
+	 */
+	public M setIQty25(java.math.BigDecimal iQty25) {
+		set("iQty25", iQty25);
+		return (M)this;
+	}
+
+	/**
+	 * 25日数量
+	 */
+	@JBoltField(name="iqty25" ,columnName="iQty25",type="BigDecimal", remark="25日数量", required=false, maxLength=24, fixed=6, order=32)
+	@JSONField(name = "iqty25")
+	public java.math.BigDecimal getIQty25() {
+		return getBigDecimal("iQty25");
+	}
+
+	/**
+	 * 26日数量
+	 */
+	public M setIQty26(java.math.BigDecimal iQty26) {
+		set("iQty26", iQty26);
+		return (M)this;
+	}
+
+	/**
+	 * 26日数量
+	 */
+	@JBoltField(name="iqty26" ,columnName="iQty26",type="BigDecimal", remark="26日数量", required=false, maxLength=24, fixed=6, order=33)
+	@JSONField(name = "iqty26")
+	public java.math.BigDecimal getIQty26() {
+		return getBigDecimal("iQty26");
+	}
+
+	/**
+	 * 27日数量
+	 */
+	public M setIQty27(java.math.BigDecimal iQty27) {
+		set("iQty27", iQty27);
+		return (M)this;
+	}
+
+	/**
+	 * 27日数量
+	 */
+	@JBoltField(name="iqty27" ,columnName="iQty27",type="BigDecimal", remark="27日数量", required=false, maxLength=24, fixed=6, order=34)
+	@JSONField(name = "iqty27")
+	public java.math.BigDecimal getIQty27() {
+		return getBigDecimal("iQty27");
+	}
+
+	/**
+	 * 28日数量
+	 */
+	public M setIQty28(java.math.BigDecimal iQty28) {
+		set("iQty28", iQty28);
+		return (M)this;
+	}
+
+	/**
+	 * 28日数量
+	 */
+	@JBoltField(name="iqty28" ,columnName="iQty28",type="BigDecimal", remark="28日数量", required=false, maxLength=24, fixed=6, order=35)
+	@JSONField(name = "iqty28")
+	public java.math.BigDecimal getIQty28() {
+		return getBigDecimal("iQty28");
+	}
+
+	/**
+	 * 29日数量
+	 */
+	public M setIQty29(java.math.BigDecimal iQty29) {
+		set("iQty29", iQty29);
+		return (M)this;
+	}
+
+	/**
+	 * 29日数量
+	 */
+	@JBoltField(name="iqty29" ,columnName="iQty29",type="BigDecimal", remark="29日数量", required=false, maxLength=24, fixed=6, order=36)
+	@JSONField(name = "iqty29")
+	public java.math.BigDecimal getIQty29() {
+		return getBigDecimal("iQty29");
+	}
+
+	/**
+	 * 30日数量
+	 */
+	public M setIQty30(java.math.BigDecimal iQty30) {
+		set("iQty30", iQty30);
+		return (M)this;
+	}
+
+	/**
+	 * 30日数量
+	 */
+	@JBoltField(name="iqty30" ,columnName="iQty30",type="BigDecimal", remark="30日数量", required=false, maxLength=24, fixed=6, order=37)
+	@JSONField(name = "iqty30")
+	public java.math.BigDecimal getIQty30() {
+		return getBigDecimal("iQty30");
+	}
+
+	/**
+	 * 31日数量
+	 */
+	public M setIQty31(java.math.BigDecimal iQty31) {
+		set("iQty31", iQty31);
+		return (M)this;
+	}
+
+	/**
+	 * 31日数量
+	 */
+	@JBoltField(name="iqty31" ,columnName="iQty31",type="BigDecimal", remark="31日数量", required=false, maxLength=24, fixed=6, order=38)
+	@JSONField(name = "iqty31")
+	public java.math.BigDecimal getIQty31() {
+		return getBigDecimal("iQty31");
+	}
+
+	/**
+	 * 合计数量
+	 */
+	public M setISum(java.math.BigDecimal iSum) {
+		set("iSum", iSum);
+		return (M)this;
+	}
+
+	/**
+	 * 合计数量
+	 */
+	@JBoltField(name="isum" ,columnName="iSum",type="BigDecimal", remark="合计数量", required=false, maxLength=24, fixed=6, order=39)
+	@JSONField(name = "isum")
+	public java.math.BigDecimal getISum() {
+		return getBigDecimal("iSum");
+	}
+
+	/**
+	 * 扩展字段1
+	 */
+	public M setCDefine1(java.lang.String cDefine1) {
+		set("cDefine1", cDefine1);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段1
+	 */
+	@JBoltField(name="cdefine1" ,columnName="cDefine1",type="String", remark="扩展字段1", required=false, maxLength=200, fixed=0, order=40)
+	@JSONField(name = "cdefine1")
+	public java.lang.String getCDefine1() {
+		return getStr("cDefine1");
+	}
+
+	/**
+	 * 扩展字段2
+	 */
+	public M setCDefine2(java.lang.String cDefine2) {
+		set("cDefine2", cDefine2);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段2
+	 */
+	@JBoltField(name="cdefine2" ,columnName="cDefine2",type="String", remark="扩展字段2", required=false, maxLength=200, fixed=0, order=41)
+	@JSONField(name = "cdefine2")
+	public java.lang.String getCDefine2() {
+		return getStr("cDefine2");
+	}
+
+	/**
+	 * 扩展字段3
+	 */
+	public M setCDefine3(java.lang.String cDefine3) {
+		set("cDefine3", cDefine3);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段3
+	 */
+	@JBoltField(name="cdefine3" ,columnName="cDefine3",type="String", remark="扩展字段3", required=false, maxLength=200, fixed=0, order=42)
+	@JSONField(name = "cdefine3")
+	public java.lang.String getCDefine3() {
+		return getStr("cDefine3");
+	}
+
+	/**
+	 * 扩展字段4
+	 */
+	public M setCDefine4(java.lang.String cDefine4) {
+		set("cDefine4", cDefine4);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段4
+	 */
+	@JBoltField(name="cdefine4" ,columnName="cDefine4",type="String", remark="扩展字段4", required=false, maxLength=200, fixed=0, order=43)
+	@JSONField(name = "cdefine4")
+	public java.lang.String getCDefine4() {
+		return getStr("cDefine4");
+	}
+
+	/**
+	 * 扩展字段5
+	 */
+	public M setCDefine5(java.lang.String cDefine5) {
+		set("cDefine5", cDefine5);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段5
+	 */
+	@JBoltField(name="cdefine5" ,columnName="cDefine5",type="String", remark="扩展字段5", required=false, maxLength=200, fixed=0, order=44)
+	@JSONField(name = "cdefine5")
+	public java.lang.String getCDefine5() {
+		return getStr("cDefine5");
+	}
+
+	/**
+	 * 扩展字段6
+	 */
+	public M setCDefine6(java.lang.String cDefine6) {
+		set("cDefine6", cDefine6);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段6
+	 */
+	@JBoltField(name="cdefine6" ,columnName="cDefine6",type="String", remark="扩展字段6", required=false, maxLength=200, fixed=0, order=45)
+	@JSONField(name = "cdefine6")
+	public java.lang.String getCDefine6() {
+		return getStr("cDefine6");
+	}
+
+	/**
+	 * 扩展字段7
+	 */
+	public M setCDefine7(java.lang.String cDefine7) {
+		set("cDefine7", cDefine7);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段7
+	 */
+	@JBoltField(name="cdefine7" ,columnName="cDefine7",type="String", remark="扩展字段7", required=false, maxLength=200, fixed=0, order=46)
+	@JSONField(name = "cdefine7")
+	public java.lang.String getCDefine7() {
+		return getStr("cDefine7");
+	}
+
+	/**
+	 * 扩展字段8
+	 */
+	public M setCDefine8(java.lang.String cDefine8) {
+		set("cDefine8", cDefine8);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段8
+	 */
+	@JBoltField(name="cdefine8" ,columnName="cDefine8",type="String", remark="扩展字段8", required=false, maxLength=200, fixed=0, order=47)
+	@JSONField(name = "cdefine8")
+	public java.lang.String getCDefine8() {
+		return getStr("cDefine8");
+	}
+
+	/**
+	 * 扩展字段9
+	 */
+	public M setCDefine9(java.lang.String cDefine9) {
+		set("cDefine9", cDefine9);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段9
+	 */
+	@JBoltField(name="cdefine9" ,columnName="cDefine9",type="String", remark="扩展字段9", required=false, maxLength=200, fixed=0, order=48)
+	@JSONField(name = "cdefine9")
+	public java.lang.String getCDefine9() {
+		return getStr("cDefine9");
+	}
+
+	/**
+	 * 扩展字段10
+	 */
+	public M setCDefine10(java.lang.String cDefine10) {
+		set("cDefine10", cDefine10);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段10
+	 */
+	@JBoltField(name="cdefine10" ,columnName="cDefine10",type="String", remark="扩展字段10", required=false, maxLength=200, fixed=0, order=49)
+	@JSONField(name = "cdefine10")
+	public java.lang.String getCDefine10() {
+		return getStr("cDefine10");
+	}
+
+	/**
+	 * 扩展字段11
+	 */
+	public M setCDefine11(java.lang.String cDefine11) {
+		set("cDefine11", cDefine11);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段11
+	 */
+	@JBoltField(name="cdefine11" ,columnName="cDefine11",type="String", remark="扩展字段11", required=false, maxLength=500, fixed=0, order=50)
+	@JSONField(name = "cdefine11")
+	public java.lang.String getCDefine11() {
+		return getStr("cDefine11");
+	}
+
+	/**
+	 * 扩展字段12
+	 */
+	public M setCDefine12(java.lang.String cDefine12) {
+		set("cDefine12", cDefine12);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段12
+	 */
+	@JBoltField(name="cdefine12" ,columnName="cDefine12",type="String", remark="扩展字段12", required=false, maxLength=500, fixed=0, order=51)
+	@JSONField(name = "cdefine12")
+	public java.lang.String getCDefine12() {
+		return getStr("cDefine12");
+	}
+
+	/**
+	 * 扩展字段13
+	 */
+	public M setCDefine13(java.lang.String cDefine13) {
+		set("cDefine13", cDefine13);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段13
+	 */
+	@JBoltField(name="cdefine13" ,columnName="cDefine13",type="String", remark="扩展字段13", required=false, maxLength=500, fixed=0, order=52)
+	@JSONField(name = "cdefine13")
+	public java.lang.String getCDefine13() {
+		return getStr("cDefine13");
+	}
+
+	/**
+	 * 扩展字段14
+	 */
+	public M setCDefine14(java.lang.String cDefine14) {
+		set("cDefine14", cDefine14);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段14
+	 */
+	@JBoltField(name="cdefine14" ,columnName="cDefine14",type="String", remark="扩展字段14", required=false, maxLength=500, fixed=0, order=53)
+	@JSONField(name = "cdefine14")
+	public java.lang.String getCDefine14() {
+		return getStr("cDefine14");
+	}
+
+	/**
+	 * 扩展字段15
+	 */
+	public M setCDefine15(java.lang.String cDefine15) {
+		set("cDefine15", cDefine15);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段15
+	 */
+	@JBoltField(name="cdefine15" ,columnName="cDefine15",type="String", remark="扩展字段15", required=false, maxLength=500, fixed=0, order=54)
+	@JSONField(name = "cdefine15")
+	public java.lang.String getCDefine15() {
+		return getStr("cDefine15");
+	}
+
+	/**
+	 * 扩展字段16
+	 */
+	public M setIDefine16(java.math.BigDecimal iDefine16) {
+		set("iDefine16", iDefine16);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段16
+	 */
+	@JBoltField(name="idefine16" ,columnName="iDefine16",type="BigDecimal", remark="扩展字段16", required=false, maxLength=24, fixed=6, order=55)
+	@JSONField(name = "idefine16")
+	public java.math.BigDecimal getIDefine16() {
+		return getBigDecimal("iDefine16");
+	}
+
+	/**
+	 * 扩展字段17
+	 */
+	public M setIDefine17(java.math.BigDecimal iDefine17) {
+		set("iDefine17", iDefine17);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段17
+	 */
+	@JBoltField(name="idefine17" ,columnName="iDefine17",type="BigDecimal", remark="扩展字段17", required=false, maxLength=24, fixed=6, order=56)
+	@JSONField(name = "idefine17")
+	public java.math.BigDecimal getIDefine17() {
+		return getBigDecimal("iDefine17");
+	}
+
+	/**
+	 * 扩展字段18
+	 */
+	public M setIDefine18(java.math.BigDecimal iDefine18) {
+		set("iDefine18", iDefine18);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段18
+	 */
+	@JBoltField(name="idefine18" ,columnName="iDefine18",type="BigDecimal", remark="扩展字段18", required=false, maxLength=24, fixed=6, order=57)
+	@JSONField(name = "idefine18")
+	public java.math.BigDecimal getIDefine18() {
+		return getBigDecimal("iDefine18");
+	}
+
+	/**
+	 * 扩展字段19
+	 */
+	public M setIDefine19(java.math.BigDecimal iDefine19) {
+		set("iDefine19", iDefine19);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段19
+	 */
+	@JBoltField(name="idefine19" ,columnName="iDefine19",type="BigDecimal", remark="扩展字段19", required=false, maxLength=24, fixed=6, order=58)
+	@JSONField(name = "idefine19")
+	public java.math.BigDecimal getIDefine19() {
+		return getBigDecimal("iDefine19");
+	}
+
+	/**
+	 * 扩展字段20
+	 */
+	public M setIDefine20(java.math.BigDecimal iDefine20) {
+		set("iDefine20", iDefine20);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段20
+	 */
+	@JBoltField(name="idefine20" ,columnName="iDefine20",type="BigDecimal", remark="扩展字段20", required=false, maxLength=24, fixed=6, order=59)
+	@JSONField(name = "idefine20")
+	public java.math.BigDecimal getIDefine20() {
+		return getBigDecimal("iDefine20");
+	}
+
+	/**
+	 * 扩展字段21
+	 */
+	public M setIDefine21(java.lang.Integer iDefine21) {
+		set("iDefine21", iDefine21);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段21
+	 */
+	@JBoltField(name="idefine21" ,columnName="iDefine21",type="Integer", remark="扩展字段21", required=false, maxLength=10, fixed=0, order=60)
+	@JSONField(name = "idefine21")
+	public java.lang.Integer getIDefine21() {
+		return getInt("iDefine21");
+	}
+
+	/**
+	 * 扩展字段22
+	 */
+	public M setIDefine22(java.lang.Integer iDefine22) {
+		set("iDefine22", iDefine22);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段22
+	 */
+	@JBoltField(name="idefine22" ,columnName="iDefine22",type="Integer", remark="扩展字段22", required=false, maxLength=10, fixed=0, order=61)
+	@JSONField(name = "idefine22")
+	public java.lang.Integer getIDefine22() {
+		return getInt("iDefine22");
+	}
+
+	/**
+	 * 扩展字段23
+	 */
+	public M setIDefine23(java.lang.Integer iDefine23) {
+		set("iDefine23", iDefine23);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段23
+	 */
+	@JBoltField(name="idefine23" ,columnName="iDefine23",type="Integer", remark="扩展字段23", required=false, maxLength=10, fixed=0, order=62)
+	@JSONField(name = "idefine23")
+	public java.lang.Integer getIDefine23() {
+		return getInt("iDefine23");
+	}
+
+	/**
+	 * 扩展字段24
+	 */
+	public M setIDefine24(java.lang.Integer iDefine24) {
+		set("iDefine24", iDefine24);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段24
+	 */
+	@JBoltField(name="idefine24" ,columnName="iDefine24",type="Integer", remark="扩展字段24", required=false, maxLength=10, fixed=0, order=63)
+	@JSONField(name = "idefine24")
+	public java.lang.Integer getIDefine24() {
+		return getInt("iDefine24");
+	}
+
+	/**
+	 * 扩展字段25
+	 */
+	public M setIDefine25(java.lang.Integer iDefine25) {
+		set("iDefine25", iDefine25);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段25
+	 */
+	@JBoltField(name="idefine25" ,columnName="iDefine25",type="Integer", remark="扩展字段25", required=false, maxLength=10, fixed=0, order=64)
+	@JSONField(name = "idefine25")
+	public java.lang.Integer getIDefine25() {
+		return getInt("iDefine25");
+	}
+
+	/**
+	 * 扩展字段26
+	 */
+	public M setDDefine26(java.util.Date dDefine26) {
+		set("dDefine26", dDefine26);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段26
+	 */
+	@JBoltField(name="ddefine26" ,columnName="dDefine26",type="Date", remark="扩展字段26", required=false, maxLength=23, fixed=3, order=65)
+	@JSONField(name = "ddefine26")
+	public java.util.Date getDDefine26() {
+		return getDate("dDefine26");
+	}
+
+	/**
+	 * 扩展字段27
+	 */
+	public M setDDefine27(java.util.Date dDefine27) {
+		set("dDefine27", dDefine27);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段27
+	 */
+	@JBoltField(name="ddefine27" ,columnName="dDefine27",type="Date", remark="扩展字段27", required=false, maxLength=23, fixed=3, order=66)
+	@JSONField(name = "ddefine27")
+	public java.util.Date getDDefine27() {
+		return getDate("dDefine27");
+	}
+
+	/**
+	 * 扩展字段28
+	 */
+	public M setDDefine28(java.util.Date dDefine28) {
+		set("dDefine28", dDefine28);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段28
+	 */
+	@JBoltField(name="ddefine28" ,columnName="dDefine28",type="Date", remark="扩展字段28", required=false, maxLength=23, fixed=3, order=67)
+	@JSONField(name = "ddefine28")
+	public java.util.Date getDDefine28() {
+		return getDate("dDefine28");
+	}
+
+	/**
+	 * 扩展字段29
+	 */
+	public M setDDefine29(java.util.Date dDefine29) {
+		set("dDefine29", dDefine29);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段29
+	 */
+	@JBoltField(name="ddefine29" ,columnName="dDefine29",type="Date", remark="扩展字段29", required=false, maxLength=23, fixed=3, order=68)
+	@JSONField(name = "ddefine29")
+	public java.util.Date getDDefine29() {
+		return getDate("dDefine29");
+	}
+
+	/**
+	 * 扩展字段30
+	 */
+	public M setDDefine30(java.util.Date dDefine30) {
+		set("dDefine30", dDefine30);
+		return (M)this;
+	}
+
+	/**
+	 * 扩展字段30
+	 */
+	@JBoltField(name="ddefine30" ,columnName="dDefine30",type="Date", remark="扩展字段30", required=false, maxLength=23, fixed=3, order=69)
+	@JSONField(name = "ddefine30")
+	public java.util.Date getDDefine30() {
+		return getDate("dDefine30");
+	}
+
+	/**
+	 * 删除状态;0. 未删除 1. 已删除
+	 */
+	public M setIsDeleted(java.lang.Boolean isDeleted) {
+		set("isDeleted", isDeleted);
+		return (M)this;
+	}
+
+	/**
+	 * 删除状态;0. 未删除 1. 已删除
+	 */
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="删除状态;0. 未删除 1. 已删除", required=true, maxLength=1, fixed=0, order=70)
+	@JSONField(name = "isdeleted")
+	public java.lang.Boolean getIsDeleted() {
+		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 含税单价
+	 */
+	public M setIQuotedPrice(java.math.BigDecimal iQuotedPrice) {
+		set("iQuotedPrice", iQuotedPrice);
+		return (M)this;
+	}
+
+	/**
+	 * 含税单价
+	 */
+	@JBoltField(name="iquotedprice" ,columnName="iQuotedPrice",type="BigDecimal", remark="含税单价", required=false, maxLength=24, fixed=6, order=71)
+	@JSONField(name = "iquotedprice")
+	public java.math.BigDecimal getIQuotedPrice() {
+		return getBigDecimal("iQuotedPrice");
+	}
+
+	/**
+	 * 行号
+	 */
+	public M setIRowNo(java.lang.Integer iRowNo) {
+		set("iRowNo", iRowNo);
+		return (M)this;
+	}
+
+	/**
+	 * 行号
+	 */
+	@JBoltField(name="irowno" ,columnName="iRowNo",type="Integer", remark="行号", required=true, maxLength=10, fixed=0, order=72)
+	@JSONField(name = "irowno")
+	public java.lang.Integer getIRowNo() {
+		return getInt("iRowNo");
+	}
 
 }
 
