@@ -3453,4 +3453,16 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String CONTAINERCLASS_IMPORT = "containerclass_import";
+	/**
+	 * 新增
+	 */
+	public static final String RDSTYLE_ADD = "rdstyle_add";
+	/**
+	 * 删除
+	 */
+	public static final String RDSTYLE_DELETE = "rdstyle_delete";
+	/**
+	 * 保存
+	 */
+	public static final String RDSTYLE_SUBMIT = "rdstyle_submit";
 }

@@ -19,7 +19,6 @@ import com.jfinal.core.Path;
  * @author: WYX
  * @date: 2023-03-24 09:48
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.RDSTYLE)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/rdstyle", viewPath = "/_view/admin/rdstyle")
@@ -46,6 +45,7 @@ public class RdStyleAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.RDSTYLE_ADD)
     public void add() {
         render("add.html");
     }
@@ -72,6 +72,7 @@ public class RdStyleAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.RDSTYLE_ADD)
     public void save() {
         renderJson(service.save(getModel(RdStyle.class, "rdStyle")));
     }
@@ -86,6 +87,7 @@ public class RdStyleAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.RDSTYLE_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -135,6 +137,7 @@ public class RdStyleAdminController extends BaseAdminController {
     /**
      * 首页右边详情保存
      */
+    @CheckPermission(PermissionKey.RDSTYLE_SUBMIT)
     public void save1() {
         Long autoid = getLong("autoid");
         String crdcode = get("crdcode");
