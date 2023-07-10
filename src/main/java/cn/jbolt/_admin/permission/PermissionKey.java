@@ -3321,4 +3321,24 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String SETTLESTYLE_DELETE = "settlestyle_delete";
+	/**
+	 * 新增
+	 */
+	public static final String QCITEM_ADD = "qcitem_add";
+	/**
+	 * 修改
+	 */
+	public static final String QCITEM_EDIT = "qcitem_edit";
+	/**
+	 * 删除
+	 */
+	public static final String QCITEM_DELETE = "qcitem_delete";
+	/**
+	 * 导出
+	 */
+	public static final String QCITEM_EXPORT = "qcitem_export";
+	/**
+	 * 导入
+	 */
+	public static final String QCITEM_IMPORT = "qcitem_import";
 }
