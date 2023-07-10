@@ -152,7 +152,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     public Ret delete(Long id) {
         tx(() -> {
             SysOtherin s = findFirst("select *  from T_Sys_OtherIn where AutoID in (" + id + ")");
-            if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
+            if ("1".equals(String.valueOf(s.getIAuditStatus())) || "2".equals(String.valueOf(s.getIAuditStatus()))) {
                 ValidationUtils.error( "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
@@ -172,7 +172,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         tx(() -> {
             List<SysOtherin> sysOtherins = find("select *  from T_Sys_OtherIn where AutoID in (" + ids + ")");
             for (SysOtherin s : sysOtherins) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
+                if ("1".equals(String.valueOf(s.getIAuditStatus())) || "2".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.error( "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
                 if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){

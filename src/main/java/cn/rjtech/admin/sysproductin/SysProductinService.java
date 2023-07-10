@@ -194,7 +194,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
     public Ret delete(Long id) {
         tx(() -> {
             SysProductin first = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + id + ")");
-            if (!"0".equals(String.valueOf(first.getIAuditStatus())) || !"3".equals(String.valueOf(first.getIAuditStatus()))) {
+            if ("1".equals(String.valueOf(first.getIAuditStatus())) || "2".equals(String.valueOf(first.getIAuditStatus()))) {
                 ValidationUtils.error( "编号：" + first.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!first.getIcreateby().equals(JBoltUserKit.getUser().getId())){
