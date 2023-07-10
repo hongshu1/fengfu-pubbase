@@ -99,7 +99,7 @@
         <div class="jbolt_table_toolbar" id="WeekOrderM_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
                 <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true" data-title="新增周间客户订单" data-url="admin/weekorderm/add" class="btn btn-outline-secondary btn-sm">新增</button>
-                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/weekorderm/deleteByIds?ids=" data-confirm="确定反审批选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>
+                <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/weekorderm/deleteByIds?ids=" data-confirm="确定批量删除选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>
                 <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true" data-title="调整计划时间" data-url="admin/weekorderm/updateCplanTime" class="btn btn-outline-secondary btn-sm" data-btn="no">调整计划时间</button>
                 #include("/_view/_common/_batch_approval_btns.html", formSn="Co_WeekOrderM", uri="admin/weekorderm",
                 primaryKeyName="iAutoId", className="cn.rjtech.admin.weekorderm.WeekOrderMService", permissionKeyPrefix="weekorderm")
