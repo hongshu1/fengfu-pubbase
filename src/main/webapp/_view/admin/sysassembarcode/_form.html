@@ -1,0 +1,102 @@
+<form onsubmit="return false;" id="SysAssembarcode_Form" action="#(action)" method="post">
+	#if(sysAssembarcode.AutoID??)
+	<input type="hidden" name="sysAssembarcode.AutoID" value="#(sysAssembarcode.AutoID??)" />
+	#end
+<div class="row">
+<div class="col" >
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">AutoID</label>
+<div class="col-10">
+    <input type="text"    data-rule="required" data-notnull="true" data-tips="请输入AutoID"  data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入AutoID" maxlength="40" name="sysAssembarcode.AutoID" value="#(sysAssembarcode.AutoID??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">明细表id</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入明细表id" maxlength="40" name="sysAssembarcode.MasID" value="#(sysAssembarcode.MasID??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">行号</label>
+<div class="col-10">
+    <input type="number"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入行号" maxlength="40" name="sysAssembarcode.RowNo" value="#(sysAssembarcode.RowNo??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">数量</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入数量" maxlength="40" name="sysAssembarcode.Qty" value="#(sysAssembarcode.Qty??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">条码</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入条码" maxlength="40" name="sysAssembarcode.Barcode" value="#(sysAssembarcode.Barcode??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">存货编码</label>
+<div class="col-10">
+    <textarea style="height:100px;" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入存货编码" maxlength="200" name="sysAssembarcode.InvCode">#(sysAssembarcode.InvCode??)</textarea>
+</div>
+</div>
+<div class="form-group row" 
+data-radio
+data-name="sysAssembarcode.isDeleted"
+data-value-attr="sn"
+data-default="options_first"
+data-url="admin/dictionary/options?key=options_enable"
+data-label="是否删除：0. 否 1. 是"
+data-width="col-sm-2,col-10"
+data-value="#(sysAssembarcode.isDeleted??)"
+data-rule="radio"
+data-notnull="false"
+data-tips="请输入是否删除：0. 否 1. 是"
+data-inline="true"
+>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人id</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人id" maxlength="40" name="sysAssembarcode.Icreateby" value="#(sysAssembarcode.Icreateby??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建人名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入创建人名称" maxlength="40" name="sysAssembarcode.Ccreatename" value="#(sysAssembarcode.Ccreatename??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">创建时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入创建时间" maxlength="20" name="sysAssembarcode.Dcreatetime"    value="#datetime(sysAssembarcode.Dcreatetime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">修改人id</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入修改人id" maxlength="40" name="sysAssembarcode.Iupdateby" value="#(sysAssembarcode.Iupdateby??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">修改人名称</label>
+<div class="col-10">
+    <input type="text"   data-with-clearbtn="true" autocomplete="off"  class="form-control" placeholder="请输入修改人名称" maxlength="40" name="sysAssembarcode.Cupdatename" value="#(sysAssembarcode.Cupdatename??)"/>
+</div>
+</div>
+<div class="form-group row" >
+<label class="col-sm-2 col-form-label">修改时间</label>
+<div class="col-10">
+    <input type="text" data-date data-type="date" data-with-clearbtn="true" data-fmt="yyyy-MM-dd" readonly="readonly" data-with-clearbtn="true" autocomplete="off"  class="form-control"  placeholder="请输入修改时间" maxlength="20" name="sysAssembarcode.Dupdatetime"    value="#datetime(sysAssembarcode.Dupdatetime??,'yyyy-MM-dd')"/>
+</div>
+</div>
+</div>
+</div>
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="SysAssembarcode_Form")
+#end
+
