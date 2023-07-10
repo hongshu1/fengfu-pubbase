@@ -3309,4 +3309,16 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String FOREIGNCURRENCY_SUBMIT = "foreigncurrency_submit";
+	/**
+	 * 新增
+	 */
+	public static final String SETTLESTYLE_ADD = "settlestyle_add";
+	/**
+	 * 修改
+	 */
+	public static final String SETTLESTYLE_EDIT = "settlestyle_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SETTLESTYLE_DELETE = "settlestyle_delete";
 }
