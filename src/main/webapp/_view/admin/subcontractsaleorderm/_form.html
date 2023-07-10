@@ -147,7 +147,7 @@
 						<div class="form-group row">
 							<label class="col-sm-1 col-form-label">税率</label>
 							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig5)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.iTaxRate" value="#(subcontractsaleorderm.iTaxRate??)"/>
+								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig5)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.iTaxRate" value="#number(subcontractsaleorderm.iTaxRate??)"/>
 							</div>	
 							<label class="col-sm-1 col-form-label">币种</label>
 							<div class="col">
@@ -163,7 +163,7 @@
 							</div>
 							<label class="col-sm-1 col-form-label">汇率</label>
 							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig4)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.iExchangeRate" value="#(subcontractsaleorderm.iExchangeRate??)"/>
+								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig4)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.iExchangeRate" value="#number(subcontractsaleorderm.iExchangeRate??)"/>
 							</div>		
 							<label class="col-sm-1 col-form-label">备注</label>
 							<div class="col">
