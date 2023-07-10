@@ -3361,4 +3361,20 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String QCPARAM_IMPORT = "qcparam_import";
+	/**
+	 * 新增
+	 */
+	public static final String QCFORM_ADD = "qcform_add";
+	/**
+	 * 修改
+	 */
+	public static final String QCFORM_EDIT = "qcform_edit";
+	/**
+	 * 删除
+	 */
+	public static final String QCFORM_DELETE = "qcform_delete";
+	/**
+	 * 保存
+	 */
+	public static final String QCFORM_SUBMIT = "qcform_submit";
 }
