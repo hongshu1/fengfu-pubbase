@@ -20,7 +20,6 @@ import com.jfinal.core.Path;
  * @date: 2023-03-24 09:08
  */
 @CheckPermission(PermissionKey.SETTLE_STYLE)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/settlestyle", viewPath = "/_view/admin/settlestyle")
 public class SettleStyleAdminController extends BaseAdminController {
