@@ -3453,4 +3453,108 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String CONTAINERCLASS_IMPORT = "containerclass_import";
+	/**
+	 * 新增
+	 */
+	public static final String RDSTYLE_ADD = "rdstyle_add";
+	/**
+	 * 删除
+	 */
+	public static final String RDSTYLE_DELETE = "rdstyle_delete";
+	/**
+	 * 保存
+	 */
+	public static final String RDSTYLE_SUBMIT = "rdstyle_submit";
+	/**
+	 * 新增
+	 */
+	public static final String VOUCHRDCONTRAPOSE_ADD = "vouchrdcontrapose_add";
+	/**
+	 * 修改
+	 */
+	public static final String VOUCHRDCONTRAPOSE_EDIT = "vouchrdcontrapose_edit";
+	/**
+	 * 删除
+	 */
+	public static final String VOUCHRDCONTRAPOSE_DELETE = "vouchrdcontrapose_delete";
+	/**
+	 * 新增
+	 */
+	public static final String SALETYPE_ADD = "saletype_add";
+	/**
+	 * 修改
+	 */
+	public static final String SALETYPE_EDIT = "saletype_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SALETYPE_DELETE = "saletype_delete";
+	/**
+	 * 新增
+	 */
+	public static final String PURCHASETYPE_ADD = "purchasetype_add";
+	/**
+	 * 修改
+	 */
+	public static final String PURCHASETYPE_EDIT = "purchasetype_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PURCHASETYPE_DELETE = "purchasetype_delete";
+	/**
+	 * 新增
+	 */
+	public static final String VOUCHTYPEDIC_ADD = "vouchtypedic_add";
+	/**
+	 * 修改
+	 */
+	public static final String VOUCHTYPEDIC_EDIT = "vouchtypedic_edit";
+	/**
+	 * 删除
+	 */
+	public static final String VOUCHTYPEDIC_DELETE = "vouchtypedic_delete";
+	/**
+	 * 新增
+	 */
+	public static final String UPTIMEPARAM_ADD = "uptimeparam_add";
+	/**
+	 * 修改
+	 */
+	public static final String UPTIMEPARAM_EDIT = "uptimeparam_edit";
+	/**
+	 * 删除
+	 */
+	public static final String UPTIMEPARAM_DELETE = "uptimeparam_delete";
+	/**
+	 * 导出
+	 */
+	public static final String UPTIMEPARAM_EXPORT = "uptimeparam_export";
+	/**
+	 * 导入
+	 */
+	public static final String UPTIMEPARAM_IMPORT = "uptimeparam_import";
+	/**
+	 * 新增
+	 */
+	public static final String UPTIMETPLM_ADD = "uptimetplm_add";
+	/**
+	 * 修改
+	 */
+	public static final String UPTIMETPLM_EDIT = "uptimetplm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String UPTIMETPLM_DELETE = "uptimetplm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String UPTIMETPLM_EXPORT = "uptimetplm_export";
+	/**
+	 * 导入
+	 */
+	public static final String UPTIMETPLM_IMPORT = "uptimetplm_import";
+	/**
+	 * 保存
+	 */
+	public static final String UPTIMETPLM_SUBMIT = "uptimetplm_submit";
 }

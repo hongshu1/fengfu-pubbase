@@ -31,6 +31,7 @@ import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
+import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.ExpenseBudget;
 import cn.rjtech.model.momdata.InvestmentPlan;
 import cn.rjtech.model.momdata.InvestmentPlanItem;
@@ -288,7 +289,9 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Ret importTableInvestmentPlanTpl(String filePath,Long iplanid) throws Exception  {
+	public Ret importTableInvestmentPlanTpl(String filePath,Kv para) throws Exception  {
+		Long iplanid = para.getLong("iplanid");
+		String cdepcodePara = para.getStr("investmentPlan.cdepcode");
 		// 读取excel中数据
 		int startRow = ReadInventmentExcelUtil.START_ROW + 1;
         HashMap<String, Object> excelMap = ReadInventmentExcelUtil.readExcelInfo(filePath);
@@ -318,10 +321,12 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 			ValidationUtils.error( "预算类型不合法,请检查导入模板!");
 		}
         try {
-        	cdepcode = departmentService.getCdepCodeByName(cdepname);
+	    	List<Department> list = departmentService.treeDatasForProposalSystem(Kv.by("isProposal", true).set("depName",cdepname));
+	    	cdepcode = list.get(0).getCDepCode();
 		} catch (Exception e) {
 			ValidationUtils.error( "预算部门获取失败,请检查导入模板!");
 		}
+        ValidationUtils.equals(cdepcodePara, cdepcode, ErrorMsg.BUDGET_IMPORT_CDEPCODE_NOT_EQUIL);
         DataPermissionKit.validateAccess(cdepcode);
         List<Record> excelRowList = (List<Record>)excelMap.get("rows");
         StringBuilder errorMsg = new StringBuilder();

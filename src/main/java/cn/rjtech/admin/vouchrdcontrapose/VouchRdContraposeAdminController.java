@@ -17,7 +17,6 @@ import com.jfinal.core.Path;
  * @date: 2023-03-27 14:10
  */
 @CheckPermission(PermissionKey.VOUCHRDCONTRAPOSE)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/vouchrdcontrapose", viewPath = "/_view/admin/vouchrdcontrapose")
 public class VouchRdContraposeAdminController extends BaseAdminController {
@@ -42,13 +41,15 @@ public class VouchRdContraposeAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
-	public void add() {
+   @CheckPermission(PermissionKey.VOUCHRDCONTRAPOSE_ADD)
+   public void add() {
 		render("add.html");
 	}
 
    /**
 	* 编辑
 	*/
+	@CheckPermission(PermissionKey.VOUCHRDCONTRAPOSE_EDIT)
 	public void edit() {
 		VouchRdContrapose vouchRdContrapose=service.findById(getLong(0)); 
 		if(vouchRdContrapose == null){
@@ -62,14 +63,16 @@ public class VouchRdContraposeAdminController extends BaseAdminController {
   /**
 	* 保存
 	*/
-	public void save() {
+  @CheckPermission(PermissionKey.VOUCHRDCONTRAPOSE_ADD)
+  public void save() {
 		renderJson(service.save(getModel(VouchRdContrapose.class, "vouchRdContrapose")));
 	}
 
    /**
 	* 更新
 	*/
-	public void update() {
+   @CheckPermission(PermissionKey.VOUCHRDCONTRAPOSE_EDIT)
+   public void update() {
 		renderJson(service.update(getModel(VouchRdContrapose.class, "vouchRdContrapose")));
 	}
 
@@ -83,6 +86,7 @@ public class VouchRdContraposeAdminController extends BaseAdminController {
    /**
 	* 删除
 	*/
+   @CheckPermission(PermissionKey.VOUCHRDCONTRAPOSE_DELETE)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}

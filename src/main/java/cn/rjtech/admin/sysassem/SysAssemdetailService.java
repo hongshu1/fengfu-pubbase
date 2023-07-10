@@ -20,9 +20,11 @@ import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 组装拆卸及形态转换单明细
@@ -159,16 +161,25 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 
     public List<Record> findEditTableDatas(Kv para) {
         List<Record> records = null;
+        List<Record> recordList = new ArrayList<>();
         if (null != para.getLong("masid")) {
             records = dbTemplate("sysassem.dList", para).find();
         }
+        // 将转换后 生成条码的数据过滤掉 todo 表改了
         if (records != null && !records.isEmpty()) {
             for (int t = 0; t < records.size(); t++) {
                 Record record = records.get(t);
+                if("转换前".equals(record.getStr("AssemType")) || ("转换后".equals(record.getStr("AssemType")) && null == record.getStr("barbarcode") )){
+                    recordList.add(record);
+                }
+            }
+
+            for (int t = 0; t < recordList.size(); t++) {
+                Record record = recordList.get(t);
                 // 获取条码表的存货编码
-                String cinvcode = record.getStr("cinvcode");
+                String barcode = record.getStr("barcode");
                 // 根据条码的存货编码判断，没有存货编码 (转换后的数据)
-                if (cinvcode == null || "".equals(cinvcode)) {
+                if (barcode == null || "".equals(barcode)) {
                     //获取从表转换后的存货编码
                     String invcode = record.getStr("invcode");
                     Record firstRecord = findFirstRecord(
@@ -205,14 +216,14 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
 
                     }
                     //查出转换的生成条码的数量
-                    Record number = findFirstRecord("select count(1) as number  from PS_PurchaseOrderDBatch where iPurchaseOrderdQtyId = '"+ record.getStr("autoid")+"'");
+                    Record number = findFirstRecord("select count(1) as number  from T_Sys_AssemBarcode where MasID = ? and Barcode is not null and isDeleted = '0'",record.getStr("autoiddetail"));
                     if(number != null && !"".equals(number)){
                         record.set("number",number.getStr("number"));
                     }
                 }
             }
         }
-        return records;
+        return recordList;
     }
     public List<Record> findEditTablenumberdetails(Long id){
         List<Record> record = findRecord("select a.cCompleteBarcode as barcode,a.iQty as qty,b.dcreatetime  from PS_PurchaseOrderDBatch a" +
@@ -262,7 +273,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         SysAssemdetail sysAssemdetail = new SysAssemdetail();
         sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
         sysAssemdetail.setMasID(masId);
-        sysAssemdetail.setBarcode(detail.getBarCode());
+//        sysAssemdetail.setBarcode(detail.getBarCode());
         sysAssemdetail.setSourceType(detail.getSourceBillType());
         sysAssemdetail.setSourceBillNo(detail.getSourceBillNo());
         sysAssemdetail.setSourceBillNoRow(detail.getSourceBillNoRow());
@@ -281,10 +292,10 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         sysAssemdetail.setWhCode(detail.getWhcode());
         sysAssemdetail.setPosCode(detail.getPosCode());
         sysAssemdetail.setRowNo(detail.getRowNo());
-        sysAssemdetail.setQty(detail.getQty());
+//        sysAssemdetail.setQty(detail.getQty());
         sysAssemdetail.setTrackType(detail.getTrackType());
         sysAssemdetail.setMemo(detail.getMemo());
-        sysAssemdetail.setBarcode(detail.getBarCode());
+//        sysAssemdetail.setBarcode(detail.getBarCode());
         sysAssemdetail.setSourceType(detail.getSourceBillType());
         sysAssemdetail.setSourceBillNo(detail.getSourceBillNo());
         sysAssemdetail.setSourceBillNoRow(detail.getSourceBillNoRow());
@@ -297,7 +308,7 @@ public class SysAssemdetailService extends BaseService<SysAssemdetail> {
         sysAssemdetail.setWhCode(detail.getWhcode());
         sysAssemdetail.setPosCode(detail.getPosCode());
         sysAssemdetail.setRowNo(detail.getRowNo());
-        sysAssemdetail.setQty(detail.getQty());
+//        sysAssemdetail.setQty(detail.getQty());
         sysAssemdetail.setTrackType(detail.getTrackType());
         sysAssemdetail.setMemo(detail.getMemo());
         sysAssemdetail.setCcreatename(JBoltUserKit.getUserName());
