@@ -1,7 +1,10 @@
 package cn.rjtech.admin.appenditem;
 
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
@@ -43,6 +46,7 @@ public class AppendItemAdminController extends BaseAdminController {
 	* 数据源
 	*/
     @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
 	public void datas() {
 		renderJsonData(service.paginateAdminDatas(getPageNumber(),getPageSize(),getKv()));
 	}
@@ -74,6 +78,7 @@ public class AppendItemAdminController extends BaseAdminController {
    /**
 	* 保存
 	*/
+	@CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
 	public void save() {
 		renderJson(service.save(useIfValid(AppendItem.class, "appendItem")));
 	}
@@ -81,6 +86,7 @@ public class AppendItemAdminController extends BaseAdminController {
    /**
 	* 更新
 	*/
+	@CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
 	public void update() {
 		renderJson(service.update(useIfValid(AppendItem.class, "appendItem")));
 	}

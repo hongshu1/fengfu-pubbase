@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  * @date: 2023-06-27 09:55
  */
 @CheckPermission(PermissionKey.PRODFORM)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/prodForm", viewPath = "/_view/admin/prodform")
 public class ProdFormAdminController extends BaseAdminController {
@@ -64,6 +63,7 @@ public class ProdFormAdminController extends BaseAdminController {
 	/**
 	 * 编辑
 	 */
+	@CheckPermission(PermissionKey.PRODFORM_ADD)
 	public void edit() {
 		ProdForm prodForm = service.findById(getLong(0));
 		if (prodForm == null) {
@@ -92,6 +92,7 @@ public class ProdFormAdminController extends BaseAdminController {
 	/**
 	 * 批量删除
 	 */
+	@CheckPermission(PermissionKey.PRODFORM_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
@@ -99,6 +100,7 @@ public class ProdFormAdminController extends BaseAdminController {
 	/**
 	 * 删除
 	 */
+	@CheckPermission(PermissionKey.PRODFORM_EDIT)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
@@ -224,7 +226,7 @@ public class ProdFormAdminController extends BaseAdminController {
 		}
 		render("_table3.html");
 	}
-
+	@CheckPermission(PermissionKey.PRODFORM_SUBMIT)
 	public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
 	                       @Para(value = "qcItemTableJsonData") String qcItemTableJsonDataStr,
 	                       @Para(value = "qcParamTableJsonData") String qcParamTableJsonDataStr,

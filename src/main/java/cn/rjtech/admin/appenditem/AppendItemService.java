@@ -4,6 +4,7 @@ import cn.hutool.core.text.StrSplitter;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -100,6 +101,7 @@ public class AppendItemService extends BaseService<AppendItem> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		formCheck(appendItem);
+		DataPermissionKit.validateAccess(appendItem.getCdepcode());
 		appendItem.setIorgid(getOrgId());
 		appendItem.setCorgcode(getOrgCode());
 		BigDecimal iBudgetMoney = appendItem.getIbudgetmoney() == null ? BigDecimal.ZERO:appendItem.getIbudgetmoney();
@@ -129,6 +131,7 @@ public class AppendItemService extends BaseService<AppendItem> {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
 		formCheck(appendItem);
+		DataPermissionKit.validateAccess(appendItem.getCdepcode());
 		tx(() -> {
 			// 更新时需要判断数据存在
 			AppendItem dbAppendItem = findById(appendItem.getIautoid());
