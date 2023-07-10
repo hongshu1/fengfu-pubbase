@@ -93,7 +93,8 @@ from #(getMomdataDbName()).dbo.PL_Expense_Budget_Item ebi
 #end
 
 #sql("findPreviousPeriodExpenseBudgetItemDatas")
-	select ebi.iautoid,ebi.iexpenseid,ebi.cbudgetno,bsh.csubjectcode chighestsubjectcode,bsh.csubjectname chighestsubjectname,bsl.csubjectcode clowestsubjectcode,bsl.csubjectname clowestsubjectname,ebi.citemname,
+	select ebi.iautoid,ebi.iexpenseid,ebi.cbudgetno,bsh.iautoid ihighestsubjectid,bsh.csubjectcode chighestsubjectcode,bsh.csubjectname chighestsubjectname,
+	bsl.iautoid ilowestsubjectid,bsl.csubjectcode clowestsubjectcode,bsl.csubjectname clowestsubjectname,ebi.citemname,
 	ebi.careertype,ebi.isLargeAmountExpense,ebi.cuse,ebi.cmemo,ebi.iprice,ebi.cunit,ebi.iCarryForward,ebi.icreateby,ebi.dcreatetime
 from PL_Expense_Budget_Item ebi
 	left join PL_Expense_Budget eb on ebi.iexpenseid = eb.iautoid

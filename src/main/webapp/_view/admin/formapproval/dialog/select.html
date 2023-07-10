@@ -38,7 +38,7 @@
     function submitThisForm(ele) {
         var index = LayerMsgBox.loading("执行中......",2000);
         var selectedValue = $('input[name="select"]:checked').val();
-        console.log('selectedValue=',selectedValue);
+
         parent.submitConfirm(selectedValue);
         parent.layer.close(parent.layer.getFrameIndex(window.name));
         LayerMsgBox.close(index);
