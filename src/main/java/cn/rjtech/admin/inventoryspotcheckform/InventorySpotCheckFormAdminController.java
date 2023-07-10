@@ -94,6 +94,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.INVENTORYSPOTCHECKFORM_ADD)
     public void add() {
         render("add.html");
     }
@@ -108,6 +109,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.INVENTORYSPOTCHECKFORM_EDIT)
     public void edit() {
         InventorySpotCheckForm inventorySpotCheckForm = service.findById(getLong(0));
         if (inventorySpotCheckForm == null) {
@@ -141,6 +143,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.INVENTORYSPOTCHECKFORM_DELETE)
     public void deleteByIds() {
         //质量建模-存货点检工序的数据也要删除
         String[] ids = get("ids").split(",");
@@ -158,6 +161,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.INVENTORYSPOTCHECKFORM_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -169,6 +173,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
         renderJson(service.toggleBoolean(getLong(0), "IsDeleted"));
     }
 
+    @CheckPermission(PermissionKey.INVENTORYSPOTCHECKFORM_SUBMIT)
     public void updateEditTable() {
         renderJson(service.updateTable(getJBoltTable()));
     }
@@ -202,6 +207,7 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
      * 数据导入
      */
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.INVENTORYSPOTCHECKFORM_IMPORT)
     public void importExcelData() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");

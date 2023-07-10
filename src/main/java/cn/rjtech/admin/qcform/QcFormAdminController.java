@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-27 17:53
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.QCFORM)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/qcform", viewPath = "/_view/admin/qcform")
@@ -88,6 +87,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.QCPARAM_EDIT)
     public void edit() {
         QcForm qcForm = service.findById(getLong(0));
         if (qcForm == null) {
@@ -116,6 +116,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.QCFORM_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
     }
@@ -123,6 +124,7 @@ public class QcFormAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.QCFORM_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -253,7 +255,7 @@ public class QcFormAdminController extends BaseAdminController {
         }
         render("_table3.html");
     }
-    
+    @CheckPermission(PermissionKey.QCFORM_SUBMIT)
     public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
                            @Para(value = "qcItemTableJsonData") String qcItemTableJsonDataStr,
                            @Para(value = "qcParamTableJsonData") String qcParamTableJsonDataStr,

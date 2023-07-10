@@ -243,7 +243,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
      */
 	@UnCheck
 	@CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
-    public void importTableExpenseBudgetTpl(@Para(value="iexpenseid") Long iexpenseid) throws Exception {
+    public void importTableExpenseBudgetTpl() throws Exception {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);
         if (notExcel(file)) {
@@ -251,7 +251,7 @@ public class ExpenseBudgetAdminController extends BaseAdminController {
             return;
         }
         String filePath = getFile().getUploadPath() + FILE_PATH_MODIFIERS + getFile().getFileName();
-        renderJson(service.importTableExpenseBudgetTpl(filePath,iexpenseid));
+        renderJson(service.importTableExpenseBudgetTpl(filePath,getKv()));
     }
 	/**
 	 * 新增前打开期间选择

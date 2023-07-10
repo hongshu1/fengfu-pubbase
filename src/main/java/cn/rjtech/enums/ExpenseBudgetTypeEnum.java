@@ -12,7 +12,7 @@ public enum ExpenseBudgetTypeEnum {
      * 费用预算类型枚举列表
      */
     FUALL_YEAR_BUDGET(1, "全年预算"),
-    NEXT_PERIOD_EDIT(2, "下半年修订");
+    NEXT_PERIOD_EDIT(2, "下期修改");
 
 
     private static final Map<Integer, ExpenseBudgetTypeEnum> BUDGET_TYPE_ENUM_MAP = new HashMap<>();

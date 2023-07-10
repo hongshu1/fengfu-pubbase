@@ -31,7 +31,6 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-17 15:31
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.QCITEM)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/qcitem", viewPath = "/_view/admin/qcitem")
@@ -61,6 +60,7 @@ public class QcItemAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.QCITEM_ADD)
     public void add() {
         render("add.html");
     }
@@ -68,6 +68,7 @@ public class QcItemAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.QCITEM_ADD)
     public void save() {
         renderJson(service.save(getModel(QcItem.class, "qcItem")));
     }
@@ -75,6 +76,7 @@ public class QcItemAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.QCITEM_EDIT)
     public void edit() {
         QcItem qcItem = service.findById(getLong(0));
         if (qcItem == null) {
@@ -88,6 +90,7 @@ public class QcItemAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.QCITEM_EDIT)
     public void update() {
         renderJson(service.update(getModel(QcItem.class, "qcItem")));
     }
@@ -108,6 +111,7 @@ public class QcItemAdminController extends BaseAdminController {
      * 批量删除
      */
     @Before(Tx.class)
+    @CheckPermission(PermissionKey.QCITEM_DELETE)
     public void deleteByIds() {
         String[] ids = get("ids").split(",");
         for (String id : ids) {
@@ -143,6 +147,7 @@ public class QcItemAdminController extends BaseAdminController {
     /**
      * 导出选中
      */
+    @CheckPermission(PermissionKey.QCITEM_EXPORT)
     public void exportExcelByIds() {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -163,6 +168,7 @@ public class QcItemAdminController extends BaseAdminController {
     /**
      * 导出全部
      */
+    @CheckPermission(PermissionKey.QCITEM_EXPORT)
     public void exportExcelAll() {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {
@@ -193,6 +199,7 @@ public class QcItemAdminController extends BaseAdminController {
         renderJson(service.importExcel(file.getFile()));
     }
 
+    @CheckPermission(PermissionKey.QCITEM_IMPORT)
     public void importExcelClass() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

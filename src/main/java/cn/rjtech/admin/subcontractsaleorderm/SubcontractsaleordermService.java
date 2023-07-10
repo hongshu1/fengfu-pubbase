@@ -114,6 +114,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 jsonObject.put("cInvCode", inventory.getCInvCode());
                 jsonObject.put("cInvName", inventory.getCInvName1());
                 jsonObject.put("iQuantity", subcontractsaleorderd.getInt("iqty" + i));
+                jsonObject.put("irowno", subcontractsaleorderd.getIRowNo());
                 jsonObject.put("iQuotedPrice", 0);
                 jsonObject.put("KL", 100);
                 jsonObject.put("iNatDisCount", 0);
@@ -353,6 +354,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
             row.set("isdeleted", "0");
             row.set("isubcontractsaleordermid", subcontractsaleorderm.getIAutoId());
             row.set("iautoid", JBoltSnowflakeKit.me.nextId());
+            row.set("irowno", i* 10);
         }
         subcontractsaleorderdService.batchSaveRecords(list);
     }

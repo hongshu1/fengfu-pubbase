@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**周间客户订单主表ID*/
@@ -105,6 +105,10 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
     public static final String DDEFINE30 = "dDefine30";
     /**删除状态;0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**含税单价*/
+    public static final String IQUOTEDPRICE = "iQuotedPrice";
+    /**行号*/
+    public static final String IROWNO = "iRowNo";
 	/**
 	 * 主键ID
 	 */
@@ -902,6 +906,40 @@ public abstract class BaseWeekOrderD<M extends BaseWeekOrderD<M>> extends JBoltB
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 含税单价
+	 */
+	public M setIQuotedPrice(java.math.BigDecimal iQuotedPrice) {
+		set("iQuotedPrice", iQuotedPrice);
+		return (M)this;
+	}
+
+	/**
+	 * 含税单价
+	 */
+	@JBoltField(name="iquotedprice" ,columnName="iQuotedPrice",type="BigDecimal", remark="含税单价", required=false, maxLength=24, fixed=6, order=48)
+	@JSONField(name = "iquotedprice")
+	public java.math.BigDecimal getIQuotedPrice() {
+		return getBigDecimal("iQuotedPrice");
+	}
+
+	/**
+	 * 行号
+	 */
+	public M setIRowNo(java.lang.Integer iRowNo) {
+		set("iRowNo", iRowNo);
+		return (M)this;
+	}
+
+	/**
+	 * 行号
+	 */
+	@JBoltField(name="irowno" ,columnName="iRowNo",type="Integer", remark="行号", required=true, maxLength=10, fixed=0, order=49)
+	@JSONField(name = "irowno")
+	public java.lang.Integer getIRowNo() {
+		return getInt("iRowNo");
 	}
 
 }
