@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/uptimeParam", viewPath = "/_view/admin/uptimeparam")
 @CheckPermission(PermissionKey.UPTIME_PARAM)
-@UnCheckIfSystemAdmin
 public class UptimeParamAdminController extends BaseAdminController {
 
 	@Inject
@@ -57,6 +56,7 @@ public class UptimeParamAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.UPTIMEPARAM_ADD)
 	public void add() {
 		render("add.html");
 	}
@@ -66,6 +66,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	*/
 	@Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.UPTIMEPARAM_ADD)
 	public void save(@Para("uptimeParam")UptimeParam uptimeParam) {
 		renderJson(service.save(uptimeParam));
 	}
@@ -73,7 +74,8 @@ public class UptimeParamAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
+   @CheckPermission(PermissionKey.UPTIMEPARAM_EDIT)
+   public void edit() {
 		UptimeParam uptimeParam=service.findById(getLong(0));
 		if(uptimeParam == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
@@ -88,6 +90,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	*/
 	@Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.UPTIMEPARAM_EDIT)
 	public void update(@Para("uptimeParam")UptimeParam uptimeParam) {
 		renderJson(service.update(uptimeParam));
 	}
@@ -97,6 +100,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	*/
 	@Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.UPTIMEPARAM_DELETE)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}
@@ -122,6 +126,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	/**
 	 * 导出
 	 */
+	@CheckPermission(PermissionKey.UPTIMEPARAM_EXPORT)
 	public void exportExcelAll() throws Exception {
 		Page<Record> recordPage = service.getAdminDatas(1, 100000, getKv());
 		List<Record> rows = recordPage.getList();
@@ -151,6 +156,7 @@ public class UptimeParamAdminController extends BaseAdminController {
 	 * 数据导入
 	 */
 	@SuppressWarnings("unchecked")
+	@CheckPermission(PermissionKey.UPTIMEPARAM_IMPORT)
 	public void importExcelData() {
 		UploadFile uploadFile = getFile("file");
 		ValidationUtils.notNull(uploadFile, "上传文件不能为空");

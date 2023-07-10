@@ -118,7 +118,8 @@
 #define js()
 <script>
     function submitThisForm(){
-        var unfinishExpenseBudgetItemCheckedTableDatas = getJboltTableCheckedDatas("#jbolt_Table_#(pageId)");
+        var columns = ["ihighestsubjectid","chighestsubjectname","ilowestsubjectid","clowestsubjectname","citemname","careertype","careertypename","islargeamountexpense","cuse","cmemo","iprice","cunit"];
+        var unfinishExpenseBudgetItemCheckedTableDatas = getJboltTableCheckedDatas("#jbolt_Table_#(pageId)",columns);
         parent.insertUnfinishExpenseBudgetItem(unfinishExpenseBudgetItemCheckedTableDatas);
         // 关闭当前页面
         parent.layer.close(parent.layer.getFrameIndex(window.name));

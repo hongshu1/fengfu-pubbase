@@ -591,7 +591,7 @@ public class MoMoinvbatchService extends BaseService<MoMoinvbatch> {
 			moMoinvbatch.setCUpdateName(JBoltUserKit.getUserName());
 			moMoinvbatch.setDUpdateTime(new Date());
 			moMoinvbatch.setIsDeleted(false);
-			moMoinvbatch.setCCompleteBarcode(moMoinvbatch.getCBarcode() + moMoinvbatch.getCVersion());
+			moMoinvbatch.setCCompleteBarcode(moMoinvbatch.getCBarcode() + "-" + moMoinvbatch.getCVersion());
 			moMoinvbatches.add(moMoinvbatch);
 		}
 

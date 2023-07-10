@@ -58,8 +58,8 @@
                                     <label class="col-sm-3 col-form-label">日期</label>
                                     <div class="col-9">
                                         <input type="text" data-date class="form-control" placeholder="日期" disabled
-                                            maxlength="20" name="sysAssem.BillDate"
-                                            value="#(sysAssem.BillDate??)" />
+                                            maxlength="20" name="sysAssem.dcreatetime"
+                                            value="#(sysAssem.dcreatetime??)" />
                                     </div>
                                 </div>
                             </div>
@@ -253,7 +253,9 @@
         {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-            <td onclick="dilog(this)">${data.number}</td>
+            #if(readonly == 'readonly')
+            <td onclick="dilog(this)" >${data.number}</td>
+            #end
             <td>${data.combination}</td>
             <td>${data.assemtype}</td>
             <td>${data.whname}</td>
@@ -334,7 +336,9 @@
         <thead>
         <tr>
             <th data-width="60" data-column="index">序号</th>
+            #if(readonly == 'readonly')
             <th data-width="150">条码数</th>
+            #end
             <th data-width="60" data-column="combination">组号</th>
             <th data-width="100" data-column="assemtype">类型</th>
             <th data-width="200" data-column="whname">仓库名称</th>
@@ -406,8 +410,7 @@
                         $("#barcode").val('');
                         Ajax.post("admin/formConversionList/getBarCodeData",
                             {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
-                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,
-                                "ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty},
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty},
                             function(rres) {
                                 console.log('rres', rres)
                                 if (rres.state==='ok'){
@@ -700,7 +703,7 @@
                         {column: "cinvstd",use: "cinvstd"}, {column: "dplandate", use: "dplandate"},
                         {column: "vencode",use: "vencode"}, {column: "venname", use: "venname"},
                         {column: "posname",use: "posname"}, {column: "poscode", use: "poscode"},
-                        {column: "whname",use: "whname"}, {column: "whcode", use: "whcode"},
+                        {column: "whname",use: "whname"}, {column: "whcode", use: "whcode"},, {column: "autoiddetail", use: "autoiddetail"},
                         {column: "cinvccode", use: "cinvccode"}, {column: "cinvcname",use: "cinvcname"},
                         {column: "cuomname", use: "cuomname"}, {column: "sourcebilltype", use: "sourcebilltype"},
                         {column: "sourcebillno", use: "sourcebillno"},{column: "sourcebilldid", use: "sourcebilldid"},

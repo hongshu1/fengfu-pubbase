@@ -25,6 +25,7 @@ import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.model.momdata.base.BaseWeekOrderD;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -270,6 +271,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
         weekOrderM.setIOrgId(getOrgId());
         weekOrderM.setCOrgCode(getOrgCode());
         weekOrderM.setCOrgName(getOrgName());
+        weekOrderM.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
         // 创建信息
         weekOrderM.setCCreateName(JBoltUserKit.getUserName());
         weekOrderM.setDCreateTime(now);

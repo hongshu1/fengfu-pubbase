@@ -33,6 +33,9 @@ and a.cPadName LIKE CONCAT('%',#para(cpadname),'%')
 #if(iworkregionmid)
 and a.iWorkRegionMid = #para(iworkregionmid)
 #end
+#if(mac)
+and cMac = #para(mac)
+#end
 #end
 
 #sql("getPadWorkRegionByCmac")

@@ -490,19 +490,14 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 	}
 
 
-
+	/**
+	 * 处理审批通过的其他业务操作，如有异常返回错误信息
+	 *
+	 * @param formAutoId 单据ID
+	 * @return 错误信息
+	 */
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		OtherOut otherOut = findById(formAutoId);
-		otherOut.setIAuditBy(userId);
-		otherOut.setCAuditName(userName);
-		otherOut.setDAuditTime(nowDate);
-//		String ids = String.valueOf(otherOut.getAutoID());
-//		this.pushU8(ids);
-		otherOut.update();
 		return null;
 	}
 
@@ -558,31 +553,6 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 
 	@Override
 	public String postBatchApprove(List<Long> formAutoIds) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		/**
-		 *List转换String类型
-		 */
-		if (formAutoIds.size()>0) {
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < formAutoIds.size(); i++) {
-
-				buffer.append("" + formAutoIds.get(i) + ",");
-			}
-			String ids = buffer.substring(0, buffer.length() - 1);
-			List<OtherOut> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (OtherOut otherOut : listByIds) {
-					//审核人
-					otherOut.setIAuditBy(userId);
-					otherOut.setCAuditName(userName);
-					otherOut.setDAuditTime(nowDate);
-//					this.pushU8(ids);
-					otherOut.update();
-				}
-			}
-		}
 		return null;
 	}
 

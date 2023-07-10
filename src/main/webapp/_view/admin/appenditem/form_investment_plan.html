@@ -33,7 +33,7 @@
                     data-value=""
                     data-handler="findDeptNewestInvestmentDatas"
                     data-width="200"
-                    #if(appendItem.iautoid??)
+                    #if(appendItem.ieffectivestatus??==2)
                     data-select="#(appendItem.cdepcode??)"
                     disabled
                     #end

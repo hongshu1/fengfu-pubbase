@@ -52,8 +52,8 @@ public class UserApiController extends BaseApiController {
         ValidationUtils.validateId(orgId, "登录组织");
 //        ValidationUtils.notBlank(mac, "未获取到MAC地址");
         LoginLog log= JBoltLoginLogUtil.createLoginLog(getRequest());
-//        renderJBoltApiRet(service.login(username, password, orgId,mac,log.getLoginIp()));
-        renderJBoltApiRet(service.login(username, password, orgId,log.getLoginIp()));
+//        renderJBoltApiRet(service.login(username, password, orgId, mac, log.getLoginIp()));
+        renderJBoltApiRet(service.login(username, password, orgId, log.getLoginIp()));
     }
 
     /**

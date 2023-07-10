@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/uptimeTplM", viewPath = "/_view/admin/uptimetplm")
 @CheckPermission(PermissionKey.UPTIME_TPL)
-@UnCheckIfSystemAdmin
 public class UptimeTplMAdminController extends BaseAdminController {
 
 	@Inject
@@ -57,6 +56,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.UPTIMETPLM_ADD)
 	public void add() {
 		render("add.html");
 	}
@@ -73,7 +73,8 @@ public class UptimeTplMAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
+   @CheckPermission(PermissionKey.UPTIMETPLM_EDIT)
+   public void edit() {
 		UptimeTplM uptimeTplM=service.findById(getLong(0));
 		if(uptimeTplM == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
@@ -115,6 +116,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	*/
 	@Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.UPTIMETPLM_DELETE)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
@@ -123,6 +125,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	/**
 	 * 保存
 	 */
+	@CheckPermission(PermissionKey.UPTIMETPLM_SUBMIT)
 	public void submitAll()
 	{
 		renderJson(service.submitAll(getKv()));
@@ -131,6 +134,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	/**
 	 * 导出
 	 */
+	@CheckPermission(PermissionKey.UPTIMETPLM_EXPORT)
 	public void exportExcelAll() throws Exception {
 		Page<Record> recordPage = service.getAdminDatas(1, 100000, getKv());
 		List<Record> rows = recordPage.getList();
@@ -160,6 +164,7 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	 * 数据导入
 	 */
 	@SuppressWarnings("unchecked")
+	@CheckPermission(PermissionKey.UPTIMETPLM_IMPORT)
 	public void importExcelData() {
 		UploadFile uploadFile = getFile("file");
 		ValidationUtils.notNull(uploadFile, "上传文件不能为空");

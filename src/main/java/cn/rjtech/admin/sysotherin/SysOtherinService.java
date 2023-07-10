@@ -26,6 +26,7 @@ import cn.rjtech.model.momdata.SysOtherindetail;
 import cn.rjtech.model.momdata.VouchTypeDic;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -152,7 +153,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     public Ret delete(Long id) {
         tx(() -> {
             SysOtherin s = findFirst("select *  from T_Sys_OtherIn where AutoID in (" + id + ")");
-            if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
+            if ("1".equals(String.valueOf(s.getIAuditStatus())) || "2".equals(String.valueOf(s.getIAuditStatus()))) {
                 ValidationUtils.error( "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
@@ -172,7 +173,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         tx(() -> {
             List<SysOtherin> sysOtherins = find("select *  from T_Sys_OtherIn where AutoID in (" + ids + ")");
             for (SysOtherin s : sysOtherins) {
-                if (!"0".equals(String.valueOf(s.getIAuditStatus())) || !"3".equals(String.valueOf(s.getIAuditStatus()))) {
+                if ("1".equals(String.valueOf(s.getIAuditStatus())) || "2".equals(String.valueOf(s.getIAuditStatus()))) {
                     ValidationUtils.error( "编号：" + s.getBillNo() + "单据状态已改变，不可删除！");
                 }
                 if(!s.getIcreateby().equals(JBoltUserKit.getUser().getId())){
@@ -315,7 +316,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             User user = JBoltUserKit.getUser();
             Date now = new Date();
 
-            sysOtherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+            sysOtherin.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
             sysOtherin.setSourceBillDid(sysOtherindetail.getSourceBillDid());
             sysOtherin.setVenCode(sysOtherindetail.getVenCode());
             sysOtherin.setOrganizeCode(getOrgCode());
@@ -795,7 +796,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         SysOtherin byId = findById(formAutoId);
         //todo 删除u8的数据
         String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
-        return this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+        String s = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+        byId.setU8BillNo(null);
+        byId.update();
+        return s;
     }
 
     //批量审核通过后的业务逻辑
@@ -822,6 +826,8 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             //todo 删除u8的数据
             String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
             post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+            byId.setU8BillNo(null);
+            byId.update();
         }
         return post;
     }

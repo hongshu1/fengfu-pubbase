@@ -14,6 +14,7 @@ import cn.rjtech.model.momdata.PadLoginLog;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 用户API
@@ -35,15 +36,14 @@ public class UserApiService extends JBoltApiBaseService {
     public JBoltApiRet getUserPermissionList(String permissionKey, String pkey){
         return JBoltApiRet.API_SUCCESS_WITH_DATA(permissionService.getUserPermissionList(permissionKey, pkey));
     }
-
-//    public JBoltApiRet login(String username, String password, Long orgId,String mac,String ip) {
-    public JBoltApiRet login(String username, String password, Long orgId,String ip) {
+    public JBoltApiRet login(String username, String password, Long orgId, String ip) {
+//    public JBoltApiRet login(String username, String password, Long orgId, String mac, String ip) {
         Org org = orgService.findById(orgId);
         ValidationUtils.notNull(org, "组织不存在");
         ValidationUtils.isTrue(org.getEnable(), "该组织已被禁用");
 
-        //通过MAC地址获取平板信息
-//        Pad pad=padService.findFirst(Okv.by("cmac", mac));
+//        //通过MAC地址获取平板信息
+//        Record pad=padService.getPadByMac(mac);
 //        if (pad == null) {
 //            return JBoltApiRet.API_FAIL("该设备未在平板端设置找到登记记录");
 //        }
@@ -67,9 +67,10 @@ public class UserApiService extends JBoltApiBaseService {
         ValidationUtils.notEmpty(jwts, "生成jwt失败");
 
 //        PadLoginLog padLoginLog=new PadLoginLog();
+//        padLoginLog.setIOrgId(org.getId());
 //        padLoginLog.setCOrgCode(org.getOrgCode());
 //        padLoginLog.setCOrgName(org.getOrgName());
-//        padLoginLog.setIPadId(pad.getIAutoId());
+//        padLoginLog.setIPadId(pad.getLong("iautoid"));
 //        padLoginLog.setIUserId(user.getId());
 //        padLoginLog.setCIp(ip);
 //        padLoginLog.setICreateBy(user.getId());
