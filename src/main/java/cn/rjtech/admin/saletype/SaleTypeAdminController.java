@@ -97,6 +97,7 @@ public class SaleTypeAdminController extends BaseAdminController {
      */
     @CheckPermission(PermissionKey.SALETYPE_DELETE)
     public void deleteByIds() {
+        String s = get("ids");
         renderJson(service.deleteByBatchIds(get("ids")));
     }
 
