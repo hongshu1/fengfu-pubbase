@@ -17,5 +17,6 @@ public class ErrorMsg {
     public static final String DELETE_FAILED = "删除失败";
     public static final String ORG_ACCESS_DENIED = "缺少组织权限";
     public static final String ILLEGAL_ARGUMENT = "非法参数";
+    public static final String BUDGET_IMPORT_CDEPCODE_NOT_EQUIL = "导入excel中的部门与当前界面选中的部门不一致!";
 
 }
