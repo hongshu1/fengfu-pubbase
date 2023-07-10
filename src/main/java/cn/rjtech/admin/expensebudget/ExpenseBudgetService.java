@@ -281,7 +281,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 	    int budgetEndYear = rc.getInt("budgetEndYear");
 	    int budgetEndMonth = rc.getInt("budgetEndMonth");
 	    String cdepcode = rc.getStr("cdepcode");
-	    ValidationUtils.equals(cdepcodePara, cdepcode, "导入excel中的部门与当前界面选中的部门不一致!");
+	    ValidationUtils.equals(cdepcodePara, cdepcode, ErrorMsg.BUDGET_IMPORT_CDEPCODE_NOT_EQUIL);
 	    DataPermissionKit.validateAccess(cdepcode);
 	    Integer ibudgetType = rc.getInt("cbudgetType");
 	    Integer ibudgetyear = rc.getInt("ibudgetyear");
@@ -347,7 +347,9 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 	    String cdepname = "";
 	    try {
 	    	cdepname = cdepcodeCell.substring(cdepcodeCell.indexOf("：")+1);
-	    	cdepcode = departmentService.getCdepCodeByName(cdepname);
+	    	ValidationUtils.notBlank(cdepname, "预算部门为空,请检查导入模板!");
+	    	List<Department> list = departmentService.treeDatasForProposalSystem(Kv.by("isProposal", true).set("depName",cdepname));
+	    	cdepcode = list.get(0).getCDepCode();
 		} catch (Exception e) {
 			ValidationUtils.error( "预算部门获取失败,请检查导入模板!");
 		}
