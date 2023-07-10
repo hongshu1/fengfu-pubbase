@@ -2,7 +2,6 @@
 #define main()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
-    <div style="text-align: center; font-size: 24px; color: red">采购入库单</div>
     <div class="jbolt_page_content">
         <form onsubmit="return false;" id="PuinstoreForm_#(pageId)" action="#(action)" method="post">
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
@@ -18,7 +17,7 @@
             #end
             <input type="hidden" id="autoid" name="autoid" value="#(puinstore.autoid??)"/>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">入库单号：</label>
+                <label class="col-sm-1 col-form-label">入库单号：</label>
                 <div class="col-sm-2 col-form-label">
                     <div class="input-group-append">
                     <input id="billno" name="puinstore.billno" type="text" readonly autocomplete="off"
@@ -53,7 +52,7 @@
             </div>
 
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">订单号：</label>
+                <label class="col-sm-1 col-form-label">订单号：</label>
                 <div class="col-sm-2 col-form-label">
                     <div class="input-group-append">
                         <input required type="text" id="sourcebillno" name="puinstore.sourcebillno" class="form-control border-none"
@@ -85,7 +84,7 @@
             </div>
 
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">供货单位：</label>
+                <label class="col-sm-1 col-form-label">供货单位：</label>
                 <div class="col-sm-2 col-form-label">
                     <input id="cvenname" name="cvenname" type="text" readonly="readonly"
                            autocomplete="off" class="form-control" maxlength="40" value="#(puinstore.cdepname??)"/>
@@ -111,7 +110,7 @@
             </div>
 
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">备注：</label>
+                <label class="col-sm-1 col-form-label">备注：</label>
                 <div class="col-sm-2 col-form-label">
                     </textarea>
                     <textarea id="memo" name="puinstore.memo" class="form-control" placeholder="=请输入备注="
@@ -126,7 +125,7 @@
                 </div>
 			</div>
             <div class="form-group row">
-                <div class="col-11" style="margin-left: 180px;">
+                <div class="col-11">
                     <div class="jbolt_page_content">
                         <table id="Puinstoreform_TableId_#(pageId)"
                                data-jbolttable
@@ -173,7 +172,7 @@
             </div>
 
 			<div class="form-group row">
-				<label class="col-sm-2 col-form-label">制单人：</label>
+				<label class="col-sm-1 col-form-label">制单人：</label>
 				<div class="col-sm-2 col-form-label">
 					<input type="text" class="form-control border-none" readonly="readonly" placeholder=""
 						   value="#(puinstore.createperson??)"/>
