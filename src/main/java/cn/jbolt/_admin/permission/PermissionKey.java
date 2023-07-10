@@ -3397,4 +3397,40 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String INVENTORYQCFORM_SUBMIT = "inventoryqcform_submit";
+	/**
+	 * 新增
+	 */
+	public static final String CONTAINER_ADD = "container_add";
+	/**
+	 * 修改
+	 */
+	public static final String CONTAINER_EDIT = "container_edit";
+	/**
+	 * 删除
+	 */
+	public static final String CONTAINER_DELETE = "container_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CONTAINER_EXPORT = "container_export";
+	/**
+	 * 导入
+	 */
+	public static final String CONTAINER_IMPORT = "container_import";
+	/**
+	 * 打印
+	 */
+	public static final String CONTAINER_PRINT = "container_print";
+	/**
+	 * 保存
+	 */
+	public static final String CONTAINER_SUBMIT = "container_submit";
+	/**
+	 * 入库
+	 */
+	public static final String CONTAINER_RK = "container_rk";
+	/**
+	 * 出库
+	 */
+	public static final String CONTAINER_CK = "container_ck";
 }
