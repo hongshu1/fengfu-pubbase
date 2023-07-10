@@ -20,6 +20,7 @@ import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.AnnualorderdQty;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.github.javaparser.utils.Log;
@@ -171,6 +172,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
                 annualOrderM.setIOrgId(getOrgId());
                 annualOrderM.setCOrgCode(getOrgCode());
                 annualOrderM.setCOrgName(getOrgName());
+                annualOrderM.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
                 annualOrderM.setICreateBy(user.getId());
                 annualOrderM.setCCreateName(user.getName());
                 annualOrderM.setDCreateTime(now);

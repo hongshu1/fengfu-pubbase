@@ -10,6 +10,7 @@ import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.Customer;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
