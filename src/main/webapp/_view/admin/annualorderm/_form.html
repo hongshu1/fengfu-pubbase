@@ -103,7 +103,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(annualOrderM.iautoid?? && annualOrderM.iauditway == 2 && annualOrderM.iauditstatus > 0)
+#if(annualOrderM.iautoid?? && annualOrderM.iauditway == 2)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=annualOrderM.iAutoId, primaryKeyName="iAutoId", formSn="Co_AnnualOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.annualorderm.AnnualOrderMService", o=annualOrderM)
 #end
 

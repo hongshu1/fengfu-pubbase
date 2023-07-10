@@ -5,6 +5,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -374,6 +375,8 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			List<Integer> list = dateMap.get(dateKey);
 			record.set(SubcontractOrderM.SIZE, list.size()+1);
 			record.set(SubcontractOrderM.DATESTR, dateKey);
+			Record sumRecord = new Record();
+			String sumStr = "";
 			for (Integer date : list){
 				String dateStr = String.format("%02d", date).concat("日");
 				Record dateRecord = new Record();
@@ -383,15 +386,19 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 				dateRecord.set(SubcontractOrderM.DATESTR, dateKey.concat(dateStr));
 				dateRecord.set(SubcontractOrderM.INDEX, index);
 				dateHeadList.add(dateRecord);
+				sumStr+=dateKey.concat(dateStr).concat("+");
 				index+=1;
 			}
-			Record sum = new Record();
-			sum.set(SubcontractOrderM.FIELDNAME, "合计");
+			
+			sumRecord.set(SubcontractOrderM.FIELDNAME, "合计");
 			// 需要统计的月份
-			sum.set(SubcontractOrderM.DATESTR, dateKey);
-			sum.set(SubcontractOrderM.INDEX, index);
+			sumRecord.set(SubcontractOrderM.DATESTR, dateKey);
+			sumRecord.set(SubcontractOrderM.INDEX, index);
+			if (StrUtil.isNotBlank(sumStr)){
+				sumRecord.set(SubcontractOrderM.SUMSTR, sumStr.substring(0, sumStr.length()-1));
+			}
 			index+=1;
-			dateHeadList.add(sum);
+			dateHeadList.add(sumRecord);
 			dateMonthHeadList.add(record);
 		}
 		ValidationUtils.notEmpty(dateHeadList, "未获取到日期范围数据");
@@ -981,30 +988,21 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 
 			String isPresentStr = record.getStr(PurchaseOrderD.ISPRESENT);
 			Warehouse warehouse = warehouseMap.get(record.getLong(PurchaseOrderD.IVENDORADDRID));
-			if(warehouse==null){
-				type=3;
+			String wareHouseName = null;
+			if(ObjUtil.isNotNull(warehouse)){
+				wareHouseName = warehouse.getCWhName();
 			}
 			int isPresent = 0;
 			if (BoolCharEnum.YES.getText().equals(isPresentStr)){
 				isPresent = 1;
 			}
 			SubcontractOrderD subcontractOrderD = null;
-			Long ivendorAddrId=null;
 			switch (type){
 				case 1:
 					subcontractOrderD = subcontractOrderDService.create(purchaseOrderMId,
 							record.getLong(PurchaseOrderD.IVENDORADDRID),
 							record.getLong(PurchaseOrderD.IINVENTORYID),
-							warehouse.getCWhName(),
-							record.getStr(PurchaseOrderD.CMEMO),
-							record.getStr(PurchaseOrderD.IPKGQTY),
-							IsOkEnum.toEnum(isPresent).getText());
-					break;
-				case 3:
-					subcontractOrderD = subcontractOrderDService.create(purchaseOrderMId,
-							ivendorAddrId,
-							record.getLong(PurchaseOrderD.IINVENTORYID),
-							"",
+							wareHouseName,
 							record.getStr(PurchaseOrderD.CMEMO),
 							record.getStr(PurchaseOrderD.IPKGQTY),
 							IsOkEnum.toEnum(isPresent).getText());
@@ -1014,7 +1012,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 							purchaseOrderMId,
 							record.getLong(PurchaseOrderD.IVENDORADDRID),
 							record.getLong(PurchaseOrderD.IINVENTORYID),
-							warehouse.getCWhName(),
+							wareHouseName,
 							record.getStr(PurchaseOrderD.CMEMO),
 							record.getStr(PurchaseOrderD.IPKGQTY),
 							IsOkEnum.toEnum(isPresent).getText());
@@ -1030,7 +1028,7 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 			String[] columnNames = record.getColumnNames();
 			for (String columnName : columnNames){
 				if (columnName.contains("日")){
-					seq+=10;
+					seq+=1;
 					DateTime dateTime = DateUtil.parseDate(columnName);
 					String yearStr = DateUtil.format(dateTime, DatePattern.NORM_YEAR_PATTERN);
 					String monthStr = DateUtil.format(dateTime, "MM");
@@ -1062,9 +1060,6 @@ public class SubcontractOrderMService extends BaseService<SubcontractOrderM> {
 		if (CollUtil.isNotEmpty(subcontractOrderDList)){
 			switch (type){
 				case 1:
-					subcontractOrderDService.batchSave(subcontractOrderDList, 500);
-					break;
-				case 3:
 					subcontractOrderDService.batchSave(subcontractOrderDList, 500);
 					break;
 				default:

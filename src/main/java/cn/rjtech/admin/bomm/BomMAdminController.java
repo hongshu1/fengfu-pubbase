@@ -137,14 +137,15 @@ public class BomMAdminController extends BaseAdminController {
 	public void audit(@Para(value = "bomMasterId") Long bomMasterId, @Para(value = "status") Integer status) {
 		renderJson(service.audit(bomMasterId, status));
 	}
+	
 	@CheckPermission(PermissionKey.BOMMASTER_VERSION_DELETE)
-	public void del() {
-		renderJson(service.del(getLong(0)));
+	public void batchDel() {
+		renderJson(service.batchDel(get("ids")));
 	}
 
 	@CheckPermission(PermissionKey.BOMMASTER_BOMM_DEL)
 	public void delFile() {
-		renderJson(service.delFile(getLong(0)));
+		renderJson(service.delFile(get("ids")));
 	}
 	
 	// 拷贝
