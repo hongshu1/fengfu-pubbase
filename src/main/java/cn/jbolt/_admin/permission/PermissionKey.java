@@ -3557,4 +3557,24 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String UPTIMETPLM_SUBMIT = "uptimetplm_submit";
+	/**
+	 * 新增
+	 */
+	public static final String PRODPARAM_ADD = "prodparam_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODPARAM_EDIT = "prodparam_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODPARAM_DELETE = "prodparam_delete";
+	/**
+	 * 导出
+	 */
+	public static final String PRODPARAM_EXPORT = "prodparam_export";
+	/**
+	 * 导入
+	 */
+	public static final String PRODPARAM_IMPORT = "prodparam_import";
 }
