@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String AUTOID = "AutoID";
     /**采购PO  委外OM（采购类型）*/
@@ -47,9 +47,9 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
     public static final String DUPDATETIME = "dUpdateTime";
     /**仓库编码*/
     public static final String WHCODE = "WhCode";
-    /***/
+    /**仓库名称*/
     public static final String WHNAME = "WhName";
-    /**审批方式：1.  审批流 2.审核*/
+    /**审批方式：1.  审批 2.审批流*/
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
     public static final String DSUBMITTIME = "dSubmitTime";
@@ -63,12 +63,14 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
     public static final String U8BILLNO = "U8BillNo";
     /**业务类型*/
     public static final String IBUSTYPE = "iBusType";
-    /**创建人id*/
+    /**创建人ID*/
     public static final String ICREATEBY = "iCreateBy";
     /**更新人ID*/
     public static final String IUPDATEBY = "iUpdateBy";
     /**审核人ID*/
     public static final String IAUDITBY = "iAuditBy";
+    /**来源类型*/
+    public static final String SOURCETYPE = "SourceType";
 	/**
 	 * 主键ID
 	 */
@@ -375,19 +377,25 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
 		return getStr("WhCode");
 	}
 
+	/**
+	 * 仓库名称
+	 */
 	public M setWhName(java.lang.String WhName) {
 		set("WhName", WhName);
 		return (M)this;
 	}
 
-	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="WHNAME", required=false, maxLength=30, fixed=0, order=19)
+	/**
+	 * 仓库名称
+	 */
+	@JBoltField(name="whname" ,columnName="WhName",type="String", remark="仓库名称", required=false, maxLength=30, fixed=0, order=19)
 	@JSONField(name = "whname")
 	public java.lang.String getWhName() {
 		return getStr("WhName");
 	}
 
 	/**
-	 * 审批方式：1.  审批流 2.审核
+	 * 审批方式：1.  审批 2.审批流
 	 */
 	public M setIAuditWay(java.lang.Integer iAuditWay) {
 		set("iAuditWay", iAuditWay);
@@ -395,9 +403,9 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
 	}
 
 	/**
-	 * 审批方式：1.  审批流 2.审核
+	 * 审批方式：1.  审批 2.审批流
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1.  审批流 2.审核", required=false, maxLength=10, fixed=0, order=20)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1.  审批 2.审批流", required=false, maxLength=10, fixed=0, order=20)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -506,7 +514,7 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
 	}
 
 	/**
-	 * 创建人id
+	 * 创建人ID
 	 */
 	public M setICreateBy(java.lang.Long iCreateBy) {
 		set("iCreateBy", iCreateBy);
@@ -514,9 +522,9 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
 	}
 
 	/**
-	 * 创建人id
+	 * 创建人ID
 	 */
-	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人id", required=false, maxLength=19, fixed=0, order=27)
+	@JBoltField(name="icreateby" ,columnName="iCreateBy",type="Long", remark="创建人ID", required=false, maxLength=19, fixed=0, order=27)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getICreateBy() {
 		return getLong("iCreateBy");
@@ -554,6 +562,23 @@ public abstract class BaseSysPuinstore<M extends BaseSysPuinstore<M>> extends JB
 	@JSONField(name = "iauditby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIAuditBy() {
 		return getLong("iAuditBy");
+	}
+
+	/**
+	 * 来源类型
+	 */
+	public M setSourceType(java.lang.String SourceType) {
+		set("SourceType", SourceType);
+		return (M)this;
+	}
+
+	/**
+	 * 来源类型
+	 */
+	@JBoltField(name="sourcetype" ,columnName="SourceType",type="String", remark="来源类型", required=false, maxLength=60, fixed=0, order=30)
+	@JSONField(name = "sourcetype")
+	public java.lang.String getSourceType() {
+		return getStr("SourceType");
 	}
 
 }

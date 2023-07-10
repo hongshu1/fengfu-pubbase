@@ -20,6 +20,7 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -194,7 +195,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
     public Ret delete(Long id) {
         tx(() -> {
             SysProductin first = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + id + ")");
-            if (!"0".equals(String.valueOf(first.getIAuditStatus())) || !"3".equals(String.valueOf(first.getIAuditStatus()))) {
+            if ("1".equals(String.valueOf(first.getIAuditStatus())) || "2".equals(String.valueOf(first.getIAuditStatus()))) {
                 ValidationUtils.error( "编号：" + first.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!first.getIcreateby().equals(JBoltUserKit.getUser().getId())){
@@ -224,7 +225,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
             // 通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+                sysotherin.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
                 sysotherin.setIcreateby(user.getId());
                 sysotherin.setCcreatename(user.getName());
                 sysotherin.setDcreatetime(now);
