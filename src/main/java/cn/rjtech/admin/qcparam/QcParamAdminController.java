@@ -30,7 +30,6 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-17 15:15
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.QCPARAM)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/qcparam", viewPath = "/_view/admin/qcparam")
@@ -60,6 +59,7 @@ public class QcParamAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.QCPARAM_ADD)
     public void add() {
         render("add.html");
     }
@@ -67,6 +67,7 @@ public class QcParamAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.QCPARAM_ADD)
     public void save() {
         QcParam model = getModel(QcParam.class, "qcParam");
         renderJson(service.save(model));
@@ -75,6 +76,7 @@ public class QcParamAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.QCPARAM_EDIT)
     public void edit() {
         QcParam qcParam = service.findById(getLong(0));
         if (qcParam == null) {
@@ -88,6 +90,7 @@ public class QcParamAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.QCPARAM_EDIT)
     public void update() {
         renderJson(service.update(getModel(QcParam.class, "qcParam")));
     }
@@ -95,6 +98,7 @@ public class QcParamAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.QCPARAM_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -124,6 +128,7 @@ public class QcParamAdminController extends BaseAdminController {
     /*
      * 导出选中
      */
+    @CheckPermission(PermissionKey.QCPARAM_EXPORT)
     public void exportExcelByIds() {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -149,6 +154,7 @@ public class QcParamAdminController extends BaseAdminController {
     /*
      * 导出全部
      */
+    @CheckPermission(PermissionKey.QCPARAM_EXPORT)
     public void exportExcelAll() {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {
@@ -179,6 +185,7 @@ public class QcParamAdminController extends BaseAdminController {
         renderJson(service.importExcelData(file.getFile()));
     }
 
+    @CheckPermission(PermissionKey.QCPARAM_IMPORT)
     public void importExcelClass() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

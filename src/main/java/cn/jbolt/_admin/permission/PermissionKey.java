@@ -3341,4 +3341,24 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String QCITEM_IMPORT = "qcitem_import";
+	/**
+	 * 新增
+	 */
+	public static final String QCPARAM_ADD = "qcparam_add";
+	/**
+	 * 修改
+	 */
+	public static final String QCPARAM_EDIT = "qcparam_edit";
+	/**
+	 * 删除
+	 */
+	public static final String QCPARAM_DELETE = "qcparam_delete";
+	/**
+	 * 导出
+	 */
+	public static final String QCPARAM_EXPORT = "qcparam_export";
+	/**
+	 * 导入
+	 */
+	public static final String QCPARAM_IMPORT = "qcparam_import";
 }
