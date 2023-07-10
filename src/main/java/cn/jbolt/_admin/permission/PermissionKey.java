@@ -3513,4 +3513,24 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String VOUCHTYPEDIC_DELETE = "vouchtypedic_delete";
+	/**
+	 * 新增
+	 */
+	public static final String UPTIMEPARAM_ADD = "uptimeparam_add";
+	/**
+	 * 修改
+	 */
+	public static final String UPTIMEPARAM_EDIT = "uptimeparam_edit";
+	/**
+	 * 删除
+	 */
+	public static final String UPTIMEPARAM_DELETE = "uptimeparam_delete";
+	/**
+	 * 导出
+	 */
+	public static final String UPTIMEPARAM_EXPORT = "uptimeparam_export";
+	/**
+	 * 导入
+	 */
+	public static final String UPTIMEPARAM_IMPORT = "uptimeparam_import";
 }
