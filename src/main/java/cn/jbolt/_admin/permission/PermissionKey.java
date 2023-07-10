@@ -3054,10 +3054,6 @@ public class PermissionKey {
 	 */
 	public static final String INVENTORYCLASS_COPY = "inventoryclass_copy";
 	/**
-	 * 添加
-	 */
-	public static final String PERSON_SUBMIT = "person_submit";
-	/**
 	 * 批量审核通过
 	 */
 	public static final String ROUTING_BATCH_APPROVE = "routing_batch_approve";

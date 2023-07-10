@@ -3,7 +3,10 @@ package cn.rjtech.admin.person;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.common.config.JBoltUploadFolder;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -48,7 +51,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 数据源
      */
-    @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.paginateAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -113,7 +116,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 删除
      */
-    @CheckPermission(PermissionKey.PERSON_DELETE)
+    @UnCheck
     public void deleteByAjax() {
         renderJson(service.deleteByAjax());
     }
@@ -163,7 +166,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 表格提交
      */
-    @CheckPermission(PermissionKey.PERSON_SUBMIT)
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void submitTable() {
         renderJson(service.submitTable(getJBoltTable()));
     }
