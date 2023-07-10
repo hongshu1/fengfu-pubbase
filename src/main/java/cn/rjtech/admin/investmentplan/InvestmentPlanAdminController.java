@@ -189,7 +189,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
      */
 	@UnCheck
 	@CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
-    public void importTableInvestmentPlanTpl(@Para(value="iplanid") Long iplanid) throws Exception {
+    public void importTableInvestmentPlanTpl() throws Exception {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);
         if (notExcel(file)) {
@@ -197,7 +197,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
             return;
         }
         String filePath = getFile().getUploadPath() + FILE_PATH_MODIFIERS + getFile().getFileName();
-        renderJson(service.importTableInvestmentPlanTpl(filePath,iplanid));
+        renderJson(service.importTableInvestmentPlanTpl(filePath,getKv()));
     }
 	/**
      * 投资计划新增-表格提交

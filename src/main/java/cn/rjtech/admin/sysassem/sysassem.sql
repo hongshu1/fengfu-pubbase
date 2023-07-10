@@ -37,16 +37,16 @@ ORDER BY so.dupdatetime DESC
 #end
 
 #sql("dList")
-SELECT  t1.*, t2.*
-FROM T_Sys_AssemDetail t1
+SELECT t1.AutoID as autoiddetail, ba.Barcode,ba.Barcode as barbarcode, ba.AutoID as barautoid,ba.Qty,ba.InvCode,ba.InvCode AS cinvcode,t1.WhCode as WhCodeh,t1.PosCode as PosCodeh,t1.*, t2.*
+FROM	T_Sys_AssemBarcode ba
+	LEFT JOIN T_Sys_AssemDetail t1 ON t1.AutoID = ba.MasID
          LEFT JOIN (
 SELECT
 	a.WhCode,
 	wh.cWhName AS whname,
 	a.PosCode,
 	area.cAreaName AS posname,
-	a.Barcode ,
-	a.InvCode AS cinvcode,
+	a.Barcode as tionbarcode,
 	b.cInvCode1,
 	b.cInvName1,
 	uom.cUomName ,
@@ -63,12 +63,13 @@ FROM
 	LEFT JOIN Bd_InventoryChange change ON change.iBeforeInventoryId= b.iAutoId and change.IsDeleted=0
 	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
 
-         ) t2 on t1.Barcode = t2.Barcode
+         ) t2 on ba.Barcode = t2.tionbarcode
 
 where 1=1
 	#if(masid)
 		and t1.MasID = #para(masid)
 	#end
+
 #end
 
 
@@ -170,13 +171,16 @@ SELECT
 	a.PosCode,
 	area.cAreaName AS posname,
 	a.Barcode ,
-	a.InvCode AS cinvcode,
+	bd.InvCode AS cinvcode,
+	bd.InvCode,
 	b.cInvCode1,
 	b.cInvName1,
 	uom.cUomName ,
 	a.Qty,
 	change.iBeforeInventoryId,
-    change.iAfterInventoryId
+    change.iAfterInventoryId,
+    bd.SourceBillNo,
+    ua.VenCode
 FROM
 	T_Sys_StockBarcodePosition a
 	LEFT JOIN Bd_Warehouse wh ON a.WhCode = wh.cWhCode
@@ -187,9 +191,9 @@ FROM
 	LEFT JOIN Bd_Uom uom ON b.iInventoryUomId1 = uom.iAutoId
 	LEFT JOIN Bd_InventoryChange change ON change.iBeforeInventoryId= b.iAutoId
 	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
-	LEFT JOIN T_Sys_AssemDetail sse ON sse.Barcode = a.Barcode   and sse.isDeleted ='0'
-where a.State = '1'
-    AND sse.AutoID IS NULL
+	LEFT JOIN T_Sys_AssemBarcode sse ON sse.Barcode = a.Barcode   and sse.isDeleted ='0'
+	LEFT JOIN V_Sys_BarcodeDetail bd on bd.Barcode = a.Barcode
+where  sse.AutoID IS NULL
     and change.iAutoId is not null
   #if(keywords)
     and (b.cInvCode like concat('%', '#(keywords)', '%') or b.cInvName like concat('%', '#(keywords)', '%')
@@ -213,13 +217,16 @@ SELECT
 	a.PosCode,
 	area.cAreaName AS posname,
 	a.Barcode ,
-	a.InvCode AS cinvcode,
+	bd.InvCode AS cinvcode,
+	bd.InvCode,
 	b.cInvCode1,
 	b.cInvName1,
 	uom.cUomName ,
 	a.Qty,
 	change.iBeforeInventoryId,
-    change.iAfterInventoryId
+    change.iAfterInventoryId,
+    bd.SourceBillNo,
+    ua.VenCode
 FROM
 	T_Sys_StockBarcodePosition a
 	LEFT JOIN Bd_Warehouse wh ON a.WhCode = wh.cWhCode
@@ -230,9 +237,9 @@ FROM
 	LEFT JOIN Bd_Uom uom ON b.iInventoryUomId1 = uom.iAutoId
 	LEFT JOIN Bd_InventoryChange change ON change.iBeforeInventoryId= b.iAutoId
 	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
-	LEFT JOIN T_Sys_AssemDetail sse ON sse.Barcode = a.Barcode   and sse.isDeleted ='0'
-where a.State = '1'
-    AND sse.AutoID IS NULL
+	LEFT JOIN T_Sys_AssemBarcode sse ON sse.Barcode = a.Barcode   and sse.isDeleted ='0'
+	LEFT JOIN V_Sys_BarcodeDetail bd on bd.Barcode = a.Barcode
+where  sse.AutoID IS NULL
     and change.iAutoId is not null
     #if(barcode)
       and a.Barcode = #para(barcode)

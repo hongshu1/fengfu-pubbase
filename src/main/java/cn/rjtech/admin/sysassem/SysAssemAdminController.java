@@ -148,7 +148,6 @@ public class SysAssemAdminController extends BaseAdminController {
 	/**
 	 * 新增-可编辑表格-批量提交
 	 */
-	@Before(Tx.class)
 	public void submitAll() {
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}

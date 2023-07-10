@@ -1,0 +1,110 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey??)">
+<div class="jbolt_page_title">
+<div class="row">
+	<div class="col-sm-auto"><h1><i class="jbicon2 jbi-appstore"></i>形态转换单条码</h1></div>
+	<div class="col">
+	<form class="form-inline" id="SysAssembarcode_form_#(pageId)">
+		<input type="text" autocomplete="off"  class="form-control"  placeholder="输入关键字搜索" name="keywords" value="" />
+
+<select class="form-control" name="isDeleted"
+	data-autoload
+	data-url="admin/dictionary/options?key=options_enable"
+	data-select-type="select"
+	data-text="=是否删除：0. 否 1. 是="
+	data-value=""
+	data-value-attr="sn"
+	></select>
+		<div class="btn-group text-center mx-1">
+			<button type="submit" class="btn btn-outline-primary" ><i class="fa fa-search"></i> 查询</button>
+			<button type="button" onclick="form.reset();refreshJBoltTable(this);" class="btn btn-outline-secondary" ><i class="fa fa-reply-all"></i> 重置</button>
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-auto text-right">
+	
+	<button data-dialogbtn class="btn btn-outline-primary btn-sm" data-url="admin/sysAssembarcode/add" data-handler="jboltTablePageToFirst" data-area="800,600" tooltip data-title="新增形态转换单条码"><i class="fa fa-plus"></i></button>
+	<button class="btn btn-outline-info btn-sm" onclick="refreshJBoltTable(this)" tooltip data-title="刷新数据"><i class="fa fa-refresh"></i></button>
+	
+	
+	</div>
+</div>
+</div>
+<div class="jbolt_page_content">
+<!-- 定义JBoltTable使用的数据渲染模板 -->
+<textarea class="jb_tpl_box" id="SysAssembarcode_tpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.AutoID}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+<td>${data.AutoID}</td>
+<td>${data.MasID}</td>
+<td>${data.RowNo}</td>
+<td>${data.Qty}</td>
+<td>${data.Barcode}</td>
+<td>${data.InvCode}</td>
+<td><img data-switchbtn data-confirm="确定切换是否删除：0. 否 1. 是？" data-value="${data.isDeleted}"  data-handler="refreshJBoltTable"  data-url="admin/sysAssembarcode/toggleIsDeleted/${data.AutoID}"/></td>
+<td>${data.Icreateby}</td>
+<td>${data.Ccreatename}</td>
+<td>${data.Dcreatetime}</td>
+<td>${data.Iupdateby}</td>
+<td>${data.Cupdatename}</td>
+<td>${data.Dupdatetime}</td>
+<td>
+	<a class="jbolt_table_editbtn" href="admin/sysAssembarcode/edit/${data.AutoID}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑形态转换单条码"><i class="fa fa-edit"></i></a>
+	<a class="jbolt_table_delbtn" href="admin/sysAssembarcode/delete/${data.AutoID}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger"></i></a>
+</td>
+</tr>
+{@/each}
+</textarea>
+<div class="jbolt_table_toolbar" id="SysAssembarcode_toolbar_#(pageId)">
+<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增形态转换单条码" data-url="admin/sysAssembarcode/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<button data-dialogbtn data-area="800,600"  data-handler="refreshJBoltTable"  id="toolbar_editBtn_#(pageId)"  data-title="编辑形态转换单条码" data-check-handler="jboltTableGetCheckedId" data-url="admin/sysAssembarcode/edit/" class="btn btn-outline-primary"><i class="fa fa-edit"></i> 编辑</button>
+	<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/sysAssembarcode/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-danger" ><i class="fa fa-trash"></i> 删除</button>
+<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
+</div>
+
+</div>
+<table class="jbolt_table jbolt_main_table  table-center "
+	   data-jbolttable
+	   data-width="fill"
+	   data-height="fill"
+	   data-ajax="true"
+	   data-conditions-form="SysAssembarcode_form_#(pageId)"
+	   data-url="admin/sysAssembarcode/datas"
+	   data-rowtpl="SysAssembarcode_tpl_#(pageId)"
+	   data-copy-to-excel="false"
+	   data-page="SysAssembarcode_page"
+	   data-toolbar="SysAssembarcode_toolbar_#(pageId)"
+>
+<thead class="fw-normal" >
+<tr>
+<th data-width="60" data-column="index">序号</th>
+	<th  data-width="150" data-column="AutoID">AutoID</th>
+	<th  data-width="150" data-column="MasID">明细表id</th>
+	<th  data-width="100" data-column="RowNo">行号</th>
+	<th  data-width="100" data-column="Qty">数量</th>
+	<th  data-width="150" data-column="Barcode">条码</th>
+	<th  data-width="150" data-column="InvCode">存货编码</th>
+	<th  data-width="100" data-column="isDeleted">是否删除：0. 否 1. 是</th>
+	<th  data-width="100" data-column="Icreateby">创建人id</th>
+	<th  data-width="150" data-column="Ccreatename">创建人名称</th>
+	<th  data-min-width="160" data-column="Dcreatetime">创建时间</th>
+	<th  data-width="100" data-column="Iupdateby">修改人id</th>
+	<th  data-width="150" data-column="Cupdatename">修改人名称</th>
+	<th  data-min-width="160" data-column="Dupdatetime">修改时间</th>
+<th data-width="80">操作</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
