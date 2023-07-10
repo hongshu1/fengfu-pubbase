@@ -3465,4 +3465,16 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String RDSTYLE_SUBMIT = "rdstyle_submit";
+	/**
+	 * 新增
+	 */
+	public static final String VOUCHRDCONTRAPOSE_ADD = "vouchrdcontrapose_add";
+	/**
+	 * 修改
+	 */
+	public static final String VOUCHRDCONTRAPOSE_EDIT = "vouchrdcontrapose_edit";
+	/**
+	 * 删除
+	 */
+	public static final String VOUCHRDCONTRAPOSE_DELETE = "vouchrdcontrapose_delete";
 }
