@@ -222,7 +222,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
 
         for (WeekOrderM weekOrderM : list) {
             ValidationUtils.equals(weekOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != weekOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != weekOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != weekOrderM.getIOrderStatus()) {
                 notAuditList.add(weekOrderM);
             }
 

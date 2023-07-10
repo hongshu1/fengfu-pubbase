@@ -42,6 +42,13 @@
                   data-text-attr="careaname"
                   data-value=""
                   data-select="#(careacode??)"></select>
+          <br/>
+          <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                 class="form-control" placeholder="=开始日期=" name="starttime" data-tips="开始时间" maxlength="23"
+                 value="">
+          <span class="input-group-text">至</span>
+          <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                 class="form-control" placeholder="=结束日期=" name="endtime" data-tips="结束时间" maxlength="23" value="">
 
           <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
           <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -60,7 +67,6 @@
     <a tooltip title="条码明细" href="admin/warehousebeginofperiod/detail/${data.masid}" data-scroll="yes"
        data-handler="refreshJBoltTable" data-title="条码明细" data-area="95%,95%" class="jbolt_table_editbtn">条码明细</a>
   </td>
-<!--  <td title="${data.state}">${data.state}</td>-->
   <td title="${data.whcode}">${data.whcode}</td>
   <td title="${data.cwhname}">${data.cwhname}</td>
   <td title="${data.poscode}">${data.poscode}</td>
@@ -71,15 +77,15 @@
   <td title="${data.cinvname1}">${data.cinvname1}</td>
   <td title="${data.cinvstd}">${data.cinvstd}</td>
   <td title="${data.cuomname}">${data.cuomname}</td>
-<!--  <td title="${data.qty, 0|number_format}">${data.qty, 0|number_format}</td>-->
-<!--  <td title="${data.ungeneratedstockqty, 0|number_format}">${data.ungeneratedstockqty, 0|number_format}</td>-->
   <td title="${data.generatedstockqty, 0|number_format}">${data.generatedstockqty, 0|number_format}</td>
+  <td title="${data.stockqty, 0|number_format}">${data.stockqty, 0|number_format}</td>
   <td title="${data.availablestockqty, 0|number_format}">${data.availablestockqty, 0|number_format}</td>
+  <td title="${data.modifydate}">${data.modifydate}</td>
 </tr>
 {@/each}
 </textarea>
-
-    <div class="jbolt_table_toolbar" id="warehousebeginFormM_toolbar_#(pageId)">
+<!--,'yyyy-MM-dd'|date-->
+    <div class="jbolt_table_toolbar" id="warehousebeginFormM_toolbar_#(pageId))">
       <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         <button data-dialogbtn data-area="100%,100%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
                 data-title="新增期初库存" data-url="admin/warehousebeginofperiod/add" class="btn btn-outline-primary"><i
@@ -110,7 +116,6 @@
       <tr>
         <th data-width="60" data-column="index">序号</th>
         <th data-width="150">操作</th>
-<!--        <th data-width="120" data-column="state">状态</th>-->
         <th data-width="180" data-column="WhCode">仓库编码</th>
         <th data-width="180" data-column="cWhName">仓库名称</th>
         <th data-width="180" data-column="PosCode">库区编码</th>
@@ -121,10 +126,10 @@
         <th data-width="180" data-column="cInvName1">部品名称</th>
         <th data-width="200" data-column="cInvStd">规格</th>
         <th data-width="120" data-column="cUomName">主计量单位</th>
-<!--        <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>-->
-<!--        <th data-width="150" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>-->
         <th data-min-width="160" data-column="generatedstockqty" title="已生成条码库存数量">已生成条码库存数量</th>
+        <th data-min-width="160" data-column="stockqty" title="条码数">条码数</th>
         <th data-width="100" data-column="availablestockqty" title="可用条码数">可用条码数</th>
+        <th data-width="150" data-column="ModifyDate" title="最后更新时间">最后更新时间</th>
       </tr>
       </thead>
       <tbody></tbody>

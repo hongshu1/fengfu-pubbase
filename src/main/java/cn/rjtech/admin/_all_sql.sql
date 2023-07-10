@@ -767,3 +767,7 @@
 #namespace("inventorymfginfo")
 #include("inventorymfginfo/inventorymfginfo.sql")
 #end
+
+#namespace("codingrulem")
+#include("codingrulem/codingrulem.sql")
+#end

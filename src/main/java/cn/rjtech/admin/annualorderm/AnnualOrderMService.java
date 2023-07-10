@@ -455,7 +455,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
         List<AnnualOrderM> notAuditList = new ArrayList<>();
         for (AnnualOrderM annualOrderM : list) {
             ValidationUtils.equals(annualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != annualOrderM.getIOrderStatus()) {
                 notAuditList.add(annualOrderM);
             }
 

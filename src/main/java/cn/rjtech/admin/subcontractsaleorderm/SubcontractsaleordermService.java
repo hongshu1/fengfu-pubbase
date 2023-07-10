@@ -203,7 +203,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         List<Subcontractsaleorderm> notAuditList = new ArrayList<>();
         for (Subcontractsaleorderm subcontractsaleorderm : list) {
             ValidationUtils.equals(subcontractsaleorderm.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != subcontractsaleorderm.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != subcontractsaleorderm.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != subcontractsaleorderm.getIOrderStatus()) {
                 notAuditList.add(subcontractsaleorderm);
             }
 

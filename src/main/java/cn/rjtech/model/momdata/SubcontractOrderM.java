@@ -37,6 +37,8 @@ public class SubcontractOrderM extends BaseSubcontractOrderM<SubcontractOrderM> 
     public static final String DATESTR = "dateStr";
     // 记录每月加合计的总长
     public static final String SIZE = "size";
+    // 记录每个月的日期字段,用于前端动态合计
+    public static final String SUMSTR ="sumStr";
     
     private boolean isAdd;
     
