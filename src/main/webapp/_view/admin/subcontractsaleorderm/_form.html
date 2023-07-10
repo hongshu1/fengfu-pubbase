@@ -214,7 +214,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(subcontractsaleorderm.iautoid?? && subcontractsaleorderm.iauditway == 2 && subcontractsaleorderm.iauditstatus > 0)
+#if(subcontractsaleorderm.iautoid?? && subcontractsaleorderm.iauditway == 2)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=subcontractsaleorderm.iAutoId, primaryKeyName="iAutoId", formSn="Co_SubcontractSaleOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService", o=subcontractsaleorderm)
 #end
 
