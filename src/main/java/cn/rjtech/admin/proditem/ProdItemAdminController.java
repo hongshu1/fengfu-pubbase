@@ -58,6 +58,7 @@ public class ProdItemAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.PRODITEM_ADD)
 	public void add() {
 		render("add.html");
 	}
@@ -67,6 +68,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	*/
 	@Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.PRODITEM_ADD)
 	public void save(@Para("prodItem")ProdItem prodItem) {
 		renderJson(service.save(prodItem));
 	}
@@ -74,7 +76,8 @@ public class ProdItemAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit() {
+   @CheckPermission(PermissionKey.PRODITEM_EDIT)
+   public void edit() {
 		ProdItem prodItem=service.findById(getLong(0));
 		if(prodItem == null){
 			renderFail(JBoltMsg.DATA_NOT_EXIST);
@@ -93,6 +96,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	*/
 	@Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.PRODITEM_EDIT)
 	public void update(@Para("prodItem")ProdItem prodItem) {
 		renderJson(service.update(prodItem));
 	}
@@ -102,6 +106,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	*/
     @Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.PRODITEM_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -125,6 +130,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	}
 
 	@SuppressWarnings("unchecked")
+	@CheckPermission(PermissionKey.PRODITEM_EXPORT)
 	public void exportExcelByIds() throws Exception {
 		String ids = get("ids");
 		if (notOk(ids)) {
@@ -140,6 +146,7 @@ public class ProdItemAdminController extends BaseAdminController {
 	}
 
 	@SuppressWarnings("unchecked")
+	@CheckPermission(PermissionKey.PRODITEM_EXPORT)
 	public void exportExcelAll() throws Exception {
 		List<Record> rows = service.list(getKv());
 		if (notOk(rows)) {
@@ -149,6 +156,7 @@ public class ProdItemAdminController extends BaseAdminController {
 		renderJxls("proditem.xlsx", Kv.by("rows", rows), "生产项目" + DateUtil.today() + ".xlsx");
 	}
 
+	@CheckPermission(PermissionKey.PRODITEM_IMPORT)
 	public void importExcelClass() {
 		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
 		UploadFile file = getFile("file", uploadPath);

@@ -31,7 +31,6 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-22 14:48
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.CONTAINER)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/container", viewPath = "/_view/admin/container")
@@ -65,6 +64,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.CONTAINER_ADD)
     public void add() {
         render("add.html");
     }
@@ -72,6 +72,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.CONTAINER_ADD)
     public void save() {
         renderJson(service.save(getModel(Container.class, "container")));
     }
@@ -79,6 +80,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.CONTAINER_EDIT)
     public void edit() {
         Container container = service.findById(getLong(0));
         if (container == null) {
@@ -92,6 +94,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.CONTAINER_EDIT)
     public void update() {
         renderJson(service.update(getModel(Container.class, "container")));
     }
@@ -99,6 +102,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.CONTAINER_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -136,6 +140,7 @@ public class ContainerAdminController extends BaseAdminController {
      * 容器档案Excel导入数据库
      */
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.CONTAINER_IMPORT)
     public void importExcelData() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");
@@ -157,6 +162,7 @@ public class ContainerAdminController extends BaseAdminController {
      * 导出数据
      */
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.CONTAINER_EXPORT)
     public void dataExport() throws Exception {
         List<Record> rows = service.list(getKv());
         for (Record row : rows) {
@@ -168,6 +174,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 入库
      */
+    @CheckPermission(PermissionKey.CONTAINER_RK)
     public void rk() {
         //标识-入库
         set("mark", "1");
@@ -177,6 +184,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 出库
      */
+    @CheckPermission(PermissionKey.CONTAINER_CK)
     public void ck() {
         //标识-出库
         set("mark", "0");
@@ -211,6 +219,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 容器出入库处理
      */
+    @CheckPermission(PermissionKey.CONTAINER_SUBMIT)
     public void handleData(String mark) {
         renderJsonData(service.handleData(getJBoltTable(), mark));
     }
@@ -218,7 +227,7 @@ public class ContainerAdminController extends BaseAdminController {
     /**
      * 容器打印数据
      */
-    @UnCheck
+    @CheckPermission(PermissionKey.CONTAINER_PRINT)
     public void printData() {
         renderJsonData(service.getPrintDataCheck(getKv()));
     }

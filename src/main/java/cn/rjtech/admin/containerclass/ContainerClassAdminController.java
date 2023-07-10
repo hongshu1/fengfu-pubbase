@@ -28,7 +28,6 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-22 16:16
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.CONTAINERCLASS)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/containerclass", viewPath = "/_view/admin/containerclass")
@@ -67,6 +66,7 @@ public class ContainerClassAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.CONTAINERCLASS_ADD)
     public void add() {
         render("add.html");
     }
@@ -74,6 +74,7 @@ public class ContainerClassAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.CONTAINERCLASS_ADD)
     public void save() {
         renderJson(service.save(getModel(ContainerClass.class, "containerClass")));
     }
@@ -81,6 +82,7 @@ public class ContainerClassAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.CONTAINERCLASS_EDIT)
     public void edit() {
         ContainerClass containerClass = service.findById(getLong(0));
         if (containerClass == null) {
@@ -94,6 +96,7 @@ public class ContainerClassAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.CONTAINERCLASS_EDIT)
     public void update() {
         renderJson(service.update(getModel(ContainerClass.class, "containerClass")));
     }
@@ -101,6 +104,7 @@ public class ContainerClassAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.CONTAINERCLASS_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -130,6 +134,7 @@ public class ContainerClassAdminController extends BaseAdminController {
      * 导出数据
      */
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.CONTAINERCLASS_EXPORT)
     public void dataExport() throws Exception {
         List<Record> rows = service.list(getKv());
         for (Record row : rows) {
@@ -138,6 +143,7 @@ public class ContainerClassAdminController extends BaseAdminController {
         renderJxls("containerClass.xlsx", Kv.by("rows", rows), "容器分类_" + DateUtil.today() + ".xlsx");
     }
 
+    @CheckPermission(PermissionKey.CONTAINERCLASS_IMPORT)
     public void importExcelClass() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

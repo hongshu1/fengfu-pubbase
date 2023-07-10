@@ -93,7 +93,6 @@
      * */
     function getJboltId(){
         var id = "jbolt_table_pheDeliveryLines_#(pageId)";
-        console.log('jbolt==>',id);
         return id;
     }
 
@@ -109,7 +108,6 @@
      * */
     function tableDataSuccess_line() {
         let result = jboltTableGetAllDatas(getJboltId(), ["ipersonid"]);
-        console.log('result==>',result);
         let array = new Array();
         if (result != null) {
             for (let i = 0; i < result.length; i++) {
@@ -118,7 +116,6 @@
             let codes = array.join(',');
             $("#itemHidden").val(codes);
         }
-        console.log('ipersonid===',$("#itemHidden").val());
     }
 
 </script>
@@ -144,7 +141,7 @@
                     submitAttr: "iAutoId"
                 },
                 iseq:{
-                    submitAttr: "iSeq"
+                    submitAttr: "iseq"
                 },
                 username:{
                     type:"input",

@@ -795,7 +795,10 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         SysOtherin byId = findById(formAutoId);
         //todo 删除u8的数据
         String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
-        return this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+        String s = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+        byId.setU8BillNo(null);
+        byId.update();
+        return s;
     }
 
     //批量审核通过后的业务逻辑
@@ -822,6 +825,8 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             //todo 删除u8的数据
             String deleteDTO = this.getDeleteDTO(byId.getU8BillNo());
             post = this.deleteVouchProcessDynamicSubmitUrl(deleteDTO);
+            byId.setU8BillNo(null);
+            byId.update();
         }
         return post;
     }

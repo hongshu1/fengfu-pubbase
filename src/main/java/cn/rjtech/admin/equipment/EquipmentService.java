@@ -16,6 +16,7 @@ import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.Workregionm;
 import cn.rjtech.util.ValidationUtils;
+import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -25,10 +26,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 设备管理-设备档案
@@ -317,8 +315,39 @@ public class EquipmentService extends BaseService<Equipment> {
 	 * 从系统导入字段配置，获得导入的数据
 	 */
 	public Ret importExcelClass(File file) {
+		StringBuilder errorMsg = new StringBuilder();
 
-		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		JBoltExcel excel = JBoltExcel
+				// 从excel文件创建JBoltExcel实例
+				.from(file)
+				// 设置工作表信息
+				.setSheets(
+						JBoltExcelSheet.create("equipment")
+								// 设置列映射 顺序 标题名称
+								.setHeaders(2,
+										JBoltExcelHeader.create("cequipmentcode", "设备档案"),
+										JBoltExcelHeader.create("cequipmentname", "设备名称"),
+										JBoltExcelHeader.create("iworkregionmid", "产线名称"),
+										JBoltExcelHeader.create("isnozzleswitchenabled", "是否导电咀更换"),
+										JBoltExcelHeader.create("cmemo", "备注")
+								)
+								// 从第三行开始读取
+								.setDataStartRow(3)
+				);
+
+		// 从指定的sheet工作表里读取数据
+		List<Record> records = JBoltExcelUtil.readRecords(excel, 0, true, errorMsg);
+		if (notOk(records)) {
+			if (errorMsg.length() > 0) {
+				return fail(errorMsg.toString());
+			} else {
+				return fail("数据为空!");
+			}
+		}
+		// 工序新增的记录
+		List<String> errList = new ArrayList<>();
+
+		//List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
@@ -327,24 +356,30 @@ public class EquipmentService extends BaseService<Equipment> {
 		Map<String, Workregionm> workregionmMap = new HashMap<>();
 		for (Record record : records) {
 
-			if (StrUtil.isBlank(record.getStr("cEquipmentCode"))) {
+			if (StrUtil.isBlank(record.getStr("cequipmentcode"))) {
 				return fail("设备编码不能为空");
 			}
-			if (StrUtil.isBlank(record.getStr("cEquipmentName"))) {
+			if (StrUtil.isBlank(record.getStr("cequipmentname"))) {
 				return fail("设备名称不能为空");
 			}
-			if (StrUtil.isBlank(record.getStr("iWorkRegionmId"))) {
+			if (StrUtil.isBlank(record.getStr("iworkregionmid"))) {
 				return fail("产线名称不能为空");
 			}
-			if (StrUtil.isBlank(record.getStr("isNozzleSwitchEnabled"))) {
+			if (StrUtil.isBlank(record.getStr("isnozzleswitchenabled"))) {
 				return fail("是否导电咀更换不能为空");
 			}
+
+			String cmemo = record.getStr("cmemo");
+			if(StringUtils.isNotBlank(cmemo)){
+				record.set("cmemo", cmemo);
+			}
+
 
 			String iWorkRegionmId = record.getStr("iWorkRegionmId");
 			Workregionm workregionm = workregionmMap.get(iWorkRegionmId);
 			if (ObjUtil.isNull(workregionm)) {
 				workregionm = workregionmService.findFirstByWorkName(iWorkRegionmId);
-				ValidationUtils.notNull(workregionm, String.format("产线“%s”不存在", workregionmMap));
+				ValidationUtils.notNull(workregionm, String.format("产线“%s”不存在", iWorkRegionmId));
 				record.set("iWorkRegionmId",workregionm.getIAutoId());
 				workregionmMap.put(iWorkRegionmId, workregionm);
 			}

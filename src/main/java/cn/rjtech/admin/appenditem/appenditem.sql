@@ -17,6 +17,7 @@
 	#if(ibudgetyear)
 		and ibudgetyear = #para(ibudgetyear)
 	#end
+	#(getDataPermissionSql("", "cdepcode"))
 #end
 
 #sql("findForEditById")
