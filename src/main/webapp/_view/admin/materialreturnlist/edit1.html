@@ -3,7 +3,6 @@
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
     <div class="jbolt_page_content">
-
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
                 <div class="col-md-l pt-2" role="group" aria-label="btn-group">
                     #if(readonly != 'readonly')
@@ -19,6 +18,7 @@
             <input type="hidden" id="autoid" name="autoid" value="#(puinstore.autoid??)"/>
             <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
             <input type="hidden" id="barcodes" name="barcodes"/>
+            <input type="hidden" name="puinstore.sourcetype" value="0"/>
 
 
             <div class="form-group row">

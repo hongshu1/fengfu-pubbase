@@ -33,6 +33,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -284,7 +285,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             //通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+                sysotherin.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
                 sysotherin.setIcreateby(user.getId());
                 sysotherin.setCcreatename(user.getName());
                 sysotherin.setDcreatetime(now);

@@ -988,49 +988,38 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
             .collect(Collectors.toMap(Warehouse::getIAutoId, warehouse -> warehouse));
         int seq = 0;
         for (Record record : recordList) {
-
             String isPresentStr = record.getStr(PurchaseOrderD.ISPRESENT);
             Warehouse warehouse = warehouseMap.get(record.get(PurchaseOrderD.IVENDORADDRID));
-            if(warehouse==null){
-                type=3;
+            String wareHouseName = null;
+            if(ObjUtil.isNotNull(warehouse)){
+                wareHouseName = warehouse.getCWhName();
             }
             int isPresent = 0;
             if (BoolCharEnum.YES.getText().equals(isPresentStr)) {
                 isPresent = 1;
             }
             PurchaseOrderD purchaseOrderD = null;
-            Long ivendorAddrId=null;
             switch (type) {
                 case 1:
                     purchaseOrderD = purchaseOrderDService.create(purchaseOrderMId,
                         record.getLong(PurchaseOrderD.IVENDORADDRID),
                         record.getLong(PurchaseOrderD.IINVENTORYID),
-                        warehouse.getCWhName(),
+                        wareHouseName,
                         record.getStr(PurchaseOrderD.CMEMO),
                         record.getStr(PurchaseOrderD.IPKGQTY),
                         IsOkEnum.toEnum(isPresent).getText());
-                    break;
-                case 3:
-                    purchaseOrderD = purchaseOrderDService.create(purchaseOrderMId,
-                            ivendorAddrId,
-                            record.getLong(PurchaseOrderD.IINVENTORYID),
-                            "",
-                            record.getStr(PurchaseOrderD.CMEMO),
-                            record.getStr(PurchaseOrderD.IPKGQTY),
-                            IsOkEnum.toEnum(isPresent).getText());
                     break;
                 default:
                     purchaseOrderD = purchaseOrderDService.create(record.getLong(PurchaseOrderD.IAUTOID),
                         purchaseOrderMId,
                         record.getLong(PurchaseOrderD.IVENDORADDRID),
                         record.getLong(PurchaseOrderD.IINVENTORYID),
-                        warehouse.getCWhName(),
+                        wareHouseName,
                         record.getStr(PurchaseOrderD.CMEMO),
                         record.getStr(PurchaseOrderD.IPKGQTY),
                         IsOkEnum.toEnum(isPresent).getText());
             }
-
-
+            
             purchaseOrderDList.add(purchaseOrderD);
             // 删除qty里的数据重新添加
 			/*switch (type){
@@ -1043,7 +1032,7 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
             String[] columnNames = record.getColumnNames();
             for (String columnName : columnNames) {
                 if (columnName.contains("日")) {
-                    seq += 10;
+                    seq += 1;
                     DateTime dateTime = DateUtil.parseDate(columnName);
                     String yearStr = DateUtil.format(dateTime, DatePattern.NORM_YEAR_PATTERN);
                     String monthStr = DateUtil.format(dateTime, "MM");
@@ -1077,9 +1066,6 @@ public class PurchaseOrderMService extends BaseService<PurchaseOrderM> {
         if (CollUtil.isNotEmpty(purchaseOrderDList)) {
             switch (type) {
                 case 1:
-                    purchaseOrderDService.batchSave(purchaseOrderDList, 500);
-                    break;
-                case 3:
                     purchaseOrderDService.batchSave(purchaseOrderDList, 500);
                     break;
                 default:

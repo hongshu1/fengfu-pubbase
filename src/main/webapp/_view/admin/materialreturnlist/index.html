@@ -55,21 +55,22 @@
 	 {@/if}
 
 </td>
-  <td title="${data.auditstate}">${data.auditstate}</td>
-  <td title="${data.billno}">${data.billno}</td>
-  <td title="${data.billno}">${data.billno}</td>
-  <td title="${data.sourcebillno}">${data.sourcebillno}</td>
-  <td title="${data.dcreatetime}">${data.dCreateTime}</td>
-  <td title="${data.cwhname}">${data.cwhname}</td>
-  <td title="${data.cdepname}">${data.cdepname}</td>
-  <td title="${data.cptname}">${data.cptname}</td>
-  <td title="${data.crdname}">${data.crdname}</td>
-  <td title="${data.iBusType}">${data.iBusType}</td>
-  <td title="${data.vencode}">${data.vencode}</td>
-  <td title="${data.cvenname}">${data.cvenname}</td>
-  <td title="${data.memo}">${data.memo}</td>
-  <td title="${data.ccreatename}">${data.ccreatename}</td>
-  <td title="${data.dcreatetime}">${data.dcreatetime}</td>
+	  <td title="${data.auditstate}">${data.auditstate}</td>
+	  <td title="${data.sourcetype}">${data.sourcetype}</td>
+	  <td title="${data.billno}">${data.billno}</td>
+	  <td title="${data.sourcebillno}">${data.sourcebillno}</td>
+      <td title="${data.u8billno}">${data.u8billno}</td>
+	  <td title="${data.dcreatetime}">${data.dCreateTime}</td>
+	  <td title="${data.cwhname}">${data.cwhname}</td>
+	  <td title="${data.cdepname}">${data.cdepname}</td>
+	  <td title="${data.cptname}">${data.cptname}</td>
+	  <td title="${data.crdname}">${data.crdname}</td>
+	  <td title="${data.iBusType}">${data.iBusType}</td>
+	  <td title="${data.vencode}">${data.vencode}</td>
+	  <td title="${data.cvenname}">${data.cvenname}</td>
+	  <td title="${data.memo}">${data.memo}</td>
+	  <td title="${data.ccreatename}">${data.ccreatename}</td>
+	  <td title="${data.dcreatetime}">${data.dcreatetime}</td>
 </tr>
 {@/each}
 </textarea>
@@ -80,8 +81,6 @@
 		<div class="" role="group" aria-label="btn-group">
 			<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="采购订单物料退货"  data-url="admin/materialreturnlist/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i>物料退货</button>
 			<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="采购订单整单退货"  data-url="admin/materialreturnlist/add?edit=2" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i>整单退货</button>
-<!--			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolba_approve_#(pageId)" data-url="admin/materialreturnlist/approve?mark=2&&iAutoId=" data-confirm="确定审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量审核</button>-->
-<!--			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"  data-url="admin/materialreturnlist/NoApprove?ids=" data-confirm="确定反审核选中数据？"  class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 批量反审核</button>-->
 			#include("/_view/_common/_batch_approval_btns.html", formSn="T_Sys_PUInStore",uri="admin/materialreturnlist",primaryKeyName="AutoID")
 
 			<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
@@ -121,9 +120,10 @@ data-row-dblclick-active="true"
 	<th data-width="60" data-column="index">序号</th>
 	<th data-width="150" data-column="">操作</th>
 	<th data-width="150" data-column="iauditstatus">状态</th>
+	<th data-width="150" data-column="sourcetype">来源类型</th>
 	<th data-width="150" data-column="BillNo">入库单号</th>
-	<th data-width="150" data-column="SourceBillNo">订单号</th>
-	<th data-width="150" data-column="billno">U8单号</th>
+	<th data-width="150" data-column="SourceBillNo">订单编号</th>
+	<th data-width="150" data-column="U8BillNo">ERP单据号</th>
 	<th data-min-width="160" data-column="BillDate">入库日期</th>
 	<th data-width="150" data-column="cwhname">仓库名称</th>
 	<th data-width="150" data-column="cDepName">部门名称</th>

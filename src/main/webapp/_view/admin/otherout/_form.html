@@ -26,18 +26,6 @@
 	#end
 	<input type="hidden" name="otherOut.sourcebilltype" value="#(otherOut.sourcebilltype??)" />
 	<input type="hidden" name="otherOut.type" value="#(otherOut.type??)" />
-
-	### 新增之后，并且为审核流
-	#if(otherOut.autoid?? && otherOut.iauditway == 2 && otherOut.iauditstatus > 0)
-	### 参数列表
-	### formAutoId:                 单据ID
-	### formSn:                     表单名
-	### btnNeed:                    是否需要显示审批按钮
-	### pId:                        当前页面绑定的pageId
-	### primaryKeyName:             主键名
-	### className:                  实现审批业务的类名
-	#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=otherOut.autoid, primaryKeyName="AutoId", formSn="T_Sys_OtherOut", btnNeed=1, pId=pageId, primaryKeyName="AutoId", className="cn.rjtech.admin.otherout.OtherOutService")
-	#end
 	<div class="form-group row">
 		<label class="col-sm-2 col-form-label">领料单号：</label>
 		<div class="col-sm-2 col-form-label">
@@ -92,6 +80,17 @@
 				<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入要求原因分析=" type="text" maxlength="300" class="form-control border-none" name="otherOut.reason" placeholder="" value="#(otherOut.reason??)">#(otherOut.reason??)</textarea>
 			</div>
 	</div>
+	### 新增之后，并且为审核流
+	#if(otherOut.autoid?? && otherOut.iauditway == 2 && otherOut.iauditstatus > 0)
+	### 参数列表
+	### formAutoId:                 单据ID
+	### formSn:                     表单名
+	### btnNeed:                    是否需要显示审批按钮
+	### pId:                        当前页面绑定的pageId
+	### primaryKeyName:             主键名
+	### className:                  实现审批业务的类名
+	#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=otherOut.autoid, primaryKeyName="AutoId", formSn="T_Sys_OtherOut", btnNeed=1, pId=pageId, primaryKeyName="AutoId", className="cn.rjtech.admin.otherout.OtherOutService")
+	#end
 </form>
 	<div class="form-group row">
 		<div class="col-11" style="left: 17px;">
@@ -122,7 +121,6 @@
 	var submit = false;
 	function submitThisForm_#(pageId)(ele) {
 		submit = ele;
-		debugger;
 		submitAllTables_#(pageId)();
 	}
 

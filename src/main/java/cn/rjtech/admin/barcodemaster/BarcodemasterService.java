@@ -1,6 +1,7 @@
 package cn.rjtech.admin.barcodemaster;
 
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -162,9 +163,8 @@ public class BarcodemasterService extends BaseService<Barcodemaster> {
      * 传参
      * */
     public void saveBarcodemasterModel(Barcodemaster barcodemaster, Date now) {
-        //barcodemaster.setAutoid(JBoltSnowflakeKit.me.nextId());
+        barcodemaster.setAutoid(JBoltSnowflakeKit.me.nextId());
         barcodemaster.setOrganizecode(getOrgCode());
-        //barcodemaster.setVencode();
         barcodemaster.setCreateperson(JBoltUserKit.getUserName());
         barcodemaster.setCreatedate(now);
         barcodemaster.setModifyperson(JBoltUserKit.getUserName());
