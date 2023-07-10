@@ -122,6 +122,7 @@ public class FormApprovalAdminController extends BaseAdminController {
     /**
      * 选择审批流
      */
+    @CheckPermission(PermissionKey.FORM_APP_SUBMIT)
     public void chooseApproval(){
         render("dialog/select.html");
     }
@@ -130,6 +131,18 @@ public class FormApprovalAdminController extends BaseAdminController {
      * 发起人自选
      */
     public void optional(){
+        String formAutoId = get("formAutoId");
+        String formSn = get("formSn");
+        String primaryKeyName = get("primaryKeyName");
+        String permissionKey = get("permissionKey");
+        ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少单据的提审权限");
+        service.optional(formAutoId,formSn,primaryKeyName);
+
+        set("formAutoId", get("formAutoId"));
+        set("formSn", get("formSn"));
+        set("primaryKeyName", get("primaryKeyName"));
+        set("permissionKey", get("permissionKey"));
+        set("className", get("className"));
         render("dialog/add.html");
     }
 
@@ -139,8 +152,22 @@ public class FormApprovalAdminController extends BaseAdminController {
     public void addApprovalD(){
         String iseq = get("iseq");
         set("iseq", iseq);
-        set("tableId", get("tableId"));
         render("approvald/add.html");
+    }
+
+    /**
+     * 编辑审批节点
+     */
+    public void editApprovalD(){
+
+        render("approvald/add.html");
+    }
+
+    /**
+     * 自选人提交表单
+     */
+    public void submitFormByOptional(){
+        renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
 
     /**
@@ -529,5 +556,6 @@ public class FormApprovalAdminController extends BaseAdminController {
 
         renderJsonData(service.withdraw(formSn, primaryKeyName, formAutoId, className));
     }
+
 
 }
