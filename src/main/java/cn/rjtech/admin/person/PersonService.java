@@ -279,7 +279,7 @@ public class PersonService extends BaseService<Person> {
         Long userid = JBoltUserKit.getUserId();
         String username = JBoltUserKit.getUserName();
         Date now = new Date();
-
+        ValidationUtils.isTrue(!isExistsByPersonCode(person.getCpsnNum()), "人员已存在，请勿重复保存!");
         tx(() -> {
             if (person.getIAutoId() == null) {
                 person.setISource(SourceEnum.MES.getValue())
@@ -544,6 +544,11 @@ public class PersonService extends BaseService<Person> {
         return findFirst(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR).first());
     }
 
+    public boolean isExistsByPersonCode(String cpsnnum) {
+         List<Person> list = find(selectSql().eq(Person.CPSN_NUM, cpsnnum).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR));
+         return CollUtil.isNotEmpty(list);
+    }
+    
     public List<Person> findByCpersonName(String cpersonname) {
         return find(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR));
     }
