@@ -5,6 +5,10 @@ SELECT
              WHEN t11.iAuditStatus=1 THEN '待审核'
              WHEN t11.iAuditStatus=2 THEN '已审核'
              WHEN t11.iAuditStatus=3 THEN '审核不通过'END,
+        SourceType =
+        CASE WHEN t11.SourceType=0 THEN '物料退货'
+             WHEN t11.SourceType=1 THEN '整单退货'
+             END,
 
         t11.iAuditStatus,
         t2.cVenName,
@@ -13,6 +17,7 @@ SELECT
         t5.cRdName,
         t6.cWhName,
         t11.BillNo,
+        t11.U8BillNo,
         t11.BillDate,
         t11.SourceBillNo,
         t11.VenCode,
@@ -31,6 +36,7 @@ FROM
         LEFT JOIN Bd_Warehouse t6 ON t22.Whcode = t6.cWhCode
 WHERE 1 = 1
   AND t22.Qty < 0
+  AND t11.isDeleted = 0
     #if(deptcode)
   AND  t3.cDepName like '%#(deptcode)%'
     #end
@@ -58,12 +64,14 @@ WHERE 1 = 1
 GROUP BY
     t11.AutoID,
     t11.iAuditStatus,
+    t11.SourceType,
     t2.cVenName,
     t3.cDepName,
     t4.cPTName,
     t5.cRdName,
     t6.cWhName,
     t11.BillNo,
+    t11.U8BillNo,
     t11.BillDate,
     t11.SourceBillNo,
     t11.VenCode,
@@ -231,6 +239,7 @@ from T_Sys_PUInStore t1
 
 where 1 =1
     AND t2.Qty > 0
+    AND iAuditStatus = 2
     AND (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE BarCode = t2.BarCode) > 0
     #if(billno)
         AND t1.billno = #para(billno)
@@ -274,7 +283,7 @@ SELECT
     b.cInvStd AS cinvstd,
     m.cOrderNo AS SourceBillNo,
     m.iBusType AS SourceBillType,
-    m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+    m.cOrderNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
     m.iAutoId AS SourceBillID,
     d.iAutoId AS SourceBillDid,
     m.iVendorId,
@@ -283,6 +292,10 @@ SELECT
     t3.cInvCCode,
     t3.cInvCName,
     t4.cEquipmentModelName,
+    wh.cWhCode AS WhCode,
+    wh.cWhName AS whname,
+    area.cAreaCode AS poscode,
+    area.cAreaName AS posname,
     ( SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid ) AS InventorycUomName ,
     ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName ,
     ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
@@ -299,6 +312,10 @@ FROM
         LEFT JOIN Bd_EquipmentModel t4 ON b.iEquipmentModelId = t4.iautoid
         LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
         AND tc.iAutoId = a.iPurchaseOrderdQtyId
+
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
 WHERE
     1 = 1
   AND t1.AutoID = '#(autoid)'

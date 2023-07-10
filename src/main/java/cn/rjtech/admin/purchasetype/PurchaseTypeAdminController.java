@@ -19,7 +19,6 @@ import com.jfinal.core.Path;
  * @author: WYX
  * @date: 2023-04-03 10:52
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.PURCHASETYPE)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/purchasetype", viewPath = "/_view/admin/purchasetype")
@@ -55,6 +54,7 @@ public class PurchaseTypeAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.PURCHASETYPE_ADD)
     public void add() {
         render("add.html");
     }
@@ -62,6 +62,7 @@ public class PurchaseTypeAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.PURCHASETYPE_EDIT)
     public void edit() {
         PurchaseType purchaseType = service.findById(getLong(0));
         if (purchaseType == null) {
@@ -75,6 +76,7 @@ public class PurchaseTypeAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.PURCHASETYPE_ADD)
     public void save() {
         renderJson(service.save(getModel(PurchaseType.class, "purchaseType")));
     }
@@ -82,6 +84,7 @@ public class PurchaseTypeAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.PURCHASETYPE_EDIT)
     public void update() {
         renderJson(service.update(getModel(PurchaseType.class, "purchaseType")));
     }
@@ -89,6 +92,7 @@ public class PurchaseTypeAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.PURCHASETYPE_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }

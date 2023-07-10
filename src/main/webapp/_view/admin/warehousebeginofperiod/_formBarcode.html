@@ -1,36 +1,42 @@
 <div class="jbolt_page_title">
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="col">
-            <div class="btn-group dropdown">
-              <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
-                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
-              </button>
-              <div class="dropdown-menu" aria-labelledby="importMenuButton">
-                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadBarcodeTpl" class="btn dropdown-item"><i
-                    class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-                <div class="j_upload_file_box"
-                     data-name="file"
-                     data-btn-class="btn dropdown-item"
-                     data-placeholder="上传导入"
-                     data-confirm="确认导入数据？"
-                     data-accept="excel"
-                     data-maxsize="20480"
-                     data-handler="uploadFile"
-                     data-upload-success-handler="setTimeout(function(){parent.refreshPjaxContainer();parent.layer.closeAll();},1000)"
-                     data-url="/admin/warehousebeginofperiod/importBarcodeExcel">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        <div class="btn-group dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    id="importMenuButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="importMenuButton">
+                                <a data-downloadbtn href="/admin/warehousebeginofperiod/downloadBarcodeTpl"
+                                   class="btn dropdown-item"><i
+                                        class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+                                <div class="j_upload_file_box"
+                                     data-name="file"
+                                     data-btn-class="btn dropdown-item"
+                                     data-placeholder="上传导入"
+                                     data-confirm="确认导入数据？"
+                                     data-accept="excel"
+                                     data-maxsize="20480"
+                                     data-handler="uploadFile"
+                                     data-upload-success-handler="setTimeout(function(){parent.refreshPjaxContainer();parent.layer.closeAll();},1000)"
+                                     data-url="/admin/warehousebeginofperiod/importBarcodeExcel">
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="submitAllByStock()" class="btn btn-outline-secondary">
+                            保存
+                        </button>
+                        <button onclick="closeHandler()" class="btn btn-outline-secondary">
+                            关闭
+                        </button>
+                    </div>
                 </div>
-              </div>
             </div>
-            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-close"></i> 关闭
-            </button>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 <textarea class="jb_tpl_box" id="warehousebeginForm_tpl_#(pageId)">
   {@each datas as data,index}
@@ -180,7 +186,12 @@
       <td>
         <input id="createdate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
                autocomplete="off" class="form-control"
-               placeholder="=选择生产日期=" name="createdate" data-tips="" maxlength="23" value="">
+               placeholder="=选择批次日期=" name="createdate" data-tips="" maxlength="23" value="">
+      </td>
+      <td>
+        <input id="barcodedate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
+               autocomplete="off" class="form-control"
+               placeholder="=选择生产日期=" name="barcodedate" data-tips="" maxlength="23" value="">
       </td>
       <td>
         <select class="form-control" data-url="admin/dictionary/options?key=beginningofperiod" name="reportfilename" data-autoload
@@ -191,403 +202,482 @@
   {@/each}
 </textarea>
 <div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-body">
-        <div class="jbolt_table_toolbar" id="warehousebeginform_toolbar_#(pageId)" style="display: flex">
-          <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-            <!--insertEmptyRow(this)、jboltTableAppendEmptyRow(this)-->
-            <button onclick="insertEmptyRow(this)" class="btn btn-primary btn-sm">新增行</button>
-            <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i
-                class="fa fa-trash"></i>批量删除
-            </button>
-          </div>
-        </div>
-        <table class="jbolt_table jbolt_main_table table-center thead_font_normal"
-               id="warehousebeginform_TableId_#(pageId)"
-               data-jbolttable
-               data-ajax="true"
-               data-url="admin/warehousebeginofperiod/findDetails"
-               data-height="300"
-               data-column-resize="true"
-               data-conditions-form="warehousebeginformtable_form_#(pageId)"
-               data-page="warehousebeginform_page_#(pageId)"
-               data-column-prepend="1:checkbox:true"
-               data-rowtpl="warehousebeginForm_tpl_#(pageId)"
-               data-toolbar="warehousebeginform_toolbar_#(pageId)"
-               data-editable="true"
-               data-tfoot-fixed="true"
-               data-editable-option="getEditableTableOptions_#(pageId)">
-          <thead>
-          <tr>
-            <th data-width="30px">序号</th>
-            <th data-width="180" data-column="cwhcode">仓库编码</th>
-            <th data-width="200" data-column="cwhname">仓库名称</th>
-            <th data-width="180" data-column="careacode">库区编码</th>
-            <th data-width="200" data-column="careaname">库区名称</th>
-            <th data-width="180" data-column="cinvcode">存货编码</th>
-            <th data-width="180" data-column="cinvcode1">客户部番</th>
-            <th data-width="200" data-column="cinvname1">部品名称</th>
-            <th data-width="150" data-column="cinvstd">规格</th>
-            <th data-width="150" data-column="cuomname">主计量单位</th>
-            <th data-width="180" data-column="cvencode">供应商编码</th>
-            <th data-width="200" data-column="cvenname">供应商名称</th>
-            <th data-width="180" data-column="generatedStockQty" title="生成条码库存数量">生成条码库存数量</th>
-            <th data-width="180" data-column="barcode">条码号</th>
-            <th data-width="180" data-column="batch">批次号</th>
-            <th data-width="180" data-column="createdate">生产日期</th>
-            <th data-width="200" data-column="reportfilename" title="标签打印模板">标签打印模板</th>
-          </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">打印数量:</label>
-            <div class="col-3" style="right: 20px;">
-              <input type="number" id="printnum" name="printnum" data-with-clearbtn="true" autocomplete="off" required="true"
-                     class="form-control" placeholder="=默认为1张=" maxlength="40" value="#(printnum??)" data-rule="int"/>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="jbolt_table_toolbar" id="warehousebeginform_toolbar_#(pageId)" style="display: flex">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                        <!--insertEmptyRow(this)、jboltTableAppendEmptyRow(this)-->
+                        <button onclick="insertEmptyRow(this)" class="btn btn-primary btn-sm">新增行</button>
+                        <button onclick="jboltTableRemoveCheckedRow(this,true,false)" class="btn btn-danger btn-sm"><i
+                                class="fa fa-trash"></i>批量删除
+                        </button>
+                    </div>
+                </div>
+                <table class="jbolt_table jbolt_main_table table-center thead_font_normal"
+                       id="warehousebeginform_TableId_#(pageId)"
+                       data-jbolttable
+                       data-ajax="true"
+                       data-url="admin/warehousebeginofperiod/findDetails"
+                       data-height="300"
+                       data-column-resize="true"
+                       data-conditions-form="warehousebeginformtable_form_#(pageId)"
+                       data-page="warehousebeginform_page_#(pageId)"
+                       data-column-prepend="1:checkbox:true"
+                       data-rowtpl="warehousebeginForm_tpl_#(pageId)"
+                       data-toolbar="warehousebeginform_toolbar_#(pageId)"
+                       data-editable="true"
+                       data-tfoot-fixed="true"
+                       data-editable-option="getEditableTableOptions_#(pageId)">
+                    <thead>
+                    <tr>
+                        <th data-width="30px">序号</th>
+                        <th data-width="180" data-column="cwhcode">仓库编码*</th>
+                        <th data-width="200" data-column="cwhname">仓库名称</th>
+                        <th data-width="180" data-column="careacode">库区编码</th>
+                        <th data-width="200" data-column="careaname">库区名称</th>
+                        <th data-width="180" data-column="cinvcode">存货编码*</th>
+                        <th data-width="180" data-column="cinvcode1">客户部番</th>
+                        <th data-width="200" data-column="cinvname1">部品名称</th>
+                        <th data-width="150" data-column="cinvstd">规格</th>
+                        <th data-width="150" data-column="cuomname">主计量单位</th>
+                        <th data-width="180" data-column="cvencode">供应商编码</th>
+                        <th data-width="200" data-column="cvenname">供应商名称</th>
+                        <th data-width="180" data-column="generatedStockQty" title="生成条码库存数量">
+                            生成条码库存数量*
+                        </th>
+                        <th data-width="180" data-column="barcode">条码号*</th>
+                        <th data-width="180" data-column="batch">批次号*</th>
+                        <th data-width="150" data-column="createdate">批次日期*</th>
+                        <th data-width="180" data-column="barcodedate">生产日期*</th>
+                        <th data-width="200" data-column="reportfilename" title="标签打印模板">标签打印模板*</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
-            <div class="col-2" style="right: 35px;">
-              <button type="button" class="btn btn-outline-secondary" id="createButton" name="createButton"
-                      onclick="submitThisForm()">生成
-              </button>
-            </div>
-            <div class="col-2" style="margin-top: 8px;right: 75px;" data-require-plugin="hiprint"
-                 aria-labelledby="exportMenuButton">
-              <input id="autoprint" type="checkbox" name="autoprint" value="#(autoprint??)"/><span>自动打印</span>
-            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">打印数量:</label>
+                        <div class="col-3" style="right: 20px;">
+                            <input type="number" id="printnum" name="printnum" data-with-clearbtn="true"
+                                   autocomplete="off" required="true"
+                                   class="form-control" placeholder="=默认为1张=" maxlength="40" value="#(printnum??)"
+                                   data-rule="int"/>
+                        </div>
+                        <div class="col-2" style="right: 35px;">
+                            <button type="button" class="btn btn-outline-secondary" id="createButton"
+                                    name="createButton"
+                                    onclick="submitThisForm()">生成
+                            </button>
+                        </div>
+                        <div class="col-2" style="margin-top: 8px;right: 75px;" data-require-plugin="hiprint"
+                             aria-labelledby="exportMenuButton">
+                            <input id="autoprint" type="checkbox" name="autoprint"
+                                   value="#(autoprint??)"/><span>自动打印</span>
+                        </div>
 
-            <div class="col-3" style="right: 95px;" data-require-plugin="hiprint">
-              <button type="button" class="btn btn-outline-secondary" id="printButton" name="printButton"
-                      onclick="printButton()">打印
-              </button>
-              <button type="reset" onclick="resetButton()" class="btn btn-outline-secondary">重置</button>
+                        <div class="col-3" style="right: 95px;" data-require-plugin="hiprint">
+                            <button type="button" class="btn btn-outline-secondary" id="printButton" name="printButton"
+                                    onclick="printButton()">打印
+                            </button>
+                            <button type="reset" onclick="resetButton()" class="btn btn-outline-secondary">重置</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 
 #define js()
 <script>
-  hideParentLayerDialogBtn(0);
-  hideParentLayerDialogBtn(1);
+    hideParentLayerDialogBtn(0);
+    hideParentLayerDialogBtn(1);
 
-  function checkisNull(ele) {
-    if (ele == null || ele == undefined || ele == '') {
-      return true;
-    }
-  }
-
-  var submitState = false;
-  var autoidList = null;
-  var tableData = null;
-  var mark = 'page'
-
-  /*
-  * 生成
-  * */
-  function submitThisForm() {
-    var printnum = $('#printnum').val();
-    if (printnum == null || printnum == undefined || printnum == '') {
-      printnum = 1;
-    }
-    var autoprint = $('input[name="autoprint"]').is(':checked');
-    //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
-    var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
-    if (!allDatas || allDatas.length == 0) {
-      LayerMsgBox.alert("表格数据不能为空", 2);
-      return;
-    }
-    var flag;
-    tableData = getTableData();
-    for (let i = 0; i < tableData.length; i++) {
-      let element = tableData[i];
-      if (checkisNull(element.cwhcode)) {
-        LayerMsgBox.alert("仓库编码不能为空", 2);
-        return;
-      }
-      if (checkisNull(element.cinvcode)) {
-        LayerMsgBox.alert("存货编码不能为空", 2);
-        return;
-      }
-      if (checkisNull(element.generatedstockqty)) {
-        LayerMsgBox.alert("生成条码库存数量不能为0", 2);
-        return;
-      }
-      if (checkisNull(element.barcode)) {
-        LayerMsgBox.alert("条码号不能为空", 2);
-        return;
-      }
-      if (checkisNull(element.reportfilename)) {
-        LayerMsgBox.alert("标签打印模板不能为空", 2);
-        return;
-      }
+    function checkisNull(ele) {
+        if (ele == null || ele == undefined || ele == '') {
+            return true;
+        }
     }
 
-    let names = tableData.map(item => item["barcode"]);
-    let nameSet = new Set(names);
+    var submitState = false;
+    var autoidList = null;
+    var tableData = null;
+    var mark = 'page'
+    var ids = null;
 
-    if (nameSet.size == names.length) {
-      console.log("无重复");
-    } else {
-      LayerMsgBox.alert("条码号不能重复", 2);
-      return;
+    /*
+    * 生成
+    * */
+    function submitThisForm() {
+        var printnum = $('#printnum').val();
+        if (printnum == null || printnum == undefined || printnum == '') {
+            printnum = 1;
+        }
+        var autoprint = $('input[name="autoprint"]').is(':checked');
+        //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
+        var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
+        if (!allDatas || allDatas.length == 0) {
+            LayerMsgBox.alert("表格数据不能为空", 2);
+            return;
+        }
+        var flag;
+        tableData = getTableData();
+        for (let i = 0; i < tableData.length; i++) {
+            let element = tableData[i];
+            if (checkisNull(element.cwhcode)) {
+                LayerMsgBox.alert("仓库编码不能为空", 2);
+                return;
+            }
+            if (checkisNull(element.cinvcode)) {
+                LayerMsgBox.alert("存货编码不能为空", 2);
+                return;
+            }
+            if (checkisNull(element.generatedstockqty)) {
+                LayerMsgBox.alert("生成条码库存数量不能为0", 2);
+                return;
+            }
+            if (checkisNull(element.barcode)) {
+                LayerMsgBox.alert("条码号不能为空", 2);
+                return;
+            }
+            if (checkisNull(element.reportfilename)) {
+                LayerMsgBox.alert("标签打印模板不能为空", 2);
+                return;
+            }
+        }
+
+        let names = tableData.map(item => item["barcode"]);
+        let nameSet = new Set(names);
+
+        if (nameSet.size == names.length) {
+            console.log("无重复");
+        } else {
+            LayerMsgBox.alert("条码号不能重复", 2);
+            return;
+        }
+
+        var para = {
+            datas: JSON.stringify(tableData),
+            printnum: printnum,
+            autoprint: autoprint
+        };
+        Ajax.post('admin/warehousebeginofperiod/submitAddBarcode', para, function (ret) {
+            let retdata = ret.data;
+            if (retdata.state === 'ok') {
+                submitState = true;
+                //如果勾选了自动打印，在生成成功后要自动打印
+                let retdata = ret.data;
+                var split = retdata.ids.split(',');
+                autoidList = split;
+                if (autoprint) {
+                    for (let lit = 0; lit < split.length; lit++) {
+                        let code = [];
+                        let autoid = split[lit];
+                        code.push(autoid);
+                        for (let j = 0; j < tableData.length; j++) {//每行的打印模板
+                            var data = tableData[j];
+                            var reportfilename = data.reportfilename;
+                            for (let printTimes = 0; printTimes < printnum; printTimes++) {//打印次数
+                                //社内现品票：029587，采购现品票：109607
+                                // jboltHiprintWebPrint(reportfilename, 'url',
+                                //     'admin/warehousebeginofperiod/addPrintData?ids=' + code.join(",") + "&&mark=" + mark);
+                                jboltHiprintWebPrint(reportfilename, 'url', 'admin/warehousebeginofperiod/addPrintData?ids=' + code.join(",") + "&&mark=" + mark);
+                            }
+                        }
+                    }
+                }
+                LayerMsgBox.success("生成成功", 1000, function () {
+                    parent.refreshPjaxContainer();
+                    // parent.layer.closeAll();
+                });
+            } else {
+                LayerMsgBox.alert(retdata.msg, 2);
+            }
+        });
     }
 
-    var para = {
-      datas: JSON.stringify(tableData),
-      printnum: printnum,
-      autoprint: autoprint
+    function getTableData() {
+        var alldatas = $("#warehousebeginform_TableId_#(pageId)");
+        var rows = [];
+        alldatas.children("tbody").children("tr").each(function () {
+            var row = {};
+            // 获取input标签 class属性还有form-control
+            $(this).find('td').each(function () {
+                var inputs = $(this).find("input[class*='form-control']");
+                getField(row, inputs);
+                var selects = $(this).find("select[class='form-control']");
+                getField(row, selects);
+
+            });
+            rows.push(row);
+        });
+        return rows;
     };
-    Ajax.post('admin/warehousebeginofperiod/submitAddBarcode', para, function (ret) {
-      let retdata = ret.data;
-      if (retdata.state === 'ok') {
-        submitState = true;
-        //如果勾选了自动打印，在生成成功后要自动打印
-        let retdata = ret.data;
-        var split = retdata.ids.split(',');
-        autoidList = split;
-        if (autoprint) {
-          for (let lit = 0; lit < split.length; lit++) {
+
+    function getField(row, labels) {
+        if (labels && labels.length > 0) {
+            $.each(labels, function (idx, v) {
+                if (v.name && v.name !== '' && v.value) {
+                    row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
+                }
+            });
+        }
+    }
+
+    function getEditableTableOptions_#(pageId)(){
+        var editableTableOptions = {
+            trigger: "click",
+            //初始行数
+            initRowCount: 0,
+            //插入数据时默认属性值
+            //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
+            cols: {
+                id: {
+                    submitAttr: "iautoid",
+                },
+                index: {
+                    submitAttr: "index"
+                }
+            }
+        };
+        return editableTableOptions;
+    }
+
+    /**
+     * 删除选中的行
+     * @param ele
+     * @param confirm
+     * @param callback
+     * @returns
+     */
+    function jboltTableRemoveCheckedRow(ele, confirm, callback) {
+        var action = getRealJqueryObject(ele);
+        if (isOk(action)) {
+            var success = checkMasterTableId(action);
+            if (!success) {
+                return false;
+            }
+        }
+        var isCheckedNone = jboltTableIsCheckedNone(ele);
+        if (isCheckedNone) {
+            LayerMsgBox.alert("请至少选择一行数据", 2);
+        } else {
+            var ids = jboltTableGetCheckedIds(ele, true);
+            if (ids) {
+                LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？", function () {
+                    removeJBoltTableCheckedTr(ele, false, callback);
+                });
+            } else {
+                removeJBoltTableCheckedTr(ele, confirm, callback);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    * 打印按钮
+    * */
+    function printButton() {
+        if (submitState != true) {
+            LayerMsgBox.alert("请先点击生成按钮，生成期初库存，再打印模板标签", 2);
+            return;
+        }
+        let ids = autoidList;
+        var nums = $('#printnum').val();
+        if (nums == null || nums == undefined || nums == '') {
+            nums = 1;
+        }
+        for (let i = 0; i < ids.length; i++) {
             let code = [];
-            let autoid = split[lit];
+            let autoid = ids[i];
             code.push(autoid);
             for (let j = 0; j < tableData.length; j++) {//每行的打印模板
-              var data = tableData[j];
-              var reportfilename = data.reportfilename;
-              for (let printTimes = 0; printTimes < printnum; printTimes++) {//打印次数
-                //社内现品票：029587，采购现品票：109607
-                // jboltHiprintWebPrint(reportfilename, 'url',
-                //     'admin/warehousebeginofperiod/addPrintData?ids=' + code.join(",") + "&&mark=" + mark);
-                jboltHiprintWebPrint(reportfilename, 'url', 'admin/warehousebeginofperiod/addPrintData?ids=' + code.join(",") + "&&mark=" + mark);
-              }
+                var buttonData = tableData[j];
+                var reportfilename = buttonData.reportfilename;
+
+                for (let printTimes = 0; printTimes < nums; printTimes++) {//打印次数
+                    //社内现品票：029587，采购现品票：109607
+                    jboltHiprintWebPrint(reportfilename, 'url',
+                        'admin/warehousebeginofperiod/addPrintData?ids=' + code.join(",") + "&&mark=" + mark);
+                }
             }
-          }
         }
-        LayerMsgBox.success("生成成功", 1000, function () {
-          parent.refreshPjaxContainer();
-          // parent.layer.closeAll();
-        });
-      } else {
-        LayerMsgBox.alert(retdata.msg, 2);
-      }
-    });
-  }
-
-  function getTableData() {
-    var alldatas = $("#warehousebeginform_TableId_#(pageId)");
-    var rows = [];
-    alldatas.children("tbody").children("tr").each(function () {
-      var row = {};
-      // 获取input标签 class属性还有form-control
-      $(this).find('td').each(function () {
-        var inputs = $(this).find("input[class*='form-control']");
-        getField(row, inputs);
-        var selects = $(this).find("select[class='form-control']");
-        getField(row, selects);
-
-      });
-      rows.push(row);
-    });
-    return rows;
-  };
-
-  function getField(row, labels) {
-    if (labels && labels.length > 0) {
-      $.each(labels, function (idx, v) {
-        if (v.name && v.name !== '' && v.value) {
-          row[v.name] = row[v.name] ? (row[v.name] + ',' + v.value) : v.value;
-        }
-      });
     }
-  }
 
-  function getEditableTableOptions_#(pageId)(){
-    var editableTableOptions = {
-      trigger: "click",
-      //初始行数
-      initRowCount: 0,
-      //插入数据时默认属性值
-      //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
-      cols: {
-        id: {
-          submitAttr: "iautoid",
-        },
-        index: {
-          submitAttr: "index"
+    /*
+    * 重置
+    * */
+    function resetButton() {
+        $("#printnum").val("");
+        let autoprint = $("#autoprint").val("");
+        console.log(autoprint)
+    }
+
+    var index =#(index ?? 0);
+
+    function setChooseDialogSelectResult(data, index, type) {
+        $("#iBeforeInventoryId" + index).val(data.itemid);
+        $("#cinvcode" + index).val(data.cinvcode);
+        $("#icinvcode" + index).val(data.cinvcode);
+        $("#cInvName" + index).val(data.cinvname);//存货名称
+        $("#cinvcode1" + index).val(data.cinvcode1);//存货编码
+        $("#cuomname" + index).val(data.cuomname);//单位
+        $("#cInvAddName" + index).val(data.cinvname1);
+        $("#cInvAddCode" + index).val(data.cinvaddcode1);
+        $("#InvName" + index).val(data.cinvname2);
+        $("#iWeight" + index).val(data.iweight);
+        $("#iVendorId" + index).val(data.venid);
+        $("#cinvstd" + index).val(data.cinvstd);//规格
+        $("#iVendorName" + index).val(data.cvenname);
+    }
+
+    function setWhcodeChooseDialogSelectResult(data, index, type) {
+        $("#cwhcode" + index).val(data.cwhcode);//仓库编码
+        $("#icwhcode" + index).val(data.cwhcode);//仓库编码
+        $("#cwhname" + index).val(data.cwhname);//仓库名称
+    }
+
+    function setCareacodeChooseDialogSelectResult(data, index, type) {
+        $("#careacode" + index).val(data.careacode);//库区编码
+        $("#icareacode" + index).val(data.careacode);//库区编码
+        $("#careaname" + index).val(data.careaname);//库区编码
+    }
+
+    function setCvencodeChooseDialogSelectResult(data, index, type) {
+        $("#cvencode" + index).val(data.cvencode);//供应商编码
+        $("#icvencode" + index).val(data.cvencode);//供应商编码
+        $("#cvenname" + index).val(data.cvenname);//供应商名称
+    }
+
+    function insertEmptyRow(ele, forceTrChange) {
+        var table = getJBoltTable(ele);
+        if (isOk(table)) {
+            index += 1;
+            var jboltTable = table.jboltTable("inst");
+            if (jboltTable) {
+                var action = getRealJqueryObject(ele), tr;
+                if (isOk(action)) {
+                    var success = checkMasterTableId(action);
+                    if (!success) {
+                        return false;
+                    }
+                    //如果是在表格里触发的
+                    if (isOk(action.closest("table[data-jbolttable]"))) {
+                        tr = action.closest("tr");
+                    } else if (isOk(action.closest(".jbolt_table_fixed"))) {
+                        var fixtr = action.closest("tr");
+                        var fixTrIndex = fixtr.index();
+                        tr = jboltTable.tbody.find("tr:nth-child(" + (fixTrIndex + 1) + ")");
+                    }
+                }
+                return insertRows(jboltTable, tr, {index: index}, true, forceTrChange);
+            }
         }
-      }
-    };
-    return editableTableOptions;
-  }
+    }
 
-  /**
-   * 删除选中的行
-   * @param ele
-   * @param confirm
-   * @param callback
-   * @returns
-   */
-  function jboltTableRemoveCheckedRow(ele, confirm, callback) {
-    var action = getRealJqueryObject(ele);
-    if (isOk(action)) {
-      var success = checkMasterTableId(action);
-      if (!success) {
+    function insertRows(table, tr, insertEmptyData, insertToBefore, forceTrChange) {
+        var canInsertTr = table.me.checkCanInsertNewTr(table, 1);
+        if (canInsertTr) {
+            //处理thead里的checkbox uncheck
+            table.me.processUnCheckTheadCheckbox(table);
+
+            var insertDefaultValues = table.editableOptions.insertDefaultValues;
+            if (insertDefaultValues) {
+                insertEmptyData = table.me.deepClone(insertDefaultValues);
+            }
+            var tempTr = table.me.insertRowData(table, tr, insertEmptyData, false, insertToBefore);
+            if (isOk(tempTr)) {
+                table.me.processTableIndexColumn(table);
+                table.me.processInsertRowTableListData(table, tempTr, insertEmptyData, insertToBefore);
+                table.me.initEditableHSummarys(table, tempTr);
+                table.me.processTfootSummarys(table);
+                //处理change状态
+                table.me.processNewInsertTrEditableTdsChanged(table, tempTr, insertEmptyData, forceTrChange);
+                //处理新插入的行重新设置宽度
+                table.me.resizeTrByOldWidth(table, tempTr);
+                //处理动态插入数据后的handler
+                table.me.processEditableTableAfterInsertRowHandler(table, tempTr);
+            }
+            return tempTr;
+        }
         return false;
-      }
     }
-    var isCheckedNone = jboltTableIsCheckedNone(ele);
-    if (isCheckedNone) {
-      LayerMsgBox.alert("请至少选择一行数据", 2);
-    } else {
-      var ids = jboltTableGetCheckedIds(ele, true);
-      if (ids) {
-        LayerMsgBox.confirm("所选数据中包含数据库已存数据，确定删除吗？", function () {
-          removeJBoltTableCheckedTr(ele, false, callback);
+
+    function submitAllBybarcode() {
+        var printnum = $('#printnum').val();
+        if (printnum == null || printnum == undefined || printnum == '') {
+            printnum = 1;
+        }
+        var autoprint = $('input[name="autoprint"]').is(':checked');
+        //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
+        var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
+        if (!allDatas || allDatas.length == 0) {
+            LayerMsgBox.alert("表格数据不能为空", 2);
+            return;
+        }
+        var flag;
+        tableData = getTableData();
+        for (let i = 0; i < tableData.length; i++) {
+            let element = tableData[i];
+            if (checkisNull(element.cwhcode)) {
+                LayerMsgBox.alert("仓库编码不能为空", 2);
+                return;
+            }
+            if (checkisNull(element.cinvcode)) {
+                LayerMsgBox.alert("存货编码不能为空", 2);
+                return;
+            }
+            if (checkisNull(element.generatedstockqty)) {
+                LayerMsgBox.alert("生成条码库存数量不能为0", 2);
+                return;
+            }
+            if (checkisNull(element.barcode)) {
+                LayerMsgBox.alert("条码号不能为空", 2);
+                return;
+            }
+            if (checkisNull(element.reportfilename)) {
+                LayerMsgBox.alert("标签打印模板不能为空", 2);
+                return;
+            }
+        }
+
+        let names = tableData.map(item => item["barcode"]);
+        let nameSet = new Set(names);
+
+        if (nameSet.size == names.length) {
+            console.log("无重复");
+        } else {
+            LayerMsgBox.alert("条码号不能重复", 2);
+            return;
+        }
+
+        var para = {
+            datas: JSON.stringify(tableData),
+            printnum: printnum,
+            autoprint: autoprint
+        };
+        Ajax.post('admin/warehousebeginofperiod/submitAddBarcode', para, function (ret) {
+            let retdata = ret.data;
+            if (retdata.state === 'ok') {
+                submitState = true;
+                //如果勾选了自动打印，在生成成功后要自动打印
+                var split = retdata.ids.split(',');
+                ids = split;
+                autoidList = split;
+                LayerMsgBox.success("保存成功", 1000, function () {
+                    parent.refreshPjaxContainer();
+                    // parent.layer.closeAll();
+                });
+            } else {
+                LayerMsgBox.alert(retdata.msg, 2);
+            }
         });
-      } else {
-        removeJBoltTableCheckedTr(ele, confirm, callback);
-      }
-      return true;
     }
-    return false;
-  }
-
-  /*
-  * 打印按钮
-  * */
-  function printButton() {
-    if (submitState != true) {
-      LayerMsgBox.alert("请先点击生成按钮，生成期初库存，再打印模板标签", 2);
-      return;
-    }
-    let ids = autoidList;
-    var nums = $('#printnum').val();
-    if (nums == null || nums == undefined || nums == '') {
-      nums = 1;
-    }
-    for (let i = 0; i < ids.length; i++) {
-      let code = [];
-      let autoid = ids[i];
-      code.push(autoid);
-      for (let j = 0; j < tableData.length; j++) {//每行的打印模板
-        var buttonData = tableData[j];
-        var reportfilename = buttonData.reportfilename;
-
-        for (let printTimes = 0; printTimes < nums; printTimes++) {//打印次数
-          //社内现品票：029587，采购现品票：109607
-          jboltHiprintWebPrint(reportfilename, 'url',
-              'admin/warehousebeginofperiod/addPrintData?ids=' + code.join(",") + "&&mark=" + mark);
-        }
-      }
-    }
-  }
-
-  /*
-  * 重置
-  * */
-  function resetButton() {
-    $("#printnum").val("");
-    let autoprint = $("#autoprint").val("");
-    console.log(autoprint)
-  }
-
-  var index = #(index ?? 0);
-
-  function setChooseDialogSelectResult(data, index, type) {
-    $("#iBeforeInventoryId" + index).val(data.itemid);
-    $("#cinvcode" + index).val(data.cinvcode);
-    $("#icinvcode" + index).val(data.cinvcode);
-    $("#cInvName" + index).val(data.cinvname);//存货名称
-    $("#cinvcode1" + index).val(data.cinvcode1);//存货编码
-    $("#cuomname" + index).val(data.cuomname);//单位
-    $("#cInvAddName" + index).val(data.cinvname1);
-    $("#cInvAddCode" + index).val(data.cinvaddcode1);
-    $("#InvName" + index).val(data.cinvname2);
-    $("#iWeight" + index).val(data.iweight);
-    $("#iVendorId" + index).val(data.venid);
-    $("#cinvstd" + index).val(data.cinvstd);//规格
-    $("#iVendorName" + index).val(data.cvenname);
-  }
-
-  function setWhcodeChooseDialogSelectResult(data, index, type) {
-    $("#cwhcode" + index).val(data.cwhcode);//仓库编码
-    $("#icwhcode" + index).val(data.cwhcode);//仓库编码
-    $("#cwhname" + index).val(data.cwhname);//仓库名称
-  }
-
-  function setCareacodeChooseDialogSelectResult(data, index, type) {
-    $("#careacode" + index).val(data.careacode);//库区编码
-    $("#icareacode" + index).val(data.careacode);//库区编码
-    $("#careaname" + index).val(data.careaname);//库区编码
-  }
-
-  function setCvencodeChooseDialogSelectResult(data, index, type) {
-    $("#cvencode" + index).val(data.cvencode);//供应商编码
-    $("#icvencode" + index).val(data.cvencode);//供应商编码
-    $("#cvenname" + index).val(data.cvenname);//供应商名称
-  }
-
-  function insertEmptyRow(ele, forceTrChange) {
-    var table = getJBoltTable(ele);
-    if (isOk(table)) {
-      index += 1;
-      var jboltTable = table.jboltTable("inst");
-      if (jboltTable) {
-        var action = getRealJqueryObject(ele), tr;
-        if (isOk(action)) {
-          var success = checkMasterTableId(action);
-          if (!success) {
-            return false;
-          }
-          //如果是在表格里触发的
-          if (isOk(action.closest("table[data-jbolttable]"))) {
-            tr = action.closest("tr");
-          } else if (isOk(action.closest(".jbolt_table_fixed"))) {
-            var fixtr = action.closest("tr");
-            var fixTrIndex = fixtr.index();
-            tr = jboltTable.tbody.find("tr:nth-child(" + (fixTrIndex + 1) + ")");
-          }
-        }
-        return insertRows(jboltTable, tr, {index: index}, true, forceTrChange);
-      }
-    }
-  }
-
-  function insertRows(table, tr, insertEmptyData, insertToBefore, forceTrChange) {
-    var canInsertTr = table.me.checkCanInsertNewTr(table, 1);
-    if (canInsertTr) {
-      //处理thead里的checkbox uncheck
-      table.me.processUnCheckTheadCheckbox(table);
-
-      var insertDefaultValues = table.editableOptions.insertDefaultValues;
-      if (insertDefaultValues) {
-        insertEmptyData = table.me.deepClone(insertDefaultValues);
-      }
-      var tempTr = table.me.insertRowData(table, tr, insertEmptyData, false, insertToBefore);
-      if (isOk(tempTr)) {
-        table.me.processTableIndexColumn(table);
-        table.me.processInsertRowTableListData(table, tempTr, insertEmptyData, insertToBefore);
-        table.me.initEditableHSummarys(table, tempTr);
-        table.me.processTfootSummarys(table);
-        //处理change状态
-        table.me.processNewInsertTrEditableTdsChanged(table, tempTr, insertEmptyData, forceTrChange);
-        //处理新插入的行重新设置宽度
-        table.me.resizeTrByOldWidth(table, tempTr);
-        //处理动态插入数据后的handler
-        table.me.processEditableTableAfterInsertRowHandler(table, tempTr);
-      }
-      return tempTr;
-    }
-    return false;
-  }
 
 </script>
 <!--#include("/_view/_admin/common/_formjs.html",formId="beginOfPeriod_forBarcode")-->

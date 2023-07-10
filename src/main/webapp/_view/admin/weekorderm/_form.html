@@ -35,7 +35,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">订单号</label>
                                     <div class="col-8">
-                                        <input type="text" data-rule="required" data-tips="请输入订单号"
+                                        <input type="text" #if(weekOrderM.iAutoId??) #(readonly) data-rule="required" #else disabled #end data-tips="请输入订单号"
                                                data-with-clearbtn="true" autocomplete="off" class="form-control"
                                                maxlength="40" name="weekOrderM.cOrderNo"
                                                value="#(weekOrderM.corderno??)"/>
@@ -605,11 +605,15 @@
 
         $.each(data, function (idx, row) {
             $.each(row, function (k, v) {
+                console.log(k);
+                console.log(v);
+                console.log("下一个");
                 if (reg.test(k)) {
                     delete row[k];
                 } else {
                     if (k === 'dplanaogdate') {
                         if (row.dplanaogdate) {
+                            console.log(row.dplanaogdate);
                             row.dplanaogdate = row.dplanaogdate.split(' ')[0];
                         }
                     } else {

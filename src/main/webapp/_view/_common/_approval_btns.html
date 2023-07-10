@@ -5,14 +5,15 @@
     #switch(AuditFormConfigCache.ME.getAuditWay(formSn)??)
         ### 审批
         #case(1)
-            <button onclick="submitThisForm_#(pageId)(true)" class="btn btn-outline-secondary btn-xs">提交审批</button>
+            <button onclick="submitThisForm_#(pageId)(true)" class="btn btn-outline-secondary btn-xs" hidden>(旧)---提交审批
+            </button>
 
         <button id="button_#(pageId)" style="display: none"></button>
 
 <button data-url="/admin/formapproval/chooseApproval"
         data-dialogbtn
         data-link-para-ele=""
-        data-area="350,300" data-title="审批流选择" class="btn btn-outline-secondary btn-xs">TEST测试使用</button>
+        data-area="350,300" data-title="审批流选择" class="btn btn-outline-secondary btn-xs">提交审批</button>
 
         ### 审核
         #case(2)
@@ -26,14 +27,15 @@
          */
         function submitConfirm(ele) {
             if (ele==='2'){
-                var temp = $("#button_#(pageId)").data('url', '/admin/formapproval/optional')
-                    .data('area', '80%,80%')
+                var temp = $("#button_#(pageId)").data('url',
+                    '/admin/formapproval/optional?formAutoId=#(o.get(primaryKeyName??)??)&formSn=#(formSn??)&primaryKeyName=#(primaryKeyName??)&permissionKey=#(permissionKeyPrefix??)_submit&className=#(className??)')
+                    .data('area', '100%,100%')
                     .data('title', '发起人自选')
                     .data('btn', '提交,取消');
 
                 DialogUtil.openBy(temp);
             } else {
-                // submitThisForm_#(pageId)(true);
+                submitThisForm_#(pageId)(true);
             }
         }
 

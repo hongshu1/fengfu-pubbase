@@ -1,6 +1,7 @@
 package cn.rjtech.admin.sysassem;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -26,11 +27,13 @@ import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
 import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
 import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
+import cn.rjtech.admin.sysassembarcode.SysAssembarcodeService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -99,6 +102,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     @Inject
     private DepartmentService departmentservice;
+
+    @Inject
+    private SysAssembarcodeService sysassembarcodeservice;
 
     /**
      * 后台管理数据查询
@@ -229,6 +235,12 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             deleteByIds(ids);
             String[] split = ids.split(",");
             for (String s : split) {
+                List<SysAssemdetail> sysAssemdetails = sysassemdetailservice.find("select * from T_Sys_AssemDetail where MasID = ? ", s);
+                if(CollectionUtil.isNotEmpty(sysAssemdetails)) {
+                    for (SysAssemdetail d : sysAssemdetails) {
+                        delete("DELETE T_Sys_AssemBarcode   where  MasID = ?", d.getAutoID());
+                    }
+                }
                 delete("DELETE T_Sys_AssemDetail   where  MasID = ?", s);
             }
             return true;
@@ -249,6 +261,12 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 ValidationUtils.error( "当前登录人:"+JBoltUserKit.getUser().getName()+",单据创建人为:" + byId.getCcreatename() + " 不可删除!!!");
             }
             deleteById(id);
+            List<SysAssemdetail> sysAssemdetails = sysassemdetailservice.find("select * from T_Sys_AssemDetail where MasID = ? ", id);
+            if(CollectionUtil.isNotEmpty(sysAssemdetails)) {
+                for (SysAssemdetail d : sysAssemdetails) {
+                    delete("DELETE T_Sys_AssemBarcode   where  MasID = ?", d.getAutoID());
+                }
+            }
             delete("DELETE T_Sys_AssemDetail   where  MasID = ?", id);
             return true;
         });
@@ -267,7 +285,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             //通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+                sysotherin.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
                 sysotherin.setIcreateby(user.getId());
                 sysotherin.setCcreatename(user.getName());
                 sysotherin.setDcreatetime(now);
@@ -284,39 +302,39 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
                 ValidationUtils.isTrue(sysotherin.update(), ErrorMsg.UPDATE_FAILED);
             }
             //从表的操作
-            if (jBoltTable.saveIsNotBlank()) {
-                List<SysAssemdetail> saveModelList = jBoltTable.getSaveModelList(SysAssemdetail.class);
-                saveModelList.forEach(sysAssemdetail->{
-                    sysAssemdetail.setMasID(sysotherin.getAutoID());
-                    sysAssemdetail.setIcreateby(user.getId());
-                    sysAssemdetail.setDcreatetime(now);
-                    sysAssemdetail.setIupdateby(user.getId());
-                    sysAssemdetail.setDupdatetime(now);
-                    sysAssemdetail.setCcreatename(user.getName());
-                    sysAssemdetail.setCupdatename(user.getName());
-                    sysAssemdetail.setIsDeleted(false);
-                });
-                sysassemdetailservice.batchSave(saveModelList);
-            }
-            if (jBoltTable.updateIsNotBlank()) {
-                List<SysAssemdetail> updateModelList = jBoltTable.getUpdateModelList(SysAssemdetail.class);
-                updateModelList.forEach(sysAssemdetail->{
-                    sysAssemdetail.setIupdateby(user.getId());
-                    sysAssemdetail.setDupdatetime(now);
-                    sysAssemdetail.setCupdatename(user.getName());
-                });
-                sysassemdetailservice.batchUpdate(updateModelList, updateModelList.size());
-            }
-            if (jBoltTable.deleteIsNotBlank()) {
-                sysassemdetailservice.deleteByIds(jBoltTable.getDelete());
-            }
+//            if (jBoltTable.saveIsNotBlank()) {
+//                List<SysAssemdetail> saveModelList = jBoltTable.getSaveModelList(SysAssemdetail.class);
+//                saveModelList.forEach(sysAssemdetail->{
+//                    sysAssemdetail.setMasID(sysotherin.getAutoID());
+//                    sysAssemdetail.setIcreateby(user.getId());
+//                    sysAssemdetail.setDcreatetime(now);
+//                    sysAssemdetail.setIupdateby(user.getId());
+//                    sysAssemdetail.setDupdatetime(now);
+//                    sysAssemdetail.setCcreatename(user.getName());
+//                    sysAssemdetail.setCupdatename(user.getName());
+//                    sysAssemdetail.setIsDeleted(false);
+//                });
+//                sysassemdetailservice.batchSave(saveModelList);
+//            }
+//            if (jBoltTable.updateIsNotBlank()) {
+//                List<SysAssemdetail> updateModelList = jBoltTable.getUpdateModelList(SysAssemdetail.class);
+//                updateModelList.forEach(sysAssemdetail->{
+//                    sysAssemdetail.setIupdateby(user.getId());
+//                    sysAssemdetail.setDupdatetime(now);
+//                    sysAssemdetail.setCupdatename(user.getName());
+//                });
+//                sysassemdetailservice.batchUpdate(updateModelList, updateModelList.size());
+//            }
+//            if (jBoltTable.deleteIsNotBlank()) {
+//                sysassemdetailservice.deleteByIds(jBoltTable.getDelete());
+//            }
 
-//            // 获取保存数据（执行保存，通过 getSaveRecordList）
-//            saveTableSubmitDatas(jBoltTable, sysotherin);
-//            //获取修改数据（执行修改，通过 getUpdateRecordList）
-//            updateTableSubmitDatas(jBoltTable, sysotherin);
-//            //获取删除数据（执行删除，通过 getDelete）
-//            deleteTableSubmitDatas(jBoltTable);
+            // 获取保存数据（执行保存，通过 getSaveRecordList）
+            saveTableSubmitDatas(jBoltTable, sysotherin);
+            //获取修改数据（执行修改，通过 getUpdateRecordList）
+            updateTableSubmitDatas(jBoltTable, sysotherin);
+            //获取删除数据（执行删除，通过 getDelete）
+            deleteTableSubmitDatas(jBoltTable);
             return true;
         });
         return Ret.ok().set("autoid", sysotherin.getAutoID());
@@ -330,32 +348,55 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         }
         User user = JBoltUserKit.getUser();
         Date now = new Date();
-        ArrayList<SysAssemdetail> sysAssemdetails = new ArrayList<>();
+        ArrayList<SysAssembarcode> sysassembarcodeList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
             SysAssemdetail sysAssemdetail = new SysAssemdetail();
             sysAssemdetail.setMasID(sysotherin.getAutoID());
             sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
-            sysotherin.setIupdateby(user.getId());
-            sysotherin.setCupdatename(user.getName());
-            sysotherin.setDupdatetime(now);
-            sysAssemdetail.setBarcode(row.get("barcode"));
-            sysAssemdetail.setSourceBillNoRow(row.get("sourcebillnorow"));
-            sysAssemdetail.setQty(new BigDecimal(row.get("qty").toString()));
-            sysAssemdetail.setSourceType(row.getStr("sourcebilltype"));
+            // todo 唐工 说形态转换的没有来源
+//            sysAssemdetail.setBarcode(row.get("barcode"));
+//            sysAssemdetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
+//            sysAssemdetail.setQty(new BigDecimal(row.get("qty").toString()));
+//            sysAssemdetail.setSourceType(row.getStr("sourcebilltype"));
             sysAssemdetail.setSourceBillNo(row.getStr("sourcebillno"));
-            sysAssemdetail.setSourceBillDid(row.getStr("sourcebilldid"));
-            sysAssemdetail.setSourceBillID(row.getStr("sourcebilldid"));
+//            sysAssemdetail.setSourceBillDid(row.getStr("sourcebilldid"));
+//            sysAssemdetail.setSourceBillID(row.getStr("sourcebilldid"));
             sysAssemdetail.setAssemType(row.getStr("assemtype"));
             sysAssemdetail.setWhCode(row.getStr("whcode"));
             sysAssemdetail.setPosCode(row.getStr("poscode"));
             sysAssemdetail.setRowNo(Integer.valueOf(row.getStr("rowno") == null ? "0" : row.getStr("rowno")));
             sysAssemdetail.setTrackType(row.getStr("tracktype"));
             sysAssemdetail.setMemo(row.getStr("memo"));
+            sysAssemdetail.setCombination(row.getInt("combination"));
+            sysAssemdetail.setVenCode(row.getStr("vencode"));
+            sysAssemdetail.setIcreateby(user.getId());
+            sysAssemdetail.setCcreatename(user.getName());
+            sysAssemdetail.setDcreatetime(now);
+            sysAssemdetail.setIupdateby(user.getId());
+            sysAssemdetail.setCupdatename(user.getName());
+            sysAssemdetail.setDupdatetime(now);
+            sysAssemdetail.setIsDeleted(false);
+            sysAssemdetail.save();
 
-            sysAssemdetails.add(sysAssemdetail);
+            SysAssembarcode sysAssembarcode = new SysAssembarcode();
+            sysAssembarcode.setBarcode(row.getStr("barcode"));
+            sysAssembarcode.setQty(new BigDecimal(row.getStr("qty")));
+            sysAssembarcode.setInvCode(row.getStr("cinvcode"));
+            sysAssembarcode.setMasID(sysAssemdetail.getAutoID());
+            sysAssembarcode.setIcreateby(user.getId());
+            sysAssembarcode.setCcreatename(user.getName());
+            sysAssembarcode.setDcreatetime(now);
+            sysAssembarcode.setIupdateby(user.getId());
+            sysAssembarcode.setCupdatename(user.getName());
+            sysAssembarcode.setDupdatetime(now);
+            sysAssembarcode.setIsDeleted(false);
+
+
+            sysassembarcodeList.add(sysAssembarcode);
         }
-        sysassemdetailservice.batchSave(sysAssemdetails);
+        sysassembarcodeservice.batchSave(sysassembarcodeList);
+
     }
 
     //可编辑表格提交-修改数据
@@ -366,32 +407,53 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         }
         User user = JBoltUserKit.getUser();
         Date now = new Date();
-        ArrayList<SysAssemdetail> sysAssemdetails = new ArrayList<>();
+        ArrayList<SysAssembarcode> sysassembarcodeList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             Record row = list.get(i);
             SysAssemdetail sysAssemdetail = new SysAssemdetail();
             sysAssemdetail.setMasID(sysotherin.getAutoID());
-            sysotherin.setIupdateby(user.getId());
-            sysotherin.setCupdatename(user.getName());
-            sysotherin.setDupdatetime(now);
-            sysAssemdetail.setBarcode(row.get("barcode"));
-            sysAssemdetail.setSourceBillNoRow(row.get("sourcebillnorow"));
-            sysAssemdetail.setQty(new BigDecimal(row.get("qty").toString()));
-            sysAssemdetail.setSourceType(row.getStr("sourcebilltype"));
+            sysAssemdetail.setAutoID(row.get("autoid").toString());
+            // todo 唐工 说形态转换的没有来源
+//            sysAssemdetail.setSourceBillNoRow(row.getStr("sourcebillnorow"));
+//            sysAssemdetail.setSourceType(row.getStr("sourcebilltype"));
             sysAssemdetail.setSourceBillNo(row.getStr("sourcebillno"));
-            sysAssemdetail.setSourceBillDid(row.getStr("sourcebilldid"));
-            sysAssemdetail.setSourceBillID(row.getStr("sourcebilldid"));
+//            sysAssemdetail.setSourceBillDid(row.getStr("sourcebilldid"));
+//            sysAssemdetail.setSourceBillID(row.getStr("sourcebilldid"));
             sysAssemdetail.setAssemType(row.getStr("assemtype"));
             sysAssemdetail.setWhCode(row.getStr("whcode"));
             sysAssemdetail.setPosCode(row.getStr("poscode"));
-            sysAssemdetail.setRowNo(Integer.valueOf(row.getStr("rowno")));
+            sysAssemdetail.setRowNo(Integer.valueOf(row.getStr("rowno") == null ? "0" : row.getStr("rowno")));
             sysAssemdetail.setTrackType(row.getStr("tracktype"));
             sysAssemdetail.setMemo(row.getStr("memo"));
+            sysAssemdetail.setVenCode(row.getStr("vencode"));
+            sysAssemdetail.setCombination(row.getInt("combination"));
+            sysAssemdetail.setIcreateby(user.getId());
+            sysAssemdetail.setCcreatename(user.getName());
+            sysAssemdetail.setDcreatetime(now);
+            sysAssemdetail.setIupdateby(user.getId());
+            sysAssemdetail.setCupdatename(user.getName());
+            sysAssemdetail.setDupdatetime(now);
+            sysAssemdetail.setIsDeleted(false);
+            sysassemdetailservice.update(sysAssemdetail);
 
-            sysAssemdetails.add(sysAssemdetail);
+            SysAssembarcode sysAssembarcode = new SysAssembarcode();
+            sysAssembarcode.setAutoID(row.get("barautoid").toString());
+            sysAssembarcode.setBarcode(row.getStr("barcode"));
+            sysAssembarcode.setQty(new BigDecimal(row.getStr("qty")));
+            sysAssembarcode.setInvCode(row.getStr("cinvcode"));
+            sysAssembarcode.setMasID(sysAssemdetail.getAutoID());
+            sysAssembarcode.setIcreateby(user.getId());
+            sysAssembarcode.setCcreatename(user.getName());
+            sysAssembarcode.setDcreatetime(now);
+            sysAssembarcode.setIupdateby(user.getId());
+            sysAssembarcode.setCupdatename(user.getName());
+            sysAssembarcode.setDupdatetime(now);
+            sysAssembarcode.setIsDeleted(false);
+
+            sysassembarcodeList.add(sysAssembarcode);
 
         }
-        sysassemdetailservice.batchUpdate(sysAssemdetails);
+        sysassembarcodeservice.batchUpdate(sysassembarcodeList);
 
     }
 
@@ -402,6 +464,12 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             return;
         }
         sysassemdetailservice.deleteByIds(ids);
+//        sysassemdetailservice.delect
+        String s1 = ids.toString();
+        String[] split = s1.split(",");
+        for (String s : split) {
+            delete("DELETE T_Sys_AssemBarcode   where  MasID = ?", s);
+        }
     }
 
     public List<Record> getdictionary(Kv kv) {
@@ -439,31 +507,15 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         data.set("PreAllocate", preallocate);
         ArrayList<Object> maindata = new ArrayList<>();
         sysassemdetail.stream().forEach(s -> {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.set("IWhCode", s.getWhCode());
-            jsonObject.set("iwhname", "");
-            jsonObject.set("invcode", s.getInvcode());
-            jsonObject.set("userCode", user.getUsername());
-            jsonObject.set("organizeCode", this.getdeptid());
-            jsonObject.set("OWhCode", s.getPosCode());
-            jsonObject.set("owhname", "");
-            jsonObject.set("barcode", s.getBarcode());
-            jsonObject.set("invstd", "");
-            jsonObject.set("invname", "");
-            jsonObject.set("CreatePerson", s.getIcreateby());
-            jsonObject.set("BillType", s.getAssemType());
-            jsonObject.set("qty", s.getQty());
-            jsonObject.set("CreatePersonName", user.getName());
-            jsonObject.set("IRdName", "");
-            jsonObject.set("IRdType", sysassem.getIRdCode());
-            jsonObject.set("ORdName", "");
-            jsonObject.set("ORdType", sysassem.getORdCode());
-            jsonObject.set("Tag", "AssemVouch");
-            jsonObject.set("IDeptCode",departmentservice.getRefDepId(sysassem.getDeptCode()));
-            jsonObject.set("ODeptCode",departmentservice.getRefDepId(sysassem.getDeptCode()));
-            jsonObject.set("VouchTemplate", "");
-            jsonObject.set("RowNo", s.getRowNo());
-            maindata.add(jsonObject);
+            if("转换前".equals(s.getAssemType())){
+                SysAssembarcode first = sysassembarcodeservice.findFirst("select * from T_Sys_AssemBarcode where MasID =  ? and Barcode is not null", s.getAutoID());
+                this.setjson(s,user,first,sysassem,maindata);
+            }else {//转换后
+                List<SysAssembarcode> sysAssembarcodes = sysassembarcodeservice.find("select * from T_Sys_AssemBarcode where MasID = ?  and Barcode is not null", s.getAutoID());
+               for(SysAssembarcode first : sysAssembarcodes){
+                   this.setjson(s,user,first,sysassem,maindata);
+               }
+            }
         });
         data.set("MainData", maindata);
         System.out.println(data);
@@ -492,6 +544,36 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             e.printStackTrace();
             return "上传u8失败:"+e.getMessage();
         }
+
+    }
+
+
+    public void setjson(SysAssemdetail s, User user,SysAssembarcode first,SysAssem sysassem,ArrayList<Object> maindata){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.set("IWhCode", s.getWhCode());
+        jsonObject.set("iwhname", "");
+        jsonObject.set("invcode", first.getInvCode());
+        jsonObject.set("userCode", user.getUsername());
+        jsonObject.set("organizeCode", this.getdeptid());
+        jsonObject.set("OWhCode", s.getPosCode());
+        jsonObject.set("owhname", "");
+        jsonObject.set("barcode", first.getBarcode());
+        jsonObject.set("invstd", "");
+        jsonObject.set("invname", "");
+        jsonObject.set("CreatePerson", s.getIcreateby());
+        jsonObject.set("BillType", s.getAssemType());
+        jsonObject.set("qty", first.getQty());
+        jsonObject.set("CreatePersonName", user.getName());
+        jsonObject.set("IRdName", "");
+        jsonObject.set("IRdType", sysassem.getIRdCode());
+        jsonObject.set("ORdName", "");
+        jsonObject.set("ORdType", sysassem.getORdCode());
+        jsonObject.set("Tag", "AssemVouch");
+        jsonObject.set("IDeptCode",departmentservice.getRefDepId(sysassem.getDeptCode()));
+        jsonObject.set("ODeptCode",departmentservice.getRefDepId(sysassem.getDeptCode()));
+        jsonObject.set("VouchTemplate", "");
+        jsonObject.set("RowNo", s.getRowNo());
+        maindata.add(jsonObject);
     }
 
     /**
@@ -725,35 +807,24 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
      */
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
-        return null;
+        return this.delectbelowtwo(formAutoIds);
     }
 
     //审核通过后的业务逻辑
     public String passagetwo(Long formAutoId) {
         SysAssem byId = findById(formAutoId);
-        //获取转换前的所有数据
-        List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(formAutoId.toString());
-        List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(firstBy)){
+        //获取转换后的所有数据
+        List<SysAssemdetail> firstBy = sysassemdetailservice.findFirst(formAutoId.toString());
+        if(CollectionUtils.isNotEmpty(firstBy)){
             for(SysAssemdetail detail : firstBy){
                 //生成现品票
-                this.cashNotTransaction(formAutoId,detail,purchaseOrderDBatchList);
-                //对转换前的现品票扣减失效
-                PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", detail.getBarcode());
-                first1.setIsEffective(false);
-                purchaseOrderDBatchService.update(first1);
+                this.cashNotTransaction(formAutoId,detail);
             }
         }
-//        //推送u8，查出转换前从表数据,并合并
-//        List<SysAssemdetail> firstBy1 = sysassemdetailservice.findFirstBy(formAutoId.toString());
-//        ArrayList<SysAssemdetail> mergeq = this.merge(firstBy1);
-//        //推送u8，查出转换后从表数据,并合并
-//        List<SysAssemdetail> first = sysassemdetailservice.findFirst(formAutoId.toString());
         //查转换前，转换后的数据
         List<SysAssemdetail> firstByall = sysassemdetailservice.findFirstByall(formAutoId);
-        ArrayList<SysAssemdetail> merge = this.merge(firstByall);
 
-        String s = this.pushU8(byId, merge);
+        String s = this.pushU8(byId, firstByall);
 
         return s;
     }
@@ -764,114 +835,72 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         for (Long s : formAutoId) {
             SysAssem byId = findById(s);
 
-            //获取转换前的所有数据
-            List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstBy(s.toString());
-            List<PurchaseOrderDBatch> purchaseOrderDBatchList = new ArrayList<>();
+            //获取转换后的所有数据
+            List<SysAssemdetail> firstBy = sysassemdetailservice.findFirst(formAutoId.toString());
             if(!CollectionUtils.isEmpty(firstBy)){
                 for(SysAssemdetail detail : firstBy){
                     //生成现品票
-                    this.cashNotTransaction(s,detail,purchaseOrderDBatchList);
-                    //对转换前的现品票扣减失效
-                    PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", detail.getBarcode());
-                    first1.setIsEffective(false);
-                    purchaseOrderDBatchService.update(first1);
+                    this.cashNotTransaction(s,detail);
                 }
             }
             //查转换前，转换后的数据
             List<SysAssemdetail> firstByall = sysassemdetailservice.findFirstByall(s);
-            ArrayList<SysAssemdetail> merge = this.merge(firstByall);
-            String s2 = this.pushU8(byId, merge);
+            s1 = this.pushU8(byId, firstByall);
         }
         return s1;
     }
 
     //生成现品票
-    public void cashNotTransaction(Long s,SysAssemdetail detail,List<PurchaseOrderDBatch> purchaseOrderDBatchList) {
-        //通过现品票获取到采购订单等相关的数据
-        String barcode = detail.getBarcode();
-        //采购订单现品票
-        PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", barcode);
-        //采购订单从表
-        PurchaseOrderD first2 = purchaseOrderDService.findFirst("select * from  PS_PurchaseOrderD where iAutoId = ?", first1.getIPurchaseOrderDid());
-        //采购订单主表
-        PurchaseOrderM first3 = purchaseordermservice.findFirst("select * from  PS_PurchaseOrderM where iAutoId = ?", first2.getIPurchaseOrderMid());
-        //采购订单明细数量
-        PurchaseorderdQty first4 = purchaseorderdQtyService.findFirst("select d.iInventoryId,qty.* from PS_PurchaseOrderD_Qty qty LEFT JOIN  PS_PurchaseOrderD d ON d.iAutoId = qty.iPurchaseOrderDid where qty.iPurchaseOrderDid = ?", first2.getIAutoId());
-        //获取转换后的从表数据
-        SysAssemdetail first5 = sysassemdetailservice.findFirst(s.toString(), detail.getCombination());
-        //通过存货编码获取单位
-        Inventory first6 = inventoryService.findFirst("select t3.*,uom.cUomCode,uom.cUomName FROM Bd_Inventory t3 LEFT JOIN Bd_Uom uom on t3.iPurchaseUomId = uom.iAutoId where t3.cInvCode = ?", detail.getInvcode());
-        //采购订单现品票表只有数量
-        BigDecimal sourceQty = first5.getBigDecimal("qty");
-        //
-//        if("KG".equals(first6.getStr("cuomname"))){
-//            sourceQty = first5.getBigDecimal("weight");
-//        }else {
-//            sourceQty = first5.getBigDecimal("qty");
-//        }
-        // 源数量，数量应该是转换后的
-//                    BigDecimal sourceQty = first4.getBigDecimal(PurchaseorderdQty.IQTY);
-        Long purchaseOrderDId = first4.getLong(PurchaseorderdQty.IPURCHASEORDERDID);
-//        Long iPurchaseOrderdQtyId = first4.getLong(PurchaseorderdQty.IAUTOID);
-        Long iPurchaseOrderdQtyId = Long.valueOf(first5.getAutoID());
-        Long inventoryId = first4.getLong(PurchaseOrderD.IINVENTORYID);
-        String dateStr = demandPlanDService.getDate(first4.getStr(PurchaseorderdQty.IYEAR), first4.getInt(PurchaseorderdQty.IMONTH),first4.getInt(PurchaseorderdQty.IDATE));
-        DateTime planDate = DateUtil.parse(dateStr, DatePattern.PURE_DATE_PATTERN);
-        // 包装数量(改从 采购/委外订单-采购订单明细)
-        BigDecimal pkgQty = first2.getBigDecimal(Inventory.IPKGQTY);
+    public void cashNotTransaction(Long s,SysAssemdetail detail) {
+        SysAssembarcode first7 = sysassembarcodeservice.findFirst("select * from T_Sys_AssemBarcode where MasID = ? and isDeleted = '0'", detail.getAutoID());
+        //获取转换后的数量
+        BigDecimal sourceQty = first7.getQty();
+        //根据存货编码获取包装数量
+        Inventory first8 = inventoryService.findFirst("select * from Bd_Inventory where cInvCode = ?", first7.getInvCode());
+        BigDecimal pkgQty = new BigDecimal(first8.getIPkgQty());
+
         //保存当前包装数量
-        first5.setIPkgQty(pkgQty.intValue());
-        sysassemdetailservice.update(first5);
+        detail.setIPkgQty(pkgQty.intValue());
+        sysassemdetailservice.update(detail);
         // 包装数量为空或者为0，生成一张条码，原始数量/打包数量
+
         if (ObjUtil.isNull(pkgQty) || BigDecimal.ZERO.compareTo(pkgQty) == 0 || sourceQty.compareTo(pkgQty) <= 0) {
-            String barCode = purchaseOrderDBatchService.generateBarCode();
-            PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, sourceQty, barCode);
-            purchaseOrderDBatchList.add(purchaseOrderDBatch);
+            this.insysAssembarcode(first7,sourceQty);
         }else {
             // 源数量/包装数量 （向上取）
             int count = sourceQty.divide(pkgQty, 0, BigDecimal.ROUND_UP).intValue();
             for (int i = 0; i < count; i++) {
-                // count-1： 69/10; 9
-                String barCode = purchaseOrderDBatchService.generateBarCode();
+                BigDecimal qty = pkgQty;
                 if (i == count - 1) {
-                    BigDecimal qty = sourceQty.subtract(BigDecimal.valueOf(i).multiply(pkgQty));
-                    PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, qty, barCode);
-                    purchaseOrderDBatchList.add(purchaseOrderDBatch);
-                    break;
+                    qty = sourceQty.subtract(BigDecimal.valueOf(i).multiply(pkgQty));
                 }
-                PurchaseOrderDBatch purchaseOrderDBatch = purchaseOrderDBatchService.createPurchaseOrderDBatch(purchaseOrderDId, iPurchaseOrderdQtyId, inventoryId, planDate, pkgQty, barCode);
-                purchaseOrderDBatchList.add(purchaseOrderDBatch);
+                this.insysAssembarcode(first7,qty);
             }
         }
-        purchaseOrderDBatchService.batchSave(purchaseOrderDBatchList);
+
     }
 
-    //根据存货编码合并数量和重量
-    public ArrayList<SysAssemdetail> merge(List<SysAssemdetail> first){
-        //先把存货编码相同的数量合并
-        ArrayList<SysAssemdetail> merge = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(first)) {
-            for(SysAssemdetail sys : first ){
-                boolean have = true;
-                if(CollectionUtils.isNotEmpty(merge)){
-                    for (SysAssemdetail me : merge){
-                        if(me.getInvcode().equals(sys.getInvcode()) && me.getAssemType().equals(sys.getAssemType())){
-                            me.setQty(me.getQty().add(sys.getQty()));
-                            me.setWeight(new BigDecimal(me.getWeight()).add(new BigDecimal(sys.getWeight())).toString());
-                            //找到，就不用新增
-                            have = false;
-                        }
-                    }
-                    if(have){
-                        merge.add(sys);
-                    }
-                }else {
-                    merge.add(sys);
-                }
-            }
-        }
-        return merge;
+    //新增条码
+    public void insysAssembarcode(SysAssembarcode first7,BigDecimal qty){
+        User user = JBoltUserKit.getUser();
+        Date now = new Date();
+        String barCode = purchaseOrderDBatchService.generateBarCode().concat("-00");
+        SysAssembarcode sysAssembarcode = new SysAssembarcode();
+        sysAssembarcode.setIcreateby(user.getId());
+        sysAssembarcode.setCcreatename(user.getName());
+        sysAssembarcode.setDcreatetime(now);
+        sysAssembarcode.setIupdateby(user.getId());
+        sysAssembarcode.setCupdatename(user.getName());
+        sysAssembarcode.setDupdatetime(now);
+        sysAssembarcode.setIsDeleted(false);
+        sysAssembarcode.setBarcode(barCode);
+        sysAssembarcode.setInvCode(first7.getInvCode());
+        sysAssembarcode.setMasID(first7.getMasID());
+        sysAssembarcode.setQty(qty);
+        sysAssembarcode.save();
     }
+
+
 
     //反审后的操作
     public String delectbelowtwo(long formAutoId){
@@ -881,18 +910,38 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstByall(formAutoId);
         if(CollectionUtils.isNotEmpty(firstBy)){
             for (SysAssemdetail s : firstBy ){
-                if(s.getAssemType().equals("转换前")){
-                    //对转换前的现品票扣减失效
-                    PurchaseOrderDBatch first1 = purchaseOrderDBatchService.findFirst("select * from  PS_PurchaseOrderDBatch where cCompleteBarcode = ?", s.getBarcode());
-                    first1.setIsEffective(true);
-                    purchaseOrderDBatchService.update(first1);
-                }else {
-                 delete("DELETE PS_PurchaseOrderDBatch where iPurchaseOrderdQtyId = ?",s.getAutoID());
+                if(!s.getAssemType().equals("转换前")) {
+                    delete("DELETE T_Sys_AssemBarcode where MasID = ? and Barcode is not null and isDeleted = '0'",s.getAutoID());
                 }
             }
         }
         //todo 删除u8的数据
-        return this.deleteVouchProcessDynamicSubmitUrl(this.getDeleteDTO(byId.getU8BillNo()));
+        String s = this.deleteVouchProcessDynamicSubmitUrl(this.getDeleteDTO(byId.getU8BillNo()));
+        byId.setU8BillNo(null);
+        byId.update();
+        return s;
+    }
+    // 批量反审后的操作
+    public String delectbelowtwo(List<Long> formAutoId){
+        String s1 = null;
+        for (Long d : formAutoId) {
+            //主表数据
+            SysAssem byId = findById(d);
+            //从表数据
+            List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstByall(d);
+            if (CollectionUtils.isNotEmpty(firstBy)) {
+                for (SysAssemdetail s : firstBy) {
+                    if (!s.getAssemType().equals("转换前")) {
+                        delete("DELETE T_Sys_AssemBarcode where MasID = ? and Barcode is not null and isDeleted = '0'", s.getAutoID());
+                    }
+                }
+            }
+            //todo 删除u8的数据
+            s1 = this.deleteVouchProcessDynamicSubmitUrl(this.getDeleteDTO(byId.getU8BillNo()));
+            byId.setU8BillNo(null);
+            byId.update();
+        }
+        return s1;
     }
 
 

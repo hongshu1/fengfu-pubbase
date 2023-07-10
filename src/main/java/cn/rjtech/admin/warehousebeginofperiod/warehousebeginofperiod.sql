@@ -35,6 +35,12 @@ WHERE 1=1 and t1.memo = '仓库期初'
 #if(iinventoryclassid)
   and t4.iInventoryClassId = #para(iinventoryclassid)
 #end
+#if(starttime)
+ and t1.ModifyDate >= #para(starttime)
+#end
+#if(endtime)
+ and t1.ModifyDate <= #para(endtime)
+#end
 #end
 
 #sql("findGeneratedstockqtyByCodes")
@@ -56,12 +62,31 @@ and poscode = #para(poscode)
 
 #sql("detailDatas")
 SELECT
-    t2.AutoID,t2.MasID,t2.VenCode,t6.cvenname,t2.Barcode,
-    t2.Invcode,t2.BarcodeDate,t2.Batch,t2.Qty,t2.PrintNum,
-    t2.ReportFileName,t2.CreatePerson,t2.CreateDate,t2.ModifyDate,t2.ModifyPerson,
-    t3.WhCode,t3.PosCode,
-    t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,
-    t5.cUomCode,t5.cUomName
+    t2.AutoID,
+    t2.MasID,
+    t2.VenCode,
+    t2.Barcode,
+    t2.Invcode,
+    t2.BarcodeDate,
+    t2.SourceBillType,
+    t2.Batch,
+    t2.Qty,
+    t2.PrintNum,
+    t2.ReportFileName,
+    t2.CreatePerson,
+    t2.CreateDate,
+    t2.ModifyDate,
+    t2.ModifyPerson,
+    t3.WhCode,
+    t3.PosCode,
+    t4.cInvName,
+    t4.cInvCode1,
+    t4.cInvName1,
+    t4.iPkgQty,
+    t4.cInvStd,
+    t5.cUomCode,
+    t5.cUomName,
+    t6.cvenname
 from T_Sys_BarcodeMaster t1
          LEFT JOIN T_Sys_BarcodeDetail t2 on t1.AutoID = t2.MasID
          LEFT JOIN T_Sys_StockBarcodePosition t3 on t2.Barcode = t3.Barcode and t2.Batch = t3.Batch
@@ -77,6 +102,15 @@ and t1.autoid = #para(masid)
 #end
 #if(autoid)
 and t2.autoid = #para(autoid)
+#end
+#if(starttime)
+ and t2.CreateDate >= #para(starttime)
+#end
+#if(endtime)
+ and t2.CreateDate <= #para(endtime)
+#end
+#if(sourcebilltype)
+and t2.sourcebilltype = #para(sourcebilltype)
 #end
 order by t1.ModifyDate desc
 #end

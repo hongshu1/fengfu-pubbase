@@ -42,8 +42,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     private InventoryService              inventoryService;
     @Inject
     private WarehouseService              warehouseService;
-    @Inject
-    private WarehouseAreaService          warehouseAreaService;
 
     /*
      * 主页面
@@ -84,7 +82,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * */
     public void detailDatas() {
         Kv kv = getKv();
-        Long aLong = getLong(0);
         if (StrUtil.isBlank(kv.getStr("masid"))) {
             renderJsonData(null);
             return;
@@ -108,14 +105,29 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     /*
-     * 保存新增期初库存
+     * 保存期初库存
+     * */
+    public void submitAllByStock(JBoltPara jBoltPara){
+        renderJsonData(service.submitByStock(jBoltPara));
+    }
+
+    /*
+     * 保存期初库存
+     * */
+    public void submitAllBybarcode(JBoltPara jBoltPara){
+        renderJsonData(service.submitAllBybarcode(jBoltPara));
+    }
+
+
+    /*
+     * 生成期初库存
      * */
     public void submitStock(JBoltPara jBoltPara) {
         renderJsonData(service.submitStock(jBoltPara));
     }
 
     /*
-     * 保存新增期初条码
+     * 生成期初条码
      * */
     public void submitAddBarcode(JBoltPara jBoltPara) {
         renderJsonData(service.submitAddBarcode(jBoltPara));
@@ -134,7 +146,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * */
     @SuppressWarnings("unchecked")
     public void downloadStockTpl() throws Exception {
-        renderJxls("warehousebeginstock_import.xlsx", Kv.by("rows", null), "期初库存导入模板.xlsx");
+        renderJxls("warehousebeginstock_import.xlsx", Kv.by("rows", null), "仓库期初库存导入模板.xlsx");
     }
 
     /*
@@ -142,7 +154,7 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
      * */
     @SuppressWarnings("unchecked")
     public void downloadBarcodeTpl() throws Exception {
-        renderJxls("warehousebeginbarcode_import.xlsx", Kv.by("rows", null), "期初条码导入模板.xlsx");
+        renderJxls("warehousebeginbarcode_import.xlsx", Kv.by("rows", null), "仓库期初条码导入模板.xlsx");
     }
 
     /*
