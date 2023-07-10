@@ -1037,29 +1037,31 @@ public class MoMotaskService extends BaseService<MoMotask> implements IApprovalS
    * @return
    */
   public List<Record> getModocStaffEditorRewriteDatas(Kv kv) {
-    List<Record> records1 = new ArrayList<>();
-
     //<editor-fold desc="1.查询产线名称，存货信息  records2">
     List<Record> records2 = dbTemplate("modocbatch.getModocDatas", kv).find();
     List<String> strings = new ArrayList<>();
     records2.forEach(record -> {
-      strings.add(record.getStr("iInventoryId"));
+      strings.add(record.getStr("iinventoryid"));
     });
     String inventoryids = CollUtil.join(strings, ",");
     //</editor-fold>
 
     //<editor-fold desc="2.获取设备，产线信息">
-    Map<String, List<Record>> equipmentMap = new HashMap<>();
-    Map<String, List<Record>> productionlineMap = new HashMap<>();
+    Map<String, Record> equipmentMap = new HashMap<>();
+    Map<String, Record> productionlineMap = new HashMap<>();
+
+
     List<Record> equipments = dbTemplate("modocbatch.getEquipmentsByInventoryId", Kv.by("inventoryids", inventoryids)).find();
     equipments.forEach(record -> {
       if (equipmentMap.containsKey(record.getStr("iinventoryid"))) {
-        List<Record> records11 = equipmentMap.get(record.getStr("iinventoryid"));
-        records11.add(record);
+        Record records11 = equipmentMap.get(record.getStr("iinventoryid"));
+        records11.set("iequipmentid", records11.getStr("iequipmentid") + "," + record.getStr("iequipmentid"));
+        records11.set("cequipmentname", records11.getStr("cequipmentname") + "/" + record.getStr("cequipmentname"));
         equipmentMap.put(record.getStr("iinventoryid"), records11);
       } else {
-        List<Record> records11 = new ArrayList<>();
-        records11.add(record);
+        Record records11 = new Record();
+        records11.set("iequipmentid", records11.getStr("iequipmentid"));
+        records11.set("cequipmentname", records11.getStr("cequipmentname"));
         equipmentMap.put(record.getStr("iinventoryid"), records11);
       }
     });
@@ -1067,13 +1069,15 @@ public class MoMotaskService extends BaseService<MoMotask> implements IApprovalS
     List<Record> productionlines = dbTemplate("modocbatch.getProductionLinesByInventoryId", Kv.by("inventoryids", inventoryids)).find();
     productionlines.forEach(record -> {
       if (productionlineMap.containsKey(record.getStr("iinventoryid"))) {
-        List<Record> records11 = productionlineMap.get(record.getStr("iinventoryid"));
-        records11.add(record);
-        productionlineMap.put(record.getStr(""), records11);
+        Record records11 = productionlineMap.get(record.getStr("iinventoryid"));
+        records11.set("ioperationid", records11.getStr("ioperationid") + "," + record.getStr("ioperationid"));
+        records11.set("coperationname", records11.getStr("coperationname") + "/" + record.getStr("coperationname"));
+        productionlineMap.put(record.getStr("iinventoryid"), records11);
       } else {
-        List<Record> records11 = new ArrayList<>();
-        records11.add(record);
-        productionlineMap.put(record.getStr(""), records11);
+        Record records11 = new Record();
+        records11.set("ioperationid", records11.getStr("ioperationid"));
+        records11.set("coperationname", records11.getStr("coperationname"));
+        productionlineMap.put(record.getStr("iinventoryid"), records11);
       }
     });
     //</editor-fold>
@@ -1083,16 +1087,16 @@ public class MoMotaskService extends BaseService<MoMotask> implements IApprovalS
     for (int i = 0; i < circulation; i++) {
       Record record = new Record();
       if (i < (circulation - 3)) {
-        record = records2.get(i);
-
+        record.put("cequipment", equipmentMap.get(records2.get(i).getStr("iinventoryid")));
+        record.put("coperation", productionlineMap.get(records2.get(i).getStr("iinventoryid")));
 
       } else {
 
       }
-      records1.add(record);
+      records2.add(record);
     }
 
-    return records1;
+    return records2;
   }
 
 
