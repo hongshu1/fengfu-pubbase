@@ -74,6 +74,9 @@
 	<a href="admin/uptimem/edit?iautoid=${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑稼动时间管理" class="jbolt_table_editbtn">编辑</a>
     <a href="admin/uptimem/delete?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
 	{@/if}
+	{@if  data.iauditstatus == '3' }
+	<a href="admin/uptimem/edit?iautoid=${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑稼动时间管理" class="jbolt_table_editbtn">编辑</a>
+	{@/if}
 	{@if  data.iauditstatus == '1' }
 		<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=PL_UptimeM&primaryKeyName=iAutoId&formAutoId=${data.iautoid}&permissionKey=uptimem&className=cn.rjtech.admin.uptimem.UptimeMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
 	{@/if}

@@ -7,14 +7,14 @@
 			<!--<div class="col-md-auto"><h1><i class="jbicon2 jbi-appstore"></i>物料需求计划汇总</h1></div>-->
 			<div class="col">
 				<form class="form-inline" id="apsAnnualplanmFormsum_#(pageId)"   onsubmit="return false;" method="post">
-					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
+					<input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20" id="startdate_four" name="startdate" value="#datetime(startdate??,'yyyy-MM-dd')"/>
 					<span style="margin-top: 5px">至</span>
-					<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
+					<input type="text" data-date class="form-control" placeholder="结束日期" maxlength="20" id="enddate_four" name="enddate" value="#datetime(enddate??,'yyyy-MM-dd')"/>
 
-					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="供应商名称" id="cvenname" name="cvenname" value="#(cvenname??)" />
-					<input type="text" class="form-control" placeholder="存货编码" id="cinvcode" name="cinvcode" value="#(cinvcode??)" />
-					<input type="text" class="form-control" placeholder="客户部番" id="cinvcode1" name="cinvcode1" value="#(cinvcode1??)" />
-					<input type="text" class="form-control" placeholder="部品名称" id="cinvname1" name="cinvname1" value="#(cinvname1??)" />
+					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="供应商名称" id="cvenname_four" name="cvenname" value="#(cvenname??)" />
+					<input type="text" class="form-control" placeholder="存货编码" id="cinvcode_four" name="cinvcode" value="#(cinvcode??)" />
+					<input type="text" class="form-control" placeholder="客户部番" id="cinvcode1_four" name="cinvcode1" value="#(cinvcode1??)" />
+					<input type="text" class="form-control" placeholder="部品名称" id="cinvname1_four" name="cinvname1" value="#(cinvname1??)" />
 
 					<button type="submit" onclick="selectDemendPlanSumBtn(this)" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 					<button type="button" onclick="clearDemendPlanSumBtn(this)" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -125,22 +125,22 @@
 <script type="text/javascript">
 
 	function selectDemendPlanSumBtn(ele){
-		let startdate = $("#startdate").val();
-		let enddate = $("#enddate").val();
-		let cvenname = $("#cvenname").val();
-		let cinvcode = $("#cinvcode").val();
-		let cinvcode1 = $("#cinvcode1").val();
-		let cinvname1 = $("#cinvname1").val();
+		let startdate = $("#startdate_four").val();
+		let enddate = $("#enddate_four").val();
+		let cvenname = $("#cvenname_four").val();
+		let cinvcode = $("#cinvcode_four").val();
+		let cinvcode1 = $("#cinvcode1_four").val();
+		let cinvname1 = $("#cinvname1_four").val();
 		JBoltTabUtil.currentTabGo(`admin/schedudemandplan/demandplansumview`,
 				{"startdate":startdate,"enddate":enddate,"cvenname":cvenname,"cinvcode":cinvcode,"cinvcode1":cinvcode1,"cinvname1":cinvname1});
 	}
 	function clearDemendPlanSumBtn(ele){
-		$("#startdate").val('');
-		$("#enddate").val('');
-		$("#cvenname").val('');
-		$("#cinvcode").val('');
-		$("#cinvcode1").val('');
-		$("#cinvname1").val('');
+		$("#startdate_four").val('');
+		$("#enddate_four").val('');
+		$("#cvenname_four").val('');
+		$("#cinvcode_four").val('');
+		$("#cinvcode1_four").val('');
+		$("#cinvname1_four").val('');
 	}
 
 
