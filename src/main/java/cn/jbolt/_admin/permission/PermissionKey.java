@@ -3377,4 +3377,24 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String QCFORM_SUBMIT = "qcform_submit";
+	/**
+	 * 新增
+	 */
+	public static final String INVENTORYQCFORM_ADD = "inventoryqcform_add";
+	/**
+	 * 修改
+	 */
+	public static final String INVENTORYQCFORM_EDIT = "inventoryqcform_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INVENTORYQCFORM_DELETE = "inventoryqcform_delete";
+	/**
+	 * 导入
+	 */
+	public static final String INVENTORYQCFORM_IMPORT = "inventoryqcform_import";
+	/**
+	 * 保存
+	 */
+	public static final String INVENTORYQCFORM_SUBMIT = "inventoryqcform_submit";
 }
