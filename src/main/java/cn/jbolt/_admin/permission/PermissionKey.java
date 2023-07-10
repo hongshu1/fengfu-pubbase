@@ -3477,4 +3477,16 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String VOUCHRDCONTRAPOSE_DELETE = "vouchrdcontrapose_delete";
+	/**
+	 * 新增
+	 */
+	public static final String SALETYPE_ADD = "saletype_add";
+	/**
+	 * 修改
+	 */
+	public static final String SALETYPE_EDIT = "saletype_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SALETYPE_DELETE = "saletype_delete";
 }

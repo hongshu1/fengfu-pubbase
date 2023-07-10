@@ -57,6 +57,7 @@ public class SaleTypeAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.SALETYPE_ADD)
     public void add() {
         render("add.html");
     }
@@ -64,6 +65,7 @@ public class SaleTypeAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.SALETYPE_EDIT)
     public void edit() {
         SaleType saleType = service.findById(getLong(0));
         if (saleType == null) {
@@ -77,6 +79,7 @@ public class SaleTypeAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.SALETYPE_ADD)
     public void save() {
         renderJson(service.save(getModel(SaleType.class, "saleType")));
     }
@@ -84,6 +87,7 @@ public class SaleTypeAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.SALETYPE_EDIT)
     public void update() {
         renderJson(service.update(getModel(SaleType.class, "saleType")));
     }
@@ -91,6 +95,7 @@ public class SaleTypeAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.SALETYPE_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
