@@ -20,6 +20,7 @@ import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.AnnualorderdQty;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.github.javaparser.utils.Log;
@@ -171,6 +172,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
                 annualOrderM.setIOrgId(getOrgId());
                 annualOrderM.setCOrgCode(getOrgCode());
                 annualOrderM.setCOrgName(getOrgName());
+                annualOrderM.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
                 annualOrderM.setICreateBy(user.getId());
                 annualOrderM.setCCreateName(user.getName());
                 annualOrderM.setDCreateTime(now);
@@ -453,7 +455,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
         List<AnnualOrderM> notAuditList = new ArrayList<>();
         for (AnnualOrderM annualOrderM : list) {
             ValidationUtils.equals(annualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != annualOrderM.getIOrderStatus()) {
                 notAuditList.add(annualOrderM);
             }
 

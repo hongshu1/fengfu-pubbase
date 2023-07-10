@@ -18,6 +18,7 @@ import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
@@ -110,7 +111,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         List<MonthOrderM> notAuditList = new ArrayList<>();
         for (MonthOrderM monthOrderM : list) {
             ValidationUtils.equals(monthOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (MonthOrderStatusEnum.SAVED.getValue() != monthOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != monthOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != monthOrderM.getIOrderStatus()) {
                 notAuditList.add(monthOrderM);
             }
 
@@ -220,6 +221,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
                 monthorderm.setIOrgId(getOrgId());
                 monthorderm.setCOrgCode(getOrgCode());
                 monthorderm.setCOrgName(getOrgName());
+                monthorderm.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
                 monthorderm.setICreateBy(user.getId());
                 monthorderm.setCCreateName(user.getName());
                 monthorderm.setDCreateTime(now);

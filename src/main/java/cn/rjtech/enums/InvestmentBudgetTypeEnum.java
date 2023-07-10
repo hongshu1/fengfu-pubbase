@@ -11,44 +11,44 @@ public enum InvestmentBudgetTypeEnum {
     /**
      * 投资计划预算类型枚举列表
      */
-    FUALL_YEAR_BUDGET(1, "全年预算"),
-    NEXT_PERIOD_EDIT(2, "下期修改"),
-	ACTUAL(3, "实绩");
+    FUALL_YEAR_BUDGET("全年预算", 1),
+    NEXT_PERIOD_EDIT("下期修改", 2),
+    ACTUAL("实绩", 3);
 
     private static final Map<Integer, InvestmentBudgetTypeEnum> BUDGET_TYPE_ENUM_MAP = new HashMap<>();
 
     static {
-        for (InvestmentBudgetTypeEnum statusEnum : InvestmentBudgetTypeEnum.values()) {
-            BUDGET_TYPE_ENUM_MAP.put(statusEnum.value, statusEnum);
+        for (InvestmentBudgetTypeEnum typeEnum : InvestmentBudgetTypeEnum.values()) {
+            BUDGET_TYPE_ENUM_MAP.put(typeEnum.value, typeEnum);
         }
     }
 
     private final String text;
     private final int value;
 
-    InvestmentBudgetTypeEnum(int value, String text) {
+    InvestmentBudgetTypeEnum(String text, int value) {
         this.value = value;
         this.text = text;
     }
 
-    public static InvestmentBudgetTypeEnum toEnum(int status) {
-        return BUDGET_TYPE_ENUM_MAP.get(status);
-    }
-
-    public int getValue() {
-        return value;
+    public static InvestmentBudgetTypeEnum toEnum(int value) {
+        return BUDGET_TYPE_ENUM_MAP.get(value);
     }
 
     public String getText() {
         return text;
     }
 
-    @Override
-    public String toString() {
-        return "BudgetTypeEnum{" +
-                "value=" + value +
-                ", text=" + text +
-                '}';
+    public int getValue() {
+        return value;
     }
 
+    @Override
+    public String toString() {
+        return "InvestmentBudgetTypeEnum{" +
+                "text='" + text + '\'' +
+                ", value=" + value +
+                '}';
+    }
+    
 }

@@ -79,8 +79,8 @@
 </div>
 <script>
     function addBomcompareTr_#(pageId)(ele){
-        var formItemids = getFormItemIds();
-        var url="/admin/bomcompare/chooseItem?ids="+formItemids;
+        // var formItemids = getFormItemIds();
+        var url="/admin/bomcompare/chooseItem";
         $(ele).data("url",url).attr("data-area","60%,60%");
         DialogUtil.openBy(ele);
     }

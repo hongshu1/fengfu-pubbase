@@ -139,7 +139,6 @@ SELECT DISTINCT
 	doc.iMonth,
 	doc.iDate,
 	doc.iWorkShiftMid,
-	oper.iOperationId,
 	shiftm.cWorkShiftCode,
 	shiftm.cWorkShiftName,
 	concat ( doc.iYear, '-', doc.iMonth, '-', doc.iDate ) dates,
@@ -149,7 +148,6 @@ FROM
 	LEFT JOIN Bd_WorkShiftM shiftm ON doc.iWorkShiftMid= shiftm.iAutoId
 	LEFT JOIN Mo_MoRouting ting ON ting.iMoDocId= doc.iAutoId
 	LEFT JOIN Mo_MoRoutingConfig tingcfg ON tingcfg.iMoRoutingId= ting.iAutoId
-	LEFT JOIN Mo_MoRoutingConfig_Operation oper ON oper.iMoRoutingConfigId= tingcfg.iAutoId
 WHERE
 	doc.iMoTaskId=#(taskid)
 	#if(iinventoryid)
@@ -393,21 +391,20 @@ FROM
 	LEFT JOIN Mo_MoRoutingConfig config ON moment.iMoRoutingConfigId= config.iAutoId
 	LEFT JOIN Mo_MoRouting ting ON config.iMoRoutingId= ting.iAutoId
 WHERE
-	ting.iInventoryId IN (inventoryids)
+	ting.iInventoryId IN (#(inventoryids))
 #end
 
 #sql("getProductionLinesByInventoryId")
 SELECT DISTINCT
-	ting.iInventoryId,
 	motion.iOperationId,
-	tion.cOperationName
+	motion.cOperationName,
+	ting.iInventoryId
 FROM
 	Mo_MoRoutingConfig_Operation motion
-	LEFT JOIN Bd_Operation tion ON motion.iOperationId= tion.iAutoId
-	LEFT JOIN Mo_MoRoutingConfig config ON motion.iMoRoutingConfigId= config.iAutoId
+	LEFT JOIN Mo_MoRoutingConfig config ON motion.iMoInventoryRoutingId= config.iAutoId
 	LEFT JOIN Mo_MoRouting ting ON config.iMoRoutingId= ting.iAutoId
 WHERE
-	ting.iInventoryId IN IN (inventoryids)
+	ting.iInventoryId IN (#(inventoryids))
 #end
 
 

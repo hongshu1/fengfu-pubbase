@@ -23,6 +23,7 @@ import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -243,6 +244,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
             if (manualOrderM.getIAutoId() == null) {
                 manualOrderM.setIsDeleted(false);
                 manualOrderM.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
+                manualOrderM.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
                 Ret save = save(manualOrderM);
                 if (!save.isOk()) {
                     return false;
@@ -393,7 +395,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
         List<ManualOrderM> list = getListByIds(ids);
         List<ManualOrderM> notAuditList = new ArrayList<>();
         for (ManualOrderM manualOrderM : list) {
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != manualOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != manualOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != manualOrderM.getIOrderStatus()) {
                 notAuditList.add(manualOrderM);
             }
 

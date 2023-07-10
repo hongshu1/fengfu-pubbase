@@ -30,6 +30,7 @@ import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -202,7 +203,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         List<Subcontractsaleorderm> notAuditList = new ArrayList<>();
         for (Subcontractsaleorderm subcontractsaleorderm : list) {
             ValidationUtils.equals(subcontractsaleorderm.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != subcontractsaleorderm.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != subcontractsaleorderm.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != subcontractsaleorderm.getIOrderStatus()) {
                 notAuditList.add(subcontractsaleorderm);
             }
 
@@ -309,6 +310,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 subcontractsaleorderm.setIOrgId(getOrgId());
                 subcontractsaleorderm.setCOrgCode(getOrgCode());
                 subcontractsaleorderm.setCOrgName(getOrgName());
+                subcontractsaleorderm.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
                 subcontractsaleorderm.setICreateBy(user.getId());
                 subcontractsaleorderm.setCCreateName(user.getName());
                 subcontractsaleorderm.setDCreateTime(now);
