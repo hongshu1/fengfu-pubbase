@@ -46,6 +46,7 @@ public class SettleStyleAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.SETTLESTYLE_ADD)
     public void add() {
         render("add.html");
     }
@@ -53,6 +54,7 @@ public class SettleStyleAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.SETTLESTYLE_EDIT)
     public void edit() {
         SettleStyle settleStyle = service.findById(getLong(0));
         if (settleStyle == null) {
@@ -66,6 +68,7 @@ public class SettleStyleAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.SETTLESTYLE_ADD)
     public void save() {
         renderJson(service.save(getModel(SettleStyle.class, "settleStyle")));
     }
@@ -73,6 +76,7 @@ public class SettleStyleAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.SETTLESTYLE_EDIT)
     public void update() {
         renderJson(service.update(getModel(SettleStyle.class, "settleStyle")));
     }
@@ -87,6 +91,7 @@ public class SettleStyleAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.SETTLESTYLE_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }

@@ -265,7 +265,9 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
      * 费用预算编制可编辑表格导入
 	 * @throws Exception
      */
-	public Ret importTableExpenseBudgetTpl(String filePath,Long iexpenseId) throws Exception {
+	public Ret importTableExpenseBudgetTpl(String filePath,Kv para) throws Exception {
+		Long iexpenseId = para.getLong("iexpenseid");
+		String cdepcodePara = para.getStr("expenseBudget.cdepcode");
 		// 读取excel中数据
 		int startRow = ReadFullYearExpenseBudgetExcelUtil.START_ROW + 1;
         HashMap<String, Object> excelMap = ReadFullYearExpenseBudgetExcelUtil.readExcelInfo(filePath);
@@ -279,6 +281,7 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
 	    int budgetEndYear = rc.getInt("budgetEndYear");
 	    int budgetEndMonth = rc.getInt("budgetEndMonth");
 	    String cdepcode = rc.getStr("cdepcode");
+	    ValidationUtils.equals(cdepcodePara, cdepcode, "导入excel中的部门与当前界面选中的部门不一致!");
 	    DataPermissionKit.validateAccess(cdepcode);
 	    Integer ibudgetType = rc.getInt("cbudgetType");
 	    Integer ibudgetyear = rc.getInt("ibudgetyear");
