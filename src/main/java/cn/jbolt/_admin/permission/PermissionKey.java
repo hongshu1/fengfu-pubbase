@@ -3297,4 +3297,16 @@ public class PermissionKey {
 	 * 点检表格行
 	 */
 	public static final String SPOT_CHECK_STANDARDS = "spot_check_standards";
+	/**
+	 * 新增
+	 */
+	public static final String FOREIGNCURRENCY_ADD = "foreigncurrency_add";
+	/**
+	 * 删除
+	 */
+	public static final String FOREIGNCURRENCY_DELETE = "foreigncurrency_delete";
+	/**
+	 * 保存
+	 */
+	public static final String FOREIGNCURRENCY_SUBMIT = "foreigncurrency_submit";
 }
