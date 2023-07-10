@@ -2,7 +2,7 @@ package cn.rjtech.model.momdata;
 
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
-import cn.rjtech.model.momdata.base.BaseSubcontractsaleorderd;
+import cn.rjtech.model.momdata.base.BaseSubcontractSaleOrderD;
 
 /**
  * 客户订单-委外销售订单明细
@@ -10,6 +10,6 @@ import cn.rjtech.model.momdata.base.BaseSubcontractsaleorderd;
  */
 @SuppressWarnings("serial")
 @TableBind(dataSource = "momdata" , table = "Co_SubcontractSaleOrderD" , primaryKey = "iAutoId" , idGenMode = JBoltIDGenMode.SNOWFLAKE)
-public class Subcontractsaleorderd extends BaseSubcontractsaleorderd<Subcontractsaleorderd> {
+public class Subcontractsaleorderd extends BaseSubcontractSaleOrderD<Subcontractsaleorderd> {
 }
 
