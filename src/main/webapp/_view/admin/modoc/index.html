@@ -55,7 +55,7 @@
                     <a href="admin/modoc/updatas/${data.iautoid}" data-area="100%,100%"  tooltip data-title="制造工单编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑" class="jbolt_table_editbtn">编辑</a>
                 {@/if}
                 {@if data.istatus == 0 && data.iauditstatus == 0 || data.iauditstatus == 3}
-                    <a data-ajaxbtn href="/admin/person/deleteByAjax" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+                    <a data-ajaxbtn href="/admin/modoc/deletemodoc/${data.iautoid}" data-loading="执行中 " tooltip data-title="删除" data-handler="removeTr" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
                 {@/if}
                 {@if data.istatus == 4 || data.istatus == 5 }
                     <a href="admin/modoc/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="关闭" data-handler="refreshJBoltTable" data-confirm="确定关闭此数据？" class="jbolt_table_delbtn">关闭</a>

@@ -395,7 +395,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“审核”权限");
 
-        renderJson(service.approveByStatus(formSn, formAutoId, primaryKeyName, className, false));
+        renderJson(service.approveByStatus(formSn, formAutoId, primaryKeyName, className, false, JBoltUserKit.getUserId()));
     }
 
     /**
@@ -420,7 +420,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“审核”权限");
 
-        renderJson(service.rejectByStatus(formSn, formAutoId, primaryKeyName, className, false));
+        renderJson(service.rejectByStatus(formSn, formAutoId, primaryKeyName, className, false, JBoltUserKit.getUserId()));
     }
 
     /**
@@ -445,7 +445,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少“反审核”权限");
 
-        renderJson(service.reverseApproveByStatus(formSn, formAutoId, primaryKeyName, className));
+        renderJson(service.reverseApproveByStatus(formSn, formAutoId, primaryKeyName, className, JBoltUserKit.getUserId()));
     }
 
     /**
@@ -470,7 +470,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少批量“审核通过”的权限");
 
-        renderJson(service.batchApproveByStatus(ids, formSn, primaryKeyName, className));
+        renderJson(service.batchApproveByStatus(ids, formSn, primaryKeyName, className, JBoltUserKit.getUserId()));
     }
 
     /**
@@ -495,7 +495,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少批量“审核不通过”的权限");
 
-        renderJson(service.batchRejectByStatus(ids, formSn, primaryKeyName, className));
+        renderJson(service.batchRejectByStatus(ids, formSn, primaryKeyName, className, JBoltUserKit.getUserId()));
     }
 
     /**

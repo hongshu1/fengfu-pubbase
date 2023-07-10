@@ -11,9 +11,20 @@
           <button onclick="print()"
                   class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 打印
           </button>
-          <button onclick="submitThisForm()"
-                  class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 数据导出
-          </button>
+          <div class="jbolt_table_toolbar" id="SysMaterialsprepare_toolbar_#(pageId)">
+            <div class="btn-group dropdown" role="group" aria-label="btn-group">
+              <div class="btn-group dropdown ">
+                <button class="btn btn-outline-secondary btn-xs" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
+                <div class="dropdown-menu" aria-labelledby="exportContainerButton">
+                  <button class="btn dropdown-item"  data-downloadbtn data-url="/admin/sysMaterialsprepare/downloadChecked"><i class="fa fa-download"></i> 导出为Excel文件</button>
+<!--                  <button class="btn dropdown-item" data-downloadbtn data-url="/admin/salesDeliveryList/downloadChecked" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>-->
+                </div>
+              </div>
+            </div>
+          </div>
+<!--          <button onclick="submitThisForm()"-->
+<!--                  class="btn btn-success btn-sm"><i class="fa fa-refresh"></i> 数据导出-->
+<!--          </button>-->
         </div>
       </div>
     </div>

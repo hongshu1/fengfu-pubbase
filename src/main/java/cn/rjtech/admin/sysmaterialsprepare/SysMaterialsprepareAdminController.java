@@ -5,6 +5,10 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
@@ -16,6 +20,7 @@ import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -23,6 +28,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -340,5 +346,52 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
 //        Kv kv = new Kv();
 //        kv.set("cmodocno", cmodocno == null ? "" : cmodocno);
         renderJsonData(service.getgetManualAdddatas(getPageNumber(), getPageSize(), getKv()));
+    }
+
+    /***
+     * 勾选导出
+     */
+    public void downloadChecked(){
+        Kv kv = getKv();
+        String ids = kv.getStr("ids");
+        if (ids != null) {
+            String[] split = ids.split(",");
+            String sqlids = "";
+            for (String id : split) {
+                sqlids += "'" + id + "',";
+            }
+//            ValidationUtils.isTrue(sqlids.length() > 0, "请至少选择一条数据!");
+            sqlids = sqlids.substring(0, sqlids.length() - 1);
+            kv.set("sqlids", sqlids);
+        }
+
+        String sqlTemplate = "sysSaleDeliver.pageList";
+        List<Record> list = service.download(kv, sqlTemplate);
+        JBoltCamelCaseUtil.keyToCamelCase(list);
+        //2、创建JBoltExcel
+        JBoltExcel jBoltExcel = JBoltExcel
+                .create()//创建JBoltExcel
+                .addSheet(//设置sheet
+                        JBoltExcelSheet.create("销售出库单列表")
+                                .setHeaders(1,//sheet里添加表头
+                                        JBoltExcelHeader.create("cinvcode", "存货编码", 15),
+                                        JBoltExcelHeader.create("cinvcode1", "客户部番", 15),
+                                        JBoltExcelHeader.create("cinvname1", "部品名称", 15),
+                                        JBoltExcelHeader.create("cinvstd", "规格", 15),
+                                        JBoltExcelHeader.create("cuomname", "库存单位", 15),
+                                        JBoltExcelHeader.create("", "计划数量", 15),
+                                        JBoltExcelHeader.create("", "出库仓库", 15),
+                                        JBoltExcelHeader.create("", "出库库区", 15),
+                                        JBoltExcelHeader.create("", "已备料数量", 15),
+                                        JBoltExcelHeader.create("", "剩余备料数量", 15),
+                                        JBoltExcelHeader.create("batch", "可用批次号", 15),
+                                        JBoltExcelHeader.create("statename", "齐料扫码检查", 15)
+                                ).setDataChangeHandler((data, index) -> {
+                                })
+                                .setRecordDatas(2, list)//设置数据
+                ).setFileName("销售出库单列表-" + new SimpleDateFormat("yyyyMMdd").format(new Date()));
+        //3、导出
+        renderBytesToExcelXlsFile(jBoltExcel);
+
     }
 }

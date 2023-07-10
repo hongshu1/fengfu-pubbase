@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
  * @author: RJ
  * @date: 2023-04-03 10:42
  */
-@CheckPermission(PermissionKey.NONE)
-@UnCheckIfSystemAdmin
+@CheckPermission(PermissionKey.SPOTCHECK_FORM)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/spotcheckform", viewPath = "/_view/admin/spotcheckform")
 public class SpotCheckFormAdminController extends BaseAdminController {
@@ -59,6 +58,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.SPOTCHECKFORM_ADD)
     public void add() {
         render("add.html");
     }
@@ -66,6 +66,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.SPOTCHECKFORM_EDIT)
     public void edit() {
         SpotCheckForm spotCheckForm = service.findById(getLong(0));
         if (spotCheckForm == null) {
@@ -94,6 +95,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.SPOTCHECKFORM_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -101,6 +103,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.SPOTCHECKFORM_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -230,7 +233,7 @@ public class SpotCheckFormAdminController extends BaseAdminController {
         }
         render("_table3.html");
     }
-
+    @CheckPermission(PermissionKey.SPOTCHECKFORM_SUBMIT)
     public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
                            @Para(value = "qcItemTableJsonData") String qcItemTableJsonDataStr,
                            @Para(value = "qcParamTableJsonData") String qcParamTableJsonDataStr,

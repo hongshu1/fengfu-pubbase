@@ -56,6 +56,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_ADD)
     public void add() {
         render("add.html");
     }
@@ -63,6 +64,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_ADD)
     public void save() {
         renderJson(service.save(getModel(SpotCheckParam.class, "spotCheckParam")));
     }
@@ -70,6 +72,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_EDIT)
     public void edit() {
         SpotCheckParam spotCheckParam = service.findById(getLong(0));
         if (spotCheckParam == null) {
@@ -83,6 +86,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_EDIT)
     public void update() {
         renderJson(service.update(getModel(SpotCheckParam.class, "spotCheckParam")));
     }
@@ -90,6 +94,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
     }
@@ -97,6 +102,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -118,6 +124,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 导出选中
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_EXPORT)
     public void exportExcelByIds() {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -143,6 +150,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 导出全部
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_EXPORT)
     public void exportExcelAll() {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {
@@ -163,6 +171,7 @@ public class SpotCheckParamAdminController extends BaseAdminController {
     /**
      * 数据导入
      */
+    @CheckPermission(PermissionKey.SPOTCHECKPARAM_IMPORT)
     public void importExcel() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);

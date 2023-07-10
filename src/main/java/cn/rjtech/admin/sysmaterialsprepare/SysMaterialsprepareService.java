@@ -9,6 +9,9 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -769,4 +772,51 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         }
         return new Page(records,pageNumber, pageSize,totalPage,totalRow);
     }
+
+    /**
+     * 生成要导出的Excel
+     * @return
+     */
+    public JBoltExcel exportExcel(List<Record> records) {
+        return JBoltExcel
+                // 创建
+                .create()
+                // 设置工作表
+                .setSheets(
+                        // 设置工作表 列映射 顺序 标题名称
+                        JBoltExcelSheet
+                                .create()
+                                // 表头映射关系
+                                .setHeaders(1,
+                                        JBoltExcelHeader.create("cinvcode", "存货编码", 15),
+                                        JBoltExcelHeader.create("cinvcode1", "客户部番", 15),
+                                        JBoltExcelHeader.create("cinvname1", "部品名称", 15),
+                                        JBoltExcelHeader.create("cinvstd", "规格", 15),
+                                        JBoltExcelHeader.create("cuomname", "库存单位", 15),
+                                        JBoltExcelHeader.create("", "计划数量", 15),
+                                        JBoltExcelHeader.create("", "出库仓库", 15),
+                                        JBoltExcelHeader.create("", "出库库区", 15),
+                                        JBoltExcelHeader.create("", "已备料数量", 15),
+                                        JBoltExcelHeader.create("", "剩余备料数量", 15),
+                                        JBoltExcelHeader.create("batch", "可用批次号", 15),
+                                        JBoltExcelHeader.create("statename", "齐料扫码检查", 15)
+                                ).setDataChangeHandler((data,index) ->{
+                                    Date createdTime = data.getDate("createDate");
+                                    String fmtCreatedTime= DateUtil.format(createdTime, "yyyy-MM-dd");
+                                    data.put("createdTime",fmtCreatedTime);
+                                })
+                                // 设置导出的数据源 来自于数据库查询出来的Model List
+                                .setRecordDatas(2, records)
+                );
+    }
+
+    /**
+     * 导出订单列表
+     */
+    public List<Record> download(Kv kv, String sqlTemplate) {
+        kv.setIfNotNull("OrganizeCode",getOrgCode());
+        List<Record> list = dbTemplate(sqlTemplate, kv).find();
+        return list;
+    }
+
 }

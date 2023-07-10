@@ -12,7 +12,7 @@
 					<div class="col">
 						#if(isView??0 !=1)
 							#if(routing.iautoid??)
-								#include("/_view/_common/_approval_btns.html", uri="/admin/routing", formSn="Bd_BomMaster",
+								#include("/_view/_common/_approval_btns.html", uri="/admin/routing", formSn="Bd_InventoryRouting",
 								o=routing, primaryKeyName="iAutoId", className="cn.rjtech.admin.routing.RoutingService",
 								permissionKeyPrefix="routing")
 							#end
@@ -156,7 +156,7 @@
 	<div class="clearfix"></div>
 </div>
 
-<table class="jbolt_table jbolt_main_table table-center"
+<table class="jbolt_table jbolt_main_table table-center" id="inventory_routing_#(pageId)"
 	   data-jbolttable
 	   data-height="62%"
 	   data-ajax="true"
@@ -193,9 +193,31 @@
 #define js()
 <script>
 
+	var submit = false;
+
 	hideParentLayerDialogBtn(0);
 
+	function submitThisForm_#(pageId)() {
+		// 提审
+		submit_#(pageId)('#(routing.iautoid??)', function (data) {
+			successHandler('提审成功', '#(routing.iautoid??)');
+		});
+		return true;
+	}
+
+	/**
+	 * 新增/修改/提审
+	 */
+	function successHandler(msg, iautoid) {
+		LayerMsgBox.success(msg, 600, function () {
+			// 新增/修改，均跳转到详情页
+			location.href = 'admin/routing/edit/' + iautoid + '?_jb_rqtype_=dialog';
+			parent.refreshPjaxContainer();
+		});
+	}
+
 	function technologicalStructureBtn_#(pageId)(ele){
+
 
 		var url="admin/inventoryrouting/technological_Structure?iinventoryroutingid=#(routing.iautoid??)&cInvName1=#(routing.cinvname1??)&cInvCode1=#(routing.cinvcode1??)";
 		$(ele).data("url",url);
@@ -214,6 +236,21 @@
 			trigger:"click",
 			initRowCount:0,
 			maxRowCount:30,
+			// submit: {
+			//
+			// 	type: "all",//cell|all
+			// 	url: "admin/stockcheckvouch/saveTableSubmit",
+			// 	success: function (res) {
+			// 		if (res.state === 'ok') {
+			// 			LayerMsgBox.success("提交成功", 600, function () {
+			// 				parent.layer.close(parent.layer.getFrameIndex(window.name));
+			// 				window.parent.refreshJBoltTable();
+			// 			});
+			// 		} else {
+			// 			LayerMsgBox.alert(res.msg, 2);
+			// 		}
+			// 	}
+			// },
 			cols:{
 				id:{
 					submitAttr:"iautoid",

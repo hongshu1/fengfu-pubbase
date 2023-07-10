@@ -34,6 +34,7 @@ FROM dbo.Mo_MoDoc AS md
     ON
     md.iWorkShiftMid = ws.iAutoId
 WHERE 1 = 1
+and md.isDeleted=0
     #if(cMoDocNo)
   AND  md.cMoDocNo LIKE concat('%',#para(cMoDocNo),'%')
     #end

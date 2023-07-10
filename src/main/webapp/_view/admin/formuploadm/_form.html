@@ -141,7 +141,7 @@
 <div class="jbolt_page_content">
     <script type="text/template" id="formUploadM_tpl_#(pageId)">
         {@each datas as data,index}
-        <tr data-id="${data.iautoid}">
+        <tr name="formupload" data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             #if(readonly != 'readonly')
             <td>
@@ -167,7 +167,7 @@
                 {@/if}
             </td>
             <td>${data.cmemo}</td>
-            <td hidden id="${data.cattachments}+2">${data.cattachments2}</td>
+            <td  id="${data.cattachments}2">${data.cattachments2}</td>
         </tr>
         {@/each}
     </script>
@@ -193,11 +193,11 @@
             <th data-width="60" data-column="index">序号</th>
 
             #if(readonly != 'readonly')
-            <th data-width="20" data-column="">操作</th>
+            <th data-width="20" data-column="Controls">操作</th>
             #end
             <th data-width="550"  data-column="cattachments">附件</th>
             <th data-width="480" data-column="cmemo">备注</th>
-            <th hidden data-width="1" data-column="cattachments2">附件2</th>
+            <th  data-width="1" data-column="cattachments2">附件2</th>
         </tr>
         </thead>
     </table>
@@ -212,7 +212,8 @@
                 let elementById = document.getElementById(Url+"+1");
                 elementById.setAttribute("href","admin/formUploadD/deletePicture?iautoid="+iautoid+"&url="+Url);
             }else {
-               let element = document.getElementById(cattachments+"+2");
+               let element = document.getElementById(cattachments+"2");
+                console.log(element);
                 let innerText = element.innerText;
                 let repeat = innerText.replace(Url);
                 // 修改数据
@@ -221,7 +222,6 @@
                 var cols = [
                     {column: "cattachments2", text: repeat, value:repeat}
                 ];
-
                 jboltTableSetCells($table, $td.parent(), cols);
                 var elementById1 = document.getElementById(""+Url);
                 var elementById4 = document.getElementById(""+Url+"+1");
@@ -404,12 +404,11 @@ hideParentLayerDialogBtn(0);
             }
             // 修改数据
             var $table = $('#jbolt_Table_#(pageId)');
-            var $td = $("table#jbolt_Table_#(pageId) td:contains('" + url + "')").first();
+            var $td = $("table#jbolt_Table_#(pageId) td:contains('"+url+"')").first();
             var cols = [
                 {column: "cattachments2", text: url+","+data, value:url+","+data}
-            ];
-            jboltTableSetCells($table, $td.parent(), cols);
-
+            ]
+            jboltTableSetCells($table,$td.parent(), cols);
         }else {
             jboltTableInsertRow('#jbolt_Table_#(pageId)', datas);
             var val = $("#cattachments").val();

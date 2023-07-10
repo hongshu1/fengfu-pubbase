@@ -255,4 +255,8 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         keepPara();
         render("cvencode_dialog_index.html");
     }
+
+    public void wareHouseOptions(){
+        renderJsonData(service.wareHouseOptions(getKv()));
+    }
 }

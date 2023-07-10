@@ -392,32 +392,51 @@ public class RoutingService extends BaseService<BomMaster> {
 		DateTime date = DateUtil.date();
 //		String userName = JBoltUserKit.getUserName();
 //		Long userId = JBoltUserKit.getUserId();
-		
-		inventoryRouting.setIAuditStatus(status);
-		inventoryRouting.setDSubmitTime(date);
-		// 默认为1
-		inventoryRouting.setIAuditWay(1);
-		tx(()->{
-			// 审核通过需要更改状态（当前存货）
-			if (AuditStatusEnum.APPROVED.getValue() == status){
-				//
-				inventoryRoutingService.updateEnable(inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
-				inventoryRouting.setIsEnabled(true);
-				invPartService.updateByInvIdIsEffective(inventoryRouting.getIAutoId(), inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
-				// 批量将当前存货的全部失效
-				invPartService.updateByRoutingIdIsEffective(inventoryRouting.getIAutoId(), IsOkEnum.YES.getValue());
-				// 批量更改
-			}
-			inventoryRouting.update();
-			return true;
-		});
+
+//		inventoryRouting.setIAuditStatus(status);
+//		inventoryRouting.setDSubmitTime(date);
+//		// 默认为1
+//		inventoryRouting.setIAuditWay(1);
+//		tx(()->{
+//			// 审核通过需要更改状态（当前存货）
+//			if (AuditStatusEnum.APPROVED.getValue() == status){
+//				//
+//				inventoryRoutingService.updateEnable(inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
+//				inventoryRouting.setIsEnabled(true);
+//				invPartService.updateByInvIdIsEffective(inventoryRouting.getIAutoId(), inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
+//				// 批量将当前存货的全部失效
+//				invPartService.updateByRoutingIdIsEffective(inventoryRouting.getIAutoId(), IsOkEnum.YES.getValue());
+//				// 批量更改
+//			}
+//			inventoryRouting.update();
+//			return true;
+//		});
 		return SUCCESS;
 	}
 
+	
+	private void approveOperate(long formAutoId){
+		// 先校验是否存在
+		InventoryRouting inventoryRouting = inventoryRoutingService.findById(formAutoId);
+		ValidationUtils.notNull(inventoryRouting, "工艺路线记录不存在");
+		// 审核通过需要更改状态（当前存货）
+		if (AuditStatusEnum.APPROVED.getValue() == inventoryRouting.getIAuditStatus()){
+			// 全部设置为失效
+			inventoryRoutingService.updateEnable(inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
+			inventoryRouting.setIsEnabled(true);
+			invPartService.updateByInvIdIsEffective(inventoryRouting.getIAutoId(), inventoryRouting.getIInventoryId(), IsOkEnum.NO.getValue());
+			// 批量将当前存货的全部失效
+			invPartService.updateByRoutingIdIsEffective(inventoryRouting.getIAutoId(), IsOkEnum.YES.getValue());
+			inventoryRouting.update();
+		}
+		
+	}
+	
 	/**
 	 * 处理审批通过的其他业务操作，如有异常返回错误信息
 	 */
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
+		approveOperate(formAutoId);
 		return null;
 	}
 
@@ -447,6 +466,16 @@ public class RoutingService extends BaseService<BomMaster> {
 	 * @param isLast     是否为审批的最后一个节点
 	 */
 	public String postReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
+		if (isLast){
+			// 先校验是否存在
+			InventoryRouting inventoryRouting = inventoryRoutingService.findById(formAutoId);
+			ValidationUtils.notNull(inventoryRouting, "工艺路线记录不存在");
+			inventoryRouting.setIsEnabled(false);
+			
+			// 批量将当前存货的全部失效
+			invPartService.updateByRoutingIdIsEffective(inventoryRouting.getIAutoId(), IsOkEnum.NO.getValue());
+			inventoryRouting.update();
+		}
 		return null;
 	}
 
@@ -499,6 +528,9 @@ public class RoutingService extends BaseService<BomMaster> {
 	 * @return 错误信息
 	 */
 	public String postBatchApprove(List<Long> formAutoIds) {
+		for (Long formAutoId : formAutoIds){
+			approveOperate(formAutoId);
+		}
 		return null;
 	}
 

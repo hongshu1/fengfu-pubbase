@@ -1,5 +1,6 @@
 package cn.rjtech.api.user;
 
+import cn.hutool.core.date.DateTime;
 import cn.jbolt._admin.permission.PermissionService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.api.*;
@@ -7,6 +8,9 @@ import cn.jbolt.core.common.enums.JBoltLoginState;
 import cn.jbolt.core.model.Org;
 import cn.jbolt.core.model.User;
 import cn.rjtech.admin.org.OrgService;
+import cn.rjtech.admin.pad.PadService;
+import cn.rjtech.model.momdata.Pad;
+import cn.rjtech.model.momdata.PadLoginLog;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
@@ -25,14 +29,24 @@ public class UserApiService extends JBoltApiBaseService {
     @Inject
     private PermissionService permissionService;
 
+    @Inject
+    private PadService padService;
+
     public JBoltApiRet getUserPermissionList(String permissionKey, String pkey){
         return JBoltApiRet.API_SUCCESS_WITH_DATA(permissionService.getUserPermissionList(permissionKey, pkey));
     }
 
-    public JBoltApiRet login(String username, String password, Long orgId) {
+//    public JBoltApiRet login(String username, String password, Long orgId,String mac,String ip) {
+    public JBoltApiRet login(String username, String password, Long orgId,String ip) {
         Org org = orgService.findById(orgId);
         ValidationUtils.notNull(org, "组织不存在");
         ValidationUtils.isTrue(org.getEnable(), "该组织已被禁用");
+
+        //通过MAC地址获取平板信息
+//        Pad pad=padService.findFirst(Okv.by("cmac", mac));
+//        if (pad == null) {
+//            return JBoltApiRet.API_FAIL("该设备未在平板端设置找到登记记录");
+//        }
 
         // 通过用户名去找用户
         User user = userService.findFirst(Okv.by("username", username));
@@ -51,6 +65,17 @@ public class UserApiService extends JBoltApiBaseService {
         // 创建JWT
         String[] jwts = JBoltApiJwtManger.me().createJBoltApiTokens(JBoltApiKit.getApplication(), userBean, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL, JBoltApiJwtManger.REFRESH_JWT_SURPLUS_TTL * 2);
         ValidationUtils.notEmpty(jwts, "生成jwt失败");
+
+//        PadLoginLog padLoginLog=new PadLoginLog();
+//        padLoginLog.setCOrgCode(org.getOrgCode());
+//        padLoginLog.setCOrgName(org.getOrgName());
+//        padLoginLog.setIPadId(pad.getIAutoId());
+//        padLoginLog.setIUserId(user.getId());
+//        padLoginLog.setCIp(ip);
+//        padLoginLog.setICreateBy(user.getId());
+//        padLoginLog.setCCreateName(user.getUsername());
+//        padLoginLog.setDCreateTime(new DateTime());
+//        padLoginLog.save();
 
         Okv ret = Okv.by(JBoltApiJwtManger.JBOLT_API_TOKEN_KEY, jwts[0])
                 .set(JBoltApiJwtManger.JBOLT_API_REFRESH_TOKEN_KEY, jwts[1])

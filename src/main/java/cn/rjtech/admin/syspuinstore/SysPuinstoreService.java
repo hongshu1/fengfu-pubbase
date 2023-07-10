@@ -615,7 +615,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             main.setCreatePerson(detail.getCCreateName());
             main.setISsurplusqty(false);
             main.setIcRdCode(puinstore.getRdCode());
-            main.setIsWhpos("1"); //
+            main.setIsWhpos("1");
             main.setNum(0);
             main.setPackRate("0");
             main.setQty(detail.getQty().stripTrailingZeros().toPlainString());
@@ -623,7 +623,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
             main.setVenCode(puinstore.getVenCode());
             main.setVenName(null != vendor ? vendor.getCVenName() : "");
             main.setIndex(String.valueOf(i));
-            main.setIposcode(""); //库区
+            main.setIposcode(detail.getPosCode()); //库区
             main.setIwhcode(detail.getWhcode());
             main.setOrganizeCode(getOrgCode());
             main.setSourceBillDid(detail.getSourceBillDid());

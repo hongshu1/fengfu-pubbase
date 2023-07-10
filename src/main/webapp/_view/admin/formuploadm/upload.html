@@ -4,26 +4,29 @@
     <div class="form-group row" >
         <label class="col-sm-2 col-form-label">文件路径</label>
         <div class="col">
-            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
-                   readonly="readonly"
-                   id="fileSyncUploaderDemo" name="cattachments" value="#(cattachments??)"/>
+            <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required" readonly="readonly" id="fileSyncUploaderDemo" name="cattachments" value="#(cattachments??)"/>
+            
             #if(iautoid??)
             <input type="hidden" id="iautoid" name="iAutoId" value="#(iautoid??)" />
             #end
+            
             <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" hidden id="cattachments" value="#(cattachments??)" />
         </div>
     </div>
+    
 </form>
-
 
 <fieldset class="form-page-fieldset" style="width: 90%;margin-left: 8%;">
     <legend>上传图片</legend>
+    
     #if(msg)
     <div class="alert alert-danger">
-     #(msg??)
+        #(msg??)
     </div>
     #end
+    
     #setLocal(inputId=RandomUtil.random(6))
+    
     <!--  data-theme="explorer-fa" 居中 data-multiplefileinput 样式 -->
     <div class="form-group text-center">
         <input type="file" id="fileInput_123" class="file-loading" data-max-filecount="8"
@@ -34,9 +37,11 @@
     </div>
 
 </fieldset>
+
 #define js()
 <script>
     hideParentLayerDialogBtn(0);
+    
     // 增加一个按钮-保存role
     addParentLayerDialogBtn("保存", "lay_success savebtn", function () {
         var val = $('#fileSyncUploaderDemo').val();
@@ -53,5 +58,5 @@
     });
 
 </script>
-#include("/_view/_admin/common/_formjs.html",formId="plInventoryPostForm")
+###include("/_view/_admin/common/_formjs.html",formId="plInventoryPostForm")
 #end

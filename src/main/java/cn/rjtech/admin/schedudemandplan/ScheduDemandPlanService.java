@@ -230,16 +230,6 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 		if (sum >20 || itemList.size() <1){
 			return compareidList;
 		}
-		//母件id
-		List<BomMaster> bommasterList = bomMasterService.find("select * from Bd_BomMaster WHERE iInventoryId IN (" + CollUtil.join(itemList, COMMA) + ") ");
-		if (CollUtil.isEmpty(bommasterList)){
-			return compareidList;
-		}
-		List<String> masterids = new ArrayList<>();
-		for (BomMaster bommaster : bommasterList){
-			Long id = bommaster.getIAutoId();
-			masterids.add(String.valueOf(id));
-		}
 
 		//根据母件id查询子表
 		List<Record> bomcompareList = findRecord("select\n" +
@@ -254,9 +244,9 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				"c.iPkgQty,\n" +
 				"g.iInnerInStockDays,\n" +
 				"b.iInventoryId as pinvId,d.cInvCode as pinvCode,\n" +
-				"a.iQty as useRate\n" +
-				"from Bd_BomCompare as a  \n" +
-				"left join Bd_BomMaster as b on a.iBOMMasterId = b.iAutoId \n" +
+				"a.iBaseQty as useRate\n" +
+				"from Bd_BomD as a  \n" +
+				"left join Bd_BomM as b on a.iPid = b.iAutoId \n" +
 				"left join Bd_Inventory as c on a.iInventoryId = c.iAutoId\n" +
 				"left join Bd_Inventory as d on b.iInventoryId = d.iAutoId\n" +
 				"left join Bd_InventoryStockConfig as e on d.iAutoId = e.iInventoryId\n" +
@@ -264,8 +254,10 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				"left join Bd_InventoryPlan as g on g.iInventoryId = d.iAutoId\n" +
 				"LEFT JOIN Bd_InventoryWorkRegion AS h ON c.iAutoId = h.iInventoryId AND h.isDefault = 1 AND h.isDeleted = 0\n" +
 				"LEFT JOIN Bd_WorkRegionM AS i ON h.iWorkRegionMid = i.iAutoId AND i.isDeleted = 0\n" +
-				"where b.isDeleted = 0 and b.isEffective = 1 \n" +
-				"and a.iBOMMasterId in (" + CollUtil.join(masterids, COMMA) + ") \n" +
+				"where b.isDeleted = 0 \n" +
+				"AND CONVERT(DATE, a.dEnableDate) <= CONVERT(DATE, GETDATE())\n" +
+				"AND CONVERT(DATE, a.dDisableDate) >= CONVERT(DATE, GETDATE())\n" +
+				"and b.iInventoryId in (" + CollUtil.join(itemList, COMMA) + ") \n" +
 				"order by c.cInvCode ");
 		if (CollUtil.isEmpty(bomcompareList)){
 			return compareidList;
