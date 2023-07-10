@@ -3,7 +3,6 @@ package cn.rjtech.admin.workregionm;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -253,10 +252,8 @@ public class WorkregionmService extends BaseService<Workregionm> {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
-        // 读取数据没有问题后判断必填字段
-        String ipslevel = "1,2,3,4,5,6,7";
-        
         Date now = new Date();
+        
         // 部门
         Map<String, Department> departmentMap = new HashMap<>();
         // 仓库
@@ -268,11 +265,10 @@ public class WorkregionmService extends BaseService<Workregionm> {
 
             if (StrUtil.isBlank(record.getStr("cWorkCode"))) {
                 return fail("产线编码不能为空");
-            }else{
+            } else {
                 String cWorkCode = record.getStr("cWorkCode");
                 Workregionm dbModel = findByCworkcode(getOrgId(), cWorkCode);
-                ValidationUtils.isTrue(dbModel==null,cWorkCode+",已存在该条码!");
-
+                ValidationUtils.isTrue(dbModel == null, cWorkCode + ",已存在该条码!");
             }
 
             if (StrUtil.isBlank(record.getStr("cWorkName"))) {
@@ -287,10 +283,10 @@ public class WorkregionmService extends BaseService<Workregionm> {
             if (StrUtil.isBlank(record.getStr("iPsLevel"))) {
                 return fail("排产层级不能为空");
             }
+            
+            int ipslevel = record.getInt("ipslevel");
+            ValidationUtils.isTrue(ipslevel >= 1 && ipslevel <= 7, "排产层级只能输入1至7");
 
-            if (!ipslevel.contains(record.getStr("iPsLevel"))) {
-                return fail("排产层级只能输入1至7");
-            }
             if (StrUtil.isBlank(record.getStr("cWarehouseName"))) {
                 return fail("关联仓库名称不能为空");
             }
