@@ -322,18 +322,6 @@ public class PermissionKey {
 	 */
 	public static final String BOMCOMPARE_IMPORT = "bomcompare_import";
 	/**
-	 * 新增
-	 */
-	public static final String INVENTORYSPOTCHECKFORM_ADD = "inventoryspotcheckform_add";
-	/**
-	 * 导出
-	 */
-	public static final String INVENTORYSPOTCHECKFORM_EXPORT = "inventoryspotcheckform_export";
-	/**
-	 * 导入
-	 */
-	public static final String INVENTORYSPOTCHECKFORM_IMPORT = "inventoryspotcheckform_import";
-	/**
 	 * 收料管理
 	 */
 	public static final String SL = "sl";
@@ -353,10 +341,6 @@ public class PermissionKey {
 	 * 片料委外入库
 	 */
 	public static final String PLPUDELIVERYDETAIL = "plpudeliverydetail";
-	/**
-	 * 点检标准行
-	 */
-	public static final String SPOT_CHECK_STANDARDS = "spot_check_standards";
 	/**
 	 * 委外入库
 	 */
@@ -3285,4 +3269,32 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String SPOTCHECKFORM_SUBMIT = "spotcheckform_submit";
+	/**
+	 * 新增
+	 */
+	public static final String INVENTORYSPOTCHECKFORM_ADD = "inventoryspotcheckform_add";
+	/**
+	 * 修改
+	 */
+	public static final String INVENTORYSPOTCHECKFORM_EDIT = "inventoryspotcheckform_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INVENTORYSPOTCHECKFORM_DELETE = "inventoryspotcheckform_delete";
+	/**
+	 * 导出
+	 */
+	public static final String INVENTORYSPOTCHECKFORM_EXPORT = "inventoryspotcheckform_export";
+	/**
+	 * 导入
+	 */
+	public static final String INVENTORYSPOTCHECKFORM_IMPORT = "inventoryspotcheckform_import";
+	/**
+	 * 保存
+	 */
+	public static final String INVENTORYSPOTCHECKFORM_SUBMIT = "inventoryspotcheckform_submit";
+	/**
+	 * 点检表格行
+	 */
+	public static final String SPOT_CHECK_STANDARDS = "spot_check_standards";
 }
