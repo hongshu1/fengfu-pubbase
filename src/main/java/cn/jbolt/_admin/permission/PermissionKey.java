@@ -3269,4 +3269,20 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String SPOTCHECKPARAM_IMPORT = "spotcheckparam_import";
+	/**
+	 * 新增
+	 */
+	public static final String SPOTCHECKFORM_ADD = "spotcheckform_add";
+	/**
+	 * 修改
+	 */
+	public static final String SPOTCHECKFORM_EDIT = "spotcheckform_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SPOTCHECKFORM_DELETE = "spotcheckform_delete";
+	/**
+	 * 保存
+	 */
+	public static final String SPOTCHECKFORM_SUBMIT = "spotcheckform_submit";
 }
