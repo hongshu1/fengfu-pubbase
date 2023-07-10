@@ -131,7 +131,7 @@ public class ForeignCurrencyAdminController extends BaseAdminController {
     public void findForeignCurrencyForEdit(){
     	renderJsonData(service.findModelByExchName(getKv()));
     }
-    @UnCheck
+    @CheckPermission(PermissionKey.FOREIGNCURRENCY_SUBMIT)
     public void saveOrUpdateForeignCurrency(){
     	renderJson(service.saveOrUpdateForeignCurrency(getKv()));
     }
@@ -139,7 +139,7 @@ public class ForeignCurrencyAdminController extends BaseAdminController {
     public void saveCellTable(){
     	renderJson(service.saveCellTable(getKv()));
     }
-    @UnCheck
+    @CheckPermission(PermissionKey.FOREIGNCURRENCY_DELETE)
     public void deleteForeignCurrencyAndExch(){
     	renderJson(service.deleteForeignCurrencyAndExch(getKv()));
     }

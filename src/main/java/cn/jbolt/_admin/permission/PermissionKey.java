@@ -3297,4 +3297,48 @@ public class PermissionKey {
 	 * 点检表格行
 	 */
 	public static final String SPOT_CHECK_STANDARDS = "spot_check_standards";
+	/**
+	 * 新增
+	 */
+	public static final String FOREIGNCURRENCY_ADD = "foreigncurrency_add";
+	/**
+	 * 删除
+	 */
+	public static final String FOREIGNCURRENCY_DELETE = "foreigncurrency_delete";
+	/**
+	 * 保存
+	 */
+	public static final String FOREIGNCURRENCY_SUBMIT = "foreigncurrency_submit";
+	/**
+	 * 新增
+	 */
+	public static final String SETTLESTYLE_ADD = "settlestyle_add";
+	/**
+	 * 修改
+	 */
+	public static final String SETTLESTYLE_EDIT = "settlestyle_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SETTLESTYLE_DELETE = "settlestyle_delete";
+	/**
+	 * 新增
+	 */
+	public static final String QCITEM_ADD = "qcitem_add";
+	/**
+	 * 修改
+	 */
+	public static final String QCITEM_EDIT = "qcitem_edit";
+	/**
+	 * 删除
+	 */
+	public static final String QCITEM_DELETE = "qcitem_delete";
+	/**
+	 * 导出
+	 */
+	public static final String QCITEM_EXPORT = "qcitem_export";
+	/**
+	 * 导入
+	 */
+	public static final String QCITEM_IMPORT = "qcitem_import";
 }
