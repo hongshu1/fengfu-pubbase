@@ -64,7 +64,7 @@
                                                        maxlength="40"
                                                        name="annualOrderM.ccusname"
                                                        value="#(annualOrderM.ccusname??)"/>
-                                            </div>*
+                                            </div>
                                             <div class="input-group-append">
                                                 <button class="btn btn-outline-secondary" data-dialogbtn
                                                         data-link-para-ele="#iCustomerId" data-area="1280,600"
@@ -123,19 +123,19 @@
             <td>${data.cinvname1}</td>
             <td>${data.cinvstd}</td>
             <td>${data.cuomname}</td>
-            <td>${data.iqty1}</td>
-			<td>${data.iqty2}</td>
-			<td>${data.iqty3}</td>
-			<td>${data.iqty4}</td>
-			<td>${data.iqty5}</td>
-			<td>${data.iqty6}</td>
-			<td>${data.iqty7}</td>
-			<td>${data.iqty8}</td>
-			<td>${data.iqty9}</td>
-			<td>${data.iqty10}</td>
-			<td>${data.iqty11}</td>
-			<td>${data.iqty12}</td>
-			<td>${data.iqtytotal}</td>
+            <td>${data.iqty1|tofixed_2}</td>
+			<td>${data.iqty2|tofixed_2}</td>
+			<td>${data.iqty3|tofixed_2}</td>
+			<td>${data.iqty4|tofixed_2}</td>
+			<td>${data.iqty5|tofixed_2}</td>
+			<td>${data.iqty6|tofixed_2}</td>
+			<td>${data.iqty7|tofixed_2}</td>
+			<td>${data.iqty8|tofixed_2}</td>
+			<td>${data.iqty9|tofixed_2}</td>
+			<td>${data.iqty10|tofixed_2}</td>
+			<td>${data.iqty11|tofixed_2}</td>
+			<td>${data.iqty12|tofixed_2}</td>
+			<td>${data.iqtytotal|tofixed_2}</td>
         </tr>
         {@/each}
     </script>
@@ -319,10 +319,10 @@
             });
         }
     }
-    
+
     function uploadHandler(uploader, type, fileInput, res) {
         jboltTableClear("#jbolt_Table_#(pageId)");
-        
+
         var data = res.data;
         if (!data || data.length === 0) {
             LayerMsgBox.alert('导入数据不能为空', 2);
@@ -330,7 +330,7 @@
         }
 
         var arr = [];
-        
+
         $.each(data, function (idx, row) {
             if (row.cinvcode1) {
                 arr.push(row.cinvcode1);
@@ -344,14 +344,14 @@
         var index = LayerMsgBox.loading('正在匹配存货信息...', 10000);
 
         Ajax.post('admin/inventory/fetchByCinvcode1s', para, function (ret) {
-            
+
             LayerMsgBox.close(index);
-            
+
             if (ret.state === 'ok') {
-                
+
                 // 导入行数据
                 $.each(data, function (idx, r) {
-                    
+
                     // 存货数据
                     $.each(ret.data, function (idx, row) {
 
@@ -385,7 +385,7 @@
                             r[key] = iqty.toFixed(0);
                         }
                     });
-                    
+
                 });
 
                 jboltTableInsertRow('#jbolt_Table_#(pageId)', data);
