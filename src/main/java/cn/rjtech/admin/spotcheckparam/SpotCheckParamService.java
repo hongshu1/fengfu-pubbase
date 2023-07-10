@@ -284,8 +284,8 @@ public class SpotCheckParamService extends BaseService<SpotCheckParam> {
 				JBoltExcelSheet.create("sheet1")
 					//设置列映射 顺序 标题名称 不处理别名
 					.setHeaders(2, false,
-						JBoltExcelHeader.create("参数项目名称", 20),
-						JBoltExcelHeader.create("参数名称", 20)
+						JBoltExcelHeader.create("*参数项目名称", 20),
+						JBoltExcelHeader.create("*参数名称", 20)
 					)
 					.setMerges(JBoltExcelMerge.create("A", "B", 1, 1, "点检参数"))
 			);
