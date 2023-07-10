@@ -61,6 +61,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.INVENTORYQCFORM_ADD)
 	public void add() {
 		set("isAdd", 1);
 		render("add.html");
@@ -76,6 +77,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.INVENTORYQCFORM_EDIT)
 	public void edit() {
 		InventoryQcForm inventoryQcForm=service.findById(getLong(0));
 		if(inventoryQcForm == null){
@@ -100,6 +102,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
    /**
 	* 批量删除
 	*/
+   @CheckPermission(PermissionKey.INVENTORYQCFORM_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -278,6 +281,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 	/**
 	 * 提交数据保存方法
 	 */
+	@CheckPermission(PermissionKey.INVENTORYQCFORM_SUBMIT)
 	public void submit(){
 		renderJson(service.submitByJBoltTable(getJBoltTable()));
 	}
@@ -362,6 +366,7 @@ public class InventoryQcFormAdminController extends BaseAdminController {
 		renderJsonData(retFiles);
 	}
 
+	@CheckPermission(PermissionKey.INVENTORYQCFORM_IMPORT)
 	public void importExcelClass() {
 		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
 		UploadFile file = getFile("file", uploadPath);
