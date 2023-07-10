@@ -802,7 +802,7 @@ public class PermissionKey {
 	 */
 	public static final String PURCHASE_RECEIPT_LIST = "purchase_receipt_list";
 	/**
-	 * 形态转换单列表
+	 * 组装拆卸及形态转换单
 	 */
 	public static final String FORM_CONVERSION_LIST = "form_conversion_list";
 	/**
@@ -3341,4 +3341,116 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String QCITEM_IMPORT = "qcitem_import";
+	/**
+	 * 新增
+	 */
+	public static final String QCPARAM_ADD = "qcparam_add";
+	/**
+	 * 修改
+	 */
+	public static final String QCPARAM_EDIT = "qcparam_edit";
+	/**
+	 * 删除
+	 */
+	public static final String QCPARAM_DELETE = "qcparam_delete";
+	/**
+	 * 导出
+	 */
+	public static final String QCPARAM_EXPORT = "qcparam_export";
+	/**
+	 * 导入
+	 */
+	public static final String QCPARAM_IMPORT = "qcparam_import";
+	/**
+	 * 新增
+	 */
+	public static final String QCFORM_ADD = "qcform_add";
+	/**
+	 * 修改
+	 */
+	public static final String QCFORM_EDIT = "qcform_edit";
+	/**
+	 * 删除
+	 */
+	public static final String QCFORM_DELETE = "qcform_delete";
+	/**
+	 * 保存
+	 */
+	public static final String QCFORM_SUBMIT = "qcform_submit";
+	/**
+	 * 新增
+	 */
+	public static final String INVENTORYQCFORM_ADD = "inventoryqcform_add";
+	/**
+	 * 修改
+	 */
+	public static final String INVENTORYQCFORM_EDIT = "inventoryqcform_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INVENTORYQCFORM_DELETE = "inventoryqcform_delete";
+	/**
+	 * 导入
+	 */
+	public static final String INVENTORYQCFORM_IMPORT = "inventoryqcform_import";
+	/**
+	 * 保存
+	 */
+	public static final String INVENTORYQCFORM_SUBMIT = "inventoryqcform_submit";
+	/**
+	 * 新增
+	 */
+	public static final String CONTAINER_ADD = "container_add";
+	/**
+	 * 修改
+	 */
+	public static final String CONTAINER_EDIT = "container_edit";
+	/**
+	 * 删除
+	 */
+	public static final String CONTAINER_DELETE = "container_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CONTAINER_EXPORT = "container_export";
+	/**
+	 * 导入
+	 */
+	public static final String CONTAINER_IMPORT = "container_import";
+	/**
+	 * 打印
+	 */
+	public static final String CONTAINER_PRINT = "container_print";
+	/**
+	 * 保存
+	 */
+	public static final String CONTAINER_SUBMIT = "container_submit";
+	/**
+	 * 入库
+	 */
+	public static final String CONTAINER_RK = "container_rk";
+	/**
+	 * 出库
+	 */
+	public static final String CONTAINER_CK = "container_ck";
+	/**
+	 * 新增
+	 */
+	public static final String CONTAINERCLASS_ADD = "containerclass_add";
+	/**
+	 * 修改
+	 */
+	public static final String CONTAINERCLASS_EDIT = "containerclass_edit";
+	/**
+	 * 删除
+	 */
+	public static final String CONTAINERCLASS_DELETE = "containerclass_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CONTAINERCLASS_EXPORT = "containerclass_export";
+	/**
+	 * 导入
+	 */
+	public static final String CONTAINERCLASS_IMPORT = "containerclass_import";
 }

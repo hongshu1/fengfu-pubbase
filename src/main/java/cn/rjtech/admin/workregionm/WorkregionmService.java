@@ -3,7 +3,6 @@ package cn.rjtech.admin.workregionm;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -22,7 +21,6 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.model.momdata.Workregionm;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -249,49 +247,13 @@ public class WorkregionmService extends BaseService<Workregionm> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcel(File file) {
-        StringBuilder errorMsg = new StringBuilder();
-
-        JBoltExcel excel = JBoltExcel
-                // 从excel文件创建JBoltExcel实例
-                .from(file)
-                // 设置工作表信息
-                .setSheets(
-                        JBoltExcelSheet.create("workregionm")
-                                // 设置列映射 顺序 标题名称
-                                .setHeaders(2,
-                                        JBoltExcelHeader.create("cworkcode", "产线编码"),
-                                        JBoltExcelHeader.create("cworkname", "产线名称"),
-                                        JBoltExcelHeader.create("cdepname", "所属部门"),
-                                        JBoltExcelHeader.create("cpersonname", "产线长"),
-                                        JBoltExcelHeader.create("ipslevel", "排产层级"),
-                                        JBoltExcelHeader.create("cwarehousename", "关联仓库名称不能为空"),
-                                        JBoltExcelHeader.create("cmemo", "备注")
-                                )
-                                // 从第三行开始读取
-                                .setDataStartRow(3)
-                );
-
-        // 从指定的sheet工作表里读取数据
-        List<Record> records = JBoltExcelUtil.readRecords(excel, 0, true, errorMsg);
-        if (notOk(records)) {
-            if (errorMsg.length() > 0) {
-                return fail(errorMsg.toString());
-            } else {
-                return fail("数据为空!");
-            }
-        }
-        // 工序新增的记录
-        List<Department> departmentAddList = new ArrayList<>();
-        List<String> errList = new ArrayList<>();
-
+        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
-        // 读取数据没有问题后判断必填字段
-        String ipslevel = "1,2,3,4,5,6,7";
-        
         Date now = new Date();
+        
         // 部门
         Map<String, Department> departmentMap = new HashMap<>();
         // 仓库
@@ -301,39 +263,38 @@ public class WorkregionmService extends BaseService<Workregionm> {
         
         for (Record record : records) {
 
-            if (StrUtil.isBlank(record.getStr("cworkcode"))) {
+            if (StrUtil.isBlank(record.getStr("cWorkCode"))) {
                 return fail("产线编码不能为空");
-            }else{
-                String cWorkCode = record.getStr("cworkcode");
+            } else {
+                String cWorkCode = record.getStr("cWorkCode");
                 Workregionm dbModel = findByCworkcode(getOrgId(), cWorkCode);
-                ValidationUtils.isTrue(dbModel==null,cWorkCode+",已存在该条码!");
-
+                ValidationUtils.isTrue(dbModel == null, cWorkCode + ",已存在该条码!");
             }
 
-            if (StrUtil.isBlank(record.getStr("cworkname"))) {
+            if (StrUtil.isBlank(record.getStr("cWorkName"))) {
                 return fail("产线名称不能为空");
             }
-            if (StrUtil.isBlank(record.getStr("cdepname"))) {
+            if (StrUtil.isBlank(record.getStr("cDepName"))) {
                 return fail("所属部门不能为空");
             }
 //            if (StrUtil.isBlank(record.getStr("cPersonName"))) {
 //                return fail("产线长不能为空");
 //            }
-            if (StrUtil.isBlank(record.getStr("ipslevel"))) {
+            if (StrUtil.isBlank(record.getStr("iPsLevel"))) {
                 return fail("排产层级不能为空");
             }
+            
+            int ipslevel = record.getInt("ipslevel");
+            ValidationUtils.isTrue(ipslevel >= 1 && ipslevel <= 7, "排产层级只能输入1至7");
 
-            if (!ipslevel.contains(record.getStr("ipslevel"))) {
-                return fail("排产层级只能输入1至7");
-            }
-            if (StrUtil.isBlank(record.getStr("cwarehousename"))) {
+            if (StrUtil.isBlank(record.getStr("cWarehouseName"))) {
                 return fail("关联仓库名称不能为空");
             }
 
             // ---------------------------------------
             // 部门
             // ---------------------------------------
-            String ccdepname = record.getStr("cdepname");
+            String ccdepname = record.getStr("cDepName");
 
             Department department = departmentMap.get(ccdepname);
             
@@ -363,26 +324,23 @@ public class WorkregionmService extends BaseService<Workregionm> {
             // ---------------------------------------
 
             String cpersonname = record.getStr("cPersonName");
-            if(StringUtils.isNotBlank(cpersonname)){
-                Person person = personMap.get(cpersonname);
 
-                if (ObjUtil.isNull(person)) {
-                    person = personService.findFirstByCpersonName(cpersonname);
-                    ValidationUtils.notNull(person, String.format("人员“%s”不存在", cpersonname));
+            Person person = personMap.get(cpersonname);
 
-                    personMap.put(cpersonname, person);
-                }
-                record.set("iPersonId", person.getIAutoId());
-                record.set("cPersonCode", person.getCpsnNum());
+            if (ObjUtil.isNull(person)) {
+                person = personService.findFirstByCpersonName(cpersonname);
+                ValidationUtils.notNull(person, String.format("人员“%s”不存在", cpersonname));
+
+                personMap.put(cpersonname, person);
             }
-
 
 
             record.set("cDepCode", department.getCDepCode());
             record.set("iDepId", department.getIAutoId());
             record.set("iWarehouseId", warehouse.getIAutoId());
             record.set("cWarehouseCode", warehouse.getCWhCode());
-
+            record.set("iPersonId", person.getIAutoId());
+            record.set("cPersonCode", person.getCpsnNum());
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iCreateBy", JBoltUserKit.getUserId());
             record.set("dCreateTime", now);
