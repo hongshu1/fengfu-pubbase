@@ -45,6 +45,7 @@ public class VouchTypeDicAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.VOUCHTYPEDIC_ADD)
     public void add() {
         render("add.html");
     }
@@ -52,6 +53,7 @@ public class VouchTypeDicAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.VOUCHTYPEDIC_ADD)
     public void save() {
         renderJson(service.save(getModel(VouchTypeDic.class, "vouchTypeDic")));
     }
@@ -59,6 +61,7 @@ public class VouchTypeDicAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.VOUCHTYPEDIC_EDIT)
     public void edit() {
         VouchTypeDic vouchTypeDic = service.findById(getLong(0));
         if (vouchTypeDic == null) {
@@ -72,6 +75,7 @@ public class VouchTypeDicAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.VOUCHTYPEDIC_EDIT)
     public void update() {
         renderJson(service.update(getModel(VouchTypeDic.class, "vouchTypeDic")));
     }
@@ -79,6 +83,7 @@ public class VouchTypeDicAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.VOUCHTYPEDIC_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
     }
@@ -86,6 +91,7 @@ public class VouchTypeDicAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.VOUCHTYPEDIC_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }

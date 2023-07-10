@@ -277,12 +277,12 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
 
-//		Map<String,Long> classMap = new HashMap<>();
-//		List<Record> classList = findRecord("SELECT iAutoId,cUomClassCode FROM Bd_UomClass WHERE isDeleted = 0 ");
-//		for (Record record : classList){
-//			classMap.put(record.get("cUomClassCode"),record.getLong("iAutoId"));
-//		}
-//		Date now=new Date();
+		Map<String,Long> classMap = new HashMap<>();
+		List<Record> classList = findRecord("SELECT iAutoId,cUomClassCode FROM Bd_UomClass WHERE isDeleted = 0 ");
+		for (Record record : classList){
+			classMap.put(record.get("cUomClassCode"),record.getLong("iAutoId"));
+		}
+		Date now=new Date();
 		for (Record record : records) {
 
 			if (StrUtil.isBlank(record.getStr("cEquipmentModelCode"))) {

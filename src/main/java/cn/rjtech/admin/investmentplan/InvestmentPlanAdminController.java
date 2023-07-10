@@ -139,57 +139,12 @@ public class InvestmentPlanAdminController extends BaseAdminController {
 		set("periodRc",periodRc);
 		render("dowloadtpl_index.html");
 	}
-
-	/*public void dowloadTplPageSubmit(){
-		Kv para = getKv();
-		String cdepcode = para.getStr("cdepcode");//部门
-		Long periodId = para.getLong("periodId");
-		ValidationUtils.notBlank(cdepcode, "请选择U8部门!");
-		ValidationUtils.notNull(periodId, "期间ID为空");
-		//查询启动的期间
-		Record periodRc = periodService.findPeriodByDownTpl(Kv.by("periodId", periodId));
-		ValidationUtils.notNull(periodRc, "未维护启用期间,模板下载失败!");
-		Integer budgetYear = periodRc.getInt("ibudgetyear");//预算年度
-		Integer iBudgetType = periodRc.getInt("ibudgettype");//预算类型
-		ValidationUtils.notNull(budgetYear, "请选择预算年度!");
-		ValidationUtils.notNull(iBudgetType, "请选择预算类型!");
-		List<JBoltExcelPositionData> excelPositionDatas= new ArrayList<>();//定位数据集合
-		excelPositionDatas.add(JBoltExcelPositionData.create(4, 3, budgetYear+"年"));
-		excelPositionDatas.add(JBoltExcelPositionData.create(4, 5, InvestmentBudgetTypeEnum.toEnum(iBudgetType).getText()));
-		excelPositionDatas.add(JBoltExcelPositionData.create(4, 7, departmentService.getCdepName(cdepcode)));
-		//下半年修订，实绩预测查询导出数据:1未完成的投资计划项目，已发生实绩的期数和预算数据
-		service.constructInvestmentExportDownTplData(iBudgetType,budgetYear,excelPositionDatas);
-		//2、创建JBoltExcel
-		JBoltExcel jBoltExcel=JBoltExcel
-				.createByTpl("investmentplanTpl.xlsx")//创建JBoltExcel 从模板加载创建
-				.addSheet(//设置sheet
-						JBoltExcelSheet.create("投资计划录入表")//创建sheet name保持与模板中的sheet一致
-						.setPositionDatas(excelPositionDatas)//设置定位数据
-						)
-				.setFileName("投资计划导入模板");
-		//3、导出
-		renderBytesToExcelXlsxFile(jBoltExcel);
-	}*/
-    /**
-     * 投资计划导入
-     */
-	/*@CheckPermission(PermissionKey.INVESTMENT_PLAN_IMPORT)
-    public void importInvestmentPlanTpl() throws Exception {
-        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
-        UploadFile file = getFile("file", uploadPath);
-        if (notExcel(file)) {
-            renderJsonFail("请上传excel文件");
-            return;
-        }
-        String filePath = getFile().getUploadPath() + FILE_PATH_MODIFIERS + getFile().getFileName();
-        renderJson(service.importInvestmentPlanTpl(filePath));
-    }*/
 	/**
      * 投资计划编制可编辑表格导入
      */
 	@UnCheck
 	@CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
-    public void importTableInvestmentPlanTpl(@Para(value="iplanid") Long iplanid) throws Exception {
+    public void importTableInvestmentPlanTpl() throws Exception {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);
         if (notExcel(file)) {
@@ -197,7 +152,7 @@ public class InvestmentPlanAdminController extends BaseAdminController {
             return;
         }
         String filePath = getFile().getUploadPath() + FILE_PATH_MODIFIERS + getFile().getFileName();
-        renderJson(service.importTableInvestmentPlanTpl(filePath,iplanid));
+        renderJson(service.importTableInvestmentPlanTpl(filePath,getKv()));
     }
 	/**
      * 投资计划新增-表格提交
