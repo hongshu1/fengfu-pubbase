@@ -5,6 +5,10 @@ SELECT
              WHEN t11.iAuditStatus=1 THEN '待审核'
              WHEN t11.iAuditStatus=2 THEN '已审核'
              WHEN t11.iAuditStatus=3 THEN '审核不通过'END,
+        SourceType =
+        CASE WHEN t11.SourceType=0 THEN '物料退货'
+             WHEN t11.SourceType=1 THEN '整单退货'
+             END,
 
         t11.iAuditStatus,
         t2.cVenName,
@@ -13,6 +17,7 @@ SELECT
         t5.cRdName,
         t6.cWhName,
         t11.BillNo,
+        t11.U8BillNo,
         t11.BillDate,
         t11.SourceBillNo,
         t11.VenCode,
@@ -31,6 +36,7 @@ FROM
         LEFT JOIN Bd_Warehouse t6 ON t22.Whcode = t6.cWhCode
 WHERE 1 = 1
   AND t22.Qty < 0
+  AND t11.isDeleted = 0
     #if(deptcode)
   AND  t3.cDepName like '%#(deptcode)%'
     #end
@@ -58,12 +64,14 @@ WHERE 1 = 1
 GROUP BY
     t11.AutoID,
     t11.iAuditStatus,
+    t11.SourceType,
     t2.cVenName,
     t3.cDepName,
     t4.cPTName,
     t5.cRdName,
     t6.cWhName,
     t11.BillNo,
+    t11.U8BillNo,
     t11.BillDate,
     t11.SourceBillNo,
     t11.VenCode,

@@ -16,6 +16,7 @@
             <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
             <input type="hidden" id="autoid" name="autoid" value="#(puinstore.autoid??)"/>
+            <input type="hidden" name="puinstore.sourcetype" value="1"/>
             <div class="form-group row">
                 <label class="col-sm-1 col-form-label">入库单号：</label>
                 <div class="col-sm-2 col-form-label">
@@ -226,7 +227,6 @@
         var tables = ["Puinstoreform_TableId_#(pageId)"];
         if (edit2checkTds()) {
             jboltTableSubmitMulti(tables, "/admin/materialreturnlist/submitMulti", function (res) {
-                debugger;
                 if (res.state == "ok") {
                     LayerMsgBox.success(res.msg, 2000, function () {
                         let autoid = res.AutoID;
