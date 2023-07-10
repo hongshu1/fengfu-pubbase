@@ -3533,4 +3533,28 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String UPTIMEPARAM_IMPORT = "uptimeparam_import";
+	/**
+	 * 新增
+	 */
+	public static final String UPTIMETPLM_ADD = "uptimetplm_add";
+	/**
+	 * 修改
+	 */
+	public static final String UPTIMETPLM_EDIT = "uptimetplm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String UPTIMETPLM_DELETE = "uptimetplm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String UPTIMETPLM_EXPORT = "uptimetplm_export";
+	/**
+	 * 导入
+	 */
+	public static final String UPTIMETPLM_IMPORT = "uptimetplm_import";
+	/**
+	 * 保存
+	 */
+	public static final String UPTIMETPLM_SUBMIT = "uptimetplm_submit";
 }
