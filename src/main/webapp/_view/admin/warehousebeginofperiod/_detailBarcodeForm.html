@@ -4,22 +4,28 @@
       <div class="card">
         <div class="card-body">
           <div class="col">
-            #if(barcodemaster.AutoID??)
-            <input id="autoid" type="hidden" name="autoid" value="#(barcodemaster.AutoID??)" />
-            #end
-            <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
-              <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印</button>
-              <div class="dropdown-menu" aria-labelledby="exportMenuButton">
-                <button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint('check')"><i class="fa fa-download"></i> 打印勾选行</button>
-                <button class="btn dropdown-item" onclick="containerPrint('page')"><i class="fa fa-download"></i> 打印当前页</button>
-              </div>
-            </div>
-            <button onclick="detailJboltTableRemoveCheckedRow(this, true)" class="btn btn-success btn-sm"><i
-                class="fa fa-remove"></i> 删除
-            </button>
-            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i
-                class="fa fa-close"></i> 关闭
-            </button>
+            <form class="form-inline" id="warehousebeginformtable_form_#(pageId)" style="left: 30px;text-align: left">
+              <select class="form-control"
+                      name="sourcebilltype"
+                      data-autoload
+                      data-url="admin/dictionary/options?key=stock_sourcebilltype"
+                      data-select-type="select2"
+                      data-text="=来源类型="
+                      data-value-attr="name"
+                      data-text-attr="name"
+                      data-select="#(sourcebilltype??)"></select>
+
+              <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                     class="form-control" placeholder="=开始日期=" name="starttime" data-tips="开始时间" maxlength="23"
+                     value=""/>
+              <span class="input-group-text">至</span>
+              <input data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly" autocomplete="off"
+                     class="form-control" placeholder="=结束日期=" name="endtime" data-tips="结束时间" maxlength="23" value="">
+
+              <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+              <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+            </form>
+          </div>
           </div>
         </div>
       </div>
@@ -30,6 +36,8 @@
   {@each datas as data,index}
     <tr data-id="${data.autoid}">
       <td>${pageNumber,pageSize,index | rownum}</td>
+      <td title="${data.state}">${data.state}</td>
+      <td title="${data.sourcebilltype}">${data.sourcebilltype}</td>
       <td title="${data.invcode}">${data.invcode}</td>
       <td title="${data.cinvcode1}">${data.cinvcode1}</td>
       <td title="${data.cinvname1}">${data.cinvname1}</td>
@@ -52,6 +60,32 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
+
+
+        <div class="jbolt_table_toolbar" id="warehousebeginform_toolbar_#(pageId)">
+          <div class="col-md-4">
+            <div class="form-group row">
+              <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印</button>
+                <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+                  <button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds" onclick="containerPrint('check')"><i class="fa fa-download"></i> 打印勾选行</button>
+                  <button class="btn dropdown-item" onclick="containerPrint('page')"><i class="fa fa-download"></i> 打印当前页</button>
+                </div>
+              </div>
+              <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button onclick="detailJboltTableRemoveCheckedRow(this, true)" class="btn btn-success btn-sm">
+                  删除
+                </button>
+              </div>
+              <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                <button onclick="closeHandler()" class="btn btn-info btn-sm">
+                  关闭
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
         <table class="jbolt_table jbolt_main_table  table-center"
                id="warehousebeginform_TableId_#(pageId)"
                data-jbolttable
@@ -64,10 +98,12 @@
                data-column-prepend="1:checkbox:true"
                data-rowtpl="warehousebeginForm_tpl_#(pageId)"
                data-toolbar="warehousebeginform_toolbar_#(pageId)"
-        >
+               data-toolbar="warehousebeginform_toolbar_#(pageId)">
           <thead>
           <tr>
             <th data-width="30px">序号</th>
+            <th data-width="150" data-column="state">状态</th>
+            <th data-width="150" data-column="sourcebilltype">来源类型</th>
             <th data-width="150" data-column="invcode">存货编码</th>
             <th data-width="180" data-column="cinvcode1">客户部番</th>
             <th data-width="180" data-column="cinvname1">部品名称</th>

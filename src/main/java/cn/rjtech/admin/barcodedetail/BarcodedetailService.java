@@ -82,7 +82,7 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
         return deleteByIds(ids, true);
     }
 
-    public int deletByAutoid(String autoid){
+    public int deletByAutoid(String autoid) {
         Sql sql = deleteSql().eq(Barcodedetail.AUTOID, autoid);
         return delete(sql);
     }
@@ -142,19 +142,20 @@ public class BarcodedetailService extends BaseService<Barcodedetail> {
     /*
      * 传参
      * */
-    public void saveBarcodedetailModel(Barcodedetail barcodedetail, Long masid, Date now, Kv kv, Integer printnum) {
+    public void saveBarcodedetailModel(Barcodedetail barcodedetail, Long masid, Date now, Kv kv, String sourcebilltype) {
         barcodedetail.setAutoid(JBoltSnowflakeKit.me.nextId());
+        barcodedetail.setSourcebilltype(sourcebilltype);
         barcodedetail.setMasid(String.valueOf(masid));
         barcodedetail.setVencode(StrUtil.isBlank(kv.getStr("cvencode")) ? "NULL" : kv.getStr("cvencode"));
         barcodedetail.setBarcode(kv.getStr("barcode"));
         barcodedetail.setInvcode(kv.getStr("cinvcode"));
-        barcodedetail.setBarcodedate(now);
         barcodedetail.setBatch(kv.getStr("batch"));
-        barcodedetail.setPrintnum(printnum);//每张条码需要打印的次数
+//        barcodedetail.setPrintnum(printnum);//每张条码需要打印的次数
         barcodedetail.setCreateperson(JBoltUserKit.getUserName());
-        barcodedetail.setCreatedate(now);
+        barcodedetail.setCreatedate(kv.getDate("createdate"));//批次日期
         barcodedetail.setModifyperson(JBoltUserKit.getUserName());
         barcodedetail.setModifydate(now);
         barcodedetail.setReportFileName(kv.getStr("reportfilename"));
+        barcodedetail.setBarcodedate(kv.getDate("barcodedate"));//生产日期
     }
 }
