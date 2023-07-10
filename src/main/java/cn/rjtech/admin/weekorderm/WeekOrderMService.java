@@ -104,6 +104,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
             jsonObject.put("cInvCode", weekOrderD.getCInvCode());
             jsonObject.put("cInvName", weekOrderD.getCInvName1());
             jsonObject.put("iQuantity", weekOrderD.getIQty());
+            jsonObject.put("irowno", weekOrderD.getIRowNo());
             jsonObject.put("iQuotedPrice", 0);
             jsonObject.put("KL", 100);
             jsonObject.put("iNatDisCount", 0);
@@ -317,10 +318,13 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     }
 
     private void saveDs(List<WeekOrderD> save, long iweekordermid) {
+        Integer rowno = 10;
         for (BaseWeekOrderD row : save) {
             row.set("IWeekOrderMid", iweekordermid)
                     .set("iautoid", JBoltSnowflakeKit.me.nextId())
                     .set("isdeleted", ZERO_STR);
+            row.setIRowNo(rowno);
+            rowno += 10;
         }
         weekOrderDService.batchSave(save);
     }

@@ -109,6 +109,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
                 jsonObject.put("cInvCode", manualOrderD.getCInvCode());
                 jsonObject.put("cInvName", manualOrderD.getCInvName1());
                 jsonObject.put("iQuantity", manualOrderD.getInt("iqty" + i));
+                jsonObject.put("irowno", manualOrderD.getIRowNo());
                 jsonObject.put("iQuotedPrice", 0);
                 jsonObject.put("KL", 100);
                 jsonObject.put("iNatDisCount", 0);
@@ -251,9 +252,12 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
             }
             List<ManualOrderD> saveBeanList = jBoltTable.getSaveBeanList(ManualOrderD.class);
             if (saveBeanList != null && saveBeanList.size() > 0) {
+                Integer rowno = 10;
                 for (ManualOrderD manualOrderD : saveBeanList) {
                     manualOrderD.setIManualOrderMid(manualOrderM.getIAutoId());
                     manualOrderD.setIsDeleted(false);
+                    manualOrderD.setIRowNo(rowno);
+                    rowno += 10;
                 }
                 manualOrderDService.batchSave(saveBeanList);
             }
