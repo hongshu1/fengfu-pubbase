@@ -802,7 +802,7 @@ public class PermissionKey {
 	 */
 	public static final String PURCHASE_RECEIPT_LIST = "purchase_receipt_list";
 	/**
-	 * 形态转换单列表
+	 * 组装拆卸及形态转换单
 	 */
 	public static final String FORM_CONVERSION_LIST = "form_conversion_list";
 	/**
@@ -3433,4 +3433,24 @@ public class PermissionKey {
 	 * 出库
 	 */
 	public static final String CONTAINER_CK = "container_ck";
+	/**
+	 * 新增
+	 */
+	public static final String CONTAINERCLASS_ADD = "containerclass_add";
+	/**
+	 * 修改
+	 */
+	public static final String CONTAINERCLASS_EDIT = "containerclass_edit";
+	/**
+	 * 删除
+	 */
+	public static final String CONTAINERCLASS_DELETE = "containerclass_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CONTAINERCLASS_EXPORT = "containerclass_export";
+	/**
+	 * 导入
+	 */
+	public static final String CONTAINERCLASS_IMPORT = "containerclass_import";
 }
