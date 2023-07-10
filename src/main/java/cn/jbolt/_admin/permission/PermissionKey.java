@@ -324,18 +324,6 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String EQUIPMENT_ADD = "equipment_add";
-	/**
-	 * 编辑
-	 */
-	public static final String EQUIPMENT_EDIT = "equipment_edit";
-	/**
-	 * 删除
-	 */
-	public static final String EQUIPMENT_DELETE = "equipment_delete";
-	/**
-	 * 新增
-	 */
 	public static final String SPOTCHECKPARAM_ADD = "spotcheckparam_add";
 	/**
 	 * 导出
@@ -3253,4 +3241,24 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String FORMUPLOADCATEGORY_IMPORT = "formuploadcategory_import";
+	/**
+	 * 新增
+	 */
+	public static final String EQUIPMENT_ADD = "equipment_add";
+	/**
+	 * 修改
+	 */
+	public static final String EQUIPMENT_EDIT = "equipment_edit";
+	/**
+	 * 删除
+	 */
+	public static final String EQUIPMENT_DELETE = "equipment_delete";
+	/**
+	 * 导出
+	 */
+	public static final String EQUIPMENT_EXPORT = "equipment_export";
+	/**
+	 * 导入
+	 */
+	public static final String EQUIPMENT_IMPORT = "equipment_import";
 }

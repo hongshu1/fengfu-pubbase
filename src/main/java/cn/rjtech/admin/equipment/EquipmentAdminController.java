@@ -55,6 +55,7 @@ public class EquipmentAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.EQUIPMENT_ADD)
     public void add() {
         render("add.html");
     }
@@ -62,6 +63,7 @@ public class EquipmentAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.EQUIPMENT_ADD)
     public void save() {
         renderJson(service.save(getModel(Equipment.class, "equipment")));
     }
@@ -69,6 +71,7 @@ public class EquipmentAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.EQUIPMENT_EDIT)
     public void edit() {
         Equipment equipment = service.findById(getLong(0));
         if (equipment == null) {
@@ -82,6 +85,7 @@ public class EquipmentAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.EQUIPMENT_EDIT)
     public void update() {
         renderJson(service.update(getModel(Equipment.class, "equipment")));
     }
@@ -89,6 +93,7 @@ public class EquipmentAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.EQUIPMENT_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -135,6 +140,7 @@ public class EquipmentAdminController extends BaseAdminController {
     /**
      * 执行导出excel 根据表格选中数据
      */
+    @CheckPermission(PermissionKey.EQUIPMENT_EXPORT)
     public void exportExcelByCheckedIds() {
         String ids = get("ids");
         Kv kv = getKv();
@@ -159,6 +165,7 @@ public class EquipmentAdminController extends BaseAdminController {
     /**
      * 执行导出excel 所有数据
      */
+    @CheckPermission(PermissionKey.EQUIPMENT_EXPORT)
     public void exportExcelAll() {
         List<Record> datas = service.getAdminDataNoPage(getKv());
         if (notOk(datas)) {
@@ -201,6 +208,7 @@ public class EquipmentAdminController extends BaseAdminController {
         renderJsonData(service.dataList());
     }
 
+    @CheckPermission(PermissionKey.EQUIPMENT_IMPORT)
     public void importExcelClass() {
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
         UploadFile file = getFile("file", uploadPath);
