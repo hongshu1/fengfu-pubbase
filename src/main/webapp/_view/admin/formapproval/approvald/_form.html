@@ -163,8 +163,38 @@
 #define js()
 <script>
 
+	$(document).ready(function(){
+		var index = LayerMsgBox.loading("加载中……",1200);
+		setTimeout(function(){
+			LayerMsgBox.close(index);
+			pushData();
+		}, 1000)
+	});
+
+	/**
+	 * push 数据
+	 * */
+	function pushData(){
+		var rowData = parent.rowData;
+		if (isNotEmpty(rowData)){
+			var iseq = rowData.iseq;    //顺序
+			var step = rowData.step;  //节点名
+			var cname = rowData.cname;    //内容
+			var dway = rowData.dway;
+			var tableGetAllDatas = rowData.object;
+
+
+			$("#approvalD").find("option[value='"+step+"']").prop("selected",true);
+			$("#iseq").val(iseq);
+			$("#approvalDName").val(cname);
+			$("#approvalDWay").find("option[value='"+dway+"']").prop("selected",true);
+			jboltTableInsertRow(getJboltId(),tableGetAllDatas);
+		}
+	}
+
+
 	hideParentLayerDialogBtn(0);
-    
+
 	addParentLayerDialogBtn("保存","lay_primary",function () {
 		submitThisForm_approval_d();
 	})
@@ -174,8 +204,6 @@
 	 */
 	function submitThisForm_approval_d() {
 
-	    // var formData = $("#approvalDForm").serialize();
-
         var approvalD = $("#approvalD").val();
         if (isEmpty(approvalD)){
             LayerMsgBox.error("请选择审批节点");
@@ -183,40 +211,26 @@
         }
 
         var iseq = $("#iseq").val();
+		var step = $("#approvalD").val();
         var stepname = $("#approvalD option:selected").text();
-        var approvalDName = $("#approvalDName").val();
-		var cname = $("#approvalDName option:selected").text();
+        var cname = $("#approvalDName").val();
         var approvalDWay = $("#approvalDWay").val();
         var way = $("#approvalDWay option:selected").text();
 	    var tableGetAllDatas = jboltTableGetAllDatas(getJboltId());
 
-	    /*var object = new Object();
-		object.approvalD = approvalD;
-		object.approvalDName = approvalDName;
-		object.approvalDWay = approvalDWay;
-		object.table = tableGetAllDatas;
-
-	    var data = new Object();
-	    data.stepname = stepname;
-	    data.iseq = iseq;
-	    data.cname = cname;
-	    data.way = way;
-	    data.object = object;*/
 
 		var data = {};
-		data.stepname = "stepname";
-		data.iseq = "iseq";
-		data.cname = "cname";
-		data.way = "way";
-		data.object = {"name":"name"};
+		data.step = step;
+		data.stepname = stepname;
+		data.iseq = iseq;
+		data.cname = cname;
+		data.way = way;
+		data.dway = approvalDWay;
+		data.object = tableGetAllDatas;
 
-		console.log('data',data)
+		console.log('data',JSON.stringify(data));
         parent.insertRows(data);
-
-	    // var jboltId2 = '#(tableId??)';
-        // parent.jboltTableInsertRow('#(tableId??)', data);x
-		parent.LayerMsgBox.close();
-	    console.log('data',data);
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
 	}
 
 	/**

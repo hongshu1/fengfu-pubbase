@@ -231,6 +231,7 @@ from T_Sys_PUInStore t1
 
 where 1 =1
     AND t2.Qty > 0
+    AND iAuditStatus = 2
     AND (SELECT SUM(Qty) FROM T_Sys_PUInStoreDetail WHERE BarCode = t2.BarCode) > 0
     #if(billno)
         AND t1.billno = #para(billno)
@@ -274,7 +275,7 @@ SELECT
     b.cInvStd AS cinvstd,
     m.cOrderNo AS SourceBillNo,
     m.iBusType AS SourceBillType,
-    m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+    m.cOrderNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
     m.iAutoId AS SourceBillID,
     d.iAutoId AS SourceBillDid,
     m.iVendorId,
@@ -283,6 +284,10 @@ SELECT
     t3.cInvCCode,
     t3.cInvCName,
     t4.cEquipmentModelName,
+    wh.cWhCode AS WhCode,
+    wh.cWhName AS whname,
+    area.cAreaCode AS poscode,
+    area.cAreaName AS posname,
     ( SELECT cUomName FROM Bd_Uom WHERE b.iInventoryUomId1 = iautoid ) AS InventorycUomName ,
     ( SELECT cUomName FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitName ,
     ( SELECT cUomCode FROM Bd_Uom WHERE b.iPurchaseUomId = iautoid ) AS PuUnitCode
@@ -299,6 +304,10 @@ FROM
         LEFT JOIN Bd_EquipmentModel t4 ON b.iEquipmentModelId = t4.iautoid
         LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
         AND tc.iAutoId = a.iPurchaseOrderdQtyId
+
+        LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
 WHERE
     1 = 1
   AND t1.AutoID = '#(autoid)'

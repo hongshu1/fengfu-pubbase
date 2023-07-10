@@ -185,19 +185,24 @@ select a.cCompleteBarcode AS barcode,
        uom.cUomCode AS purchasecuomcode,
        uom.cUomName AS purchasecuomname,
        config.iWarehouseId,
-       eq.cEquipmentModelName
+       eq.cEquipmentModelName,
+       wh.cWhCode AS WhCode,
+       wh.cWhName AS whname,
+       area.cAreaCode AS poscode,
+       area.cAreaName AS posname
 FROM
     PS_PurchaseOrderDBatch a
         LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
         LEFT JOIN PS_PurchaseOrderD d ON a.iPurchaseOrderDid = d.iAutoId
         LEFT JOIN PS_PurchaseOrderM m ON m.iAutoId = d.iPurchaseOrderMid
         LEFT JOIN Bd_Vendor v ON m.iVendorId = v.iAutoId
-        LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cBarcode
-        AND pd.isDeleted = '0'
-        LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId
-        AND tc.iAutoId = a.iPurchaseOrderdQtyId
+        LEFT JOIN T_Sys_PUReceiveDetail pd ON pd.Barcode = a.cBarcode AND pd.isDeleted = '0'
+        LEFT JOIN PS_PurchaseOrderD_Qty tc ON tc.iPurchaseOrderDid = d.iAutoId AND tc.iAutoId = a.iPurchaseOrderdQtyId
         LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
         LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
         LEFT JOIN Bd_EquipmentModel eq ON eq.iAutoId = b.iEquipmentModelId
 where 1=1
     #if(orgCode != null)
