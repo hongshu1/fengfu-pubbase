@@ -3597,4 +3597,20 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String PRODITEM_IMPORT = "proditem_import";
+	/**
+	 * 新增
+	 */
+	public static final String PRODFORM_ADD = "prodform_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODFORM_EDIT = "prodform_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODFORM_DELETE = "prodform_delete";
+	/**
+	 * 保存
+	 */
+	public static final String PRODFORM_SUBMIT = "prodform_submit";
 }
