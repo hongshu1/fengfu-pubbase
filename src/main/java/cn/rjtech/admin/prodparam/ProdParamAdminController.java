@@ -59,6 +59,7 @@ public class ProdParamAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.PRODPARAM_ADD)
     public void add() {
         render("add.html");
     }
@@ -68,6 +69,7 @@ public class ProdParamAdminController extends BaseAdminController {
      */
     @Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+    @CheckPermission(PermissionKey.PRODPARAM_ADD)
     public void save(@Para("prodParam") ProdParam prodParam) {
         renderJson(service.save(prodParam));
     }
@@ -75,6 +77,7 @@ public class ProdParamAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.PRODPARAM_EDIT)
     public void edit() {
         ProdParam prodParam = service.findById(getLong(0));
         if (prodParam == null) {
@@ -90,6 +93,7 @@ public class ProdParamAdminController extends BaseAdminController {
      */
     @Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+    @CheckPermission(PermissionKey.PRODPARAM_EDIT)
     public void update(@Para("prodParam") ProdParam prodParam) {
         renderJson(service.update(prodParam));
     }
@@ -108,6 +112,7 @@ public class ProdParamAdminController extends BaseAdminController {
      */
     @Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+    @CheckPermission(PermissionKey.PRODPARAM_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -131,6 +136,7 @@ public class ProdParamAdminController extends BaseAdminController {
     }
 
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.PRODPARAM_EXPORT)
     public void exportExcelByIds() throws Exception {
         String ids = get("ids");
         if (notOk(ids)) {
@@ -146,6 +152,7 @@ public class ProdParamAdminController extends BaseAdminController {
     }
 
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.PRODPARAM_EXPORT)
     public void exportExcelAll() throws Exception {
         List<Record> rows = service.list(getKv());
         if (notOk(rows)) {
@@ -167,7 +174,7 @@ public class ProdParamAdminController extends BaseAdminController {
             ValidationUtils.error("模板下载失败");
         }
     }
-
+    @CheckPermission(PermissionKey.PRODPARAM_IMPORT)
     public void importExcelClass() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");

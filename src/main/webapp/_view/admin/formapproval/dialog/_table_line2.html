@@ -4,7 +4,6 @@
     {@each datas as data,index}
         <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
-             <td>${data.iseq}</td>
             <td data-editable="false">${data.stepname}</td>
             <td data-editable="false">${data.cname}</td>
             <td data-editable="false">${data.way}</td>
@@ -12,12 +11,13 @@
                <a tooltip data-title="上移" href="javascript:void(0)" onclick="jboltTableTrMoveUp(this, true, 'iseq');"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
                 <a tooltip data-title="下移" href="javascript:void(0)" onclick="jboltTableTrMoveDown(this, true, 'iseq');" class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
 
-	<a href="admin/approvald/edit/${data.iautoid}" data-area="95%,95%"  tooltip data-title="修改"
+	<a href="/admin/formapproval/editApprovalD/" data-area="95%,95%"  tooltip data-title="修改"
+       data-check-handler="rowCheckHandler"
        data-handler="refreshJBoltTable" data-dialog-title="修改审批节点" class="jbolt_table_editbtn"><i class="fa fa-pencil"></i></a>
-    <a href="admin/approvald/delete/${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除"
-       data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>
-</td>
-        <td>${data.object}</td>
+<!--<a onclick="delRow(this)" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>-->
+           </td>
+        <td hidden>${data.object}</td>
+        <td hidden>${data.iseq}</td>
         </tr>
     {@/each}
 </textarea>
@@ -33,7 +33,9 @@
                         <button onclick="addApprovalD(this)"
                                 class="btn btn-outline-success btn-sm" ><i
                                 class="fa fa-plus"></i> 新增</button>
-                        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
+
+                        <button onclick="jboltTableRemoveCheckedRow(this, true)"
+                                class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
 
                     </div>
                 </div>
@@ -53,17 +55,17 @@
                        data-rowtpl="PheDeliveryLines_tpl2_#(pageId)"
                        data-column-resize="true"
                        data-editable="true"
-                       ###data-editable-option="getEditableTableOptions2_#(pageId)"
+                       data-editable-option="getEditableTableOptions2_#(pageId)"
                 >
                     <thead>
                     <tr>
-                        <th data-width="100" data-column="index">序号</th>
-                        <th data-min-width="100" data-column="iseq">审批顺序</th>
+                        <th data-width="100" data-column="index">审批顺序</th>
                         <th data-min-width="200" data-column="stepname">审批节点</th>
                         <th data-min-width="200" data-column="cname">审批内容</th>
                         <th data-min-width="200" data-column="way">审批人设置</th>
                         <th data-min-width="200" data-column="index">操作</th>
-                        <th data-min-width="200" data-column="object">操作</th>
+                        <th data-min-width="200" data-column="object" hidden></th>
+                        <th data-min-width="200" data-column="iseq" hidden></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -75,10 +77,36 @@
 
 <script>
 
+    /**
+     * 存储行数据
+     * */
+    var rowData;
+
+    var rowTr;
+
+    /**
+     * 编辑节点页面前置方法
+     * */
+    function rowCheckHandler(ele) {
+
+        var td = ele.parent();
+        var tr = td.parent();
+
+        var index = tr.index();
+        var jsonData = jboltTableGetRowJsonData(getJboltId2(),index);
+
+        rowData = jsonData;
+        rowTr = tr;
+    }
+
+    /**
+     * 新增节点
+     * */
     function addApprovalD(ele) {
         var getAllDatas = jboltTableGetAllDatas(getJboltId2());
-        let index = isNotEmpty(getAllDatas)?getAllDatas.length:1;
-        // var temp = $(ele).data('url','/admin/formapproval/addApprovalD?iseq='+index).data('area','80%,80%').data('title','新增审批节点');
+        let iseq = isNotEmpty(getAllDatas)?getAllDatas.length+1:1;
+
+        rowData = null;
 
         DialogUtil.openNewDialog({
             title: "新增审批节点",
@@ -87,18 +115,45 @@
             height: "100%",
             offset: "auto",
             zIndex: 20220610,
-            url: "/admin/formapproval/addApprovalD?iseq=" + index + "&tableId=" + getJboltId2()
+            url: "/admin/formapproval/addApprovalD?iseq=" + iseq
         });
 
     }
 
-    function returnDatas(data) {
-        console.log('returnDatas',data)
+    /**
+     * 删除行
+     * */
+    function delRow(ele) {
+        var table = getJBoltTableInst(getJboltId2());
+
+        var td = ele.parent();
+        var tr = td.parent();
+
+        var index = tr.index();
+
+        table.me.removeRow(table,index);
     }
 
+    /**
+     * 节点弹窗回写数据
+     * */
     function insertRows(data) {
-        console.log('insertRows', data);
-        jboltTableInsertRow('#jbolt_table_pheDeliveryLines2_#(pageId)', data)
+
+        if (isNotEmpty(rowTr)){
+
+            jboltTableInsertAfterRow(getJboltId2(),rowTr,data);
+
+            var table = getJBoltTableInst(getJboltId2());
+
+            let index = rowTr.index();
+
+            table.me.removeRow(table,index);
+
+            rowTr = null;
+
+        } else {
+            jboltTableInsertRow(getJboltId2(), data)
+        }
     }
 
     /**
@@ -122,7 +177,7 @@
             submit: {
                 withForm: ["approvalMForm"],
                 type: "all",
-                url: "/admin/auditformconfig/submit",
+                url: "/admin/formapproval/submitFormByOptional",
                 success: function (res, table, td) {
                     if (res.state === 'ok') {
                         LayerMsgBox.success(res.msg, 1000, function () {

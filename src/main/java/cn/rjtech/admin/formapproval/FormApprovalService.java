@@ -9,6 +9,7 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.approvald.ApprovalDService;
 import cn.rjtech.admin.approvaldrole.ApprovaldRoleService;
@@ -32,6 +33,7 @@ import cn.rjtech.enums.AuditTypeEnum;
 import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -44,6 +46,7 @@ import com.jfinal.plugin.activerecord.Record;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -224,6 +227,195 @@ public class FormApprovalService extends BaseService<FormApproval> {
         //addUpdateSystemLog(formApproval.getIautoid(), JBoltUserKit.getUserId(), formApproval.getName(),"的字段["+column+"]值:"+formApproval.get(column));
         return null;
     }
+
+    /**
+     * 校验参数
+     * @param formAutoId
+     * @param formSn
+     * @param primaryKeyName
+     * @return
+     */
+    public Ret optional(String formAutoId, String formSn, String primaryKeyName){
+
+        ValidationUtils.isTrue(isOk(formAutoId), "请先点击保存按钮，保存好单据信息，再作提审");
+        User user = JBoltUserKit.getUser();
+        // 获取单据信息
+        Record formData = getApprovalForm(formSn, primaryKeyName, Long.parseLong(formAutoId));
+
+        // 单据审核状态
+        AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(formData.getInt(IAUDITSTATUS));
+        // 允许提审的状态校验
+        switch (auditStatusEnum) {
+            case NOT_AUDIT:
+            case REJECTED:
+                break;
+            default:
+                return fail(String.format("当前状态“%s”，不可提交审核", auditStatusEnum.getText()));
+        }
+
+        // 单据创建人
+        Long icreateby = formData.getLong("icreateby");
+        // 提审人跟单据创建人要是同一个用户
+        ValidationUtils.equals(icreateby, user.getId(), "提审人必须是单据创建人");
+
+        return SUCCESS;
+    }
+
+    /**
+     * 提交表格
+     * @param jBoltTable
+     * @return
+     */
+    public Ret submitByJBoltTable(JBoltTable jBoltTable) {
+        //当前操作人员  当前时间
+        User user = JBoltUserKit.getUser();
+        Date nowDate = new Date();
+        System.out.println("saveTable===>" + jBoltTable.getSave());
+        System.out.println("updateTable===>" + jBoltTable.getUpdate());
+        System.out.println("deleteTable===>" + jBoltTable.getDelete());
+        System.out.println("form===>" + jBoltTable.getForm());
+
+        System.out.println("saveTable===>" + jBoltTable.getSaveRecordList());
+        System.out.println("form===>" + jBoltTable.getFormRecord());
+
+        ValidationUtils.isTrue(jBoltTable.saveIsNotBlank(), "请先添加审批节点");
+
+        List<Record> saveRecordList = jBoltTable.getSaveRecordList();
+        Record approvalM = jBoltTable.getFormRecord();
+
+        String formId = approvalM.getStr("formAutoId");
+        ValidationUtils.isTrue(isOk(formId), "请先点击保存按钮，保存好单据信息，再作提审");
+
+        Long formAutoId = Long.parseLong(formId);
+
+        String formSn = approvalM.getStr("formSn");
+        Boolean isApprovedOnSame = approvalM.getBoolean("isApprovedOnSame");
+        String permissionKey = approvalM.getStr("permissionKey");
+        String className = approvalM.getStr("className");
+        String primaryKeyName = approvalM.getStr("primaryKeyName");
+        Boolean isSkippedOnDuplicate = approvalM.getBoolean("isSkippedOnDuplicate");
+
+        Form form = formService.findByCformSn(formSn);
+
+        tx(()->{
+
+            FormApproval byFormAutoId = findByFormAutoId(formAutoId);
+            ValidationUtils.isTrue((notOk(byFormAutoId)), "该单据已提交审批，请勿重复提交审批！");
+
+            // -----------------------------------
+            // 提审前的业务调用
+            // -----------------------------------
+            String msg = invokeMethod(className, "preSubmitFunc", formAutoId);
+            ValidationUtils.assertBlank(msg, msg);
+
+            // 提审更新
+            ValidationUtils.isTrue(updateSubmit(formSn, formAutoId, AuditWayEnum.FLOW.getValue(), nowDate, primaryKeyName),
+                    "单据当前状态不可提审");
+
+            // 流程子表集合
+            List<FormApprovalFlowD> flowDList = new ArrayList<>();
+
+            List<FormapprovaldUser> userList = new ArrayList<>();
+
+            //        保存单据审批流信息
+            FormApproval formApproval = new FormApproval();
+            formApproval.setIOrgId(getOrgId());
+            formApproval.setCOrgCode(getOrgCode());
+            formApproval.setCOrgName(getOrgName());
+            formApproval.setIFormId(form.getIAutoId());
+            formApproval.setIFormObjectId(formAutoId);
+            formApproval.setIsSkippedOnDuplicate(isSkippedOnDuplicate);
+            formApproval.setIsApprovedOnSame(isApprovedOnSame);
+            formApproval.setICreateBy(user.getId());
+            formApproval.setCCreateName(user.getName());
+            formApproval.setDCreateTime(new Date());
+            formApproval.save();
+
+            Long formApprovalIAutoId = formApproval.getIAutoId();
+
+            for (int i = 0, j = 1; i < saveRecordList.size(); i++,j++) {
+                Record record = saveRecordList.get(i);
+                FormApprovalD formApprovalD = new FormApprovalD();
+                formApprovalD.setIFormApprovalId(formApprovalIAutoId);
+                formApprovalD.setIStep(record.getInt("step"));
+                formApprovalD.setISeq(j);
+                formApprovalD.setCName(record.getStr("cname"));
+                formApprovalD.setIType(1);
+                formApprovalD.setIApprovalWay(record.getInt("dway"));
+                formApprovalD.setIStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                formApprovalD.setDAuditTime(nowDate);
+                formApprovalD.save();
+
+                Long formApprovalDid = formApprovalD.getIAutoId();
+
+                // 流程主表
+                FormApprovalFlowM flowM = new FormApprovalFlowM();
+                // 单据审批流ID
+                flowM.setIApprovalId(formApprovalIAutoId);
+                // 单据审批节点ID
+                flowM.setIApprovalDid(formApprovalDid);
+                // 节点顺序
+                flowM.setISeq(formApprovalD.getISeq());
+                // 多人审批方式
+                flowM.setIApprovalWay(formApprovalD.getIApprovalWay());
+                flowM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                flowM.save();
+
+                Long flowMId = flowM.getIAutoId();
+
+                List<JSONObject> recordList = (List<JSONObject>) record.getObject("object");
+                LOG.info("recordList={}",recordList);
+
+                for (int k = 0; k < recordList.size(); k++) {
+                    JSONObject userRecord = recordList.get(k);
+
+//                    审批用户
+                    FormapprovaldUser formapprovaldUser = new FormapprovaldUser();
+                    formapprovaldUser.setIFormApprovalId(formApprovalDid);
+                    formapprovaldUser.setISeq(k);
+                    formapprovaldUser.setIUserId(userRecord.getLong("iuserid"));
+                    formapprovaldUser.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                    formapprovaldUser.setDAuditTime(nowDate);
+                    formapprovaldUser.setIPersonId(userRecord.getLong("ipersonid"));
+                    userList.add(formapprovaldUser);
+
+//                流程子表
+                FormApprovalFlowD flowD = new FormApprovalFlowD();
+                flowD.setIFormApprovalFlowMid(flowMId);
+                flowD.setISeq(k);
+                flowD.setIUserId(userRecord.getLong("iuserid"));
+                flowD.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
+                flowDList.add(flowD);
+                }
+            }
+
+            // 保存审批流程的审批人
+            flowDService.batchSave(flowDList, flowDList.size());
+            formapprovaldUserService.batchSave(userList,userList.size());
+
+            // 流程主表数据
+            List<FormApprovalFlowM> flowMList = flowMService.find("select * from Bd_FormApprovalFlowM where " +
+                    "iApprovalId = ? ", formApprovalIAutoId);
+            Map<Long, FormApprovalFlowM> flowMMap = flowMList.stream().collect(Collectors.toMap(FormApprovalFlowM::getIApprovalDid, Function.identity(), (key1, key2) -> key2));
+
+            // 判断下一节点
+            nextNode(formApproval, formApprovalIAutoId, flowMMap, nowDate, primaryKeyName, className, formAutoId, false,
+                    user.getId());
+
+
+            // -----------------------------------
+            // 提审后的业务调用
+            // -----------------------------------
+
+            String postMsg = invokeMethod(className, "postSubmitFunc", formAutoId);
+            ValidationUtils.assertBlank(postMsg, postMsg);
+
+
+            return true;
+        });
+        return SUCCESS;
+    }
+
 
     /**
      * 检测是否可以删除

@@ -3,10 +3,12 @@
     {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.poscode}</td> <!--库区-->
             <td>${data.barcode}</td> <!--现品票-->
             <td>${data.invcode}</td> <!--材料编码-->
             <td>${data.cinvaddcode}</td> <!--材料代码-->
             <td>${data.cinvname1}</td> <!--材料名称-->
+            <td>${data.cinvstd}</td> <!--规格-->
             <td>${data.purchasecuomname}</td> <!--主计量单位-->
             <td>${data.qty}</td> <!--数量-->
             <td>${data.cequipmentmodelname}</td> <!--所属机型-->
@@ -53,14 +55,18 @@
                data-editable-option="getEditableTableOptions_split_#(pageId)">
           <thead class="fw-normal">
           <tr>
-            <th data-width="60" data-column="index">序号</th>
-            <th data-width="150" data-column="barcode">现品票</th>
+              <th data-width="60" data-column="index">序号</th>
+              <th data-width="150" data-column="poscode">库区编码</th>
+              <th data-width="150" data-column="barcode">现品票</th>
               <th data-width="150" data-column="invcode">材料编码</th>
               <th data-width="150" data-column="cinvaddcode">材料代码</th>
               <th data-width="150" data-column="cinvname">材料名称</th>
+              <th data-width="100" data-column="cinvstd">规格型号</th>
               <th data-width="150" data-column="purchasecuomname">主计量单位</th>
-            <th data-width="150" data-column="qty">数量</th>
-            <th data-width="150" data-column="cequipmentmodelname">所属机型</th>
+              <th data-width="150" data-column="qty">数量</th>
+              <th data-width="150" data-column="cequipmentmodelname">所属机型</th>
+
+
 
               <th hidden data-width="100" data-column="sourcebillno"></th>
               <th hidden data-width="100" data-column="sourcebillid"></th>
@@ -162,8 +168,8 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,invcode,cinvaddcode,cinvname,purchasecuomname,qty,cequipmentmodelname",
-              header:'现品票,材料编码,材料代码,材料名称,主计量单位,数量,所属机型',
+              columnAttr: "barcode,invcode,cinvaddcode,cinvname,cinvstd,purchasecuomname,qty,cequipmentmodelname",
+              header:'现品票,材料编码,材料代码,材料名称,规格型号,主计量单位,数量,所属机型',
               changeColumns:[{column: "barcode", use: "barcode"},
                   {column: "invcode", use: "invcode"},
                   {column: "cinvaddcode", use: "cinvaddcode"},
@@ -171,6 +177,9 @@
                   {column: "purchasecuomname", use: "purchasecuomname"},
                   {column: "qty", use: "qty"},
                   {column: "cequipmentmodelname", use: "cequipmentmodelname"},
+                  {column: "cinvstd", use: "cinvstd"},
+                  {column: "whcode", use: "whcode"},
+                  {column: "poscode", use: "poscode"},
 
                   {column: "sourcebillno", use: "sourcebillno"},
                   {column: "sourcebillid", use: "sourcebillid"},
@@ -205,12 +214,34 @@
               textAttr: "cinvcode",
               width: 800,
               valueAttr: "invcode",
-              columnAttr: "cinvcode,cinvaddcode,cinvname,cuomclassname,qty,cequipmentmodelname",
-              header:'材料编码,材料代码,材料名称,主计量单位,数量,所属机型',
-              changeColumns:[{column: "invcode", use: "cinvcode"},{column: "cinvaddcode", use: "cinvaddcode"},
-                  {column: "cinvname", use: "cinvname"},{column: "cuomclassname", use: "cuomclassname"},
-                  {column: "qty", use: "qty"},{column: "cequipmentmodelname", use: "cequipmentmodelname"},
+              columnAttr: "cinvcode,cinvaddcode,cinvname,cinvstd,cuomclassname,qty,cequipmentmodelname",
+              header:'材料编码,材料代码,材料名称,规格型号,主计量单位,数量,所属机型',
+              changeColumns:[{column: "invcode", use: "cinvcode"},
+                  {column: "cinvaddcode", use: "cinvaddcode"},
+                  {column: "cinvname", use: "cinvname"},
+                  {column: "cuomclassname", use: "cuomclassname"},
+                  {column: "qty", use: "qty"},
+                  {column: "cequipmentmodelname", use: "cequipmentmodelname"},
+                  {column: "cinvstd", use: "cinvstd"},
+                  {column: "whcode", use: "whcode"},
+                  {column: "poscode", use: "poscode"},
               ],
+          },
+          poscode:{
+              placeholder: "库区",
+              tooltip: "库区",
+              type: "autocomplete",
+              url: "admin/warehousearea/options",
+              maxLength: 100,
+              required: true,
+              placeholder: "请选择库区编码",
+              textAttr: "careacode",
+              width: 500,
+              valueAttr: "careacode",//选择赋值的字段
+              columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
+              header: '库区编码,库区名称',
+              changeColumns: [
+                  {column: "poscode", use: "careacode"}]
           },
           qty: {
               type:"amount",
