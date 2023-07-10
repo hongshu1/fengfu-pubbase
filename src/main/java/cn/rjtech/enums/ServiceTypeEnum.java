@@ -11,8 +11,8 @@ public enum ServiceTypeEnum {
     /**
      * 枚举列表
      */
-    EXPENSE_BUDGET(1, "费用预算"),
-    INVESTMENT_PLAN(2, "投资计划");
+    EXPENSE_BUDGET("费用预算", 1),
+    INVESTMENT_PLAN("投资计划", 2);
 
     private static final Map<Integer, ServiceTypeEnum> SERVICE_TYPE_ENUM_MAP = new HashMap<>();
 
@@ -25,29 +25,29 @@ public enum ServiceTypeEnum {
     private final String text;
     private final int value;
 
-    ServiceTypeEnum(int value, String text) {
-        this.value = value;
+    ServiceTypeEnum(String text, int value) {
         this.text = text;
+        this.value = value;
     }
 
-    public static ServiceTypeEnum toEnum(int status) {
-        return SERVICE_TYPE_ENUM_MAP.get(status);
-    }
-
-    public int getValue() {
-        return value;
+    public static ServiceTypeEnum toEnum(int value) {
+        return SERVICE_TYPE_ENUM_MAP.get(value);
     }
 
     public String getText() {
         return text;
     }
 
+    public int getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "ServiceTypeEnum{" +
-                "value=" + value +
-                ", text=" + text +
+                "text='" + text + '\'' +
+                ", value=" + value +
                 '}';
     }
-
+    
 }

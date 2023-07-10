@@ -111,7 +111,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         List<MonthOrderM> notAuditList = new ArrayList<>();
         for (MonthOrderM monthOrderM : list) {
             ValidationUtils.equals(monthOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (MonthOrderStatusEnum.SAVED.getValue() != monthOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != monthOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != monthOrderM.getIOrderStatus()) {
                 notAuditList.add(monthOrderM);
             }
 

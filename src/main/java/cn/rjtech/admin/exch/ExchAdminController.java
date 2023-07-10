@@ -96,5 +96,12 @@ public class ExchAdminController extends BaseAdminController {
 		renderJson(service.toggleIsDeleted(getLong(0)));
 	}
 
+    /**
+     * 获取币种汇率
+     */
+    @UnCheck
+    public void getNflatByExchName() {
+        renderJsonData(service.getNflat(get("cexchname")));
+    }	
 
 }

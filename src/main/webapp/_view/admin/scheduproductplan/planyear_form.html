@@ -24,7 +24,8 @@
 
     ### 新增之后，并且为审核流
     #if(apsAnnualplanm.iautoid?? && apsAnnualplanm.iauditway == 2)
-    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=apsAnnualplanm.iAutoId, primaryKeyName="iAutoId", formSn="Aps_AnnualPlanM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService")
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=apsAnnualplanm.iAutoId, primaryKeyName="iAutoId",
+    formSn="Aps_AnnualPlanM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService")
     #end
 
     <div class="jbolt_page_title">
@@ -63,11 +64,14 @@
     <div class="jbolt_page_content">
         <script type="text/template" id="jboltTable_demotpladd_#(pageId)">
             {@each datas as data,index}
-            <tr data-row-click-active-bgcolor="" {@if parseInt(index/3)%2 == 0} bgcolor="#deb887" {@else} bgcolor="#8fbc8f" {@/if} data-id="${data.iautoid}">
+            {@if #(isedit)}
+            <tr {@if parseInt(index/3)%2 == 0} bgcolor="#deb887" {@else} bgcolor="#8fbc8f" {@/if} data-id="${data.iautoid}">
+            {@else}
+            <tr data-id="${data.iautoid}">
+            {@/if}
                 <!--<td>${pageNumber,pageSize,index | rownum}</td>-->
                 {@if #(isedit)}
                     <td hidden>${pageNumber,pageSize,index | rownum}</td>
-
                     <td>${ parseInt(index/3) + 1}</td>
                     <td title="${data.cCusName}">${data.cCusName}</td>
                     <td title="${data.cEquipmentModelName}">${data.cEquipmentModelName}</td>
@@ -76,7 +80,6 @@
                     <td title="${data.cInvName1}">${data.cInvName1}</td>
                 {@else}
                     <td hidden>${pageNumber,pageSize,index | rownum}</td>
-
                     {@if (pageNumber,pageSize,index | rownum) % 3 == 0 }
                     <td rowspan="3">${index / 3 + 1}</td>
                     <td rowspan="3" title="${data.cCusName}">${data.cCusName}</td>
@@ -150,7 +153,7 @@
 
             </div>
         </div>
-        <table class="jbolt_table thead_font_normal table-bordered table-center hover_info"
+        <table class="jbolt_table thead_font_normal table-bordered table-center #if(isedit) hover_info #end "
                data-jbolttable
                data-ajax="true"
                data-conditions-form="apsAnnualplanmFormadd_#(pageId)"
@@ -158,7 +161,6 @@
                id="jbolt_Table_year"
                data-column-resize="true"
                data-tfoot-fixed="true"
-               data-column-prepend="1:checkbox"
                data-rowtpl="jboltTable_demotpladd_#(pageId)"
                data-toolbar="AnnualOrderM_toolbaradd_#(pageId)"
                data-editable="#(isedit)"

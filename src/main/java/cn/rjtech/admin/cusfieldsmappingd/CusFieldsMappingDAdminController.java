@@ -73,7 +73,8 @@ public class CusFieldsMappingDAdminController extends BaseAdminController {
         List<Long> iformids = cusfieldsmappingFormService.getIformIdsByMid(m.getIAutoId());
 
         CusFieldsMappingD cusFieldsMappingD = new CusFieldsMappingD()
-                .setICusFieldsMappingMid(icusfieldsmappingmid);
+                .setICusFieldsMappingMid(icusfieldsmappingmid)
+                .setIsEncoded(true);
         
         set("cusfieldsmappingm", m);
         set("cusFieldsMappingD", cusFieldsMappingD);

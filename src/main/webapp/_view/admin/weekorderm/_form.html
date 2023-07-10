@@ -216,7 +216,7 @@
                                                data-notnull="false"
                                                data-filebox=""
                                                placeholder="请输入汇率" maxlength="40" name="weekOrderM.iExchangeRate"
-                                               value="#(weekOrderM.iExchangeRate??)"/>
+                                               value="#number(weekOrderM.iExchangeRate??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -262,7 +262,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(weekOrderM.iautoid?? && weekOrderM.iauditway == 2 && weekOrderM.iauditstatus > 0)
+#if(weekOrderM.iautoid?? && weekOrderM.iauditway == 2)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名

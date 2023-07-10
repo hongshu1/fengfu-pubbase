@@ -1,6 +1,7 @@
 package cn.rjtech.admin.workregionm;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
@@ -9,20 +10,17 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.Workregionm;
 import cn.rjtech.util.Util;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.NotAction;
 import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
@@ -30,7 +28,6 @@ import com.jfinal.upload.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 /**
  * 工段档案 Controller
@@ -240,8 +237,12 @@ public class WorkregionmAdminController extends JBoltBaseController {
     }
 
     @UnCheck
-    public void findByWareHouseId() {
-        renderJsonData(warehouseAreaService.findByWareHouseId(getLong("iWarehouseId")));
+    public void findByWareHouseId(@Para(value = "iWarehouseId") Long iWarehouseId) {
+        if (ObjUtil.isNull(iWarehouseId)) {
+            renderJsonSuccess();
+            return;
+        }
+        renderJsonData(warehouseAreaService.findByWareHouseId(iWarehouseId));
     }
 
     @UnCheck

@@ -70,7 +70,7 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a href="admin/uptimem/edit?iautoid=${data.iautoid}&readonly=true" data-area="100%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看稼动时间管理" class="jbolt_table_editbtn">查看</a>
-	{@if  data.iauditstatus == '0' }
+	{@if data.iauditstatus == '0' || data.iauditstatus == '3' }
 	<a href="admin/uptimem/edit?iautoid=${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑稼动时间管理" class="jbolt_table_editbtn">编辑</a>
     <a href="admin/uptimem/delete?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
 	{@/if}

@@ -1,5 +1,5 @@
 ### 新增之后，并且为审核流
-#if(manualOrderM.iautoid?? && manualOrderM.iauditway == 2 && manualOrderM.iauditstatus > 0)
+#if(manualOrderM.iautoid?? && manualOrderM.iauditway == 2)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=manualOrderM.iAutoId, primaryKeyName="iAutoId", formSn="Co_ManualOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.manualorderm.ManualOrderMService", o=manualOrderM)
 #end
 

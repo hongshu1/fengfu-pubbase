@@ -4,7 +4,6 @@
 		<div class="card">
 			<div class="card-body">
 				<div class="col">
-
 					#if(updateOrSave == 'save')
 					<button type="button" onclick="submitThisForm_uptimeM()" class="btn btn-outline-secondary btn-xs">保存</button>
 					#else
@@ -19,12 +18,17 @@
 					#include("/_view/_common/_approval_btns.html", uri="/admin/uptimem",
 					formSn="PL_UptimeM", primaryKeyName="iAutoId", o=uptimeM,
 					permissionKeyPrefix="uptimem",  className="cn.rjtech.admin.uptimem.UptimeMService")
-
 					<button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	### 新增之后，并且为审核流
+	#if(uptimeM.iautoid?? && uptimeM.iauditway == 2)
+	#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=uptimeM.iAutoId, primaryKeyName="iAutoId",
+	formSn="PL_UptimeM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.uptimem.UptimeMService")
+	#end
 
 	<div class="py-2" style="padding:.5rem 0rem;">
 		<span class="py-1"><strong>稼动信息</strong></span>

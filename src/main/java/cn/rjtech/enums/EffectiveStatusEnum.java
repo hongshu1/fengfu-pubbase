@@ -11,10 +11,10 @@ public enum EffectiveStatusEnum {
     /**
      * 枚举列表
      */
-    INVAILD(1, "未生效"),
-    EFFECTIVED(2, "已生效"),
-    EXPIRED(3, "已失效"),
-    CANCLE(4, "已作废");
+    INVAILD("未生效", 1),
+    EFFECTIVED("已生效", 2),
+    EXPIRED("已失效", 3),
+    CANCLE("已作废", 4);
 
     private final String text;
     private final int value;
@@ -27,7 +27,7 @@ public enum EffectiveStatusEnum {
         }
     }
 
-    EffectiveStatusEnum(int value, String text) {
+    EffectiveStatusEnum(String text, int value) {
         this.value = value;
         this.text = text;
     }
@@ -46,10 +46,10 @@ public enum EffectiveStatusEnum {
 
     @Override
     public String toString() {
-        return "AuditStatusEnum{" +
-                "value=" + value +
-                ", text=" + text +
+        return "EffectiveStatusEnum{" +
+                "text='" + text + '\'' +
+                ", value=" + value +
                 '}';
     }
-
+    
 }

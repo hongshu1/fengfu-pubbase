@@ -14,10 +14,10 @@ public enum CMeasurePurposeEnum {
     /**
      * 枚举列表
      */
-    FIRST(0, "定期检查"),
-    SECOND(1, "初物检查"),
-    THIRD(2, "委托测定"),
-    FOURTH(3, "特别检查");
+    FIRST("定期检查", 0),
+    SECOND("初物检查", 1),
+    THIRD("委托测定",2),
+    FOURTH("特别检查", 3);
 
     private static final Map<Integer, CMeasurePurposeEnum> SOURCE_ENUM_MAP = new HashMap<>();
 
@@ -27,31 +27,32 @@ public enum CMeasurePurposeEnum {
         }
     }
 
-    private final int    value;
     private final String text;
+    private final int value;
 
-    CMeasurePurposeEnum(int value, String text) {
+    CMeasurePurposeEnum(String text, int value) {
+        this.text = text;
         this.value = value;
-        this.text  = text;
     }
 
     public static CMeasurePurposeEnum toEnum(int value) {
         return SOURCE_ENUM_MAP.get(value);
     }
 
-    public int getValue() {
-        return value;
-    }
-
     public String getText() {
         return text;
+    }
+
+    public int getValue() {
+        return value;
     }
 
     @Override
     public String toString() {
         return "CMeasurePurposeEnum{" +
-            "value=" + value +
-            ", text='" + text + '\'' +
-            '}';
+                "text='" + text + '\'' +
+                ", value=" + value +
+                '}';
     }
+    
 }
