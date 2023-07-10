@@ -3489,4 +3489,28 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String SALETYPE_DELETE = "saletype_delete";
+	/**
+	 * 新增
+	 */
+	public static final String PURCHASETYPE_ADD = "purchasetype_add";
+	/**
+	 * 修改
+	 */
+	public static final String PURCHASETYPE_EDIT = "purchasetype_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PURCHASETYPE_DELETE = "purchasetype_delete";
+	/**
+	 * 新增
+	 */
+	public static final String VOUCHTYPEDIC_ADD = "vouchtypedic_add";
+	/**
+	 * 修改
+	 */
+	public static final String VOUCHTYPEDIC_EDIT = "vouchtypedic_edit";
+	/**
+	 * 删除
+	 */
+	public static final String VOUCHTYPEDIC_DELETE = "vouchtypedic_delete";
 }

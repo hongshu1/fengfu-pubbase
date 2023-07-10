@@ -19,7 +19,6 @@ import com.jfinal.core.Path;
  * @author: WYX
  * @date: 2023-03-28 11:04
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.SALETYPE)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/saletype", viewPath = "/_view/admin/saletype")
