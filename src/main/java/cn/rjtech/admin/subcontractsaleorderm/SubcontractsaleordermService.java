@@ -30,6 +30,7 @@ import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -309,6 +310,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 subcontractsaleorderm.setIOrgId(getOrgId());
                 subcontractsaleorderm.setCOrgCode(getOrgCode());
                 subcontractsaleorderm.setCOrgName(getOrgName());
+                subcontractsaleorderm.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
                 subcontractsaleorderm.setICreateBy(user.getId());
                 subcontractsaleorderm.setCCreateName(user.getName());
                 subcontractsaleorderm.setDCreateTime(now);

@@ -38,7 +38,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">订单号</label>
                                     <div class="col-8">
-                                        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="annualOrderM.cOrderNo" value="#(annualOrderM.cOrderNo??)"/>
+                                        <input type="text" #if(annualOrderM.iAutoId??) #(readonly) data-rule="required" data-notnull="true" #else disabled #end data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="annualOrderM.cOrderNo" value="#(annualOrderM.cOrderNo??)"/>
                                     </div>
                                 </div>
                             </div>
