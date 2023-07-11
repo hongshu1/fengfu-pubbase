@@ -6,6 +6,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
@@ -42,6 +43,7 @@ import java.util.List;
  */
 @CheckPermission(PermissionKey.CURRENTSTOCK)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/currentstock", viewPath = "_view/admin/currentstock")
 public class CurrentStockController extends BaseAdminController {
 
@@ -122,7 +124,7 @@ public class CurrentStockController extends BaseAdminController {
 	}
 
 
-
+	@CheckPermission(PermissionKey.CURRENTSTOCK_ADD)
 	public void add(){
 		render("add.html");
    }
@@ -184,6 +186,7 @@ public class CurrentStockController extends BaseAdminController {
 	/**
 	 * 新增提交
 	 * */
+	@CheckPermission(PermissionKey.CURRENTSTOCK_ADD)
    public void save(){
 	   Kv kv = getKv();
 
@@ -218,7 +221,7 @@ public class CurrentStockController extends BaseAdminController {
 	   render("stockForm.html");
    }
 
-
+	@CheckPermission(PermissionKey.CURRENTSTOCK_ADD)
    public void saveSubmit(){
    	renderJson(service.saveSubmit(getKv()));
    }
@@ -227,6 +230,7 @@ public class CurrentStockController extends BaseAdminController {
 	 * 逻辑删除
 	 * @param kv 业务id
 	 */
+	@CheckPermission(PermissionKey.CURRENTSTOCK_DELETE)
 	public void delete(Kv kv) {
 		StockCheckVouch mid = stockChekVouchService.findById(kv.get("mid"));
 		mid.setIsDeleted(false);
@@ -236,6 +240,7 @@ public class CurrentStockController extends BaseAdminController {
 	/**
 	 * 批量删除
 	 */
+	@CheckPermission(PermissionKey.CURRENTSTOCK_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
@@ -243,6 +248,7 @@ public class CurrentStockController extends BaseAdminController {
 	/***
 	 * 勾选导出
 	 */
+	@CheckPermission(PermissionKey.CURRENTSTOCK_EXPORT)
 	public void downloadChecked(){
 		Kv kv = getKv();
 		String ids = kv.getStr("ids");
@@ -285,7 +291,7 @@ public class CurrentStockController extends BaseAdminController {
 		renderBytesToExcelXlsFile(jBoltExcel);
 
 	}
-
+	@CheckPermission(PermissionKey.CURRENTSTOCK_EXPORT)
 	public void importExcelClass() {
 		Long autoid = getLong("autoid");
 		String whcode = get("whcode");
@@ -304,6 +310,7 @@ public class CurrentStockController extends BaseAdminController {
 	/**
 	 * 执行导入excel
 	 */
+	@CheckPermission(PermissionKey.CURRENTSTOCK_IMPORT)
 	public void importExcel() {
 		Long autoid = getLong("autoid");
 		String whcode = get("whcode");

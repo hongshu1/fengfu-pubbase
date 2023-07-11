@@ -2,7 +2,10 @@ package cn.rjtech.admin.goodspaymentm;
 
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.core.annotation.CheckDataPermission;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.common.enums.BusObjectTypeEnum;
+import cn.jbolt.core.common.enums.DataOperationEnum;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
@@ -51,6 +54,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
     /**
      * 数据源
      */
+    @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
@@ -58,6 +62,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.GOODSPAYMENTM_ADD)
     public void add() {
         render("add.html");
     }
@@ -72,6 +77,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.GOODSPAYMENTM_EDIT)
     public void edit() {
         GoodsPaymentM goodsPaymentM = service.findById(getLong(0));
         if (goodsPaymentM == null) {
@@ -97,6 +103,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.GOODSPAYMENTM_EDIT)
     public void deleteByIds() {
         renderJson(service.deleteRmRdByIds(get("ids")));
     }

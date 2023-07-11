@@ -65,6 +65,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.PURECEIVE_ADD)
     public void add() {
 
         render("add.html");
@@ -80,6 +81,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.PURECEIVE_EDIT)
     public void edit(@Para(value = "autoid") String autoid) {
         SysPureceive sysPureceive = service.findById(autoid);
         if (sysPureceive == null) {
@@ -117,6 +119,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.PURECEIVE_DELETE_ALL)
     public void deleteByIds() {
         renderJson(service.deleteRmRdByIds(get("ids")));
     }
@@ -124,6 +127,7 @@ public class SysPureceiveAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.GOODSPAYMENTM_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }

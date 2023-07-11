@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**组织代码*/
@@ -43,8 +43,6 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
     public static final String MEMO = "Memo";
     /**供应商*/
     public static final String VENCODE = "VenCode";
-    /**状态：1=已保存，2=待审核，3=已审核*/
-    public static final String STATE = "State";
     /**审批方式：1. 审核 2. 审批流*/
     public static final String IAUDITWAY = "iAuditWay";
     /**提审时间*/
@@ -71,6 +69,8 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
     public static final String CAUDITNAME = "cAuditName";
     /**审核时间*/
     public static final String DAUDITTIME = "dAuditTime";
+    /**U8编码*/
+    public static final String U8BILLNO = "U8BillNo";
 	/**
 	 * AutoID
 	 */
@@ -344,23 +344,6 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	}
 
 	/**
-	 * 状态：1=已保存，2=待审核，3=已审核
-	 */
-	public M setState(java.lang.Integer State) {
-		set("State", State);
-		return (M)this;
-	}
-
-	/**
-	 * 状态：1=已保存，2=待审核，3=已审核
-	 */
-	@JBoltField(name="state" ,columnName="State",type="Integer", remark="状态：1=已保存，2=待审核，3=已审核", required=false, maxLength=10, fixed=0, order=17)
-	@JSONField(name = "state")
-	public java.lang.Integer getState() {
-		return getInt("State");
-	}
-
-	/**
 	 * 审批方式：1. 审核 2. 审批流
 	 */
 	public M setIAuditWay(java.lang.Integer iAuditWay) {
@@ -371,7 +354,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 审批方式：1. 审核 2. 审批流
 	 */
-	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审核 2. 审批流", required=false, maxLength=10, fixed=0, order=18)
+	@JBoltField(name="iauditway" ,columnName="iAuditWay",type="Integer", remark="审批方式：1. 审核 2. 审批流", required=false, maxLength=10, fixed=0, order=17)
 	@JSONField(name = "iauditway")
 	public java.lang.Integer getIAuditWay() {
 		return getInt("iAuditWay");
@@ -388,7 +371,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 提审时间
 	 */
-	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=19)
+	@JBoltField(name="dsubmittime" ,columnName="dSubmitTime",type="Date", remark="提审时间", required=false, maxLength=23, fixed=3, order=18)
 	@JSONField(name = "dsubmittime")
 	public java.util.Date getDSubmitTime() {
 		return getDate("dSubmitTime");
@@ -405,7 +388,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 	 */
-	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=20)
+	@JBoltField(name="iauditstatus" ,columnName="iAuditStatus",type="Integer", remark="审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过", required=true, maxLength=10, fixed=0, order=19)
 	@JSONField(name = "iauditstatus")
 	public java.lang.Integer getIAuditStatus() {
 		return getInt("iAuditStatus");
@@ -422,7 +405,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 是否删除：0. 否 1. 是
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=21)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=20)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
@@ -439,7 +422,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 创建人id
 	 */
-	@JBoltField(name="icreateby" ,columnName="icreateBy",type="Long", remark="创建人id", required=false, maxLength=19, fixed=0, order=22)
+	@JBoltField(name="icreateby" ,columnName="icreateBy",type="Long", remark="创建人id", required=false, maxLength=19, fixed=0, order=21)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIcreateBy() {
 		return getLong("icreateBy");
@@ -456,7 +439,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="ccreateName",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=23)
+	@JBoltField(name="ccreatename" ,columnName="ccreateName",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=22)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCcreateName() {
 		return getStr("ccreateName");
@@ -473,7 +456,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dcreateTime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=24)
+	@JBoltField(name="dcreatetime" ,columnName="dcreateTime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=23)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDcreateTime() {
 		return getDate("dcreateTime");
@@ -490,7 +473,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 修改人id
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iupdateBy",type="Long", remark="修改人id", required=false, maxLength=19, fixed=0, order=25)
+	@JBoltField(name="iupdateby" ,columnName="iupdateBy",type="Long", remark="修改人id", required=false, maxLength=19, fixed=0, order=24)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIupdateBy() {
 		return getLong("iupdateBy");
@@ -507,7 +490,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 修改人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cupdateName",type="String", remark="修改人名称", required=false, maxLength=30, fixed=0, order=26)
+	@JBoltField(name="cupdatename" ,columnName="cupdateName",type="String", remark="修改人名称", required=false, maxLength=30, fixed=0, order=25)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCupdateName() {
 		return getStr("cupdateName");
@@ -524,7 +507,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 修改时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dupdateTime",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=27)
+	@JBoltField(name="dupdatetime" ,columnName="dupdateTime",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=26)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDupdateTime() {
 		return getDate("dupdateTime");
@@ -541,7 +524,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 审核人id
 	 */
-	@JBoltField(name="iauditby" ,columnName="iAuditBy",type="Long", remark="审核人id", required=false, maxLength=19, fixed=0, order=28)
+	@JBoltField(name="iauditby" ,columnName="iAuditBy",type="Long", remark="审核人id", required=false, maxLength=19, fixed=0, order=27)
 	@JSONField(name = "iauditby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIAuditBy() {
 		return getLong("iAuditBy");
@@ -558,7 +541,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 审核人名称
 	 */
-	@JBoltField(name="cauditname" ,columnName="cAuditName",type="String", remark="审核人名称", required=false, maxLength=60, fixed=0, order=29)
+	@JBoltField(name="cauditname" ,columnName="cAuditName",type="String", remark="审核人名称", required=false, maxLength=60, fixed=0, order=28)
 	@JSONField(name = "cauditname")
 	public java.lang.String getCAuditName() {
 		return getStr("cAuditName");
@@ -575,10 +558,27 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * 审核时间
 	 */
-	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=30)
+	@JBoltField(name="daudittime" ,columnName="dAuditTime",type="Date", remark="审核时间", required=false, maxLength=23, fixed=3, order=29)
 	@JSONField(name = "daudittime")
 	public java.util.Date getDAuditTime() {
 		return getDate("dAuditTime");
+	}
+
+	/**
+	 * U8编码
+	 */
+	public M setU8BillNo(java.lang.String U8BillNo) {
+		set("U8BillNo", U8BillNo);
+		return (M)this;
+	}
+
+	/**
+	 * U8编码
+	 */
+	@JBoltField(name="u8billno" ,columnName="U8BillNo",type="String", remark="U8编码", required=false, maxLength=60, fixed=0, order=30)
+	@JSONField(name = "u8billno")
+	public java.lang.String getU8BillNo() {
+		return getStr("U8BillNo");
 	}
 
 }

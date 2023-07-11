@@ -4,11 +4,13 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.util.BillNoUtils;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
@@ -23,6 +25,7 @@ import java.util.Date;
  */
 @CheckPermission(PermissionKey.OTHEROUT)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/otherout", viewPath = "/_view/admin/otherout")
 public class OtherOutAdminController extends BaseAdminController {
 
@@ -57,7 +60,6 @@ public class OtherOutAdminController extends BaseAdminController {
 	/**
 	* 特殊领料单列表明细
 	*/
-    @UnCheck
 	public void getOtherOutLines() {
 		String autoid = get("autoid");
 				Kv kv = new Kv();
@@ -69,6 +71,7 @@ public class OtherOutAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.OTHEROUT_ADD)
 	public void add() {
 		OtherOut otherOut = new OtherOut();
 		String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
@@ -83,6 +86,7 @@ public class OtherOutAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.OTHEROUT_EDIT)
 	public void edit() {
 		OtherOut otherOut=service.findById(getLong(0)); 
 		if(otherOut == null){
@@ -111,6 +115,7 @@ public class OtherOutAdminController extends BaseAdminController {
    /**
 	* 批量删除
 	*/
+   @CheckPermission(PermissionKey.OTHEROUT_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}
@@ -118,6 +123,7 @@ public class OtherOutAdminController extends BaseAdminController {
    /**
 	* 删除
 	*/
+   @CheckPermission(PermissionKey.OTHEROUT_DELETE)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
@@ -153,6 +159,7 @@ public class OtherOutAdminController extends BaseAdminController {
 	/**
 	 * JBoltTable 可编辑表格整体提交 多表格
 	 */
+	@CheckPermission(PermissionKey.OTHEROUT_ADD)
 	public void submitMulti() {
 		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
@@ -205,6 +212,7 @@ public class OtherOutAdminController extends BaseAdminController {
 	/**
 	 * 生成二维码
 	 */
+	@CheckPermission(PermissionKey.OTHEROUT_PRINT)
 	public void erm() {
 		OtherOut otherOut=service.findById(getLong(0));
 		if(otherOut == null){

@@ -251,7 +251,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         String startDate = "";
         String endDate = "";
         if (apsWeekschedule != null){
-            startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(),"yyyy-MM-dd");
+            startDate = DateUtils.formatDate(new Date(),"yyyy-MM").concat("-01");
             endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(),"yyyy-MM-dd");
         }
 
@@ -444,6 +444,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     /**
      * 导出数据
      */
+    @CheckPermission(PermissionKey.PLANMONTHSUM_EXPORT)
     @SuppressWarnings("unchecked")
     public void dataExport() throws Exception {
         String startdate = get("startdate");

@@ -15,6 +15,7 @@ import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import com.jfinal.aop.Inject;
@@ -27,6 +28,8 @@ import org.json.JSONArray;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -245,6 +248,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 //					保存
 //					审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 					materialsOut.setIAuditStatus(0);
+					materialsOut.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
 
 					//创建人
 					materialsOut.setIcreateBy(userId);
@@ -378,7 +382,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 		return first2;
 	}
 
-	public Ret pushU8(String ids) {
+	public Ret pushU8(Long ids) {
 		List<Record> list = dbTemplate("materialsout.pushU8List", Kv.by("autoid", ids)).find();
 
 		if (list.size() > 0) {
@@ -463,10 +467,12 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 						String bill = s[0];
 						LOG.info("s===>" + bill);
 						LOG.info("data====" + data);
-//						int update = update("update T_Sys_OtherOut set AuditStatus ='2' where AutoID IN("+ids+")" );
-//
-//						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
-//								"推送数据失败," + "失败原因" + msg);
+						int update = update("update T_Sys_MaterialsOut set U8BillNo = '" + this.extractU8Billno(bill) + "' where" +
+								" AutoID " +
+								"= " +
+								"'" + ids + "'");
+						return update == 1 ? ret.setOk().set("msg", msg) : ret.setFail().set("msg",
+								"推送数据失败," + "失败原因" + msg);
 					}
 					return ret.setFail().set("msg", "推送数据失败," + "失败原因" + msg);
 				} else {
@@ -531,16 +537,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-			Long userId = JBoltUserKit.getUserId();
-			String userName = JBoltUserKit.getUserName();
-			Date nowDate = new Date();
-			MaterialsOut materialsOut = findById(formAutoId);
-			materialsOut.setIAuditBy(userId);
-			materialsOut.setCAuditName(userName);
-			materialsOut.setDAuditTime(nowDate);
-			String ids = String.valueOf(materialsOut.getAutoID());
-		 	this.pushU8(ids);
-			materialsOut.update();
+		this.pushU8(formAutoId);
 		return null;
 	}
 
@@ -597,37 +594,9 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 
 	@Override
 	public String postBatchApprove(List<Long> formAutoIds) {
-
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		/**
-		 *List转换String类型
-		 */
-		if (formAutoIds.size()>0){
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < formAutoIds.size(); i++) {
-
-				buffer.append(""+formAutoIds.get(i)+",");
-			}
-			String ids = buffer.substring(0, buffer.length() - 1);
-			List<MaterialsOut> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (MaterialsOut materialsOut : listByIds) {
-					//审核人
-					materialsOut.setIAuditBy(userId);
-					materialsOut.setCAuditName(userName);
-					materialsOut.setDAuditTime(nowDate);
-//					this.pushU8(ids);
-					materialsOut.update();
-				}
-			}
+		for (Long ids : formAutoIds) {
+			Ret u8 = this.pushU8(ids);
 		}
-
-
-
-
-
 		return null;
 	}
 
@@ -639,6 +608,16 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 	@Override
 	public String postBatchBackout(List<Long> formAutoIds) {
 		return null;
+	}
+
+	/**
+	 * 提取字符串里面的数字
+	 */
+	public String extractU8Billno(String message) {
+		String regEx = "[^0-9]";
+		Pattern p = Pattern.compile(regEx);
+		Matcher m = p.matcher(message);
+		return m.replaceAll("").trim();
 	}
 
 }

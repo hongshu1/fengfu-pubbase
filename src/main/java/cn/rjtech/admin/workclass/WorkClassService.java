@@ -267,6 +267,10 @@ public class WorkClassService extends BaseService<Workclass> {
                 if (notOk(w.getCworkclassname())) {
                     return fail("工种名称不能为空");
                 }
+
+                if (notOk(w.getIlevel())) {
+                    return fail("工种名称不能为空");
+                }
             }
         }
         savaModelHandle(models);

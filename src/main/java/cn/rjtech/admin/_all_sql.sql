@@ -132,6 +132,10 @@
 #include("container/container.sql")
 #end
 
+#namespace("containerclass")
+#include("containerclass/containerclass.sql")
+#end
+
 #namespace("vendor")
 #include("vendor/vendor.sql")
 #end
