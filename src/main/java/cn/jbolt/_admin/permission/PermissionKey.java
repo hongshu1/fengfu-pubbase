@@ -596,7 +596,7 @@ public class PermissionKey {
 	/**
 	 * 消息模板
 	 */
-	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
+	public static final String MESSAGETPL = "messagetpl";
 	/**
 	 * 备份设置
 	 */
@@ -3118,7 +3118,7 @@ public class PermissionKey {
 	 */
 	public static final String BOMMASTER_EXPORT = "bommaster_export";
 	/**
-	 * 导入
+	 * 手工导入
 	 */
 	public static final String BOMMASTER_IMPORT = "bommaster_import";
 	/**
