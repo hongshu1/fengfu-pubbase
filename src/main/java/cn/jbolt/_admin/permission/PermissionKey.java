@@ -3753,4 +3753,12 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String SPOTCHECKFORMM_ADD_SUBMIT = "spotcheckformm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String CODINGRULEM_ADD = "codingrulem_add";
+	/**
+	 * 删除
+	 */
+	public static final String CODINGRULEM_DEL = "codingrulem_del";
 }

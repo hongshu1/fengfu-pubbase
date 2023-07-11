@@ -40,7 +40,7 @@ public class CodingRuleMAdminController extends BaseAdminController {
      */
     @UnCheck
     public void datas() {
-        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), get("cFormTypeSn"), getInt("iCodingType"), getBoolean("IsDeleted")));
+        renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
 
     /**
@@ -81,18 +81,33 @@ public class CodingRuleMAdminController extends BaseAdminController {
      * 批量删除
      */
     public void deleteByIds() {
-        renderJson(service.deleteByIds(get("ids")));
+        renderJson(service.removeByIds(get("ids")));
     }
 
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.CODINGRULEM_DEL)
     public void delete() {
-        renderJson(service.deleteById(getLong(0)));
+        renderJson(service.removeByIds(get("ids")));
     }
-
+    
+    @CheckPermission(PermissionKey.CODINGRULEM_ADD)
     public void saveTableSubmit() {
         renderJson(service.saveTableSubmit(getJBoltTable()));
     }
-
+    
+    /**
+     * 详情
+     */
+    public void info(){
+        CodingRuleM codingRuleM = service.findById(getLong(0));
+        if (codingRuleM == null) {
+            renderFail(JBoltMsg.DATA_NOT_EXIST);
+            return;
+        }
+        set("codingRuleM", codingRuleM);
+        set("isView", 1);
+        render("edit.html");
+    }
 }
