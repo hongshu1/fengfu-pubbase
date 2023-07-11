@@ -3793,4 +3793,132 @@ public class PermissionKey {
 	 * 导出
 	 */
 	public static final String CUSORDERRESULT_EXPORT = "cusorderresult_export";
+	/**
+	 * 批量删除
+	 */
+	public static final String PURECEIVE_DELETE_ALL = "pureceive_delete_all";
+	/**
+	 * 新增
+	 */
+	public static final String OTHER_DELIVERY_LIST_ADD = "other_delivery_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String OTHER_DELIVERY_LIST_EDIT = "other_delivery_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OTHER_DELIVERY_LIST_DELETE = "other_delivery_list_delete";
+	/**
+	 * 新增
+	 */
+	public static final String MATERIAL_DELIVERY_LIST_ADD = "material_delivery_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String MATERIAL_DELIVERY_LIST_EDIT = "material_delivery_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String MATERIAL_DELIVERY_LIST_DELETE = "material_delivery_list_delete";
+	/**
+	 * 新增
+	 */
+	public static final String ASSEM_ADD = "assem_add";
+	/**
+	 * 修改
+	 */
+	public static final String ASSEM_EDIT = "assem_edit";
+	/**
+	 * 删除
+	 */
+	public static final String ASSEM_DELETE = "assem_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String ASSEM_DELETE_ALL = "assem_delete_all";
+	/**
+	 * 新增
+	 */
+	public static final String PRODUCTIN_ADD = "productin_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODUCTIN_EDIT = "productin_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODUCTIN_DELETE = "productin_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String PRODUCTIN_DELETE_ALL = "productin_delete_all";
+	/**
+	 * 新增
+	 */
+	public static final String OTHERIN_ADD = "otherin_add";
+	/**
+	 * 修改
+	 */
+	public static final String OTHERIN_EDIT = "otherin_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OTHERIN_DELETE = "otherin_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String OTHERIN_DELETE_ALL = "otherin_delete_all";
+	/**
+	 * 新增
+	 */
+	public static final String GOODSPAYMENTM_ADD = "goodspaymentm_add";
+	/**
+	 * 修改
+	 */
+	public static final String GOODSPAYMENTM_EDIT = "goodspaymentm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String GOODSPAYMENTM_DELETE = "goodspaymentm_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String GOODSPAYMENTM_DELETE_ALL = "goodspaymentm_delete_all";
+	/**
+	 * 提交
+	 */
+	public static final String WORKCALENDARM_SUBMIT = "workcalendarm_submit";
+	/**
+	 * 新增
+	 */
+	public static final String MATERIAL_RETURN_LIST_ADD = "material_return_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String MATERIAL_RETURN_LIST_EDIT = "material_return_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String MATERIAL_RETURN_LIST_DELETE = "material_return_list_delete";
+	/**
+	 * 导出
+	 */
+	public static final String PLANYEARSUM_EXPORT = "planyearsum_export";
+	/**
+	 * 新增
+	 */
+	public static final String TRANSVOUCH_ADD = "transvouch_add";
+	/**
+	 * 编辑
+	 */
+	public static final String TRANSVOUCH_EDIT = "transvouch_edit";
+	/**
+	 * 删除
+	 */
+	public static final String TRANSVOUCH_DELETE = "transvouch_delete";
+	/**
+	 * 查看
+	 */
+	public static final String PLANYEARSUM_SHOW = "planyearsum_show";
 }
