@@ -42,9 +42,7 @@
 <tr data-id="${data.autoid}">
   <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	{@if data.iauditstatus != '0'}
 	<a class="jbolt_table_editbtn" href="admin/materialreturnlist/edit/${data.autoid}?&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" data-title="物料退货单列表详情">查看</i></a>
-	{@/if}
 	{@if data.iauditstatus == '0'}
 	<a href="admin/materialreturnlist/deleteByIds?ids=${data.autoid}" data-ajaxbtn data-loading="执行中 "
                            tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"

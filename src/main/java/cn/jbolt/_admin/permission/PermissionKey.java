@@ -836,7 +836,7 @@ public class PermissionKey {
 	/**
 	 * 特殊领料单列表
 	 */
-	public static final String OTHEROUT_LIST = "otherout_list";
+	public static final String OTHEROUT = "otherout";
 	/**
 	 * 仓库期初
 	 */
@@ -3933,4 +3933,32 @@ public class PermissionKey {
 	 * 新增
 	 */
 	public static final String MOMATERIALSRETURNM_ADD = "momaterialsreturnm_add";
+	/**
+	 * 新增
+	 */
+	public static final String OTHEROUT_ADD = "otherout_add";
+	/**
+	 * 编辑
+	 */
+	public static final String OTHEROUT_EDIT = "otherout_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OTHEROUT_DELETE = "otherout_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String OTHEROUT_PRINT = "otherout_print";
+	/**
+	 * 新增
+	 */
+	public static final String OTHER_OUT_RETURN_LIST_ADD = "other_out_return_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String OTHER_OUT_RETURN_LIST_EDIT = "other_out_return_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OTHER_OUT_RETURN_LIST_DELETE = "other_out_return_list_delete";
 }

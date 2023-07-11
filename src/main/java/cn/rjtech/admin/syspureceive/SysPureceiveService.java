@@ -635,7 +635,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     //往采购订单入库主表插入
     public String installsyspuinstore(SysPureceive byId, Date now, User user, Record barcode) {
         SysPuinstore sysPuinstore = new SysPuinstore();
-        sysPuinstore.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+        sysPuinstore.setBillNo(BillNoUtils.genCode(getOrgCode(), syspuinstoreservice.table()));
         sysPuinstore.setBillDate(DateUtil.formatDate(now));
         sysPuinstore.setOrganizeCode(getOrgCode());
         sysPuinstore.setSourceBillNo(byId.getBillNo());

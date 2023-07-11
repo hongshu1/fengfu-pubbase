@@ -25,6 +25,7 @@ where rm.IsDeleted = '0'
 	#if(endTime)
 		and rm.dCreateTime <= #para(endTime)
 	#end
+	#(getDataPermissionSql("rm", "corgcode"))
 ORDER BY rm.dUpdateTime DESC
 #end
 
