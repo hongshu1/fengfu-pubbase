@@ -71,8 +71,12 @@
 <td>
 	<a href="admin/uptimem/edit?iautoid=${data.iautoid}&readonly=true" data-area="100%,100%"  tooltip data-title="查看"  data-handler="refreshJBoltTable" data-dialog-title="查看稼动时间管理" class="jbolt_table_editbtn">查看</a>
 	{@if data.iauditstatus == '0' || data.iauditstatus == '3' }
-	<a href="admin/uptimem/edit?iautoid=${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑稼动时间管理" class="jbolt_table_editbtn">编辑</a>
-    <a href="admin/uptimem/delete?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+		#permission(PermissionKey.UPTIMEM_EDIT)
+			<a href="admin/uptimem/edit?iautoid=${data.iautoid}" data-area="100%,100%"  tooltip data-title="编辑"  data-handler="refreshJBoltTable" data-dialog-title="编辑稼动时间管理" class="jbolt_table_editbtn">编辑</a>
+		#end
+		#permission(PermissionKey.UPTIMEM_DELETE)
+    		<a href="admin/uptimem/delete?iautoid=${data.iautoid}" data-ajaxbtn data-loading="执行中 " tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn">删除</a>
+		#end
 	{@/if}
 	{@if  data.iauditstatus == '1' }
 		<a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=PL_UptimeM&primaryKeyName=iAutoId&formAutoId=${data.iautoid}&permissionKey=uptimem&className=cn.rjtech.admin.uptimem.UptimeMService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
@@ -91,7 +95,10 @@
 <!-- 工具条 toolbar -->
 <div class="jbolt_table_toolbar" id="uptimeM_toolbar_#(pageId)">
 	<div class="" role="group" aria-label="btn-group">
+		#permission(PermissionKey.UPTIMEM_ADD)
 		<button data-openpage="dialog" data-area="100%,100%"  data-handler="jboltTablePageToFirst" data-title="新增稼动时间管理"  data-url="admin/uptimem/add" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增</button>
+		#end
+
 <!--		<button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/uptimem/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>-->
 		#include("/_view/_common/_batch_approval_btns.html", formSn="PL_UptimeM", uri="admin/uptimem??", primaryKeyName="iAutoId", className="cn.rjtech.admin.uptimem.UptimeMService", permissionKeyPrefix="uptimem")
 	</div>

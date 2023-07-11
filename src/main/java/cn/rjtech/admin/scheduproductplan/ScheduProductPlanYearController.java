@@ -167,6 +167,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.PLANYEAR_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }

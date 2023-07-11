@@ -46,9 +46,13 @@
                     onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',false)" data-handler="refreshJBoltTable" data-title="查看年度计划">查看</a>
 
                 {@if data.iauditstatus == 0 || data.iauditstatus == 3}
-                    <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
+                    #permission(PermissionKey.PLANYEAR_EDIT)
+                        <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
                             onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',true)" data-handler="refreshJBoltTable" data-title="编辑年度计划">编辑</a>
-                    <a class="jbolt_table_delbtn" href="admin/scheduproductplanyear/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
+                    #end
+                    #permission(PermissionKey.PLANYEAR_DELETE)
+                        <a class="jbolt_table_delbtn" href="admin/scheduproductplanyear/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
+                    #end
                 {@/if}
                 {@if  data.iauditstatus == '1' }
                     <a class="jbolt_table_delbtn" href="admin/formapproval/withdraw?formSn=Aps_AnnualPlanM&primaryKeyName=iAutoId&formAutoId=${data.iautoid}&permissionKey=scheduproductplanyear&className=cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService" data-confirm="确定撤回此选项？" data-handler="refreshJBoltTable" tooltip data-title="撤回该数据状态" ><i class="fa fa-remove c-danger">撤回</i></a>
@@ -65,9 +69,11 @@
         </textarea>
         <div class="jbolt_table_toolbar" id="apsAnnualplanm_toolbar_#(pageId)">
             <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+                #permission(PermissionKey.PLANYEAR_ADD)
                 <button data-dialogbtn data-handler="jboltTablePageToFirst" data-fs="true"
                         data-title="新增年度生产计划排产" data-url="admin/scheduproductplanyear/addview" class="btn btn-outline-primary"><i class="fa fa-plus"></i> 新增
                 </button>
+                #end
                 <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds" id="toolbar_deleteBtn_#(pageId)" data-url="admin/scheduproductplanyear/deleteByIds?ids=" data-confirm="确定删除选中数据？" class="btn btn-outline-secondary btn-sm">批量删除</button>
                 #include("/_view/_common/_batch_approval_btns.html", formSn="Aps_AnnualPlanM", uri="admin/scheduproductplanyear",
                 primaryKeyName="iAutoId", className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService", permissionKeyPrefix="scheduplanyear")

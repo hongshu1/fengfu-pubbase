@@ -43,6 +43,7 @@ public class UptimeMAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.UPTIMEM_ADD)
 	public void add() {
 		set("updateOrSave","save");
 		render("add.html");
@@ -51,6 +52,7 @@ public class UptimeMAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.UPTIMEM_EDIT)
 	public void edit() {
 		UptimeM uptimeM=service.findById(getLong("iautoid"));
 		if(uptimeM == null){
@@ -90,6 +92,7 @@ public class UptimeMAdminController extends BaseAdminController {
    /**
 	* 删除
 	*/
+   @CheckPermission(PermissionKey.UPTIMEM_DELETE)
 	public void delete() {
 		renderJson(service.delete(getLong("iautoid")));
 	}

@@ -4093,4 +4093,28 @@ public class PermissionKey {
 	 * 查看
 	 */
 	public static final String DEMANDPLANSUMVIEW_SHOW = "demandplansumview_show";
+	/**
+	 * 新增
+	 */
+	public static final String UPTIMEM_ADD = "uptimem_add";
+	/**
+	 * 编辑
+	 */
+	public static final String UPTIMEM_EDIT = "uptimem_edit";
+	/**
+	 * 删除
+	 */
+	public static final String UPTIMEM_DELETE = "uptimem_delete";
+	/**
+	 * 新增
+	 */
+	public static final String PLANYEAR_ADD = "planyear_add";
+	/**
+	 * 编辑
+	 */
+	public static final String PLANYEAR_EDIT = "planyear_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PLANYEAR_DELETE = "planyear_delete";
 }
