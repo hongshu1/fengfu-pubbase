@@ -547,13 +547,13 @@ public class PurchasemAdminController extends BaseAdminController {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
 
-
     /**
      * 提交审核
      */
     @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_SUBMIT)
     public void submit() {
         ValidationUtils.validateId(getLong("iautoid"), "申购单ID");
+        
         renderJson(service.submit(getLong("iautoid")));
     }
     

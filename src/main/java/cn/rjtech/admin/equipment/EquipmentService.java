@@ -15,6 +15,7 @@ import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.Workregionm;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
@@ -93,6 +94,7 @@ public class EquipmentService extends BaseService<Equipment> {
 		if(equipment==null || isOk(equipment.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
+		equipment.setCEquipmentCode(BillNoUtils.genCode(getOrgCode(), table()));
 		setEquipment(equipment);
 		//if(existsName(equipment.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=equipment.save();
