@@ -3761,7 +3761,10 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String CODINGRULEM_DEL = "codingrulem_del";
-
+	/**
+	 * 根目录展示开关
+	 */
+	public static final String BOMMASTER_VERSION_VIEW = "bommaster_version_view";
 	/**
 	 * 新增
 	 */
@@ -3770,4 +3773,24 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String FORMEXTENDFIELDS_SAVE = "formextendfields_save";
+	/**
+	 * 新增
+	 */
+	public static final String PURECEIVE_ADD = "pureceive_add";
+	/**
+	 * 修改
+	 */
+	public static final String PURECEIVE_EDIT = "pureceive_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PURECEIVE_DELETE = "pureceive_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERSUM_EXPORT = "cusordersum_export";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERRESULT_EXPORT = "cusorderresult_export";
 }
