@@ -1463,8 +1463,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             return new ArrayList<>();
         }
         int iLevel = apsWeekschedule.getILevel();
-        String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(), "yyyy-MM-dd");
+        String startDate = DateUtils.formatDate(new Date(),"yyyy-MM-dd");
         String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(), "yyyy-MM-dd");
+        if (isOk(kv.get("startdate"))){
+            startDate = kv.getStr("startdate");
+        }
+        if (isOk(kv.get("enddate"))){
+            endDate = kv.getStr("enddate");
+        }
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
         List<String> scheduDateList = Util.getBetweenDate(startDate, endDate);
 
