@@ -349,6 +349,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
     /**
      * 生成现品票
      */
+    @CheckPermission(PermissionKey.MOMOINVBATCH_CREATEMOMOINVBATCH)
     public void createMomoinvbatch()
     {
         renderJson(service.createMomoinvbatch(getLong("imodocid")));
@@ -357,6 +358,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
     /**
      * 批量报工
      */
+    @CheckPermission(PermissionKey.MOMOINVBATCH_WORKBYIDS)
     public void workByIds()
     {
         renderJson(service.workByIds(get("imodocid"), get("ids")));
@@ -365,6 +367,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
     /**
      * 撤回
      */
+    @CheckPermission(PermissionKey.MOMOINVBATCH_WITHDRAW)
     public void withdraw() {
         renderJson(service.withdraw(getLong("iautoid")));
     }
@@ -372,6 +375,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
     /**
      * 修改数量
      */
+    @CheckPermission(PermissionKey.MOMOINVBATCH_UPDATENUMBER)
     public void updateNumber()
     {
         Long iautoid = getLong("moMoinvbatch.iautoid");
@@ -382,7 +386,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
     /**
      * 批量打印
      */
-
+    @CheckPermission(PermissionKey.MOMOINVBATCH_BATCHPRINT)
     public void batchPrint()
     {
         renderJson(service.batchPrint(get("imodocid"), get("ids")));

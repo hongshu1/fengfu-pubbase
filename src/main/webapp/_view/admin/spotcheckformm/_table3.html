@@ -129,11 +129,9 @@
       <input disabled type="text" autocomplete="off"  class="form-control" data-rule="number"  data-notnull="false"  maxlength="10" name="iminval" value="#(data.iminval??)">
     </td>
 
-    #if(data.itype==2)
     <td>
       <input type="text" autocomplete="off"     class="form-control"  name="cvalue" value="#(data.cvalue??)">
     </td>
-    #end
     #if(data.itype==3)
     <td>
       √ <input autocomplete="off"  #if(readonly) disabled #end   type="radio" name="cvalue1" value="1">

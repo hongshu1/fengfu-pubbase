@@ -596,7 +596,7 @@ public class PermissionKey {
 	/**
 	 * 消息模板
 	 */
-	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
+	public static final String MESSAGETPL = "messagetpl";
 	/**
 	 * 备份设置
 	 */
@@ -3118,7 +3118,7 @@ public class PermissionKey {
 	 */
 	public static final String BOMMASTER_EXPORT = "bommaster_export";
 	/**
-	 * 导入
+	 * 手工导入
 	 */
 	public static final String BOMMASTER_IMPORT = "bommaster_import";
 	/**
@@ -3697,4 +3697,100 @@ public class PermissionKey {
 	 * 二维码
 	 */
 	public static final String RCVDOCDEFECT_QR = "rcvdocdefect_qr";
+	/**
+	 * 新增
+	 */
+	public static final String PROCESSDEFECT_ADD = "processdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String PROCESSDEFECT_EDIT = "processdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PROCESSDEFECT_DELETE = "processdefect_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String PROCESSDEFECT_QR = "processdefect_qr";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_SHELVES_PRINT = "warehouse_shelves_print";
+	/**
+	 * 生成现品票
+	 */
+	public static final String MOMOINVBATCH_CREATEMOMOINVBATCH = "momoinvbatch_createmomoinvbatch";
+	/**
+	 * 现品票批量报工
+	 */
+	public static final String MOMOINVBATCH_WORKBYIDS = "momoinvbatch_workbyids";
+	/**
+	 * 现品票撤回
+	 */
+	public static final String MOMOINVBATCH_WITHDRAW = "momoinvbatch_withdraw";
+	/**
+	 * 现品票修改数量
+	 */
+	public static final String MOMOINVBATCH_UPDATENUMBER = "momoinvbatch_updatenumber";
+	/**
+	 * 现品票打印
+	 */
+	public static final String MOMOINVBATCH_BATCHPRINT = "momoinvbatch_batchprint";
+	/**
+	 * 新增
+	 */
+	public static final String SPOTCHECKFORMM_ADD = "spotcheckformm_add";
+	/**
+	 * 修改
+	 */
+	public static final String SPOTCHECKFORMM_EDIT = "spotcheckformm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SPOTCHECKFORMM_DELETE = "spotcheckformm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String SPOTCHECKFORMM_ADD_SUBMIT = "spotcheckformm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String CODINGRULEM_ADD = "codingrulem_add";
+	/**
+	 * 删除
+	 */
+	public static final String CODINGRULEM_DEL = "codingrulem_del";
+	/**
+	 * 根目录展示开关
+	 */
+	public static final String BOMMASTER_VERSION_VIEW = "bommaster_version_view";
+	/**
+	 * 新增
+	 */
+	public static final String FORMEXTENDFIELDS_ADD = "formextendfields_add";
+	/**
+	 * 保存
+	 */
+	public static final String FORMEXTENDFIELDS_SAVE = "formextendfields_save";
+	/**
+	 * 新增
+	 */
+	public static final String PURECEIVE_ADD = "pureceive_add";
+	/**
+	 * 修改
+	 */
+	public static final String PURECEIVE_EDIT = "pureceive_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PURECEIVE_DELETE = "pureceive_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERSUM_EXPORT = "cusordersum_export";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERRESULT_EXPORT = "cusorderresult_export";
 }

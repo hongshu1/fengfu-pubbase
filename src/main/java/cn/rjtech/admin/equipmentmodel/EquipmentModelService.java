@@ -1,6 +1,7 @@
 package cn.rjtech.admin.equipmentmodel;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -12,6 +13,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.enums.IsOkEnum;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.EquipmentModel;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
@@ -25,7 +27,9 @@ import com.jfinal.plugin.activerecord.Record;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 物料建模-机型档案
@@ -46,6 +50,7 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
     }
 	@Inject
 	private CusFieldsMappingDService cusFieldsMappingdService;
+
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -261,4 +266,46 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 	public EquipmentModel findByName(String equipmentModelName){
 		return findFirst("select * from Bd_EquipmentModel where isDeleted = 0 and cequipmentmodelname = ?", equipmentModelName);
 	}
+
+	/**
+	 * 从系统导入字段配置，获得导入的数据
+	 */
+	public Ret importExcelClass(File file) {
+		List<Record> records = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
+		if (notOk(records)) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+		}
+
+
+		for (Record record : records) {
+
+			if (StrUtil.isBlank(record.getStr("cEquipmentModelCode"))) {
+				return fail("机型编码不能为空");
+			}
+			if (StrUtil.isBlank(record.getStr("cEquipmentModelName"))) {
+				return fail("机型名称不能为空");
+			}
+
+			Date now=new Date();
+			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+			record.set("iCreateBy", JBoltUserKit.getUserId());
+			record.set("cOrgCode",getOrgCode());
+			record.set("cOrgName",getOrgName());
+			record.set("iOrgId",getOrgId());
+			record.set("dCreateTime", now);
+			record.set("cCreateName", JBoltUserKit.getUserName());
+			record.set("isDeleted",0);
+			record.set("iUpdateBy", JBoltUserKit.getUserId());
+			record.set("dUpdateTime", now);
+			record.set("cUpdateName", JBoltUserKit.getUserName());
+		}
+
+		// 执行批量操作
+		tx(() -> {
+			batchSaveRecords(records);
+			return true;
+		});
+		return SUCCESS;
+	}
+
 }

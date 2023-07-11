@@ -5,17 +5,16 @@
     <div class="row">
         <div class="col">
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label is_required">类别编码:</label>
+                <label class="col-sm-2 col-form-label">类别编码:</label>
                 <div class="col-10">
-                    <input type="text" data-rule="required" data-notnull="true" data-tips="请输入类别编码"
-                           data-with-clearbtn="true"
+                    <input type="text" #if(uptimeCategory.iautoid??) data-rule="required" #else disabled #end data-tips="请输入类别编码"
                            autocomplete="off" class="form-control" placeholder="请输入类别编码" maxlength="40"
                            name="uptimeCategory.cUptimeCategoryCode"
-                           data-rule="required" value="#(uptimeCategory.cuptimecategorycode??)"/>
+                           value="#(uptimeCategory.cuptimecategorycode??)"/>
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label is_required">类别名称:</label>
+                <label class="col-sm-2 col-form-label">类别名称:</label>
                 <div class="col-10">
                     <input type="text" data-rule="required" data-notnull="true" data-tips="请输入类别名称"
                            data-with-clearbtn="true"

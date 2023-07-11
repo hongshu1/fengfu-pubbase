@@ -2,6 +2,7 @@ package cn.rjtech.admin.equipmentmodel;
 
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -191,6 +192,18 @@ public class EquipmentModelAdminController extends BaseAdminController {
     public void options() {
         List<Record> options = service.options();
         renderJsonData(options);
+    }
+
+
+    @CheckPermission(PermissionKey.EQUIPMENTMODEL_IMPORT)
+    public void importExcelClass() {
+        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+        UploadFile file = getFile("file", uploadPath);
+        if (notExcel(file)) {
+            renderJsonFail("请上传excel文件");
+            return;
+        }
+        renderJson(service.importExcelClass(file.getFile()));
     }
 
 }

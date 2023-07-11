@@ -1,5 +1,6 @@
 package cn.rjtech.admin.inventorymfginfo;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.service.base.BaseService;
@@ -150,9 +151,9 @@ public class InventoryMfgInfoService extends BaseService<InventoryMfgInfo> {
      * 查询初物按钮是否打开，来料质检开关
      */
     public boolean getIsIqc1(String cinvcode) {
-        Boolean bool = dbTemplate("syspureceive.inventoryMfgInfo", Okv.by("cinvcode", cinvcode).set("iorgid", getOrgId())).queryBoolean();
+        String bool = dbTemplate("inventorymfginfo.inventoryMfgInfo", Okv.by("cinvcode", cinvcode).set("iorgid", getOrgId())).queryStr();
         ValidationUtils.notNull(bool, String.format("存货“%s”未定义来料质检开关", cinvcode));
-        return bool;
+        return ObjUtil.notEqual(bool, ZERO_STR);
     }
 
     /**
