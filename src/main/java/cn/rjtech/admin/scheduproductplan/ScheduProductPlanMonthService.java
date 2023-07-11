@@ -1463,7 +1463,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             return new ArrayList<>();
         }
         int iLevel = apsWeekschedule.getILevel();
-        String startDate = DateUtils.formatDate(new Date(),"yyyy-MM-dd");
+        String startDate = DateUtils.formatDate(new Date(),"yyyy-MM").concat("-01");;
         String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(), "yyyy-MM-dd");
         if (isOk(kv.get("startdate"))){
             startDate = kv.getStr("startdate");
