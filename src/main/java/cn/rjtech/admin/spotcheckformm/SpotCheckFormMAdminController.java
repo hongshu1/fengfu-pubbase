@@ -34,7 +34,6 @@ import java.util.Map;
  * @date: 2023-06-29 09:16
  */
 @CheckPermission(PermissionKey.SPOTCHECKFORMM)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/spotCheckFormM", viewPath = "/_view/admin/spotcheckformm")
 public class SpotCheckFormMAdminController extends BaseAdminController {
@@ -101,6 +100,7 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.SPOTCHECKFORMM_EDIT)
 	public void edit(@Para(value = "coperationname") String coperationname,
 					 @Para(value = "iinventoryid") String iinventoryid,
 					 @Para(value = "modocid") String modocid,
@@ -150,6 +150,7 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 	/**
 	 * 编辑
 	 */
+	@CheckPermission(PermissionKey.SPOTCHECKFORMM_EDIT)
 	public void edit2(@Para(value = "coperationname") String coperationname,
 					 @Para(value = "iinventoryid") String iinventoryid,
 					 @Para(value = "modocid") String modocid,
@@ -228,6 +229,7 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 	*/
     @Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.SPOTCHECKFORMM_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -237,10 +239,12 @@ public class SpotCheckFormMAdminController extends BaseAdminController {
 	*/
 	@Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.SPOTCHECKFORMM_DELETE)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}
 
+	@CheckPermission(PermissionKey.SPOTCHECKFORMM_ADD_SUBMIT)
 	public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
 						   @Para(value = "tableJsonData") String tableJsonDataStr){
 		renderJsonData(service.submitForm(formJsonDataStr, tableJsonDataStr));
