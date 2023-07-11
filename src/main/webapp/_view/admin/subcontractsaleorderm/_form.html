@@ -39,7 +39,7 @@
 						<div class="form-group row">
 							<label class="col-sm-1 col-form-label">订单号</label>
 							<div class="col">
-								<input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="subcontractsaleorderm.cOrderNo" value="#(subcontractsaleorderm.cOrderNo??)"/>	
+								<input type="text" #if(subcontractsaleorderm.iAutoId??) #(readonly) data-rule="required" data-notnull="true" #else disabled #end data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="subcontractsaleorderm.cOrderNo" value="#(subcontractsaleorderm.cOrderNo??)"/>
 							</div>	
 							<label class="col-sm-1 col-form-label">订单日期</label>
 							<div class="col">
@@ -147,7 +147,7 @@
 						<div class="form-group row">
 							<label class="col-sm-1 col-form-label">税率</label>
 							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig5)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.iTaxRate" value="#(subcontractsaleorderm.iTaxRate??)"/>
+								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig5)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入税率" maxlength="6" name="subcontractsaleorderm.iTaxRate" value="#number(subcontractsaleorderm.iTaxRate??)"/>
 							</div>	
 							<label class="col-sm-1 col-form-label">币种</label>
 							<div class="col">
@@ -157,13 +157,14 @@
 										data-url="admin/dictionary/options?key=cCurrency"
 										data-value-attr="sn"
 										data-text-attr="name"
-										data-text="=请选择="				
+										data-text="=请选择="
+                                        data-handler="setExchangeRate"
 										data-select="#(subcontractsaleorderm.cCurrency??)">
 								</select>									
 							</div>
 							<label class="col-sm-1 col-form-label">汇率</label>
 							<div class="col">
-								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig4)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.iExchangeRate" value="#(subcontractsaleorderm.iExchangeRate??)"/>
+								<input type="text" data-with-clearbtn="true" data-rule="pnumber;fix<=#(precisionConfig4)" data-notnull="false" autocomplete="off"  class="form-control" placeholder="请输入汇率" maxlength="10" name="subcontractsaleorderm.iExchangeRate" value="#number(subcontractsaleorderm.iExchangeRate??)"/>
 							</div>		
 							<label class="col-sm-1 col-form-label">备注</label>
 							<div class="col">
@@ -214,7 +215,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(subcontractsaleorderm.iautoid?? && subcontractsaleorderm.iauditway == 2 && subcontractsaleorderm.iauditstatus > 0)
+#if(subcontractsaleorderm.iautoid?? && subcontractsaleorderm.iauditway == 2)
 #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=subcontractsaleorderm.iAutoId, primaryKeyName="iAutoId", formSn="Co_SubcontractSaleOrderM", btnNeed=1, pId=pageId, className="cn.rjtech.admin.subcontractsaleorderm.SubcontractsaleordermService", o=subcontractsaleorderm)
 #end
 
@@ -1049,6 +1050,24 @@
     {
         $("#icustomerid").val(data.iautoid);
         $("#ccusname").val(data.ccusname);
+    }
+
+    /**
+     * 根据币种设置汇率
+     */
+    function setExchangeRate() {
+        var cexchname = $('select[name="subcontractsaleorderm.cCurrency"]').find("option:selected").text();
+        if (cexchname && cexchname != null) {
+            Ajax.get("/admin/exch/getNflatByExchName?cexchname=" + cexchname, function (ret) {
+                if (ret.state === 'ok') {
+                    $('input[name="subcontractsaleorderm.iExchangeRate"]').val(ret.data.nflat);
+                } else {
+                    $('input[name="subcontractsaleorderm.iExchangeRate"]').val(0);
+                }
+            });
+        } else {
+            $('input[name="subcontractsaleorderm.iExchangeRate"]').val(0);
+        }
     }
 </script>
 #end

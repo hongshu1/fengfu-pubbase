@@ -144,7 +144,7 @@ public class PurchaseorderdQtyService extends BaseService<PurchaseorderdQty> {
 			if (ObjUtil.isNull(qty) || BigDecimal.ZERO.compareTo(qty) == 0){
 				continue;
 			}
-			seq+=10;
+			seq+=1;
 			PurchaseorderdQty purchaseOrderdQty = create(
 					purchaseOrderDId,
 					jsonObject.getIntValue(PurchaseorderdQty.IYEAR.toLowerCase()),

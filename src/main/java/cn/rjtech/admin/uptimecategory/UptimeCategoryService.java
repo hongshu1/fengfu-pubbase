@@ -3,9 +3,9 @@ package cn.rjtech.admin.uptimecategory;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.core.util.JBoltRandomUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.UptimeCategory;
+import cn.rjtech.util.BillNoUtils;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -56,6 +56,7 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 		uptimeCategory.setIOrgId(getOrgId());
 		uptimeCategory.setCOrgCode(getOrgCode());
 		uptimeCategory.setCOrgName(getOrgName());
+		uptimeCategory.setCUptimeCategoryCode(BillNoUtils.genCode(getOrgCode(), table()));
 		uptimeCategory.setICreateBy(JBoltUserKit.getUserId());
 		uptimeCategory.setCCreateName(JBoltUserKit.getUserName());
 		uptimeCategory.setDCreateTime(new Date());
@@ -146,7 +147,7 @@ public class UptimeCategoryService extends BaseService<UptimeCategory> {
 		}
 
 		UptimeCategory newUptimeCategory = new UptimeCategory();
-		newUptimeCategory.setCUptimeCategoryCode(JBoltRandomUtil.randomNumber(6));//待优化
+		uptimeCategory.setCUptimeCategoryCode(BillNoUtils.genCode(getOrgCode(), table()));
 		newUptimeCategory.setCUptimeCategoryName(cuptimeparamname);
 		save(newUptimeCategory);
 		return newUptimeCategory.getIAutoId();

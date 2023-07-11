@@ -596,7 +596,7 @@ public class PermissionKey {
 	/**
 	 * 消息模板
 	 */
-	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
+	public static final String MESSAGETPL = "messagetpl";
 	/**
 	 * 备份设置
 	 */
@@ -1221,6 +1221,10 @@ public class PermissionKey {
 	 * 始业点检表管理
 	 */
 	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
+	/**
+	 * 收发类型
+	 */
+	public static final String STYLE = "style";
 	/**
 	 * 新增
 	 */
@@ -3054,10 +3058,6 @@ public class PermissionKey {
 	 */
 	public static final String INVENTORYCLASS_COPY = "inventoryclass_copy";
 	/**
-	 * 添加
-	 */
-	public static final String PERSON_SUBMIT = "person_submit";
-	/**
 	 * 批量审核通过
 	 */
 	public static final String ROUTING_BATCH_APPROVE = "routing_batch_approve";
@@ -3118,7 +3118,7 @@ public class PermissionKey {
 	 */
 	public static final String BOMMASTER_EXPORT = "bommaster_export";
 	/**
-	 * 导入
+	 * 手工导入
 	 */
 	public static final String BOMMASTER_IMPORT = "bommaster_import";
 	/**
@@ -3557,4 +3557,240 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String UPTIMETPLM_SUBMIT = "uptimetplm_submit";
+	/**
+	 * 新增
+	 */
+	public static final String PRODPARAM_ADD = "prodparam_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODPARAM_EDIT = "prodparam_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODPARAM_DELETE = "prodparam_delete";
+	/**
+	 * 导出
+	 */
+	public static final String PRODPARAM_EXPORT = "prodparam_export";
+	/**
+	 * 导入
+	 */
+	public static final String PRODPARAM_IMPORT = "prodparam_import";
+	/**
+	 * 新增
+	 */
+	public static final String PRODITEM_ADD = "proditem_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODITEM_EDIT = "proditem_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODITEM_DELETE = "proditem_delete";
+	/**
+	 * 导出
+	 */
+	public static final String PRODITEM_EXPORT = "proditem_export";
+	/**
+	 * 导入
+	 */
+	public static final String PRODITEM_IMPORT = "proditem_import";
+	/**
+	 * 新增
+	 */
+	public static final String PRODFORM_ADD = "prodform_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODFORM_EDIT = "prodform_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODFORM_DELETE = "prodform_delete";
+	/**
+	 * 保存
+	 */
+	public static final String PRODFORM_SUBMIT = "prodform_submit";
+	/**
+	 * 导入
+	 */
+	public static final String EQUIPMENTMODEL_IMPORT = "equipmentmodel_import";
+	/**
+	 * 新增
+	 */
+	public static final String FORMUPLOADM_ADD = "formuploadm_add";
+	/**
+	 * 修改
+	 */
+	public static final String FORMUPLOADM_EDIT = "formuploadm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String FORMUPLOADM_DELETE = "formuploadm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String FORMUPLOADM_ADD_SUBMIT = "formuploadm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String FORMUPLOADM_API_ADD = "formuploadm_api_add";
+	/**
+	 * 修改
+	 */
+	public static final String FORMUPLOADM_API_EDIT = "formuploadm_api_edit";
+	/**
+	 * 删除
+	 */
+	public static final String FORMUPLOADM_API_DELETE = "formuploadm_api_delete";
+	/**
+	 * 提交
+	 */
+	public static final String FORMUPLOADM_API_SUBMIT = "formuploadm_api_submit";
+	/**
+	 * 提交
+	 */
+	public static final String DOUBLE_SCAN_CODE_SUBMIT = "double_scan_code_submit";
+	/**
+	 * 提交
+	 */
+	public static final String SCAN_CODE_SUBMIT = "scan_code_submit";
+	/**
+	 * 新增
+	 */
+	public static final String PRODFORMM_ADD = "prodformm_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODFORMM_EDIT = "prodformm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODFORMM_DELETE = "prodformm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String PRODFORMM_ADD_SUBMIT = "prodformm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String STYLE_ADD = "style_add";
+	/**
+	 * 删除
+	 */
+	public static final String STYLE_DELETE = "style_delete";
+	/**
+	 * 新增
+	 */
+	public static final String RCVDOCDEFECT_ADD = "rcvdocdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String RCVDOCDEFECT_EDIT = "rcvdocdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String RCVDOCDEFECT_DELETE = "rcvdocdefect_delete";
+	/**
+	 * 二维码
+	 */
+	public static final String RCVDOCDEFECT_QR = "rcvdocdefect_qr";
+	/**
+	 * 新增
+	 */
+	public static final String PROCESSDEFECT_ADD = "processdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String PROCESSDEFECT_EDIT = "processdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PROCESSDEFECT_DELETE = "processdefect_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String PROCESSDEFECT_QR = "processdefect_qr";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_SHELVES_PRINT = "warehouse_shelves_print";
+	/**
+	 * 生成现品票
+	 */
+	public static final String MOMOINVBATCH_CREATEMOMOINVBATCH = "momoinvbatch_createmomoinvbatch";
+	/**
+	 * 现品票批量报工
+	 */
+	public static final String MOMOINVBATCH_WORKBYIDS = "momoinvbatch_workbyids";
+	/**
+	 * 现品票撤回
+	 */
+	public static final String MOMOINVBATCH_WITHDRAW = "momoinvbatch_withdraw";
+	/**
+	 * 现品票修改数量
+	 */
+	public static final String MOMOINVBATCH_UPDATENUMBER = "momoinvbatch_updatenumber";
+	/**
+	 * 现品票打印
+	 */
+	public static final String MOMOINVBATCH_BATCHPRINT = "momoinvbatch_batchprint";
+	/**
+	 * 新增
+	 */
+	public static final String SPOTCHECKFORMM_ADD = "spotcheckformm_add";
+	/**
+	 * 修改
+	 */
+	public static final String SPOTCHECKFORMM_EDIT = "spotcheckformm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SPOTCHECKFORMM_DELETE = "spotcheckformm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String SPOTCHECKFORMM_ADD_SUBMIT = "spotcheckformm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String CODINGRULEM_ADD = "codingrulem_add";
+	/**
+	 * 删除
+	 */
+	public static final String CODINGRULEM_DEL = "codingrulem_del";
+	/**
+	 * 根目录展示开关
+	 */
+	public static final String BOMMASTER_VERSION_VIEW = "bommaster_version_view";
+	/**
+	 * 新增
+	 */
+	public static final String FORMEXTENDFIELDS_ADD = "formextendfields_add";
+	/**
+	 * 保存
+	 */
+	public static final String FORMEXTENDFIELDS_SAVE = "formextendfields_save";
+	/**
+	 * 新增
+	 */
+	public static final String PURECEIVE_ADD = "pureceive_add";
+	/**
+	 * 修改
+	 */
+	public static final String PURECEIVE_EDIT = "pureceive_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PURECEIVE_DELETE = "pureceive_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERSUM_EXPORT = "cusordersum_export";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERRESULT_EXPORT = "cusorderresult_export";
 }

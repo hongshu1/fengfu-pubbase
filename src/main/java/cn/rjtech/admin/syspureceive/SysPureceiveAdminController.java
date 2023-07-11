@@ -23,7 +23,6 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -197,20 +196,13 @@ public class SysPureceiveAdminController extends BaseAdminController {
         String barcode = get("detailHidden");
         if(null != barcode &&  !"".equals(barcode)){
             String[] split = barcode.split(",");
-            for (int i = 0; i < split.length; i++) {
-                String s = split[i].replaceAll("'", "");
-                Iterator<Record> iterator = barcodeDatas.iterator();
-                while (iterator.hasNext()) {
-                    Record r = iterator.next();
-                    if (r.getStr("barcode").equals(s)) {
-                        iterator.remove();
-                    }
-                }
+            for (String value : split) {
+                String s = value.replaceAll("'", "");
+                barcodeDatas.removeIf(r -> r.getStr("barcode").equals(s));
             }
-            for (int i = 0; i < barcodeDatas.size(); i++) {
-                Record record = barcodeDatas.get(i);
-                if(!iautoid.equals(record.getStr("iwarehouseid"))){
-                    record.set("poscode",null);
+            for (Record record : barcodeDatas) {
+                if (!iautoid.equals(record.getStr("iwarehouseid"))) {
+                    record.set("poscode", null);
                 }
             }
         }
@@ -229,88 +221,12 @@ public class SysPureceiveAdminController extends BaseAdminController {
         Record whcodeid = service.getWhcodeid(whcode1);
         String iautoid = whcodeid.getStr("iautoid");
         Record barcodeDatas = service.barcode(Kv.by("barcode", barcode));
-        if(null != barcode &&  !"".equals(barcode)){
-            if(!iautoid.equals(barcodeDatas.getStr("iwarehouseid"))){
-                barcodeDatas.set("poscode",null);
-
+        if (null != barcode && !"".equals(barcode)) {
+            if (!iautoid.equals(barcodeDatas.getStr("iwarehouseid"))) {
+                barcodeDatas.set("poscode", null);
             }
         }
         renderJsonData(barcodeDatas);
-    }
-
-    /**
-     * 提审批
-     */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "id");
-
-        renderJson(service.submit(iautoid));
-    }
-
-    /**
-     * 撤回已提审批
-     */
-    public void withdraw(Long iAutoId) {
-        ValidationUtils.validateId(iAutoId, "iAutoId");
-
-         renderJson(service.withdraw(iAutoId));
-    }
-
-    /**
-     * 审核通过
-     */
-    public void approve(String ids) {
-        renderJson(service.approve(getLong(0)));
-    }
-
-    /**
-     * 审批不通过
-     */
-    public void reject(String ids) {
-        renderJson(service.reject(getLong(0)));
-    }
-    /**
-     * 反审批
-     */
-    public void reverseApprove(String ids) {
-        if (StrUtil.isBlank(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.reverseApprove(ids));
-    }
-
-    /**
-     * 批量审核通过（批量审批也走这里）
-     */
-    public void batchApprove(@Para(value = "ids") String ids) {
-        if (StrUtil.isBlank(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.process(ids));
-    }
-
-
-    /**
-     * 批量反审核
-     */
-    public void batchReverseApprove(@Para(value = "ids") String ids) {
-        if (StrUtil.isBlank(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.noProcess(ids));
-    }
-    /**
-     * 批量审批不通过
-     */
-    public void batchReject(@Para(value = "ids") String ids) {
-        if (StrUtil.isBlank(ids)) {
-            renderFail(JBoltMsg.PARAM_ERROR);
-            return;
-        }
-        renderJson(service.batchReject(ids));
     }
 
 }

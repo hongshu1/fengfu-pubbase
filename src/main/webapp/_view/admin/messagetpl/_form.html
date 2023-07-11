@@ -1,6 +1,6 @@
 #set(pageId=RandomUtil.random(6))
 <form onsubmit="return false;" id="sysMessageTemplateForm_#(pageId)" action="#(action)" method="post">
-    <input type="hidden" name="sysMessageTemplate.id" value="#(sysMessageTemplate.id??)"/>
+    <input type="hidden" name="messageTpl.id" value="#(messageTpl.id??)"/>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">消息名称</label>
@@ -10,13 +10,13 @@
                     data-rule="required"
                     data-tips="请选择消息名称"
                     data-url="admin/dictionary/options?key=message_name"
-                    name="sysMessageTemplate.message_name"
+                    name="messageTpl.message_name"
                     data-autoload
                     data-text="=请选择消息名称="
                     data-value-attr="sn"
                     data-select-type="select"
                     data-value=""
-                    data-select="#(sysMessageTemplate.message_name??)">
+                    data-select="#(messageTpl.message_name??)">
             </select>
         </div>
     </div>
@@ -26,14 +26,14 @@
             <select class="form-control"
                     data-rule="required"
                     data-tips="请选择发送时机"
-                    data-url="admin/dictionary/options?key=message_chance"
-                    name="sysMessageTemplate.message_chance"
+                    data-url="admin/dictionary/options?key=messagetpl_trigger"
+                    name="messageTpl.ctrigger"
                     data-autoload
                     data-text="=请选择发送时机="
                     data-value-attr="sn"
                     data-select-type="select"
                     data-value=""
-                    data-select="#(sysMessageTemplate.message_chance??)">
+                    data-select="#(messageTpl.ctrigger??)">
             </select>
 
         </div>
@@ -44,8 +44,8 @@
         <div class="col">
 
             <input type="text" data-with-clearbtn="true" data-rule="required" autocomplete="off" class="form-control"
-                   placeholder="请输入模板标题" maxlength="10" name="sysMessageTemplate.message_title"
-                   value="#(sysMessageTemplate.message_title??)"/>
+                   placeholder="请输入模板标题" maxlength="10" name="messageTpl.message_title"
+                   value="#(messageTpl.message_title??)"/>
         </div>
     </div>
     <div class="form-group row">
@@ -54,7 +54,7 @@
 
 
             <textarea class="form-control" data-auto-height data-with-clearbtn="true"  data-rule="required"  placeholder="请输入发送内容" data-tips="请输入发送内容"
-                      maxlength="20000" name="sysMessageTemplate.message_value" value="">#(sysMessageTemplate.message_value??)</textarea>
+                      maxlength="20000" name="messageTpl.message_value" value="">#(messageTpl.message_value??)</textarea>
         </div>
     </div>
 
@@ -63,11 +63,11 @@
             <p style="font-size: 15px;font-weight:600;"><span>接收人配置</span></p>
         </div>
     </div>
-    <input type="text" id="xxx" hidden=hidden name="sysMessageTemplate.message_type" value="#(sysMessageTemplate.message_type??)"/>
+    <input type="text" id="xxx" hidden=hidden name="messageTpl.message_type" value="#(messageTpl.message_type??)"/>
     <div class="form-group row"
          data-checkbox
          data-rule="checkbox"
-         data-value="#(sysMessageTemplate.message_type??)"
+         data-value="#(messageTpl.message_type??)"
          data-hidden-input="xxx"
          data-name="message_type"
          data-default="">
@@ -96,20 +96,20 @@
     <div class="form-group row"
          data-radio
          data-rule="radio"
-         data-value="#(sysMessageTemplate.is_on??'1' == '1'? 'true' : 'false')"
-         data-name="sysMessageTemplate.is_on"
+         data-value="#(messageTpl.is_on??'1' == '1'? 'true' : 'false')"
+         data-name="messageTpl.is_on"
          data-default="options_first"
          data-width="col-sm-1"
     >
         <label class="col-sm-1 col-form-label" >是否启用</label>
         <div class="col"  style="padding-top: 1px;">
             <div class="radio radio-primary  radio-inline">
-                <input  id="r_isenabled_true" type="radio" name="sysMessageTemplate.is_on" value="true"/>
+                <input  id="r_isenabled_true" type="radio" name="messageTpl.is_on" value="true"/>
                 <label for="r_isenabled_true">是</label>
             </div>
 
             <div class="radio radio-primary  radio-inline">
-                <input  id="r_isenabled_false" type="radio" name="sysMessageTemplate.is_on" value="false"/>
+                <input  id="r_isenabled_false" type="radio" name="messageTpl.is_on" value="false"/>
                 <label for="r_isenabled_false">否</label>
             </div>
         </div>
@@ -150,8 +150,8 @@
            data-column-resize="true"
            data-rowtpl="jbolt_table_rowtpl_#(pageId)"
            data-toolbar="jbolt_table_toolbar_#(pageId)"
-           #if(sysMessageTemplate.id??)
-           data-url="admin/messageTemplate/messageUserDate?messageId=#(sysMessageTemplate.id)"
+           #if(messageTpl.id??)
+           data-url="admin/messagetpl/messageUserDate?messageId=#(messageTpl.id)"
            #else
            data-autoload="false"
            #end
@@ -193,7 +193,7 @@
                 name: 'sysMessageTemplateForm',
                 type:"all",//cell|all
                 //params:{"orderId":3},//携带其他额外参数
-                url:"admin/messageTemplate/submitTable",
+                url:"admin/messagetpl/submitTable",
                 success:function(res){
                     LayerMsgBox.success("提交成功",600,function(){
                         parent.refreshPjaxContainer();

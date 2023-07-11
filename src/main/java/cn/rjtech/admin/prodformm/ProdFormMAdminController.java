@@ -31,7 +31,6 @@ import java.util.Map;
  * @date: 2023-06-28 10:04
  */
 @CheckPermission(PermissionKey.PRODFORMM)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/prodFormM", viewPath = "/_view/admin/prodformm")
 public class ProdFormMAdminController extends BaseAdminController {
@@ -60,6 +59,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	/**
 	 * 新增
 	 */
+	@CheckPermission(PermissionKey.PRODFORMM_ADD)
 	public void add() {
 		render("add.html");
 	}
@@ -76,6 +76,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	/**
 	 * 编辑
 	 */
+	@CheckPermission(PermissionKey.PRODFORMM_EDIT)
 	public void edit(@Para(value = "iautoid") Long iautoid) {
 		ProdFormM prodFormM = service.findById(iautoid);
 		if(prodFormM == null){
@@ -105,6 +106,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	 */
 	@Before(Tx.class)
 	@TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.PRODFORMM_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -114,6 +116,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	 */
 	@Before(Tx.class)
 	@TxConfig(DataSourceConstants.MOMDATA)
+	@CheckPermission(PermissionKey.PRODFORMM_DELETE)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}
@@ -140,6 +143,7 @@ public class ProdFormMAdminController extends BaseAdminController {
 	/**
 	 * 新增保存
 	 */
+	@CheckPermission(PermissionKey.PRODFORMM_ADD_SUBMIT)
 	public void submitForm(@Para(value = "formJsonData") String formJsonDataStr,
 						   @Para(value = "tableJsonData") String tableJsonDataStr){
 		renderJsonData(service.submitForm(formJsonDataStr, tableJsonDataStr));

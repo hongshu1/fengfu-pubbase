@@ -24,7 +24,8 @@
 
     ### 新增之后，并且为审核流
     #if(apsAnnualplanm.iautoid?? && apsAnnualplanm.iauditway == 2)
-    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=apsAnnualplanm.iAutoId, primaryKeyName="iAutoId", formSn="Aps_AnnualPlanM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService")
+    #include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=apsAnnualplanm.iAutoId, primaryKeyName="iAutoId",
+    formSn="Aps_AnnualPlanM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.scheduproductplan.ScheduProductPlanYearService")
     #end
 
     <div class="jbolt_page_title">
@@ -63,14 +64,32 @@
     <div class="jbolt_page_content">
         <script type="text/template" id="jboltTable_demotpladd_#(pageId)">
             {@each datas as data,index}
+            {@if #(isedit)}
+            <tr {@if parseInt(index/3)%2 == 0} bgcolor="#deb887" {@else} bgcolor="#8fbc8f" {@/if} data-id="${data.iautoid}">
+            {@else}
             <tr data-id="${data.iautoid}">
-                <td>${pageNumber,pageSize,index | rownum}</td>
+            {@/if}
+                <!--<td>${pageNumber,pageSize,index | rownum}</td>-->
+                {@if #(isedit)}
+                    <td hidden>${pageNumber,pageSize,index | rownum}</td>
+                    <td>${ parseInt(index/3) + 1}</td>
+                    <td title="${data.cCusName}">${data.cCusName}</td>
+                    <td title="${data.cEquipmentModelName}">${data.cEquipmentModelName}</td>
+                    <td title="${data.cInvCode}">${data.cInvCode}</td>
+                    <td title="${data.cInvCode1}">${data.cInvCode1}</td>
+                    <td title="${data.cInvName1}">${data.cInvName1}</td>
+                {@else}
+                    <td hidden>${pageNumber,pageSize,index | rownum}</td>
+                    {@if (pageNumber,pageSize,index | rownum) % 3 == 0 }
+                    <td rowspan="3">${index / 3 + 1}</td>
+                    <td rowspan="3" title="${data.cCusName}">${data.cCusName}</td>
+                    <td rowspan="3" title="${data.cEquipmentModelName}">${data.cEquipmentModelName}</td>
+                    <td rowspan="3" title="${data.cInvCode}">${data.cInvCode}</td>
+                    <td rowspan="3" title="${data.cInvCode1}">${data.cInvCode1}</td>
+                    <td rowspan="3" title="${data.cInvName1}">${data.cInvName1}</td>
+                    {@/if}
+                {@/if}
 
-                <td title="${data.cCusName}">${data.cCusName}</td>
-                <td title="${data.cEquipmentModelName}">${data.cEquipmentModelName}</td>
-                <td title="${data.cInvCode}">${data.cInvCode}</td>
-                <td title="${data.cInvCode1}">${data.cInvCode1}</td>
-                <td title="${data.cInvName1}">${data.cInvName1}</td>
                 <th>
                     {@if data.planTypeCode == 'PP'}
                     <span>计划使用</span>
@@ -134,7 +153,7 @@
 
             </div>
         </div>
-        <table class="jbolt_table thead_font_normal table-bordered table-center"
+        <table class="jbolt_table thead_font_normal table-bordered table-center #if(isedit) hover_info #end "
                data-jbolttable
                data-ajax="true"
                data-conditions-form="apsAnnualplanmFormadd_#(pageId)"
@@ -142,7 +161,6 @@
                id="jbolt_Table_year"
                data-column-resize="true"
                data-tfoot-fixed="true"
-               data-column-prepend="1:checkbox"
                data-rowtpl="jboltTable_demotpladd_#(pageId)"
                data-toolbar="AnnualOrderM_toolbaradd_#(pageId)"
                data-editable="#(isedit)"
@@ -150,41 +168,42 @@
         >
             <thead>
             <tr>
+                <th hidden data-width="60" data-column="seq" rowspan="3"></th>
                 <th data-width="60" data-column="index" rowspan="3">序号</th>
-                <th data-width="150" data-column="ccusname" rowspan="3">客户名称</th>
-                <th data-width="150" data-column="cequipmentmodelname" rowspan="3">机型</th>
-                <th data-width="150" data-column="cinvcode" rowspan="3">存货编码</th>
-                <th data-width="150" data-column="cinvcode1" rowspan="3">客户部番</th>
-                <th data-width="150" data-column="cinvname1" rowspan="3">部品名称</th>
+                <th data-width="120" data-column="ccusname" rowspan="3">客户名称</th>
+                <th data-width="120" data-column="cequipmentmodelname" rowspan="3">机型</th>
+                <th data-width="120" data-column="cinvcode" rowspan="3">存货编码</th>
+                <th data-width="120" data-column="cinvcode1" rowspan="3">客户部番</th>
+                <th data-width="120" data-column="cinvname1" rowspan="3">部品名称</th>
                 <th data-width="110" data-column="plantypecode" rowspan="3">项目</th>
                 <!--<th data-width="100" data-column="nowmonth0" rowspan="">年份</th>-->
                 <th colspan="14" id="nowYear">#(startyear)年</th>
                 <th colspan="4" id="nextYear">#(endyear)年</th>
             </tr>
             <tr>
-                <th data-column="nowmonth0">月份</th>
-                <th data-column="nowmonth1">1月</th>
-                <th data-column="nowmonth2">2月</th>
-                <th data-column="nowmonth3">3月</th>
-                <th data-column="nowmonth4">4月</th>
-                <th data-column="nowmonth5">5月</th>
-                <th data-column="nowmonth6">6月</th>
-                <th data-column="nowmonth7">7月</th>
-                <th data-column="nowmonth8">8月</th>
-                <th data-column="nowmonth9">9月</th>
-                <th data-column="nowmonth10">10月</th>
-                <th data-column="nowmonth11">11月</th>
-                <th data-column="nowmonth12">12月</th>
-                <th data-column="nowmonthsum">合计</th>
-                <th data-column="nextmonth1">1月</th>
-                <th data-column="nextmonth2">2月</th>
-                <th data-column="nextmonth3">3月</th>
-                <th data-column="nextmonthsum">合计</th>
+                <th data-width="120" data-column="nowmonth0">月份</th>
+                <th data-width="120" data-column="nowmonth1">1月</th>
+                <th data-width="120" data-column="nowmonth2">2月</th>
+                <th data-width="120" data-column="nowmonth3">3月</th>
+                <th data-width="120" data-column="nowmonth4">4月</th>
+                <th data-width="120" data-column="nowmonth5">5月</th>
+                <th data-width="120" data-column="nowmonth6">6月</th>
+                <th data-width="120" data-column="nowmonth7">7月</th>
+                <th data-width="120" data-column="nowmonth8">8月</th>
+                <th data-width="120" data-column="nowmonth9">9月</th>
+                <th data-width="120" data-column="nowmonth10">10月</th>
+                <th data-width="120" data-column="nowmonth11">11月</th>
+                <th data-width="120" data-column="nowmonth12">12月</th>
+                <th data-width="120" data-column="nowmonthsum">合计</th>
+                <th data-width="120" data-column="nextmonth1">1月</th>
+                <th data-width="120" data-column="nextmonth2">2月</th>
+                <th data-width="120" data-column="nextmonth3">3月</th>
+                <th data-width="120" data-column="nextmonthsum">合计</th>
             </tr>
             <tr>
                 <th data-column="nowmonth0">客户行事历</th>
                 #for(week:weeklist)
-                <th data-width="130" data-column="month1">#(week)</th>
+                <th data-width="120" data-column="month1">#(week)</th>
                 #end
             </tr>
 

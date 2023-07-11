@@ -41,7 +41,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(monthorderm.iautoid?? && monthorderm.iauditway == 2 && monthorderm.iauditstatus > 0)
+#if(monthorderm.iautoid?? && monthorderm.iauditway == 2)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名
@@ -73,7 +73,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">订单号</label>
                                     <div class="col-10">
-                                        <input type="text" data-rule="required" data-notnull="true" data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="monthorderm.cOrderNo" value="#(monthorderm.cOrderNo??)" #(readonly) />
+                                        <input type="text" #if(monthorderm.iAutoId??) #(readonly) data-rule="required" data-notnull="true" #else disabled #end data-tips="请输入订单号" data-with-clearbtn="true" autocomplete="off" class="form-control" placeholder="请输入订单号" maxlength="40" name="monthorderm.cOrderNo" value="#(monthorderm.cOrderNo??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -176,40 +176,40 @@
             <td>${data.cinvname1}</td>
             <td>${data.cinvstd}</td>
             <td>${data.cuomname}</td>
-            <td>${data.iqty1}</td>
-			<td>${data.iqty2}</td>
-			<td>${data.iqty3}</td>
-			<td>${data.iqty4}</td>
-			<td>${data.iqty5}</td>
-			<td>${data.iqty6}</td>
-			<td>${data.iqty7}</td>
-			<td>${data.iqty8}</td>
-			<td>${data.iqty9}</td>
-			<td>${data.iqty10}</td>
-			<td>${data.iqty11}</td>
-			<td>${data.iqty12}</td>
-			<td>${data.iqty13}</td>
-			<td>${data.iqty14}</td>
-			<td>${data.iqty15}</td>
-			<td>${data.iqty16}</td>
-			<td>${data.iqty17}</td>
-			<td>${data.iqty18}</td>
-			<td>${data.iqty19}</td>
-			<td>${data.iqty20}</td>
-			<td>${data.iqty21}</td>
-			<td>${data.iqty22}</td>
-			<td>${data.iqty23}</td>
-			<td>${data.iqty24}</td>
-			<td>${data.iqty25}</td>
-			<td>${data.iqty26}</td>
-			<td>${data.iqty27}</td>
-			<td>${data.iqty28}</td>
-			<td>${data.iqty29}</td>
-			<td>${data.iqty30}</td>
-			<td>${data.iqty31}</td>
-			<td>${data.isum}</td>
-			<td>${data.imonth1qty}</td>
-			<td>${data.imonth2qty}</td>
+            <td>${data.iqty1|tofixed_2}</td>
+			<td>${data.iqty2|tofixed_2}</td>
+			<td>${data.iqty3|tofixed_2}</td>
+			<td>${data.iqty4|tofixed_2}</td>
+			<td>${data.iqty5|tofixed_2}</td>
+			<td>${data.iqty6|tofixed_2}</td>
+			<td>${data.iqty7|tofixed_2}</td>
+			<td>${data.iqty8|tofixed_2}</td>
+			<td>${data.iqty9|tofixed_2}</td>
+			<td>${data.iqty10|tofixed_2}</td>
+			<td>${data.iqty11|tofixed_2}</td>
+			<td>${data.iqty12|tofixed_2}</td>
+			<td>${data.iqty13|tofixed_2}</td>
+			<td>${data.iqty14|tofixed_2}</td>
+			<td>${data.iqty15|tofixed_2}</td>
+			<td>${data.iqty16|tofixed_2}</td>
+			<td>${data.iqty17|tofixed_2}</td>
+			<td>${data.iqty18|tofixed_2}</td>
+			<td>${data.iqty19|tofixed_2}</td>
+			<td>${data.iqty20|tofixed_2}</td>
+			<td>${data.iqty21|tofixed_2}</td>
+			<td>${data.iqty22|tofixed_2}</td>
+			<td>${data.iqty23|tofixed_2}</td>
+			<td>${data.iqty24|tofixed_2}</td>
+			<td>${data.iqty25|tofixed_2}</td>
+			<td>${data.iqty26|tofixed_2}</td>
+			<td>${data.iqty27|tofixed_2}</td>
+			<td>${data.iqty28|tofixed_2}</td>
+			<td>${data.iqty29|tofixed_2}</td>
+			<td>${data.iqty30|tofixed_2}</td>
+			<td>${data.iqty31|tofixed_2}</td>
+			<td>${data.isum|tofixed_2}</td>
+			<td>${data.imonth1qty|tofixed_2}</td>
+			<td>${data.imonth2qty|tofixed_2}</td>
         </tr>
         {@/each}
     </script>

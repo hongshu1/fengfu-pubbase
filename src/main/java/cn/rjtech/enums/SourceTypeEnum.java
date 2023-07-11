@@ -1,13 +1,17 @@
 package cn.rjtech.enums;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * @author Kephon
+ */
 public enum SourceTypeEnum {
     /**
      * 枚举列表
      */
-    BLANK_PURCHASE_TYPE(1, "空白采购"),
-    MATERIAL_PLAN_TYPE(2, "物料到货计划");
+    BLANK_PURCHASE_TYPE("空白采购", 1),
+    MATERIAL_PLAN_TYPE("物料到货计划", 2);
     
     private static final Map<Integer, SourceTypeEnum> SOURCE_TYPE_ENUM_MAP = new HashMap<>();
     
@@ -16,11 +20,11 @@ public enum SourceTypeEnum {
             SOURCE_TYPE_ENUM_MAP.put(sourceTypeEnum.value, sourceTypeEnum);
         }
     }
-    
-    private final int value;
+
     private final String text;
+    private final int value;
     
-    SourceTypeEnum(int value, String text) {
+    SourceTypeEnum(String text, int value) {
         this.value = value;
         this.text  = text;
     }
@@ -28,20 +32,21 @@ public enum SourceTypeEnum {
     public static SourceTypeEnum toEnum(int value) {
         return SOURCE_TYPE_ENUM_MAP.get(value);
     }
-    
-    public int getValue() {
-        return value;
-    }
-    
+
     public String getText() {
         return text;
     }
     
+    public int getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "SourceTypeEnum{" +
-                "value=" + value +
-                ", text='" + text + '\'' +
+                "text='" + text + '\'' +
+                ", value=" + value +
                 '}';
     }
+    
 }

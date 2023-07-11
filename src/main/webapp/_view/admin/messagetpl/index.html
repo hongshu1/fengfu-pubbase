@@ -1,0 +1,102 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="col-md-auto">
+                <h1>消息模板</h1>
+            </div>
+            <div class="col">
+                <form class="form-inline text-left" id="sysMessageTemplateForm_#(pageId)" onsubmit="return false;" method="post">
+
+                    <input type="text" autocomplete="off" class="form-control" placeholder="=标题模板=" name="keywords" value=""/>
+
+                    <select class="form-control" name="messageChance" data-autoload data-url="admin/dictionary/options?key=messagetpl_trigger" data-select-type="select" data-text="=发送时机=" data-value="" data-value-attr="sn"></select>
+                    <select class="form-control" name="isEnabled" data-autoload data-url="admin/dictionary/options?key=options_enable" data-select-type="select" data-text="=启用状态=" data-value="" data-value-attr="sn"></select>
+
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>
+                    <button type="reset" class="btn btn-outline-secondary" onclick="jboltTableRefresh(this)"><i class="fa fa-reset"></i> 重置</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="jbolt_page_content">
+        
+        <!-- JBoltTable的数据模板定义-->
+        <textarea class="jb_tpl_box" id="sysMessageTemplateRowtpl_#(pageId)">
+        {@each datas as data,index}
+        <tr data-id="${data.id}" >
+            <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>
+                <a class="jbolt_table_editbtn" href="admin/messagetpl/edit/${data.id}" data-handler="refreshJBoltTable" data-area="800,600" data-title="编辑业务对象"><i class="fa fa-edit">编辑</i></a>
+                <a class="jbolt_table_delbtn" href="admin/messagetpl/${data.isDeleted == '1'?'realDeleteByIds':'delete'}/${data.id}" data-handler="refreshJBoltTable" ><i class="fa fa-remove c-danger">删除</i></a>
+             </td>
+            <td>${data.messageNameValue}</td>
+            <td>${data.id}</td>
+            <td>${data.messageChanceValue}</td>
+            <td>${data.messagetitle}</td>
+            <td>${data.messagevalue}</td>
+            <td>
+                <img data-switchbtn data-confirm="确定切换启用状态？" data-value="${data.ison}" data-handler="refreshJBoltTable" data-url="admin/messagetpl/toggleIson/${data.id}"/>
+            </td>
+        </tr>
+        {@/each}
+        </textarea>
+        <div class="jbolt_table_toolbar" id="person_toolbar_#(pageId)">
+            <div class="" role="group" aria-label="btn-group">
+                <button data-dialogbtn data-area="1200,800" data-handler="refreshJBoltTable" data-title="新增消息模板" data-url="admin/messagetpl/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增</button>
+            </div>
+        </div>
+
+        <table class="jbolt_table jbolt_main_table table-center hover_info"
+               data-jbolttable
+               data-height="fill"
+               data-ajax="true"
+               data-url="admin/messagetpl/datas"
+               data-column-resize="true"
+               data-row-click-active="true"
+               data-conditions-form="sysMessageTemplateForm_#(pageId)"
+               data-rowtpl="sysMessageTemplateRowtpl_#(pageId)"
+               data-page="sysMessageTemplatePage_#(pageId)"
+               data-fixed-columns-left="1,2"
+               data-row-dblclick-active="true"
+               data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+        >
+            <thead>
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-width="150">操作</th>
+                <th data-width="150" data-column="message_name">消息名称</th>
+                <th data-min-width="150" data-column="id">消息编码</th>
+                <th data-width="150" data-column="ctrigger">发送时机</th>
+                <th data-width="150" data-column="message_title">模板标题</th>
+                <th data-width="150" data-column="message_value">发送内容</th>
+                <th data-width="150" data-column="ison">启用禁用</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+
+	function jbolt_table_dblclickhandler_#(pageId)(table, tempTr1, trId1, rowData) {
+		console.log(JSON.stringify(rowData));
+
+		$(tempTr1).data('url', '/admin/admin/messagetpl/edit/' + rowData.iautoid)
+			.data('area', '1200,800')
+			.data('title', '消息模板')
+			.data('btn', '保存,关闭');
+
+		DialogUtil.openBy(tempTr1);
+	}
+</script>
+#end

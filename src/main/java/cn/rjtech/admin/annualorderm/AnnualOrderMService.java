@@ -11,15 +11,14 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.annualorderd.AnnualOrderDService;
 import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.AnnualOrderD;
 import cn.rjtech.model.momdata.AnnualOrderM;
 import cn.rjtech.model.momdata.AnnualorderdQty;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.github.javaparser.utils.Log;
@@ -56,8 +55,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
     private AnnualOrderDService annualOrderDService;
     @Inject
     private AnnualorderdQtyService annualorderdQtyService;
-    @Inject
-    private FormApprovalService formApprovalService;
 
     @Override
     protected AnnualOrderM dao() {
@@ -171,6 +168,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
                 annualOrderM.setIOrgId(getOrgId());
                 annualOrderM.setCOrgCode(getOrgCode());
                 annualOrderM.setCOrgName(getOrgName());
+                annualOrderM.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
                 annualOrderM.setICreateBy(user.getId());
                 annualOrderM.setCCreateName(user.getName());
                 annualOrderM.setDCreateTime(now);
@@ -279,23 +277,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
         StringBuilder errorMsg = new StringBuilder();
 
 
-        return SUCCESS;
-    }
-
-    /**
-     * 提交审批
-     */
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            AnnualOrderM annualOrderM = findById(iautoid);
-            annualOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
-            annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            ValidationUtils.isTrue(annualOrderM.update(), JBoltMsg.FAIL);
-            return true;
-        });
         return SUCCESS;
     }
 
@@ -453,7 +434,7 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
         List<AnnualOrderM> notAuditList = new ArrayList<>();
         for (AnnualOrderM annualOrderM : list) {
             ValidationUtils.equals(annualOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != annualOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != annualOrderM.getIOrderStatus()) {
                 notAuditList.add(annualOrderM);
             }
 

@@ -7,17 +7,13 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
-import cn.rjtech.enums.WeekOrderStatusEnum;
-import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -43,41 +39,25 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 		return dao;
 	}
 
-
 	@Inject
 	private OtherOutDetailService otherOutDetailService;
-	@Inject
-	private FormApprovalService formApprovalService;
-
 
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate("otherout.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
 	}
 
-
 	/**
 	 * 特殊领料单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
 	public Page<Record> getOtherOutLines(int pageNumber, int pageSize, Kv kv){
 		return dbTemplate("otherout.getOtherOutLines",kv).paginate(pageNumber, pageSize);
-
 	}
 
 	/**
 	 * 保存
-	 * @param otherOut
-	 * @return
 	 */
 	public Ret save(OtherOut otherOut) {
 		if(otherOut==null || isOk(otherOut.getAutoID())) {
@@ -94,8 +74,6 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 
 	/**
 	 * 更新
-	 * @param otherOut
-	 * @return
 	 */
 	public Ret update(OtherOut otherOut) {
 		if(otherOut==null || notOk(otherOut.getAutoID())) {
@@ -115,8 +93,6 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		tx(() -> {
@@ -140,31 +116,29 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		return deleteById(id,true);
 	}
 
-	/**
-	 * 删除数据后执行的回调
-	 * @param otherOut 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
+    /**
+     * 删除数据后执行的回调
+     *
+     * @param otherOut 要删除的model
+     * @param kv       携带额外参数一般用不上
+     */
 	@Override
 	protected String afterDelete(OtherOut otherOut, Kv kv) {
 		//addDeleteSystemLog(otherOut.getAutoid(), JBoltUserKit.getUserId(),otherOut.getName());
 		return null;
 	}
 
-	/**
-	 * 检测是否可以删除
-	 * @param otherOut 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
+    /**
+     * 检测是否可以删除
+     *
+     * @param otherOut 要删除的model
+     * @param kv       携带额外参数一般用不上
+     */
 	@Override
 	public String checkCanDelete(OtherOut otherOut, Kv kv) {
 		//如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
@@ -173,7 +147,6 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 
 	/**
 	 * 设置返回二开业务所属的关键systemLog的targetType 
-	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
@@ -319,30 +292,7 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 	}
 
 	/**
-	 * 详情页提审
-	 */
-
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-
-			// 根据审批状态
-			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"cn.rjtech.admin.otherout.OtherOutService");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			// 处理其他业务
-//			OtherOut otherOut = findById(iautoid);
-//			otherOut.setIAuditStatus(1);
-//			ValidationUtils.isTrue(otherOut.update(),JBoltMsg.FAIL);
-			return true;
-		});
-
-		return SUCCESS;
-	}
-
-	/**
 	 * 审批
-	 * @param iAutoId
-	 * @return
 	 */
 	public Ret approve(String iAutoId,Integer mark) {
 		boolean success = false;
@@ -490,19 +440,14 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 	}
 
 
-
+	/**
+	 * 处理审批通过的其他业务操作，如有异常返回错误信息
+	 *
+	 * @param formAutoId 单据ID
+	 * @return 错误信息
+	 */
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		OtherOut otherOut = findById(formAutoId);
-		otherOut.setIAuditBy(userId);
-		otherOut.setCAuditName(userName);
-		otherOut.setDAuditTime(nowDate);
-//		String ids = String.valueOf(otherOut.getAutoID());
-//		this.pushU8(ids);
-		otherOut.update();
 		return null;
 	}
 
@@ -558,31 +503,6 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 
 	@Override
 	public String postBatchApprove(List<Long> formAutoIds) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		/**
-		 *List转换String类型
-		 */
-		if (formAutoIds.size()>0) {
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < formAutoIds.size(); i++) {
-
-				buffer.append("" + formAutoIds.get(i) + ",");
-			}
-			String ids = buffer.substring(0, buffer.length() - 1);
-			List<OtherOut> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (OtherOut otherOut : listByIds) {
-					//审核人
-					otherOut.setIAuditBy(userId);
-					otherOut.setCAuditName(userName);
-					otherOut.setDAuditTime(nowDate);
-//					this.pushU8(ids);
-					otherOut.update();
-				}
-			}
-		}
 		return null;
 	}
 

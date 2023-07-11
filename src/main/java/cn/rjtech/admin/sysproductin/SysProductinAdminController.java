@@ -176,15 +176,6 @@ public class SysProductinAdminController extends BaseAdminController {
 
 
     /**
-     * 提审批
-     */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "id");
-
-        renderJson(service.submit(iautoid));
-    }
-
-    /**
      * 撤回已提审
      */
     public void withdraw(Long iAutoId) {

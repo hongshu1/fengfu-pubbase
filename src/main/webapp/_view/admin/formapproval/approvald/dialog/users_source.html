@@ -97,7 +97,7 @@
     function chooseData() {
         //点确定按钮的处理逻辑 获取到选中的一条数据 然后调用parent里定义的setChooseDialogSelectResult
         var data=jboltTableGetCheckedDatas("chooseDataTable_#(pageId)");
-        console.log('souurcedata===>',data)
+
         if(data){
             var success=jboltTablePrependRow('#jbolt_orderItemTable_otherreturn_#(pageId)_dia',data);
             if (success) {

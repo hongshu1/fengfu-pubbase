@@ -277,4 +277,14 @@ public class PadService extends BaseService<Pad> {
     boolean success = pad.update();
     return ret(success);
   }
+
+  /**
+   * 根据mac地址获取平板配置
+   *
+   * @param mac 平板mac地址
+   * @return
+   */
+  public Record getPadByMac(String mac) {
+    return dbTemplate("pad.list", Kv.by("mac", mac)).findFirst();
+  }
 }

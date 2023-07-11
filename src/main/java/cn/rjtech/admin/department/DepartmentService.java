@@ -263,12 +263,12 @@ public class DepartmentService extends BaseService<Department> {
     private JBoltExcelSheet createJboltExcelSheetTpl() {
         JBoltExcelSheet jBoltExcelSheet = JBoltExcelSheet.create("sheet");
         jBoltExcelSheet.setHeaders(
-                JBoltExcelHeader.create("cdepcode", "部门编码", 20),
-                JBoltExcelHeader.create("cdepname", "部门名称", 20),
+                JBoltExcelHeader.create("cdepcode", "*部门编码", 20),
+                JBoltExcelHeader.create("cdepname", "*部门名称", 20),
                 JBoltExcelHeader.create("cdeptype", "部门类型", 20),
                 JBoltExcelHeader.create("cdepperson", "负责人编码", 20),
                 JBoltExcelHeader.create("cdeppersonname", "负责人名称", 20),
-                JBoltExcelHeader.create("isapsinvoled", "是否参与排产", 15),
+                JBoltExcelHeader.create("isapsinvoled", "*是否参与排产", 15),
                 JBoltExcelHeader.create("cdepmemo", "备注", 20)
         );
         return jBoltExcelSheet;
@@ -694,7 +694,12 @@ public class DepartmentService extends BaseService<Department> {
 
         for (Record record : rows) {
             int i = 0;
-            Department dbDepartment = findByCdepcode(record.getStr("cdepcode"));
+            String cdepcode = record.getStr("cdepcode");
+            ValidationUtils.notNull(cdepcode,"部门编码为空!");
+            String cdepname = record.getStr("cdepname");
+            ValidationUtils.notNull(cdepname,"部门名称为空!");
+
+            Department dbDepartment = findByCdepcode(cdepcode);
 
             if (dbDepartment != null) {
                 errList.add(String.format("%s部门编码已存在<br/>", record.getStr("cdepcode")));
@@ -726,7 +731,10 @@ public class DepartmentService extends BaseService<Department> {
 
                 department.put(record);
                 String cdepperson = record.getStr("cdepperson");
-                department.setCDepPerson(cdepperson);
+                if(StringUtils.isNotEmpty(cdepperson)){
+                    department.setCDepPerson(cdepperson);
+                }
+
                 department.setCCreateName(JBoltUserKit.getUserName());
                 department.setCUpdateName(JBoltUserKit.getUserName());
                 department.setDCreateTime(new Date());

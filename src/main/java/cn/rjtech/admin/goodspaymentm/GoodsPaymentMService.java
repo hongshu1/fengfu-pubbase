@@ -12,7 +12,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
@@ -20,6 +19,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
@@ -44,55 +44,42 @@ import java.util.Objects;
  */
 public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements IApprovalService {
 
-	@Inject
-	private GoodsPaymentDService goodsPaymentDservice;
+    private final GoodsPaymentM dao = new GoodsPaymentM().dao();
 
-	private final GoodsPaymentM dao=new GoodsPaymentM().dao();
-	@Override
-	protected GoodsPaymentM dao() {
-		return dao;
-	}
+    @Override
+    protected GoodsPaymentM dao() {
+        return dao;
+    }
 
 	@Override
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-	@Inject
-	private FormApprovalService formApprovalService;
-
-	@Inject
-	private GoodsPaymentDService goodspaymentdservice;
-
-	@Inject
+    @Inject
+    private InventoryService inventoryservice;
+    @Inject
 	private WeekOrderDService weekorderdservice;
-
-	@Inject
+    @Inject
 	private WeekOrderMService weekordermservice;
-	@Inject
+    @Inject
+    private GoodsPaymentDService goodspaymentdservice;
+    @Inject
+    private GoodsPaymentDService goodsPaymentDservice;
+    @Inject
 	private CusFieldsMappingDService cusFieldsMappingdService;
-
-	@Inject
-	private InventoryService inventoryservice;
 
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-
-	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-
-		Page<Record> paginate = dbTemplate("goodspaymentm.recpor", kv).paginate(pageNumber, pageSize);
-
-		return paginate;
+        return dbTemplate("goodspaymentm.recpor", kv).paginate(pageNumber, pageSize);
 	}
 
 	/**
 	 * 保存
-	 * @param goodsPaymentM
-	 * @return
 	 */
 	public Ret save(GoodsPaymentM goodsPaymentM) {
 		if(goodsPaymentM==null || isOk(goodsPaymentM.getIAutoId())) {
@@ -230,52 +217,49 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 		if(!success) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);
 		}
-		return SUCCESS.data(goodsPaymentDS);
+		return successWithData(goodsPaymentDS);
 	}
 
 	/**
 	 * 执行JBoltTable表格整体提交
-	 *
-	 * @param jBoltTable
-	 * @return
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-		GoodsPaymentM rcvplanm = jBoltTable.getFormModel(GoodsPaymentM.class,"goodspaymentm");
+		GoodsPaymentM goodspaymentm = jBoltTable.getFormModel(GoodsPaymentM.class,"goodspaymentm");
 		//获取当前用户信息？
 		User user = JBoltUserKit.getUser();
 		Date now = new Date();
 		tx(()->{
 			//通过 id 判断是新增还是修改
-			if(rcvplanm.getIAutoId() == null){
-				rcvplanm.setCOrgCode(getOrgCode());
-				rcvplanm.setCOrgName(getOrgName());
-				rcvplanm.setCGoodsPaymentNo(JBoltSnowflakeKit.me.nextIdStr());
-				rcvplanm.setICreateBy(user.getId());
-				rcvplanm.setCCreateName(user.getName());
-				rcvplanm.setDCreateTime(now);
-				rcvplanm.setIUpdateBy(user.getId());
-				rcvplanm.setCUpdateName(user.getName());
-				rcvplanm.setDUpdateTime(now);
-				rcvplanm.setIsDeleted(false);
+			if(goodspaymentm.getIAutoId() == null){
+				goodspaymentm.setCOrgCode(getOrgCode());
+				goodspaymentm.setCOrgName(getOrgName());
+				goodspaymentm.setCGoodsPaymentNo(BillNoUtils.genCode(getOrgCode(), table()));
+				goodspaymentm.setICreateBy(user.getId());
+				goodspaymentm.setCCreateName(user.getName());
+				goodspaymentm.setDCreateTime(now);
+				goodspaymentm.setIUpdateBy(user.getId());
+				goodspaymentm.setCUpdateName(user.getName());
+				goodspaymentm.setDUpdateTime(now);
+				goodspaymentm.setIsDeleted(false);
 				//主表新增
-				ValidationUtils.isTrue(rcvplanm.save(), ErrorMsg.SAVE_FAILED);
+				ValidationUtils.isTrue(goodspaymentm.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				rcvplanm.setIUpdateBy(user.getId());
-				rcvplanm.setCUpdateName(user.getName());
-				rcvplanm.setDUpdateTime(now);
+				goodspaymentm.setIUpdateBy(user.getId());
+				goodspaymentm.setCUpdateName(user.getName());
+				goodspaymentm.setDUpdateTime(now);
 				//主表修改
-				ValidationUtils.isTrue(rcvplanm.update(), ErrorMsg.UPDATE_FAILED);
+				ValidationUtils.isTrue(goodspaymentm.update(), ErrorMsg.UPDATE_FAILED);
 			}
 			//从表的操作
 			// 获取保存数据（执行保存，通过 getSaveRecordList）
-			saveTableSubmitDatas(jBoltTable,rcvplanm);
+			saveTableSubmitDatas(jBoltTable,goodspaymentm);
 			//获取修改数据（执行修改，通过 getUpdateRecordList）
-			updateTableSubmitDatas(jBoltTable,rcvplanm);
+			updateTableSubmitDatas(jBoltTable,goodspaymentm);
 			//获取删除数据（执行删除，通过 getDelete）
 			deleteTableSubmitDatas(jBoltTable);
 			return true;
 		});
-		return Ret.ok().set("autoid", rcvplanm.getIAutoId());
+		return Ret.ok().set("autoid", goodspaymentm.getIAutoId());
 	}
 
 	//可编辑表格提交-新增数据
@@ -341,21 +325,6 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 			goodsPaymentDservice.deleteById(id);
 		}
 	}
-
-	/**
-	 * 提审批
-	 */
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-
-			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.goodspaymentm.GoodsPaymentMService");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			return true;
-		});
-		return SUCCESS;
-	}
-
 
 	/**
 	 * 获取条码列表

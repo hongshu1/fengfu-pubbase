@@ -6,13 +6,11 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
@@ -20,6 +18,7 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -35,11 +34,13 @@ import java.util.*;
 
 /**
  * 产成品入库单
+ *
  * @ClassName: SysProductinService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-08 09:56
  */
 public class SysProductinService extends BaseService<SysProductin> implements IApprovalService {
+    
     private final SysProductin dao = new SysProductin().dao();
 
     @Override
@@ -49,10 +50,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
 
     @Inject
     private PersonService personservice;
-
-    @Inject
-    private FormApprovalService formApprovalService;
-
     @Inject
     private SysProductindetailService sysproductindetailservice;
 
@@ -71,7 +68,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
      * @param state           状态 1已保存 2待审批 3已审批 4审批不通过
      * @param IsDeleted       删除状态：0. 未删除 1. 已删除
      * @param warehousingType 入库类别
-     * @return
      */
     public Page<SysProductin> getAdminDatas(int pageNumber, int pageSize, String keywords, String SourceBillType, String BillType, String state, Boolean IsDeleted, String warehousingType) {
         // 创建sql对象
@@ -91,8 +87,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
 
     /**
      * 保存
-     * @param sysProductin
-     * @return
      */
     public Ret save(SysProductin sysProductin) {
         if (sysProductin == null || isOk(sysProductin.getAutoID())) {
@@ -104,8 +98,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
 
     /**
      * 更新
-     * @param sysProductin
-     * @return
      */
     public Ret update(SysProductin sysProductin) {
         if (sysProductin == null || notOk(sysProductin.getAutoID())) {
@@ -124,7 +116,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
      * 删除数据后执行的回调
      * @param sysProductin 要删除的model
      * @param kv           携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(SysProductin sysProductin, Kv kv) {
@@ -135,7 +126,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
      * 检测是否可以删除
      * @param sysProductin model
      * @param kv           携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(SysProductin sysProductin, Kv kv) {
@@ -155,11 +145,9 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
      * 后台管理数据查询
      * @param pageNumber 第几页
      * @param pageSize   每页几条数据
-     * @return
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("sysproductin.recpor", kv).paginate(pageNumber, pageSize);
-        return paginate;
+        return dbTemplate("sysproductin.recpor", kv).paginate(pageNumber, pageSize);
     }
 
     /**
@@ -188,13 +176,11 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
 
     /**
      * 删除
-     * @param id
-     * @return
      */
     public Ret delete(Long id) {
         tx(() -> {
             SysProductin first = findFirst("select *  from T_Sys_ProductIn where AutoID in (" + id + ")");
-            if (!"0".equals(String.valueOf(first.getIAuditStatus())) || !"3".equals(String.valueOf(first.getIAuditStatus()))) {
+            if ("1".equals(String.valueOf(first.getIAuditStatus())) || "2".equals(String.valueOf(first.getIAuditStatus()))) {
                 ValidationUtils.error( "编号：" + first.getBillNo() + "单据状态已改变，不可删除！");
             }
             if(!first.getIcreateby().equals(JBoltUserKit.getUser().getId())){
@@ -209,8 +195,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
 
     /**
      * 执行JBoltTable表格整体提交
-     * @param jBoltTable
-     * @return
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
 //        if (jBoltTable.getSaveRecordList() == null && jBoltTable.getDelete() == null && jBoltTable.getUpdateRecordList() == null) {
@@ -224,7 +208,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
             // 通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+                sysotherin.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
                 sysotherin.setIcreateby(user.getId());
                 sysotherin.setCcreatename(user.getName());
                 sysotherin.setDcreatetime(now);
@@ -309,7 +293,9 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
     // 可编辑表格提交-删除数据
     private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
         Object[] ids = jBoltTable.getDelete();
-        if (ArrayUtil.isEmpty(ids)) return;
+        if (ArrayUtil.isEmpty(ids)) {
+            return;
+        }
         sysproductindetailservice.deleteByIds(ids);
     }
 
@@ -434,20 +420,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
             dept = person.getCOrgCode();
         }
         return dept;
-    }
-
-    /**
-     * 提审批
-     */
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysproductin.SysProductinService");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            return true;
-        });
-        return SUCCESS;
     }
 
     /**

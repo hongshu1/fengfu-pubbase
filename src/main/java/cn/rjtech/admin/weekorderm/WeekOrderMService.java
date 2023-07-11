@@ -13,7 +13,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
@@ -25,6 +24,7 @@ import cn.rjtech.model.momdata.WeekOrderD;
 import cn.rjtech.model.momdata.WeekOrderM;
 import cn.rjtech.model.momdata.base.BaseWeekOrderD;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -61,8 +61,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     private WeekOrderDService weekOrderDService;
     @Inject
     private CusOrderSumService cusOrderSumService;
-    @Inject
-    private FormApprovalService formApprovalService;
     @Inject
     private DictionaryService dictionaryService;
     @Inject
@@ -221,7 +219,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
 
         for (WeekOrderM weekOrderM : list) {
             ValidationUtils.equals(weekOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != weekOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != weekOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != weekOrderM.getIOrderStatus()) {
                 notAuditList.add(weekOrderM);
             }
 
@@ -270,6 +268,7 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
         weekOrderM.setIOrgId(getOrgId());
         weekOrderM.setCOrgCode(getOrgCode());
         weekOrderM.setCOrgName(getOrgName());
+        weekOrderM.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
         // 创建信息
         weekOrderM.setCCreateName(JBoltUserKit.getUserName());
         weekOrderM.setDCreateTime(now);

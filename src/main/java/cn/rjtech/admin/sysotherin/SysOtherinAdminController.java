@@ -153,25 +153,12 @@ public class SysOtherinAdminController extends BaseAdminController {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
 
-
-
-    /**
-     * 提审
-     */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "id");
-
-        renderJson(service.submit(iautoid));
-    }
-
-
     /**
      * 查询业务类型类型
      */
     public void billtype() {
         renderJsonData(service.billtype(getKv()));
     }
-
 
     /**
      * 条码数据源

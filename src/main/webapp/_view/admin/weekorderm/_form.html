@@ -35,7 +35,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">订单号</label>
                                     <div class="col-8">
-                                        <input type="text" data-rule="required" data-tips="请输入订单号"
+                                        <input type="text" #if(weekOrderM.iAutoId??) #(readonly) data-rule="required" #else disabled #end data-tips="请输入订单号"
                                                data-with-clearbtn="true" autocomplete="off" class="form-control"
                                                maxlength="40" name="weekOrderM.cOrderNo"
                                                value="#(weekOrderM.corderno??)"/>
@@ -202,6 +202,7 @@
                                                 data-text="=请选择数据分类="
                                                 data-value=""
                                                 data-value-attr="sn"
+                                                data-handler="setExchangeRate"
                                                 data-select="#(weekOrderM.ccurrency??)">
                                         </select>
                                     </div>
@@ -216,7 +217,7 @@
                                                data-notnull="false"
                                                data-filebox=""
                                                placeholder="请输入汇率" maxlength="40" name="weekOrderM.iExchangeRate"
-                                               value="#(weekOrderM.iExchangeRate??)"/>
+                                               value="#number(weekOrderM.iExchangeRate??)"/>
                                     </div>
                                 </div>
                             </div>
@@ -262,7 +263,7 @@
 </div>
 
 ### 新增之后，并且为审核流
-#if(weekOrderM.iautoid?? && weekOrderM.iauditway == 2 && weekOrderM.iauditstatus > 0)
+#if(weekOrderM.iautoid?? && weekOrderM.iauditway == 2)
     ### 参数列表
     ### formAutoId:                 单据ID
     ### formSn:                     表单名
@@ -605,11 +606,15 @@
 
         $.each(data, function (idx, row) {
             $.each(row, function (k, v) {
+                console.log(k);
+                console.log(v);
+                console.log("下一个");
                 if (reg.test(k)) {
                     delete row[k];
                 } else {
                     if (k === 'dplanaogdate') {
                         if (row.dplanaogdate) {
+                            console.log(row.dplanaogdate);
                             row.dplanaogdate = row.dplanaogdate.split(' ')[0];
                         }
                     } else {
@@ -729,6 +734,24 @@
 
         // 收货地点依赖数据
         $("#icustomermid").val(data.iautoid);
+    }
+
+    /**
+     * 根据币种设置汇率
+     */
+    function setExchangeRate() {
+        var cexchname = $('select[name="weekOrderM.cCurrency"]').find("option:selected").text();
+        if (cexchname && cexchname != null) {
+            Ajax.get("/admin/exch/getNflatByExchName?cexchname=" + cexchname, function (ret) {
+                if (ret.state === 'ok') {
+                    $('input[name="weekOrderM.iExchangeRate"]').val(ret.data.nflat);
+                } else {
+                    $('input[name="weekOrderM.iExchangeRate"]').val(0);
+                }
+            });
+        } else {
+            $('input[name="weekOrderM.iExchangeRate"]').val(0);
+        }
     }
 </script>
 #end

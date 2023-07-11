@@ -2,6 +2,7 @@ package cn.rjtech.admin.monthorderm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -10,14 +11,17 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
+import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.MonthOrderD;
 import cn.rjtech.model.momdata.MonthOrderM;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
@@ -49,8 +53,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
     private MonthorderdService monthorderdService;
     @Inject
     private CusOrderSumService cusOrderSumService;
-    @Inject
-    private FormApprovalService formApprovalService;
 
     @Override
     protected MonthOrderM dao() {
@@ -61,8 +63,16 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
      * 后台管理分页查询
      */
     public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv para) {
-        para.set("iorgid", getOrgId());
-        return dbTemplate("monthorderm.paginateAdminDatas", para).paginate(pageNumber, pageSize);
+        Page<Record> page = dbTemplate("monthorderm.paginateAdminDatas", para.set("iorgid", getOrgId())).paginate(pageNumber, pageSize);
+        if (CollUtil.isNotEmpty(page.getList())) {
+            for (Record row : page.getList()) {
+                // 审核中，并且单据审批方式为审批流
+                if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), row.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), row.getInt(IAUDITWAY))) {
+                    row.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(row.getLong("iautoid"), 5));
+                }
+            }
+        }
+        return page;
     }
 
     /**
@@ -110,7 +120,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         List<MonthOrderM> notAuditList = new ArrayList<>();
         for (MonthOrderM monthOrderM : list) {
             ValidationUtils.equals(monthOrderM.getICreateBy(), JBoltUserKit.getUserId(), "不可删除非本人单据!");
-            if (MonthOrderStatusEnum.SAVED.getValue() != monthOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != monthOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != monthOrderM.getIOrderStatus()) {
                 notAuditList.add(monthOrderM);
             }
 
@@ -220,6 +230,7 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
                 monthorderm.setIOrgId(getOrgId());
                 monthorderm.setCOrgCode(getOrgCode());
                 monthorderm.setCOrgName(getOrgName());
+                monthorderm.setCOrderNo(BillNoUtils.genCode(getOrgCode(), table()));
                 monthorderm.setICreateBy(user.getId());
                 monthorderm.setCCreateName(user.getName());
                 monthorderm.setDCreateTime(now);
@@ -303,26 +314,6 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         for (Object id : ids) {
             monthorderdService.deleteById(id);
         }
-    }
-
-    /**
-     * 提交审核
-     */
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-
-            // 根据审批状态
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.monthorderm.MonthordermService");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            // 处理其他业务
-            MonthOrderM monthOrderM = findById(iautoid);
-            monthOrderM.setIOrderStatus(MonthOrderStatusEnum.AWAIT_AUDITED.getValue());
-            ValidationUtils.isTrue(monthOrderM.update(), JBoltMsg.FAIL);
-            return true;
-        });
-
-        return SUCCESS;
     }
 
     /**

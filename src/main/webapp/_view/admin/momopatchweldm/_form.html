@@ -11,12 +11,17 @@
 					#include("/_view/_common/_approval_btns.html", uri="/admin/momopatchweldm",
 					formSn="Mo_MoPatchWeldM", primaryKeyName="iAutoId", o=moMopatchweldm,
 					permissionKeyPrefix="momopatchweldm",  className="cn.rjtech.admin.momopatchweldm.MoMopatchweldmService")
-
 					<button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	### 新增之后，并且为审核流
+	#if(moMopatchweldm.iautoid?? && moMopatchweldm.iauditway == 2)
+	#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=moMopatchweldm.iAutoId, primaryKeyName="iAutoId",
+	formSn="Mo_MoPatchWeldM", btnNeed=1, pId=pageId,className="cn.rjtech.admin.momopatchweldm.MoMopatchweldmService")
+	#end
 
 	<div class="py-2" style="padding:.5rem 0rem;">
 		<span class="py-1"><strong>工单信息</strong></span>

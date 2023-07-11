@@ -1,35 +1,19 @@
 package cn.rjtech.admin.materialreturnlist;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.SystemLog;
-import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
-import cn.rjtech.admin.materialsout.MaterialsOutService;
-import cn.rjtech.admin.purchasetype.PurchaseTypeService;
-import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoredetailService;
-import cn.rjtech.config.AppConfig;
 import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
-import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.service.approval.IApprovalService;
-import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO;
-import cn.rjtech.util.BaseInU8Util;
 import cn.rjtech.util.ValidationUtils;
-import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -37,7 +21,9 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -59,22 +45,10 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 	@Inject
 	private SysPuinstoredetailService syspuinstoredetailservice;
 	@Inject
-	private PurchaseTypeService purchaseTypeService;
-	@Inject
-	private MaterialsOutService materialsOutService;
-	@Inject
-	private RdStyleService rdStyleService;
-	@Inject
 	private SysPuinstoreService sysPuinstoreService;
-	@Inject
-	private FormApprovalService formApprovalService;
 
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate("materialreturnlist.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
@@ -82,8 +56,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 	/**
 	 * 保存
-	 * @param sysPuinstore
-	 * @return
 	 */
 	public Ret save(SysPuinstore sysPuinstore) {
 		if(sysPuinstore==null || isOk(sysPuinstore.getAutoID())) {
@@ -100,8 +72,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 	/**
 	 * 更新
-	 * @param sysPuinstore
-	 * @return
 	 */
 	public Ret update(SysPuinstore sysPuinstore) {
 		if(sysPuinstore==null || notOk(sysPuinstore.getAutoID())) {
@@ -121,8 +91,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		tx(() -> {
@@ -144,13 +112,8 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 		return SUCCESS;
 	}
 
-
-
-
 	/**
 	 * 删除
-	 * @param autoId
-	 * @return
 	 */
 	public Ret delete(Long autoId) {
 		tx(() -> {
@@ -164,8 +127,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 	/**
 	 * 删除行数据
-	 * @param autoId
-	 * @return
 	 */
 	public Ret deleteList(String autoId) {
 		tx(() -> {
@@ -174,27 +135,26 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 			return true;
 		});
 		return SUCCESS;
-
 	}
 
-	/**
-	 * 删除数据后执行的回调
-	 * @param sysPuinstore 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
+    /**
+     * 删除数据后执行的回调
+     *
+     * @param sysPuinstore 要删除的model
+     * @param kv           携带额外参数一般用不上
+     */
 	@Override
 	protected String afterDelete(SysPuinstore sysPuinstore, Kv kv) {
 		//addDeleteSystemLog(sysPuinstore.getAutoid(), JBoltUserKit.getUserId(),sysPuinstore.getName());
 		return null;
 	}
 
-	/**
-	 * 检测是否可以删除
-	 * @param sysPuinstore 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
+    /**
+     * 检测是否可以删除
+     *
+     * @param sysPuinstore 要删除的model
+     * @param kv           携带额外参数一般用不上
+     */
 	@Override
 	public String checkCanDelete(SysPuinstore sysPuinstore, Kv kv) {
 		//如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
@@ -203,20 +163,16 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 	/**
 	 * 设置返回二开业务所属的关键systemLog的targetType
-	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
 		return ProjectSystemLogTargetType.NONE.getValue();
 	}
 
-
 	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
 			return fail(JBoltMsg.JBOLTTABLE_IS_BLANK);
 		}
-
-
 
 		// 这里可以循环遍历 保存处理每个表格 也可以 按照name自己get出来单独处理
 
@@ -233,8 +189,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 		String userName = JBoltUserKit.getUserName();
 		Date nowDate = new Date();
 		String OrgCode =getOrgCode();
-
-
 
 		System.out.println("saveTable===>" + jBoltTable.getSave());
 		System.out.println("updateTable===>" + jBoltTable.getUpdate());
@@ -406,10 +360,6 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 	/**
 	 * 材料出库单列表 明细
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
 	public Page<Record> getmaterialReturnListLines(int pageNumber, int pageSize, Kv kv){
 		return dbTemplate("materialreturnlist.getmaterialReturnListLines",kv).paginate(pageNumber, pageSize);
@@ -418,13 +368,9 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 
 	/**
 	 * 整单退货出库单列表 明细
-
-	 * @param kv
-	 * @return
 	 */
 	public List<Record> getmaterialLines(Kv kv){
 		return dbTemplate("materialreturnlist.getmaterialLines",kv).find();
-
 	}
 
 	/**
@@ -440,13 +386,11 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 	 * autocomplete组件使用
 	 */
 	public Record barcode(Kv kv) {
-////		先查询条码是否已添加
+        // 先查询条码是否已添加
 		Record first = dbTemplate("materialreturnlist.barcodeDatas", kv).findFirst();
-		if(null == first){
-			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "采购入库没有此数据！！！");
-		}
-		Record first2 = dbTemplate("materialreturnlist.getBarcodes", kv).findFirst();
-		return first2;
+        ValidationUtils.notNull(first, "条码为：" + kv.getStr("barcode") + "采购入库没有此数据！！！");
+        
+        return dbTemplate("materialreturnlist.getBarcodes", kv).findFirst();
 	}
 
 	@Override

@@ -2,8 +2,6 @@ package cn.rjtech.admin.sysassem;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -18,21 +16,17 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.demandpland.DemandPlanDService;
 import cn.rjtech.admin.department.DepartmentService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.admin.purchaseorderd.PurchaseOrderDService;
 import cn.rjtech.admin.purchaseorderdbatch.PurchaseOrderDBatchService;
-import cn.rjtech.admin.purchaseorderdqty.PurchaseorderdQtyService;
-import cn.rjtech.admin.purchaseorderm.PurchaseOrderMService;
 import cn.rjtech.admin.sysassembarcode.SysAssembarcodeService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -68,42 +62,22 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
     }
 
     @Inject
-    private PurchaseOrderMService purchaseordermservice;
-
-    @Inject
-    private PurchaseOrderDService purchaseOrderDService;
-
-    @Inject
-    private PurchaseOrderDBatchService purchaseOrderDBatchService;
-
-    @Inject
     private PersonService personservice;
-
+    @Inject
+    private InventoryService inventoryService;
+    @Inject
+    private DepartmentService departmentservice;
     @Inject
     private SysAssemdetailService sysassemdetailservice;
+    @Inject
+    private SysAssembarcodeService sysassembarcodeservice;
+    @Inject
+    private PurchaseOrderDBatchService purchaseOrderDBatchService;
 
     @Override
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-
-    @Inject
-    private FormApprovalService formApprovalService;
-
-    @Inject
-    private PurchaseorderdQtyService purchaseorderdQtyService;
-
-    @Inject
-    private InventoryService inventoryService;
-
-    @Inject
-    private DemandPlanDService demandPlanDService;
-
-    @Inject
-    private DepartmentService departmentservice;
-
-    @Inject
-    private SysAssembarcodeService sysassembarcodeservice;
 
     /**
      * 后台管理数据查询
@@ -284,7 +258,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             //通过 id 判断是新增还是修改
             if (sysotherin.getAutoID() == null) {
                 sysotherin.setOrganizeCode(getOrgCode());
-                sysotherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+                sysotherin.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
                 sysotherin.setIcreateby(user.getId());
                 sysotherin.setCcreatename(user.getName());
                 sysotherin.setDcreatetime(now);
@@ -700,20 +674,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         firstRecord.set("iafterinventoryid",kv.get("iafterinventoryid"));
         firstRecord.set("qty",kv.get("qty"));
         return firstRecord;
-    }
-
-    /**
-     * 提审批
-     */
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.sysassem.SysAssemService");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            return true;
-        });
-        return SUCCESS;
     }
 
     /**

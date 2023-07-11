@@ -1463,8 +1463,14 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             return new ArrayList<>();
         }
         int iLevel = apsWeekschedule.getILevel();
-        String startDate = DateUtils.formatDate(apsWeekschedule.getDScheduleBeginTime(), "yyyy-MM-dd");
+        String startDate = DateUtils.formatDate(new Date(),"yyyy-MM").concat("-01");;
         String endDate = DateUtils.formatDate(apsWeekschedule.getDScheduleEndTime(), "yyyy-MM-dd");
+        if (isOk(kv.get("startdate"))){
+            startDate = kv.getStr("startdate");
+        }
+        if (isOk(kv.get("enddate"))){
+            endDate = kv.getStr("enddate");
+        }
         //排产开始日期到截止日期之间的日期集 包含开始到结束那天 有序
         List<String> scheduDateList = Util.getBetweenDate(startDate, endDate);
 
@@ -2263,6 +2269,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 moDoc.setIInventoryRouting(iInventoryRoutingId);
                 moDoc.setCRoutingName(cRoutingName);
                 moDoc.setCVersion(cVersion);
+                moDoc.setICreateBy(userId);
+                moDoc.setDCreateTime(nowDate);
+                moDoc.setCCreateName(userName);
+                moDoc.setIUpdateBy(userId);
+                moDoc.setDUpdateTime(nowDate);
+                moDoc.setCUpdateName(userName);
                 moDocList.add(moDoc);
 
                 //工艺路线

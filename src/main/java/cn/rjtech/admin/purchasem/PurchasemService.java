@@ -7,7 +7,6 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
-import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -33,19 +32,14 @@ import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.depref.DepRefService;
 import cn.rjtech.admin.exch.ExchService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryclass.InventoryClassService;
 import cn.rjtech.admin.period.PeriodService;
-import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.admin.proposalcategory.ProposalcategoryService;
-import cn.rjtech.admin.proposalm.ProposalmService;
 import cn.rjtech.admin.purchaseattachment.PurchaseAttachmentService;
 import cn.rjtech.admin.purchased.PurchasedService;
-import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendorclass.VendorClassService;
-import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
@@ -91,50 +85,38 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
     }
 
     @Inject
+    private ExchService exchService;
+    @Inject
+    private DepRefService depRefService;
+    @Inject
+    private PeriodService periodService;
+    @Inject
+    private InventoryService inventoryService;
+    @Inject
     private PurchasedService purchasedService;
+    @Inject
+    private VendorService vendorRecordService;
     @Inject
     private DictionaryService dictionaryService;
     @Inject
-    private PurchaseTypeService purchaseTypeService;
-    @Inject
     private DepartmentService departmentService;
     @Inject
-    private ProjectCardService projectCardService;
+    private VendorClassService vendorclassService;
+    @Inject
+    private GlobalConfigService globalConfigService;
+    @Inject
+    private ExpenseBudgetService expenseBudgetService;
+    @Inject
+    private InventoryClassService inventoryClassService;
     @Inject
     private BarcodeencodingmService barcodeencodingmService;
     @Inject
     private ProposalcategoryService proposalcategoryService;
     @Inject
-    private UserService userService;
-    @Inject
-    private ProposalmService proposalmService;
-    @Inject
-    private GlobalConfigService globalConfigService;
-    @Inject
-    private PeriodService periodService;
-    @Inject
-    private ExpenseBudgetService expenseBudgetService;
-    @Inject
-    private InventoryService inventoryService;
-    @Inject
-    private InventoryClassService inventoryClassService;
-    @Inject
-    private VendorService vendorRecordService;
-    @Inject
-    private ExchService exchService;
-    @Inject
-    private VendorClassService vendorclassService;
-    @Inject
-    private DepRefService depRefService;
-	@Inject
-    private FormApprovalService formApprovalService;
-	@Inject
 	private PurchaseAttachmentService purchaseAttachmentService;
+    
     /**
      * 后台管理分页查询
-     *
-     * @param kv
-     * @return
      */
     public List<Record> paginateAdminDatas(Kv kv) {
     	kv.set("iorgid",getOrgId());
@@ -404,11 +386,9 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 		return true;
 		//ValidationUtils.error( "申购金额已超禀议金额10%或500,请追加禀议!");
 	}
+    
 	/**
      * 详情
-     *
-     * @param kv
-     * @return
      */
     public Record details(Kv kv) {
         return dbTemplate("purchasem.findPurchasemDetails", kv).findFirst();
@@ -416,9 +396,6 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 
     /**
      * 获取金额信息
-     *
-     * @param kv
-     * @return
      */
     public Record getMoney(Kv para) {
     	para.set("ieffectivestatus",EffectiveStatusEnum.EFFECTIVED.getValue());
@@ -427,9 +404,6 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 
     /**
      * 根据主键获取申购单
-     *
-     * @param iautoid
-     * @return
      */
     public Record getPurchasemByIautoid(Long iautoid) {
         Record record = details(Kv.by("iautoid", iautoid));
@@ -445,34 +419,6 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         return record;
     }
 
-    /**
-     * 提交审批
-     */
-    public Ret submit(Long iautoid) {
-        Purchasem purchasem = findById(iautoid);
-        ValidationUtils.notNull(purchasem, "申购单记录不存在");
-        ValidationUtils.isTrue(purchasem.getIOrgId().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
-        ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), purchasem.getIAuditStatus(), "非编辑状态，禁止提交审批");
-        if(purchasem.getIRefType() == PurchaseRefTypeEnum.PROPOSAL.getValue())
-        	ValidationUtils.isTrue(validatePurchaseMoneyIsExceed(purchasem), "申购金额已超禀议金额10%或500,请追加禀议");
-        tx(() -> {
-        	if(AppConfig.isVerifyProgressEnabled()){
-        		// 根据审批状态
-                Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"cn.rjtech.admin.purchasem.PurchasemService");
-                ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-                
-                //生成待办和发送邮件
-        	}else{
-        		purchasem.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-        		ValidationUtils.isTrue(purchasem.update(), ErrorMsg.UPDATE_FAILED);
-        	}
-            return true;
-        });
-
-        return SUCCESS;
-
-    }
-	
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */
@@ -628,9 +574,6 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 
     /**
      * 打印预览
-     *
-     * @param iautoid
-     * @return
      */
     public Ret printData(Long iautoid) {
         Record purchasem = getPurchasemByIautoid(iautoid);
@@ -656,9 +599,6 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 
     /**
      * 参照预算
-     *
-     * @param iautoids
-     * @return
      */
     public List<Record> purchaseChoose(String iautoids) {
         return dbTemplate("purchasem.purchaseChoose", Kv.by("iautoids", iautoids)).find();
@@ -667,8 +607,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
      * 选择存货树形数据源
      */
     public List<JsTreeBean> inventorTree() {
-        List<JsTreeBean> treeList = inventoryClassService.getTreeList();
-        return treeList;
+        return inventoryClassService.getTreeList();
     }
     /**
      * 选择供应商分类树形数据源

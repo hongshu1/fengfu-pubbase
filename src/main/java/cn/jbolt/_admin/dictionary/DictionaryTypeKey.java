@@ -471,7 +471,7 @@ public enum DictionaryTypeKey {
     /**
      * 消息发送时机
      */
-    message_chance,
+    messagetpl_trigger,
     /**
      * 材料类别
      */
@@ -787,5 +787,45 @@ public enum DictionaryTypeKey {
     /**
      * 显示位置
      */
-    visible_position;
+    visible_position,
+    /**
+     * 订单业务类型
+     */
+    order_business_type,
+    /**
+     * 项目大类
+     */
+    fitem,
+    /**
+     * 订单类型
+     */
+    order_type,
+    /**
+     * DSD
+     */
+    D,
+    /**
+     * 工单任务编码
+     */
+    mojob_type,
+    /**
+     * 字段名称
+     */
+    field_name,
+    /**
+     * 其他出库业务类型
+     */
+    OtherOut_type,
+    /**
+     * 特殊领料处置意见
+     */
+    SpecAdvice,
+    /**
+     * 盘点状态
+     */
+    currentstock_status,
+    /**
+     * 仓库期初—来源类型
+     */
+    stock_sourcebilltype;
 }

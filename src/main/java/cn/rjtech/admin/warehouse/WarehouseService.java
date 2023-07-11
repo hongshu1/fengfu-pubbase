@@ -314,9 +314,9 @@ public class WarehouseService extends BaseService<Warehouse> {
         ValidationUtils.notNull(data.get("cwhcode"), "第" + iseq + "行的【仓库编码】不能为空！");
         ValidationUtils.notNull(data.get("cwhname"), "第" + iseq + "行的【仓库名称】不能为空！");
         ValidationUtils.notNull(data.get("cdepcode"), "第" + iseq + "行的【所属部门名称】不能为空");
-        ValidationUtils.notNull(data.get("isstockwarnenabled"), "第" + iseq + "行的【是否启用空间掌控】不能为空！");
-        ValidationUtils.notNull(data.get("isspacecontrolenabled"), "第" + iseq + "行的【启用库存预警】不能为空！");
-        ValidationUtils.notNull(data.get("isspacecontrolenabled"), "第" + iseq + "行的【启用库区】不能为空！");
+        ValidationUtils.notNull(data.get("isspacecontrolenabled"), "第" + iseq + "行的【是否启用空间掌控】不能为空！");
+        ValidationUtils.notNull(data.get("isstockwarnenabled"), "第" + iseq + "行的【启用库存预警】不能为空！");
+        ValidationUtils.notNull(data.get("isreservoirarea"), "第" + iseq + "行的【启用库区】不能为空！");
 
         // 查重
         ValidationUtils.assertNull(findByWhCode(data.get("cwhcode") + ""), "第" + iseq + "行的【仓库编码】已存在！");

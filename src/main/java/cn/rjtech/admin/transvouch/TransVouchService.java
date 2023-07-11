@@ -10,12 +10,9 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.transvouchdetail.TransVouchDetailService;
-import cn.rjtech.model.momdata.MaterialsOut;
 import cn.rjtech.model.momdata.TransVouch;
 import cn.rjtech.model.momdata.TransVouchDetail;
-import cn.rjtech.model.momdata.Workregionm;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -27,7 +24,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.apache.poi.ss.formula.functions.T;
 
 import java.util.*;
 
@@ -50,26 +46,16 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 
 	@Inject
 	private TransVouchDetailService transVouchDetailService;
-	@Inject
-	private FormApprovalService formApprovalService;
 
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
-
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate("transvouch.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
 	}
 
-
 	/**
 	 * 调拨单列表 明细
-	 * @param kv
-	 * @return
 	 */
 	public List<Record> getTransVouchLines(Kv kv){
 		return dbTemplate("transvouch.getTransVouchLines",kv).find();
@@ -78,8 +64,6 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 
 	/**
 	 * 保存
-	 * @param transVouch
-	 * @return
 	 */
 	public Ret save(TransVouch transVouch) {
 		if(transVouch==null || isOk(transVouch.getAutoID())) {
@@ -96,8 +80,6 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 
 	/**
 	 * 更新
-	 * @param transVouch
-	 * @return
 	 */
 	public Ret update(TransVouch transVouch) {
 		if(transVouch==null || notOk(transVouch.getAutoID())) {
@@ -117,14 +99,11 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 	tx(() -> {
 		for (String idStr : StrSplitter.split(ids, COMMA, true, true)) {
-			String autoId = idStr;
-			TransVouch transVouch = findById(autoId);
+            TransVouch transVouch = findById(idStr);
 			ValidationUtils.notNull(transVouch, JBoltMsg.DATA_NOT_EXIST);
 			//软删除
 //			transVouch.setIsDeleted(true);
@@ -134,14 +113,14 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 			// TODO 存在关联使用时，校验是否仍在使用
 
 			Integer[] state = {1,2,3};
-			for (int i = 0; i < state.length; i++) {
-				System.out.println(state[i]);
-				if (state[i] ==transVouch.getIAuditStatus()){
-					ValidationUtils.error( "审核中、已审核的记录不允许删除,修改！！！");
-				}
-			}
+            for (Integer integer : state) {
+                System.out.println(integer);
+                if (integer.equals(transVouch.getIAuditStatus())) {
+                    ValidationUtils.error("审核中、已审核的记录不允许删除,修改！！！");
+                }
+            }
 			//删除行数据
-			transVouchDetailService.deleteByBatchIds(autoId);
+			transVouchDetailService.deleteByBatchIds(idStr);
 			ValidationUtils.isTrue(transVouch.delete(), JBoltMsg.FAIL);
 
 		}
@@ -152,19 +131,15 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		return deleteById(id,true);
 	}
 
-
 	/**
 	 * 删除数据后执行的回调
 	 * @param transVouch 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(TransVouch transVouch, Kv kv) {
@@ -176,7 +151,6 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 	 * 检测是否可以删除
 	 * @param transVouch 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanDelete(TransVouch transVouch, Kv kv) {
@@ -186,7 +160,6 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 
 	/**
 	 * 设置返回二开业务所属的关键systemLog的targetType
-	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
@@ -214,7 +187,6 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 	public List<Record> iwarehouse(Kv kv) {
 		return dbTemplate("transvouch.iwarehouse", kv.set("OrgCode",getOrgCode())).find();
 	}
-
 
 	public Ret submitByJBoltTables(JBoltTableMulti jboltTableMulti) {
 		if (jboltTableMulti == null || jboltTableMulti.isEmpty()) {
@@ -342,10 +314,8 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 	 * autocomplete组件使用
 	 */
 	public Record barcode(Kv kv) {
-		Record first2 = dbTemplate("materialsout.getBarcodeDatas", kv).findFirst();
-		return first2;
+        return dbTemplate("materialsout.getBarcodeDatas", kv).findFirst();
 	}
-
 
 	public Ret pushU8(String id) {
 		List<Record> list = dbTemplate("transvouch.pushU8List", Kv.by("autoid", id)).find();
@@ -541,15 +511,14 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 		Long userId = JBoltUserKit.getUserId();
 		String userName = JBoltUserKit.getUserName();
 		Date nowDate = new Date();
-		/**
-		 *List转换String类型
+		/*
+		 * List转换String类型
 		 */
 		if (formAutoIds.size()>0){
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < formAutoIds.size(); i++) {
-
-				buffer.append(""+formAutoIds.get(i)+",");
-			}
+			StringBuilder buffer = new StringBuilder();
+            for (Long formAutoId : formAutoIds) {
+                buffer.append(formAutoId).append(",");
+            }
 			String ids = buffer.substring(0, buffer.length() - 1);
 			List<TransVouch> listByIds = getListByIds(ids);
 			if (listByIds.size() > 0) {
@@ -575,4 +544,5 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 	public String postBatchBackout(List<Long> formAutoIds) {
 		return null;
 	}
+    
 }
