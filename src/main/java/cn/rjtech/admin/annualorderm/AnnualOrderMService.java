@@ -11,9 +11,7 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.annualorderd.AnnualOrderDService;
 import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.AnnualOrderD;
@@ -57,8 +55,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
     private AnnualOrderDService annualOrderDService;
     @Inject
     private AnnualorderdQtyService annualorderdQtyService;
-    @Inject
-    private FormApprovalService formApprovalService;
 
     @Override
     protected AnnualOrderM dao() {
@@ -281,23 +277,6 @@ public class AnnualOrderMService extends BaseService<AnnualOrderM> implements IA
         StringBuilder errorMsg = new StringBuilder();
 
 
-        return SUCCESS;
-    }
-
-    /**
-     * 提交审批
-     */
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            AnnualOrderM annualOrderM = findById(iautoid);
-            annualOrderM.setIOrderStatus(WeekOrderStatusEnum.AWAIT_AUDIT.getValue());
-            annualOrderM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-            ValidationUtils.isTrue(annualOrderM.update(), JBoltMsg.FAIL);
-            return true;
-        });
         return SUCCESS;
     }
 

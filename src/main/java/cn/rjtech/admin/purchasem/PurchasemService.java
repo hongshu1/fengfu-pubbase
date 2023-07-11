@@ -7,7 +7,6 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.globalconfig.GlobalConfigService;
-import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
@@ -37,12 +36,9 @@ import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryclass.InventoryClassService;
 import cn.rjtech.admin.period.PeriodService;
-import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.admin.proposalcategory.ProposalcategoryService;
-import cn.rjtech.admin.proposalm.ProposalmService;
 import cn.rjtech.admin.purchaseattachment.PurchaseAttachmentService;
 import cn.rjtech.admin.purchased.PurchasedService;
-import cn.rjtech.admin.purchasetype.PurchaseTypeService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendorclass.VendorClassService;
 import cn.rjtech.config.AppConfig;
@@ -91,50 +87,40 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
     }
 
     @Inject
+    private ExchService exchService;
+    @Inject
+    private DepRefService depRefService;
+    @Inject
+    private PeriodService periodService;
+    @Inject
+    private InventoryService inventoryService;
+    @Inject
     private PurchasedService purchasedService;
+    @Inject
+    private VendorService vendorRecordService;
     @Inject
     private DictionaryService dictionaryService;
     @Inject
-    private PurchaseTypeService purchaseTypeService;
-    @Inject
     private DepartmentService departmentService;
     @Inject
-    private ProjectCardService projectCardService;
+    private VendorClassService vendorclassService;
+    @Inject
+    private GlobalConfigService globalConfigService;
+    @Inject
+    private FormApprovalService formApprovalService;
+    @Inject
+    private ExpenseBudgetService expenseBudgetService;
+    @Inject
+    private InventoryClassService inventoryClassService;
     @Inject
     private BarcodeencodingmService barcodeencodingmService;
     @Inject
     private ProposalcategoryService proposalcategoryService;
     @Inject
-    private UserService userService;
-    @Inject
-    private ProposalmService proposalmService;
-    @Inject
-    private GlobalConfigService globalConfigService;
-    @Inject
-    private PeriodService periodService;
-    @Inject
-    private ExpenseBudgetService expenseBudgetService;
-    @Inject
-    private InventoryService inventoryService;
-    @Inject
-    private InventoryClassService inventoryClassService;
-    @Inject
-    private VendorService vendorRecordService;
-    @Inject
-    private ExchService exchService;
-    @Inject
-    private VendorClassService vendorclassService;
-    @Inject
-    private DepRefService depRefService;
-	@Inject
-    private FormApprovalService formApprovalService;
-	@Inject
 	private PurchaseAttachmentService purchaseAttachmentService;
+    
     /**
      * 后台管理分页查询
-     *
-     * @param kv
-     * @return
      */
     public List<Record> paginateAdminDatas(Kv kv) {
     	kv.set("iorgid",getOrgId());
@@ -453,8 +439,11 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         ValidationUtils.notNull(purchasem, "申购单记录不存在");
         ValidationUtils.isTrue(purchasem.getIOrgId().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
         ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), purchasem.getIAuditStatus(), "非编辑状态，禁止提交审批");
-        if(purchasem.getIRefType() == PurchaseRefTypeEnum.PROPOSAL.getValue())
-        	ValidationUtils.isTrue(validatePurchaseMoneyIsExceed(purchasem), "申购金额已超禀议金额10%或500,请追加禀议");
+
+        if (purchasem.getIRefType() == PurchaseRefTypeEnum.PROPOSAL.getValue()) {
+            ValidationUtils.isTrue(validatePurchaseMoneyIsExceed(purchasem), "申购金额已超禀议金额10%或500,请追加禀议");
+        }
+        
         tx(() -> {
         	if(AppConfig.isVerifyProgressEnabled()){
         		// 根据审批状态

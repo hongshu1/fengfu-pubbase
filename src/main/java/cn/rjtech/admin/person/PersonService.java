@@ -279,10 +279,10 @@ public class PersonService extends BaseService<Person> {
         Long userid = JBoltUserKit.getUserId();
         String username = JBoltUserKit.getUserName();
         Date now = new Date();
-        ValidationUtils.isTrue(!isExistsByPersonCode(person.getCpsnNum()), "人员已存在，请勿重复保存!");
         DataPermissionKit.validateAccess(person.getCdeptNum());
         tx(() -> {
             if (person.getIAutoId() == null) {
+            	ValidationUtils.isTrue(!isExistsByPersonCode(person.getCpsnNum()), "人员已存在，请勿重复保存!");
                 person.setISource(SourceEnum.MES.getValue())
                         .setICreateBy(userid)
                         .setCCreateName(username)
