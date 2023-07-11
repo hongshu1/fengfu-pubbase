@@ -31,7 +31,7 @@ ORDER BY so.dcreatetime DESC
 
 
 #sql("dList")
-SELECT  a.*,t.*
+SELECT  a.*,t.*,area.cAreaName as careaname,a.PosCode as poscode
 FROM T_Sys_PUReceiveDetail a
 LEFT JOIN
 (
@@ -106,6 +106,7 @@ FROM
 	LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
 	LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
 ) as t on a.Barcode = t.barcode
+left join Bd_Warehouse_Area area on area.cAreaCode = a.PosCode
 where a.isDeleted = '0'
 	#if(masid)
 		and a.MasID = #para(masid)
