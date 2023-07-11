@@ -914,10 +914,6 @@ public class PermissionKey {
 	 */
 	public static final String PATCHWORK_BARCODE = "patchwork_barcode";
 	/**
-	 * 月周排产记录时间
-	 */
-	public static final String APS_WEEK_SCHEDULE = "aps_week_schedule";
-	/**
 	 * 特殊领料出库
 	 */
 	public static final String OTHER_OUT_RETURN_LIST = "other_out_return_list";
@@ -3929,4 +3925,172 @@ public class PermissionKey {
 	 * 查看
 	 */
 	public static final String PLANMONTHSUM_SHOW = "planmonthsum_show";
+	/**
+	 * 新增
+	 */
+	public static final String MOMATERIALSRETURNM_ADD = "momaterialsreturnm_add";
+	/**
+	 * 新增
+	 */
+	public static final String OTHEROUT_ADD = "otherout_add";
+	/**
+	 * 编辑
+	 */
+	public static final String OTHEROUT_EDIT = "otherout_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OTHEROUT_DELETE = "otherout_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String OTHEROUT_PRINT = "otherout_print";
+	/**
+	 * 新增
+	 */
+	public static final String OTHER_OUT_RETURN_LIST_ADD = "other_out_return_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String OTHER_OUT_RETURN_LIST_EDIT = "other_out_return_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OTHER_OUT_RETURN_LIST_DELETE = "other_out_return_list_delete";
+	/**
+	 * 新增
+	 */
+	public static final String CURRENTSTOCK_ADD = "currentstock_add";
+	/**
+	 * 编辑
+	 */
+	public static final String CURRENTSTOCK_EDIT = "currentstock_edit";
+	/**
+	 * 删除
+	 */
+	public static final String CURRENTSTOCK_DELETE = "currentstock_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CURRENTSTOCK_EXPORT = "currentstock_export";
+	/**
+	 * 导入
+	 */
+	public static final String CURRENTSTOCK_IMPORT = "currentstock_import";
+	/**
+	 * 导出
+	 */
+	public static final String INVENTORY_BARCODE_TRACEPAGE_EXPORT = "Inventory_barcode_tracepage_export";
+	/**
+	 * 打印
+	 */
+	public static final String INVENTORY_BARCODE_TRACEPAGE_PRINT = "Inventory_barcode_tracepage_print";
+	/**
+	 * 导出
+	 */
+	public static final String BILLNO_BARCODE_TRACEPAGE_EXPORT = "billno_barcode_tracepage_export";
+	/**
+	 * 打印
+	 */
+	public static final String BILLNO_BARCODE_TRACEPAGE_PRINT = "billno_barcode_tracepage_print";
+	/**
+	 * 导出
+	 */
+	public static final String BARCODE_TRACEPAGE_EXPORT = "barcode_tracepage_export";
+	/**
+	 * 打印
+	 */
+	public static final String BARCODE_TRACEPAGE_PRINT = "barcode_tracepage_print";
+	/**
+	 * 新增
+	 */
+	public static final String INSTOCKDEFECT_ADD = "instockdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String INSTOCKDEFECT_EDIT = "instockdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INSTOCKDEFECT_DELETE = "instockdefect_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String INSTOCKDEFECT_PRINT = "instockdefect_print";
+	/**
+	 * 新增
+	 */
+	public static final String STOCKOUTDEFECT_ADD = "stockoutdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String STOCKOUTDEFECT_EDIT = "stockoutdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String STOCKOUTDEFECT_DELETE = "stockoutdefect_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String STOCKOUTDEFECT_PRINT = "stockoutdefect_print";
+	/**
+	 * 新增
+	 */
+	public static final String QCINSPECTION_ADD = "qcinspection_add";
+	/**
+	 * 编辑
+	 */
+	public static final String QCINSPECTION_EDIT = "qcinspection_edit";
+	/**
+	 * 删除
+	 */
+	public static final String QCINSPECTION_DELETE = "qcinspection_delete";
+	/**
+	 * 导出
+	 */
+	public static final String PLANANDACTUALVIEW_EXPORT = "planandactualview_export";
+	/**
+	 * 查看
+	 */
+	public static final String PLANANDACTUALVIEW_SHOW = "planandactualview_show";
+	/**
+	 * 删除
+	 */
+	public static final String DEMANDFORECASTM_DELETE = "demandforecastm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String DEMANDFORECASTM_EXPORT = "demandforecastm_export";
+	/**
+	 * 查看
+	 */
+	public static final String DEMANDFORECASTM_SHOW = "demandforecastm_show";
+	/**
+	 * 删除
+	 */
+	public static final String DEMANDPLANM_DELETE = "demandplanm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String DEMANDPLANM_EXPORT = "demandplanm_export";
+	/**
+	 * 查看
+	 */
+	public static final String DEMANDPLANM_SHOW = "demandplanm_show";
+	/**
+	 * 齐料检查
+	 */
+	public static final String MODOC_MATERIALSCANLOG = "modoc_materialscanlog";
+	/**
+	 * 材料耗用
+	 */
+	public static final String MODOC_MO_MATERIALSCAN = "modoc_mo_materialscan";
+	/**
+	 * 导出
+	 */
+	public static final String DEMANDPLANSUMVIEW_EXPORT = "demandplansumview_export";
+	/**
+	 * 查看
+	 */
+	public static final String DEMANDPLANSUMVIEW_SHOW = "demandplansumview_show";
 }
