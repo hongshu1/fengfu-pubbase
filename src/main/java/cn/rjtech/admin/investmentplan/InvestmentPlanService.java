@@ -6,11 +6,7 @@ import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
-import cn.jbolt.core.kit.DataPermissionKit;
-import cn.jbolt.core.kit.JBoltModelKit;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
-import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.kit.U8DataSourceKit;
+import cn.jbolt.core.kit.*;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.service.base.BaseService;
@@ -23,7 +19,6 @@ import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.expensebudget.ExpenseBudgetService;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.investmentplanitem.InvestmentPlanItemService;
 import cn.rjtech.admin.investmentplanitemd.InvestmentPlanItemdService;
 import cn.rjtech.admin.period.PeriodService;
@@ -31,12 +26,7 @@ import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
-import cn.rjtech.model.momdata.Department;
-import cn.rjtech.model.momdata.ExpenseBudget;
-import cn.rjtech.model.momdata.InvestmentPlan;
-import cn.rjtech.model.momdata.InvestmentPlanItem;
-import cn.rjtech.model.momdata.InvestmentPlanItemd;
-import cn.rjtech.model.momdata.Period;
+import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ReadInventmentExcelUtil;
 import cn.rjtech.util.ValidationUtils;
@@ -50,6 +40,7 @@ import com.jfinal.plugin.activerecord.Record;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.*;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -82,8 +73,7 @@ public class InvestmentPlanService extends BaseService<InvestmentPlan> implement
 	private ExpenseBudgetService expenseBudgetService;
 	@Inject
 	private BarcodeencodingmService barcodeencodingmService;
-	@Inject
-    private FormApprovalService formApprovalService;
+    
 	@Override
 	protected InvestmentPlan dao() {
 		return dao;

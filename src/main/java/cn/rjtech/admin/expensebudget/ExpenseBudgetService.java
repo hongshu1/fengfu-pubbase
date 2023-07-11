@@ -23,7 +23,6 @@ import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.expensebudgetitem.ExpenseBudgetItemService;
 import cn.rjtech.admin.expensebudgetitemd.ExpenseBudgetItemdService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.subjectm.SubjectmService;
 import cn.rjtech.constants.Constants;
 import cn.rjtech.constants.ErrorMsg;
@@ -65,8 +64,6 @@ public class ExpenseBudgetService extends BaseService<ExpenseBudget> implements 
     private DictionaryService dictionaryService;
     @Inject
     private DepartmentService departmentService;
-    @Inject
-    private FormApprovalService formApprovalService;
     @Inject
 	private BarcodeencodingmService barcodeencodingmService;
     @Inject

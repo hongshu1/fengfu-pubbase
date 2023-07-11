@@ -548,18 +548,8 @@ public class PurchasemAdminController extends BaseAdminController {
     }
 
     /**
-     * 提交审核
-     */
-    @CheckPermission(PermissionKey.PURCHASE_INSTRUMENT_SUBMIT)
-    public void submit() {
-        ValidationUtils.validateId(getLong("iautoid"), "申购单ID");
-        
-        renderJson(service.submit(getLong("iautoid")));
-    }
-    
-    /**
      * 参照禀议书界面-禀议书主表数据查询
-     * */
+     */
     @UnCheck
     @CheckDataPermission(operation = DataOperationEnum.VIEW, type = BusObjectTypeEnum.DEPTARTMENT)
     public void chooseProposalmDatas(){

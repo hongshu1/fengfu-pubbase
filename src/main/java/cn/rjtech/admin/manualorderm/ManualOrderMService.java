@@ -11,7 +11,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
@@ -58,23 +57,21 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     private final ManualOrderM dao = new ManualOrderM().dao();
 
     @Inject
+    private SaleTypeService saleTypeService;
+    @Inject
     private InventoryService inventoryService;
     @Inject
-    private CusOrderSumService cusOrderSumService;
+    private DictionaryService dictionaryService;
     @Inject
-    private FormApprovalService formApprovalService;
+    private WeekOrderMService weekOrderMService;
+    @Inject
+    private CusOrderSumService cusOrderSumService;
     @Inject
     private ManualOrderDService manualOrderDService;
     @Inject
     private InventoryQcFormService inventoryQcFormService;
     @Inject
     private StockoutQcFormMService stockoutQcFormMService;
-    @Inject
-    private WeekOrderMService weekOrderMService;
-    @Inject
-    private DictionaryService dictionaryService;
-    @Inject
-    private SaleTypeService saleTypeService;
     @Inject
     private InventoryMfgInfoService inventoryMfgInfoService;
 
@@ -637,11 +634,10 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
         List<ManualOrderM> manualOrderMS = getListByIds(StringUtils.join(formAutoIds, StrPool.COMMA));
+        
         boolean algorithmSum = manualOrderMS.stream().anyMatch(item -> item.getIOrderStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
-        manualOrderMS.stream().map(item -> {
-            item.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-            return item;
-        }).collect(Collectors.toList());
+        
+        manualOrderMS = manualOrderMS.stream().peek(item -> item.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue())).collect(Collectors.toList());
         batchUpdate(manualOrderMS);
 
         if (algorithmSum) {

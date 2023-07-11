@@ -3,7 +3,6 @@ package cn.rjtech.admin.formuploadm;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -11,7 +10,6 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.formuploadcategory.FormUploadCategoryService;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
@@ -29,8 +27,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.*;
-
-import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 记录上传
@@ -59,8 +55,6 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
     private WorkregionmService workregionmService;
     @Inject
     private FormUploadCategoryService formUploadCategoryService;
-    @Inject
-    private FormApprovalService formApprovalService;
 
     /**
      * 后台管理数据查询

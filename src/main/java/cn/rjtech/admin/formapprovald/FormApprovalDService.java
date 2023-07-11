@@ -16,7 +16,6 @@ import cn.rjtech.admin.formapprovaldroleusers.FormapprovaldRoleusersService;
 import cn.rjtech.admin.formapprovalduser.FormapprovaldUserService;
 import cn.rjtech.admin.formapprovalflowd.FormApprovalFlowDService;
 import cn.rjtech.admin.formapprovalflowm.FormApprovalFlowMService;
-import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -51,8 +50,6 @@ public class FormApprovalDService extends BaseService<FormApprovalD> {
 
     @Inject
     private UserService userService;
-    @Inject
-    private PersonService personService;
     @Inject
     private FormApprovalFlowMService flowMService;
     @Inject

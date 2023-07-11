@@ -1,7 +1,6 @@
 package cn.rjtech.admin.spotcheckformm;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -10,13 +9,8 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
-import cn.rjtech.admin.inventoryrouting.InventoryRoutingService;
-import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
-import cn.rjtech.admin.inventoryroutingequipment.InventoryRoutingEquipmentService;
 import cn.rjtech.admin.inventoryspotcheckform.InventorySpotCheckFormService;
 import cn.rjtech.admin.modoc.MoDocService;
-import cn.rjtech.admin.morouting.MoMoroutingService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.admin.spotcheckformd.SpotCheckFormDService;
 import cn.rjtech.admin.spotcheckformdline.SpotcheckformdLineService;
@@ -42,8 +36,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static cn.hutool.core.text.StrPool.COMMA;
-
 /**
  * 始业点检表管理
  * @ClassName: SpotCheckFormMService
@@ -51,7 +43,9 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @date: 2023-06-29 09:16
  */
 public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implements IApprovalService {
+    
 	private final SpotCheckFormM dao=new SpotCheckFormM().dao();
+    
 	@Override
 	protected SpotCheckFormM dao() {
 		return dao;
@@ -61,39 +55,28 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-	@Inject
-	private InventorySpotCheckFormService inventorySpotCheckFormService;
-	@Inject
-	private SpotCheckFormDService spotCheckFormDService;
-	@Inject
-	private SpotcheckformdLineService spotcheckformdLineService;
-
-
-	@Inject
-	private MoMoroutingService moMoroutingService; //工艺路线
-	@Inject
-	private InventoryRoutingService inventoryRoutingService; //存货工艺
-	@Inject
-	private InventoryRoutingConfigService inventoryRoutingConfigService; //工序
-	@Inject
-	private InventoryRoutingEquipmentService inventoryRoutingEquipmentService;
-	@Inject
-	private MoDocService moDocService;
-	@Inject
-	private FormApprovalService formApprovalService;
-	@Inject
+    
+    @Inject
+    private MoDocService moDocService;
+    @Inject
 	private SpotCheckFormService spotCheckFormService;
-	@Inject
-	private SpotCheckFormTableParamService spotCheckFormTableParamService;
-	@Inject
-	private SpotCheckFormParamService spotCheckFormParamService;
-	@Inject
+    @Inject
+    private SpotCheckFormDService spotCheckFormDService;
+    @Inject
+    private SpotCheckFormParamService spotCheckFormParamService;
+    @Inject
+    private SpotcheckformdLineService spotcheckformdLineService;
+    @Inject
 	private SpotCheckFormTableItemService spotCheckFormTableItemService;
+    @Inject
+    private InventorySpotCheckFormService inventorySpotCheckFormService;
+    @Inject
+    private SpotCheckFormTableParamService spotCheckFormTableParamService;
+
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv para) {
 	    return  dbTemplate("spotcheckformm.list",para).paginate(pageNumber,pageSize);
@@ -102,8 +85,6 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 
 	/**
 	 * 保存
-	 * @param spotCheckFormM
-	 * @return
 	 */
 	public Ret save(SpotCheckFormM spotCheckFormM) {
 		if(spotCheckFormM==null || isOk(spotCheckFormM.getIAutoId())) {
@@ -119,8 +100,6 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 
 	/**
 	 * 更新
-	 * @param spotCheckFormM
-	 * @return
 	 */
 	public Ret update(SpotCheckFormM spotCheckFormM) {
 		if(spotCheckFormM==null || notOk(spotCheckFormM.getIAutoId())) {
@@ -141,7 +120,6 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	 * 删除数据后执行的回调
 	 * @param spotCheckFormM 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(SpotCheckFormM spotCheckFormM, Kv kv) {
@@ -515,26 +493,6 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 		SpotCheckFormM m = new SpotCheckFormM();
 		m.setIAutoId(Long.valueOf(id.get()));
 		return successWithData(m.keep("iautoid"));
-	}
-
-	/**
-	 * 提交审批
-	 */
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			SpotCheckFormM prodFormM = findById(iautoid);
-			prodFormM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-			prodFormM.setIUpdateBy(JBoltUserKit.getUserId());
-			prodFormM.setCUpdateName(JBoltUserKit.getUserName());
-			prodFormM.setCAuditName(JBoltUserKit.getUserName());
-			prodFormM.setDUpdateTime(new Date());
-			ValidationUtils.isTrue(prodFormM.update(), JBoltMsg.FAIL);
-			return true;
-		});
-		return SUCCESS;
 	}
 
 	/**
