@@ -184,7 +184,7 @@ public class ProdParamAdminController extends BaseAdminController {
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
 
         // 截取最后一个“.”之前的文件名，作为导入格式名
-        String cformatName = list.get(0);
+        String cformatName = "生产表单参数";
 
         String extension = list.get(1);
 

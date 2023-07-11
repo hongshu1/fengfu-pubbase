@@ -187,12 +187,18 @@ public class ProdParamService extends BaseService<ProdParam> {
 
 			ArrayList<Map> datas = (ArrayList<Map>) records.get("data");
 			// 封装数据
-			for (Map<String, String> map : datas) {
+			for (Map<String, Object> map : datas) {
 				// 分类名称不存在就新增
-				Long iUptimeCategoryId = prodItemService.getOrAddUptimeCategoryByName(map.get("cproditemname"));
+				String cprodparamname = (String)map.get("cprodparamname");
+				String cproditemname = (String)map.get("cproditemname");
+				ValidationUtils.notNull(cprodparamname,"参数名称为空!");
+				ValidationUtils.notNull(cproditemname,"生产项目名称为空!");
+				Long iUptimeCategoryId = prodItemService.getOrAddUptimeCategoryByName(cproditemname);
+
+
 
 				ProdParam prodParam = new ProdParam();
-				prodParam.setCProdParamName(map.get("cprodparamname"));
+				prodParam.setCProdParamName(cprodparamname);
 				prodParam.setIProdItemId(iUptimeCategoryId);
 				prodParam.setIsEnabled(true);
 				// 保存数据

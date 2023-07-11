@@ -140,5 +140,5 @@ SELECT cPsn_Num FROM Bd_Person WHERE cPsn_Name = #para(cdepname)
 #end
 
 #sql("getWarehouseareaById")
-select ISNULL(SUM(iAutoId), 0) FROM Bd_Warehouse_Area WHERE iWarehouseId=#(id) AND isDeleted=0
+select ISNULL(COUNT(iAutoId), 0) qty FROM Bd_Warehouse_Area WHERE iWarehouseId IN (#(id)) AND isDeleted=0
 #end
