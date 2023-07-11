@@ -329,7 +329,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             User user = JBoltUserKit.getUser();
             Date now = new Date();
             sysOtherin.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
-            sysOtherin.setBillNo(JBoltSnowflakeKit.me.nextIdStr());
+            sysOtherin.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
             sysOtherin.setSourceBillDid(sysOtherindetail.getSourceBillDid());
             sysOtherin.setVenCode(sysOtherindetail.getVenCode());
             sysOtherin.setOrganizeCode(getOrgCode());
