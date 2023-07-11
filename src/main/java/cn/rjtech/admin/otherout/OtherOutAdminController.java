@@ -9,10 +9,8 @@ import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.util.BillNoUtils;
-import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 
 import java.util.Date;
@@ -158,16 +156,6 @@ public class OtherOutAdminController extends BaseAdminController {
 	public void submitMulti() {
 		renderJson(service.submitByJBoltTables(getJBoltTables()));
 	}
-
-	/**
-	 * 详情页提审
-	 */
-	public void submit(@Para(value = "iautoid") Long iautoid) {
-		ValidationUtils.validateId(iautoid, "ID");
-
-		renderJson(service.submit(iautoid));
-	}
-
 
 	/**
 	 * 审批

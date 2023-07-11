@@ -22,13 +22,10 @@ import cn.jbolt.core.util.ModelMap;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodeencodingm.BarcodeencodingmService;
 import cn.rjtech.admin.department.DepartmentService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.project.ProjectService;
-import cn.rjtech.admin.projectcard.ProjectCardService;
 import cn.rjtech.admin.proposalattachment.ProposalAttachmentService;
 import cn.rjtech.admin.proposalcategory.ProposalcategoryService;
 import cn.rjtech.admin.proposald.ProposaldService;
-import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.Project;
@@ -47,7 +44,9 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.TableMapping;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -61,8 +60,11 @@ import static cn.hutool.core.text.StrPool.COMMA;
 public class ProposalmService extends BaseService<Proposalm> implements IApprovalService{
 
     private final Proposalm dao = new Proposalm().dao();
+    
     @Inject
     private UserService userService;
+    @Inject
+    private ProjectService projectService;
     @Inject
     private ProposaldService proposaldService;
     @Inject
@@ -75,12 +77,7 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
     private BarcodeencodingmService barcodeencodingmService;
     @Inject
     private ProposalAttachmentService proposalAttachmentService;
-    @Inject
-    private ProjectCardService projectCardService;
-	@Inject
-    private FormApprovalService formApprovalService;
-	@Inject
-	private ProjectService projectService;
+    
     @Override
     protected Proposalm dao() {
         return dao;
@@ -456,29 +453,6 @@ public class ProposalmService extends BaseService<Proposalm> implements IApprova
         }
     }
 
-    public Ret submit(Long iproposalmid, User loginUser) {
-        Proposalm proposalm = findById(iproposalmid);
-        ValidationUtils.notNull(proposalm, "禀议书记录不存在");
-        ValidationUtils.isTrue(proposalm.getIOrgId().equals(getOrgId()), ErrorMsg.ORG_ACCESS_DENIED);
-        ValidationUtils.equals(AuditStatusEnum.NOT_AUDIT.getValue(), proposalm.getIAuditStatus(), "非编辑状态，禁止提交审核");
-
-        tx(() -> {
-        	if(AppConfig.isVerifyProgressEnabled()){
-        		// 根据审批状态
-                Ret ret = formApprovalService.submit(table(), iproposalmid, primaryKey(),"cn.rjtech.admin.proposalm.ProposalmService");
-                ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-                
-                //生成待办和发送邮件
-        	}else{
-        		proposalm.setIAuditStatus(AuditStatusEnum.APPROVED.getValue());
-        		ValidationUtils.isTrue(proposalm.update(), ErrorMsg.UPDATE_FAILED);
-        	}
-            return true;
-        });
-
-        return SUCCESS;
-    }
-	
     /**
      * 处理审批不通过的其他业务操作，如有异常处理返回错误信息
      */

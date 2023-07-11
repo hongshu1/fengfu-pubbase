@@ -11,10 +11,11 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.OtherOut;
+import cn.rjtech.model.momdata.OtherOutDetail;
+import cn.rjtech.model.momdata.Person;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -43,8 +44,6 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 	@Inject
 	private PersonService personservice;
 	@Inject
-	private FormApprovalService formApprovalService;
-	@Inject
 	private OtherOutDetailService otherOutDetailService;
 
 	@Override
@@ -52,13 +51,8 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 		return dao;
 	}
 
-
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param kv
-	 * @return
 	 */
 	public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
 		return dbTemplate("otherdeliverylist.paginateAdminDatas",kv).paginate(pageNumber, pageSize);
@@ -66,18 +60,13 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 
 	/**
 	 * 其他出库单列表 明细
-	 * @param kv
-	 * @return
 	 */
 	public List<Record> getOtherOutLines(Kv kv){
 		return dbTemplate("otherdeliverylist.getOtherOutLines",kv).find();
 	}
 
-
 	/**
 	 * 保存
-	 * @param otherOut
-	 * @return
 	 */
 	public Ret save(OtherOut otherOut) {
 		if(otherOut==null || isOk(otherOut.getAutoID())) {
@@ -94,8 +83,6 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 
 	/**
 	 * 更新
-	 * @param otherOut
-	 * @return
 	 */
 	public Ret update(OtherOut otherOut) {
 		if(otherOut==null || notOk(otherOut.getAutoID())) {
@@ -115,8 +102,6 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		tx(() -> {

@@ -154,7 +154,7 @@
 			var ccode = rowdata.iautoid;
 			var istatus = rowdata.istatus;
 			var cdocno = rowdata.cdocno;
-			if (istatus != 2){
+			if (istatus != 3){
 				LayerMsgBox.error("第"+k+"行["+cdocno+"]异常单,请审核再打印！！！",3000);
 				return false;
 			}

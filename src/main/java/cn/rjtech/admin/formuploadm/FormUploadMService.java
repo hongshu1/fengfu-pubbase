@@ -3,7 +3,6 @@ package cn.rjtech.admin.formuploadm;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -11,11 +10,12 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.formuploadcategory.FormUploadCategoryService;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.model.momdata.FormUploadD;
 import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.service.approval.IApprovalService;
@@ -29,8 +29,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.*;
-
-import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 记录上传
@@ -59,8 +57,6 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
     private WorkregionmService workregionmService;
     @Inject
     private FormUploadCategoryService formUploadCategoryService;
-    @Inject
-    private FormApprovalService formApprovalService;
 
     /**
      * 后台管理数据查询
@@ -76,6 +72,12 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
             }
             if (ObjUtil.isNotNull(formUploadCategoryService.findById(record.getStr("icategoryid")))) {
                 record.set("icategoryid", formUploadCategoryService.findById(record.getStr("icategoryid")).getCCategoryName());
+            }
+            // 审核中，并且单据审批方式为审批流
+            if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), record.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), record.getInt(IAUDITWAY))) {
+                record.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(record.getLong("iautoid"), 5));
+            }else {
+                record.put("approvalusers","");
             }
         }
         return paginate;

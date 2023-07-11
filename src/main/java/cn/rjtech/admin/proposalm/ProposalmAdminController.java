@@ -545,16 +545,6 @@ public class ProposalmAdminController extends BaseAdminController {
     }
 
     /**
-     * 提交审核
-     */
-    @CheckPermission(PermissionKey.PROPOSALM_SUBMIT)
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "禀议书ID");
-
-        renderJson(service.submit(iautoid, JBoltUserKit.getUser()));
-    }
-
-    /**
      * 撤销提审
      */
     @CheckPermission(PermissionKey.PROPOSALM_WITHDRAW)

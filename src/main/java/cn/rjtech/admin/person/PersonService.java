@@ -144,7 +144,7 @@ public class PersonService extends BaseService<Person> {
         ValidationUtils.notNull(dbPerson, JBoltMsg.DATA_NOT_EXIST);
         ValidationUtils.isTrue(!dbPerson.getIsDeleted(), "该记录已被删除");
         ValidationUtils.equals(dbPerson.getISource(), SourceEnum.MES.getValue(), "U8同步过来的记录，禁止删除操作！");
-        
+        DataPermissionKit.validateAccess(dbPerson.getCdeptNum());
         tx(() -> {
 
             dbPerson.setIsDeleted(true);
@@ -335,6 +335,18 @@ public class PersonService extends BaseService<Person> {
                     return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
                 }
             }
+            //数据权限校验
+            List<String> cdeptnumList = new ArrayList<String>();
+            for (Person person : rows) {
+            	String cdeptnum = departmentService.getCdepCodeByName(person.getCdeptNum());
+            	if(JBoltStringUtil.isBlank(cdeptnum)) continue;
+            	else cdeptnumList.add(cdeptnum);
+			}
+            if(CollUtil.isNotEmpty(cdeptnumList)) {
+            	for (String cdeptnum : cdeptnumList) {
+            		DataPermissionKit.validateAccess(cdeptnum);
+				}
+            }
             //校验数据的有效性
             constructPersonModelCheckDatasEffectiveColumnByExcelDatas(rows, errorMsg, startRow);
             ValidationUtils.isTrue(errorMsg.length() == 0, errorMsg.toString());
@@ -364,6 +376,8 @@ public class PersonService extends BaseService<Person> {
             String cpsnName = excelRecord.getStr("cpsn_name");
             if (JBoltStringUtil.isBlank(cpsnNum)) {
                 errorMsg.append("第").append(startRow).append("行,[人员编码]为空,请检查!<br/>");
+            }else if(isExistsByPersonCode(cpsnNum)){
+            	errorMsg.append("第").append(startRow).append("行,[人员编码]为已存在,请检查!<br/>");
             }
             if (JBoltStringUtil.isBlank(cpsnName)) {
                 errorMsg.append("第").append(startRow).append("行,[姓名]为空,请检查!<br/>");
@@ -406,7 +420,7 @@ public class PersonService extends BaseService<Person> {
             person.setCPsnMobilePhone(excelRecord.getStr("cpsnmobilephone"));
             person.setJobNumber(excelRecord.getStr("jobnumber"));
             person.setCEcardNo(excelRecord.getStr("cecardno"));
-            person.setCdeptNum(departmentService.getCdepName(excelRecord.getStr("cdeptnum")));
+            person.setCdeptNum(departmentService.getCdepCodeByName(excelRecord.getCdeptNum()));
             Record remploystateDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.job_type.name());
             String remploystate = excelRecord.getStr("remploystate");
             remploystate = JBoltStringUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
@@ -419,7 +433,7 @@ public class PersonService extends BaseService<Person> {
             }
             person.setDBirthDate(excelRecord.getStr("dbirthdate"));
             person.setCPsnEmail(excelRecord.getStr("cpsnemail"));
-            String isenabled = excelRecord.getStr("isenabled");
+            String isenabled = JBoltStringUtil.isBlank(excelRecord.getStr("isenabled")) ? "1" : excelRecord.getStr("isenabled");
             person.setIsEnabled(Objects.equals(isenabled, "1"));
             person.setCMemo(excelRecord.getStr("cmemo"));
             person.setIOrgId(getOrgId());

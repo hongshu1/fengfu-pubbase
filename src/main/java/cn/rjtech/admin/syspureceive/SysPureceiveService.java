@@ -13,7 +13,6 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.admin.syspuinstore.SysPuinstoreService;
@@ -51,8 +50,6 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     private VendorService vendorservice;
     @Inject
     private WarehouseService warehouseservice;
-    @Inject
-    private FormApprovalService formApprovalService;
     @Inject
     private SysPuinstoreService syspuinstoreservice;
     @Inject
@@ -630,33 +627,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
      * @return true, 更新成功
      */
     private boolean update(String autoId, String beforeState, String afterState) {
-        return update("UPDATE T_Sys_PUReceive SET iAuditStatus = ? WHERE autoid = ? AND iAuditStatus = ? ", afterState, autoId,
-                beforeState) > 0;
-    }
-
-    /**
-     * 提审批
-     */
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.syspureceive.SysPureceiveService");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            return true;
-        });
-        return SUCCESS;
-    }
-
-    /**
-     * 撤回提审批流
-     */
-    public Ret withdraw(Long iAutoId) {
-        tx(() -> {
-
-            return true;
-        });
-        return SUCCESS;
+        return update("UPDATE T_Sys_PUReceive SET iAuditStatus = ? WHERE autoid = ? AND iAuditStatus = ? ", afterState, autoId, beforeState) > 0;
     }
 
     /**

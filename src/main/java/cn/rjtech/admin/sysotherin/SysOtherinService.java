@@ -14,7 +14,6 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.vouchtypedic.VouchTypeDicService;
 import cn.rjtech.config.AppConfig;
@@ -47,11 +46,13 @@ import java.util.regex.Pattern;
 
 /**
  * 其它入库单
+ *
  * @ClassName: SysOtherinService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-05 17:57
  */
 public class SysOtherinService extends BaseService<SysOtherin> implements IApprovalService {
+    
     private final SysOtherin dao = new SysOtherin().dao();
 
     @Override
@@ -60,16 +61,11 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     }
 
     @Inject
+    private PersonService personservice;
+    @Inject
     private VouchTypeDicService vouchtypedicservice;
-
     @Inject
     private SysOtherindetailService sysotherindetailservice;
-
-    @Inject
-    private FormApprovalService formApprovalService;
-
-    @Inject
-    private PersonService personservice;
 
     @Override
     protected int systemLogTargetType() {
@@ -78,21 +74,16 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     /**
      * 后台管理数据查询
+     *
      * @param pageNumber 第几页
      * @param pageSize   每页几条数据
-     * @return
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        // 查业务类型
-        Page<Record> paginate = dbTemplate("sysotherin.recpor", kv).paginate(pageNumber, pageSize);
-        return paginate;
+        return dbTemplate("sysotherin.recpor", kv).paginate(pageNumber, pageSize);
     }
 
     /**
      * 保存
-     *
-     * @param sysOtherin
-     * @return
      */
     public Ret save(SysOtherin sysOtherin) {
         if (sysOtherin == null || isOk(sysOtherin.getAutoID())) {
@@ -104,8 +95,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     /**
      * 更新
-     * @param sysOtherin
-     * @return
      */
     public Ret update(SysOtherin sysOtherin) {
         if (sysOtherin == null || notOk(sysOtherin.getAutoID())) {
@@ -122,9 +111,9 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     /**
      * 删除数据后执行的回调
+     *
      * @param sysOtherin 要删除的model
      * @param kv         携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(SysOtherin sysOtherin, Kv kv) {
@@ -136,7 +125,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      *
      * @param sysOtherin model
      * @param kv         携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(SysOtherin sysOtherin, Kv kv) {
@@ -146,9 +134,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     /**
      * 删除
-     *
-     * @param id
-     * @return
      */
     public Ret delete(Long id) {
         tx(() -> {
@@ -193,9 +178,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     /**
      * 执行JBoltTable表格整体提交
-     *
-     * @param jBoltTable
-     * @return
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
 
@@ -494,22 +476,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             dept = person.getCOrgCode();
         }
         return dept;
-    }
-
-    /**
-     * 提审
-     */
-    public Ret submit(Long iautoid) {
-        tx(() -> {
-
-            Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"");
-            ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-            // 更新状态
-
-            return true;
-        });
-        return SUCCESS;
     }
 
     /**
