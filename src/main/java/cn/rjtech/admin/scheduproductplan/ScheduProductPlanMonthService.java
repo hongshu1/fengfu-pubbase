@@ -2263,6 +2263,12 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                 moDoc.setIInventoryRouting(iInventoryRoutingId);
                 moDoc.setCRoutingName(cRoutingName);
                 moDoc.setCVersion(cVersion);
+                moDoc.setICreateBy(userId);
+                moDoc.setDCreateTime(nowDate);
+                moDoc.setCCreateName(userName);
+                moDoc.setIUpdateBy(userId);
+                moDoc.setDUpdateTime(nowDate);
+                moDoc.setCUpdateName(userName);
                 moDocList.add(moDoc);
 
                 //工艺路线
