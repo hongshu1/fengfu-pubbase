@@ -49,11 +49,13 @@ public class InStockDefectAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.INSTOCKDEFECT_ADD)
     public void add() {
         render("add.html");
     }
 
 
+    @CheckPermission(PermissionKey.INSTOCKDEFECT_EDIT)
     public void add2() {
         InStockDefect inStockDefect = service.findById(get("iautoid"));
         Record inStockQcFormM = service.getinStockQcFormMList(getLong("iinstockqcformmid"));
@@ -81,6 +83,7 @@ public class InStockDefectAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.INSTOCKDEFECT_EDIT)
     public void edit() {
         InStockDefect inStockDefect = service.findById(getLong(0));
         if (inStockDefect == null) {
@@ -108,6 +111,7 @@ public class InStockDefectAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.INSTOCKDEFECT_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -115,6 +119,7 @@ public class InStockDefectAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.INSTOCKDEFECT_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -141,6 +146,7 @@ public class InStockDefectAdminController extends BaseAdminController {
     /**
      * 生成二维码
      */
+    @CheckPermission(PermissionKey.INSTOCKDEFECT_PRINT)
     public void QRCode() {
         Kv kv = new Kv();
         kv.setIfNotNull("ids", get("ids"));

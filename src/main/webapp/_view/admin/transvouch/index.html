@@ -39,9 +39,7 @@
 <tr data-id="${data.autoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 	<td>
-	{@if data.iauditstatus != '0'}
 		<a class="jbolt_table_editbtn" href="admin/transvouch/edit/${data.autoid}?&readonly=readonly"  data-fs="true" data-handler="refreshJBoltTable" data-title="调拨单列表详情">查看</i></a>
-	{@/if}
 	{@if data.iauditstatus == '0'}
 	<a href="admin/transvouch/deleteByIds?ids=${data.autoid}" data-ajaxbtn data-loading="执行中 "
                            tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
@@ -54,6 +52,7 @@
 <td>${data.auditstate}</td>
 <td>${data.typename}</td>
 <td>${data.billno}</td>
+<td>${data.u8billno}</td>
 <td>${data.billdate}</td>
 <td>${data.ordname}</td>
 <td>${data.iwhcode}</td>
@@ -107,8 +106,9 @@ data-row-dblclick-active="true"
 	<th data-width="60">序号</th>
 	<th data-width="150">操作</th>
 	<th data-width="100">状态</th>
-	<th data-min-width="150" data-column="SourceBillType">调拨类别</th>
+	<th data-min-width="150" data-column="SourceBillType">来源类型</th>
 	<th data-width="150" data-column="BillNo">调拨单号</th>
+	<th data-width="150" data-column="U8BillNo">ERP单据号</th>
 	<th data-width="150" data-column="BillDate">日期</th>
 	<th data-width="150" data-column="ORdCode">出库类别</th>
 	<th data-width="150" data-column="IPosCode">转入仓库</th>

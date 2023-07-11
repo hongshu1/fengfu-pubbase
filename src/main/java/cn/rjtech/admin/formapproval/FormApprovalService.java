@@ -294,6 +294,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
         String className = approvalM.getStr("className");
         String primaryKeyName = approvalM.getStr("primaryKeyName");
         Boolean isSkippedOnDuplicate = approvalM.getBoolean("isSkippedOnDuplicate");
+        String originalUrl = approvalM.getStr("originalUrl");
 
         Form form = formService.findByCformSn(formSn);
 
@@ -329,6 +330,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
             formApproval.setICreateBy(user.getId());
             formApproval.setCCreateName(user.getName());
             formApproval.setDCreateTime(new Date());
+            formApproval.setIApprovalType(2);
             formApproval.save();
 
             Long formApprovalIAutoId = formApproval.getIAutoId();
@@ -413,7 +415,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
             return true;
         });
-        return SUCCESS;
+        return SUCCESS.set("originalUrl",originalUrl);
     }
 
 
@@ -494,6 +496,7 @@ public class FormApprovalService extends BaseService<FormApproval> {
 
                     // copyObj
                     FormApproval formApproval = copySetObj(approvalM, iFormId, formAutoId, user);
+                    formApproval.setIApprovalType(1);
                     formApproval.save();
 
                     Long approvalIautoId = formApproval.getIAutoId();

@@ -67,6 +67,7 @@ public class QcInspectionAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.QCINSPECTION_ADD)
     public void add() {
         render("add.html");
     }
@@ -74,6 +75,7 @@ public class QcInspectionAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.QCINSPECTION_EDIT)
     public void edit() {
         QcInspection qcInspection = service.findById(getLong(0));
         if (qcInspection == null) {
@@ -84,6 +86,7 @@ public class QcInspectionAdminController extends BaseAdminController {
         render("edit.html");
     }
 
+    @CheckPermission(PermissionKey.QCINSPECTION_EDIT)
     public void edit2() {
         set("iautoid", get("iautoid"));
         set("type", get("type"));
@@ -128,6 +131,7 @@ public class QcInspectionAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.QCINSPECTION_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -135,6 +139,7 @@ public class QcInspectionAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.QCINSPECTION_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -164,7 +169,7 @@ public class QcInspectionAdminController extends BaseAdminController {
         renderJsonData(service.DepartmentList(kv));
 
     }
-
+    @CheckPermission(PermissionKey.QCINSPECTION_ADD)
     public void updateEditTable() {
         renderJson(service.updateEditTable(getKv()));
     }

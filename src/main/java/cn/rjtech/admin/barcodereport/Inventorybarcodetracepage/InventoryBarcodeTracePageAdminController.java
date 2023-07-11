@@ -1,10 +1,10 @@
 package cn.rjtech.admin.barcodereport.Inventorybarcodetracepage;
-import cn.hutool.core.date.DateUtil;
 
 import cn.jbolt._admin.hiprint.HiprintTplService;
 
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -14,6 +14,7 @@ import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.util.ValidationUtils;
 
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
@@ -25,11 +26,11 @@ import java.util.*;
 
 /**
  * 物料现品票汇总管理 Controller
- *
  * @author Kephon
  */
 @CheckPermission(PermissionKey.INVENTORY_BARCODE_TRACEPAGE)
 @UnCheckIfSystemAdmin
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/barcodeReport/InventoryBarcodeTracePage", viewPath = "/_view/admin/barcodereport/inventorybarcodetracepage")
 public class InventoryBarcodeTracePageAdminController extends BaseAdminController {
 
@@ -81,6 +82,7 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
     /**
      * 获取打印数据
      */
+    @CheckPermission(PermissionKey.INVENTORY_BARCODE_TRACEPAGE_PRINT)
     public void PrintData() {
         Kv kv = getKv();
         String ids = kv.getStr("ids");
@@ -104,7 +106,7 @@ public class InventoryBarcodeTracePageAdminController extends BaseAdminControlle
     /***
      * 勾选导出
      */
-    @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.INVENTORY_BARCODE_TRACEPAGE_EXPORT)
     public void downloadChecked() throws Exception{
         Kv kv = getKv();
         String ids = kv.getStr("ids");
