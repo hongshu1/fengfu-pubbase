@@ -49,10 +49,10 @@ WHERE
   #end
 
 #if(startdate)
-    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) >='#(startdate)'
+    and CONVERT(VARCHAR(10),t2.dQcTime,23) >='#(startdate)'
 #end
 #if(enddate)
-    and CONVERT(VARCHAR(10),t2.dUpdateTime,23) <='#(enddate)'
+    and CONVERT(VARCHAR(10),t2.dQcTime,23) <='#(enddate)'
 #end
 order by t2.dQcTime desc
 #end

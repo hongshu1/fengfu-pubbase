@@ -1222,6 +1222,10 @@ public class PermissionKey {
 	 */
 	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
 	/**
+	 * 收发类型
+	 */
+	public static final String STYLE = "style";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -3669,4 +3673,28 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String PRODFORMM_ADD_SUBMIT = "prodformm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String STYLE_ADD = "style_add";
+	/**
+	 * 删除
+	 */
+	public static final String STYLE_DELETE = "style_delete";
+	/**
+	 * 新增
+	 */
+	public static final String RCVDOCDEFECT_ADD = "rcvdocdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String RCVDOCDEFECT_EDIT = "rcvdocdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String RCVDOCDEFECT_DELETE = "rcvdocdefect_delete";
+	/**
+	 * 二维码
+	 */
+	public static final String RCVDOCDEFECT_QR = "rcvdocdefect_qr";
 }
