@@ -122,6 +122,7 @@
         </div>
         #end
 
+        #permission(PermissionKey.WAREHOUSE_POSITION_PRINT)
         <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
           <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
@@ -133,8 +134,9 @@
             <button class="btn dropdown-item" onclick="warehousePositionPrint('page')"><i class="fa fa-download"></i> 打印当前页
             </button>
           </div>
-
         </div>
+        #end
+
       </div>
 
 

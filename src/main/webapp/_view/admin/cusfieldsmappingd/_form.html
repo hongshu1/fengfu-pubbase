@@ -76,7 +76,7 @@
         console.log('isEncoded: ' + isEncoded);
         
         // 定制 || 非编码字段
-        if (parseInt(iruletype) > 1 || isEncoded === '0') {
+        if (parseInt(iruletype) > 1 || isEncoded === 'false') {
             ajaxSubmitForm('#CusFieldsMappingD_Form', function (ret) {
                 parent.refreshPjaxContainer();
                 location.href = '/admin/cusfieldsmappingd/edit/' + ret.data.iautoid + '-_jb_rqtype_dialog';

@@ -71,22 +71,32 @@
         </textarea>
 
     <div class="jbolt_table_toolbar" id="Container_toolbar_#(pageId)">
-      <div class="col-sm-auto" role="group" aria-label="btn-group">
+      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        #permission(PermissionKey.CONTAINER_ADD)
         <button data-dialogbtn data-area="80%,95%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
                 data-title="新增仓库建模-容器档案" data-url="admin/container/add" class="btn btn-outline-primary btn-sm"><i
             class="fa fa-plus"></i> 新增
         </button>
+        #end
+
+        #permission(PermissionKey.CONTAINER_EDIT)
         <button data-dialogbtn data-area="80%,95%" data-handler="refreshJBoltTable" id="toolbar_editBtn_#(pageId)"
-                data-title="编辑仓库建模-容器档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/container/edit/"
-                class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i> 编辑
+                data-title="修改仓库建模-容器档案" data-check-handler="jboltTableGetCheckedId" data-url="admin/container/edit/"
+                class="btn btn-outline-primary btn-sm"><i class="fa fa-edit"></i> 修改
         </button>
+        #end
+
+        #permission(PermissionKey.CONTAINER_DELETE)
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/container/deleteByIds?ids=" data-confirm="确定删除选中数据？"
                 class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 删除
         </button>
+        #end
+
         <button onclick="jboltTableRefresh(this)" class="btn btn-outline-primary btn-sm"><i class="fa fa-refresh"></i>刷新
         </button>
 
+        #permission(PermissionKey.CONTAINER_IMPORT)
         <div class="btn-group dropdown">
           <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入
@@ -107,7 +117,9 @@
             </div>
           </div>
         </div>
+        #end
 
+        #permission(PermissionKey.CONTAINER_EXPORT)
         <div class="btn-group dropdown" role="group" aria-label="btn-group">
           <div class="btn-group dropdown ">
             <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton"
@@ -123,7 +135,9 @@
             </div>
           </div>
         </div>
+        #end
 
+        #permission(PermissionKey.CONTAINER_PRINT)
         <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
           <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print" data-toggle="dropdown"
                   aria-haspopup="true" aria-expanded="false"> 打印
@@ -136,17 +150,22 @@
             </button>
           </div>
         </div>
+        #end
 
-        <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+
+          #permission(PermissionKey.CONTAINER_RK)
           <button data-dialogbtn data-area="60%,85%" data-handler="refreshJBoltTable" id="toolbar_Rk_#(pageId)"
                   data-title="入库" data-url="admin/container/rk/" class="btn btn-outline-primary"><i
               class="fa fa-edit"></i> 入库
           </button>
+          #end
+
+          #permission(PermissionKey.CONTAINER_CK)
           <button data-dialogbtn data-area="60%,85%" data-handler="refreshJBoltTable" id="toolbar_Ck_#(pageId)"
                   data-title="出库" data-url="admin/container/ck/" class="btn btn-outline-primary"><i
               class="fa fa-edit"></i> 出库
           </button>
-        </div>
+          #end
       </div>
     </div>
 

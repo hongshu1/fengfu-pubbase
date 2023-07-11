@@ -10,7 +10,10 @@
             <div class="form-group row">
                 <div class="col">
                     <label class="col-sm-1 col-form-label"></label>
-                    <button onclick="getSubmitThisForm()" class="btn btn-success btn-sm" data-jbolt-table-id="jbolt_Table_"><i class="fa fa-refresh"></i> 保存</button>
+                    #if(isView??0 !=1)
+                        <button onclick="getSubmitThisForm()" class="btn btn-success btn-sm" data-jbolt-table-id="jbolt_Table_"><i class="fa fa-refresh"></i> 保存</button>
+                    #end
+                    <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-window-maximize"></i> 关闭</button>
 <!--                    <button onclick="submitThisForm()" class="btn btn-success btn-sm" data-jbolt-table-id="jbolt_Table_"><i class="fa fa-refresh"></i> 保存</button>-->
                 </div>
             </div>
@@ -123,6 +126,7 @@
 #include("_codingruled_js.html")
 #include("/_view/_admin/common/_formjs.html",formId="CodingRuleM_Form")
 <script>
+    #if(isView??0 !=1)
     function getSubmitThisForm() {
         var formData = formToJson('#CodingRuleM_Form');
         // 表单名称
@@ -146,6 +150,8 @@
         }
         jboltTableSubmit("#jbolt_table_coding_#(pageId)");
     }
+    #end
+
 
     function checkData(datas) {
 

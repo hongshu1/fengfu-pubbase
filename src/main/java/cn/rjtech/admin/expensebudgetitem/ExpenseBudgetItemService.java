@@ -9,6 +9,7 @@ import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.kit.U8DataSourceKit;
 import cn.jbolt.core.model.User;
+import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
@@ -212,16 +213,36 @@ public class ExpenseBudgetItemService extends BaseService<ExpenseBudgetItem> {
 		delete(deleteSql().eq("cbudgetno", ccode));
 	}
 
-	public void constructExportDifferencesManagementDatas(Kv para,List<JBoltExcelPositionData> excelPositionDatas) {
+	public void constructExportDifferencesManagementDatas(Kv para,List<JBoltExcelPositionData> excelPositionDatas,List<JBoltExcelMerge> mergeList) {
 		List<Record> list = differencesManagementDatas(para);
 		if(CollUtil.isEmpty(list)) return;
 		int startRow = 2;
+		String initHighestsubjectname = list.get(0).getStr("chighestsubjectname");
+		int firstRowHighestsubjectname = startRow;
+		String initLowestsubjectname = list.get(0).getStr("clowestsubjectname");
+		int firstRowLowestsubjectname = startRow;
 		for (int i=0;i<list.size(); i++) {
 			Record record = list.get(i);
 			int nowDatasRow = startRow + i;
 			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 1, i+1));
-			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 2, record.getStr("chighestsubjectname")));
-			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 3, record.getStr("clowestsubjectname")));
+			String chighestsubjectname = record.getStr("chighestsubjectname");
+			//excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 2, chighestsubjectname));
+			if(!initHighestsubjectname.equals(chighestsubjectname)){
+				mergeList.add(JBoltExcelMerge.create(firstRowHighestsubjectname, nowDatasRow-1, 2, 2, chighestsubjectname));
+				firstRowHighestsubjectname = nowDatasRow;
+				initHighestsubjectname = chighestsubjectname;
+			}
+			//excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 3, record.getStr("clowestsubjectname")));
+			String clowestsubjectname = record.getStr("clowestsubjectname");
+			if(!initLowestsubjectname.equals(clowestsubjectname)){
+				mergeList.add(JBoltExcelMerge.create(firstRowLowestsubjectname, nowDatasRow-1, 3, 3, clowestsubjectname));
+				firstRowLowestsubjectname = nowDatasRow;
+				initLowestsubjectname = clowestsubjectname;
+			}
+			if(i == list.size() -1){
+				mergeList.add(JBoltExcelMerge.create(firstRowHighestsubjectname, nowDatasRow, 2, 2, chighestsubjectname));
+				mergeList.add(JBoltExcelMerge.create(firstRowLowestsubjectname, nowDatasRow, 3, 3, clowestsubjectname));
+			}
 			String ibudgettype = DiffReportBudgetTypeEnum.toEnum(record.getInt("ibudgettype")).getText();
 			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 4, ibudgettype));
 			excelPositionDatas.add(JBoltExcelPositionData.create(nowDatasRow, 5, Constants.kFormat(record.getBigDecimal("imonthamount1"))));

@@ -1,5 +1,5 @@
 #sql("paginateAdminDatas")
-SELECT vc.*, VRR.cRdName vrrname, VRS.cRdName vrsname, dic.cvtchname, dic.cbtchname
+SELECT vc.*, VRR.cRdName, VRS.cRdName as vrsname, dic.cvtchname, dic.cbtchname
 FROM Bd_VouchRdContrapose vc
 LEFT JOIN bd_rd_Style VRR ON VRR.cRdCode = vc.cVRRCode AND VRR.bRdFlag = 1
 AND VRR.isDeleted = '0' AND VRR.iorgid = #para(iorgid) ###-- 1 收类型

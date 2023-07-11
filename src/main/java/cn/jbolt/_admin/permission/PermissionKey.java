@@ -596,7 +596,7 @@ public class PermissionKey {
 	/**
 	 * 消息模板
 	 */
-	public static final String SYS_MASSSAGE_TEMPLATE = "sys_masssage_template";
+	public static final String MESSAGETPL = "messagetpl";
 	/**
 	 * 备份设置
 	 */
@@ -3118,7 +3118,7 @@ public class PermissionKey {
 	 */
 	public static final String BOMMASTER_EXPORT = "bommaster_export";
 	/**
-	 * 导入
+	 * 手工导入
 	 */
 	public static final String BOMMASTER_IMPORT = "bommaster_import";
 	/**
@@ -3753,4 +3753,44 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String SPOTCHECKFORMM_ADD_SUBMIT = "spotcheckformm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String CODINGRULEM_ADD = "codingrulem_add";
+	/**
+	 * 删除
+	 */
+	public static final String CODINGRULEM_DEL = "codingrulem_del";
+	/**
+	 * 根目录展示开关
+	 */
+	public static final String BOMMASTER_VERSION_VIEW = "bommaster_version_view";
+	/**
+	 * 新增
+	 */
+	public static final String FORMEXTENDFIELDS_ADD = "formextendfields_add";
+	/**
+	 * 保存
+	 */
+	public static final String FORMEXTENDFIELDS_SAVE = "formextendfields_save";
+	/**
+	 * 新增
+	 */
+	public static final String PURECEIVE_ADD = "pureceive_add";
+	/**
+	 * 修改
+	 */
+	public static final String PURECEIVE_EDIT = "pureceive_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PURECEIVE_DELETE = "pureceive_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERSUM_EXPORT = "cusordersum_export";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERRESULT_EXPORT = "cusorderresult_export";
 }
