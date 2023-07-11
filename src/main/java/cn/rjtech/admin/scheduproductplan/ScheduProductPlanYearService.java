@@ -3,22 +3,16 @@ package cn.rjtech.admin.scheduproductplan;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.apsannualpland.ApsAnnualplandService;
 import cn.rjtech.admin.apsannualplandqty.ApsAnnualplandQtyService;
 import cn.rjtech.admin.calendar.CalendarService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
-import cn.rjtech.enums.MonthOrderStatusEnum;
-import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.ApsAnnualpland;
 import cn.rjtech.model.momdata.ApsAnnualplandQty;
 import cn.rjtech.model.momdata.ApsAnnualplanm;
-import cn.rjtech.model.momdata.ApsWeekscheduledQty;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
@@ -56,27 +50,20 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
     protected ApsAnnualplanm dao() {
         return dao;
     }
+    
     @Inject
     private CalendarService calendarService;
     @Inject
-    private DateQueryInvTotalFuncService dateQueryInvTotalFuncService;
-    @Inject
     private MomDataFuncService momDataFuncService;
-    @Inject
-    private FormApprovalService formApprovalService;
-
     @Inject
     private ApsAnnualplandService apsAnnualplandService;
     @Inject
     private ApsAnnualplandQtyService apsAnnualplandQtyService;
-
+    @Inject
+    private DateQueryInvTotalFuncService dateQueryInvTotalFuncService;
 
     /**
      * 后台管理分页查询
-     * @param pageNumber
-     * @param pageSize
-     * @param keywords
-     * @return
      */
     public Page<ApsAnnualplanm> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
         return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");

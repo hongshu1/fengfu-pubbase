@@ -1326,7 +1326,7 @@ public class BomMService extends BaseService<BomM> {
 				continue;
 			}
 			// 父级id
-			BomD parentBom = getParentBom(perCode, codeBomCompareMap);
+			BomD parentBom = getParentBom(bomMasterInvId, perCode, codeBomCompareMap);
 			if (ObjectUtil.isNull(parentBom)){
 				continue;
 			}
@@ -1343,16 +1343,27 @@ public class BomMService extends BaseService<BomM> {
 		return parentInvMap;
 	}
 	
-	private BomD getParentBom(String perCode, Map<String, BomD> codeBomCompareMap){
+	private BomD getParentBom(Long bomMasterInvId, String perCode, Map<String, BomD> codeBomCompareMap){
 		if (!codeBomCompareMap.containsKey(perCode)){
 			return null;
 		}
+		
 		BomD parentBom = codeBomCompareMap.get(perCode);
-		if (ObjectUtil.isNull(parentBom.getIAutoId())){
-			String newPerCode = getPerCode(perCode);
-			return getParentBom(newPerCode, codeBomCompareMap);
+		String cInvName = parentBom.getCInvName();
+		// 不为虚拟件直接返回
+		if ((StrUtil.isNotBlank(cInvName) && !cInvName.contains("虚拟件_")) || ObjUtil.isNotNull(parentBom.getIInventoryId())){
+			return parentBom;
 		}
-		return parentBom;
+		// 虚拟件需要一层一层往上找
+		String newPerCode = getPerCode(perCode);
+		if (StrUtil.isBlank(newPerCode) && ((StrUtil.isNotBlank(cInvName) && cInvName.contains("虚拟件_")))){
+			BomD bomD = new BomD();
+			bomD.setIInventoryId(bomMasterInvId);
+			bomD.setICodeLevel(perCode);
+			bomD.setIAutoId(parentBom.getIAutoId());
+			return bomD;
+		}
+		return getParentBom(bomMasterInvId, newPerCode, codeBomCompareMap);
 	}
 	
 	private void addParentInvMap(Map<Long, List<BomD>> parentInvMap, Long invId, BomD sonBomD){
@@ -1361,17 +1372,23 @@ public class BomMService extends BaseService<BomM> {
 		if (ObjectUtil.isNull(sonBomD)){
 			return;
 		}
+		Inventory inventory = inventoryService.findById(invId);
+		String format = String.format("编码栏【%s】，在系统中未找到编码【%s】的母件", sonBomD.getICodeLevel(), inventory.getCInvCode());
+		ValidationUtils.isTrue(ObjUtil.isNotNull(sonBomD.getIPid()), format);
+		Long pid = sonBomD.getIPid();
+		String cInvCode = inventory.getCInvCode();
+		
 		boolean flag = false;
 		for (BomD bomD : bomDList){
 			Long inventoryId = bomD.getIInventoryId();
-			if (ObjectUtil.isNull(inventoryId)){
+			// 同一个母件存在相同的子件，无需校验重量及基本用量
+			if (ObjectUtil.isNull(inventoryId) || pid.equals(bomD.getIPid())){
 				continue;
 			}
 			if (inventoryId.equals(sonBomD.getIInventoryId())){
 				flag = true;
-				Inventory inventory = inventoryService.findById(invId);
 //				checkQtyOrWeight(bomD, inventory.getCInvCode());
-//				checkQtyOrWeight(inventoryId, inventoryId, bomD.getCInvLev(), inventory.getCInvCode(), bomD.getIBaseQty(), bomD.getIWeight(), sonBomD.getIBaseQty(), sonBomD.getIWeight());
+				checkQtyOrWeight(inventoryId, inventoryId, bomD.getCInvLev(), inventory.getCInvCode(), bomD.getIBaseQty(), bomD.getIWeight(), sonBomD.getIBaseQty(), sonBomD.getIWeight());
 			}
 		}
 		if (flag){

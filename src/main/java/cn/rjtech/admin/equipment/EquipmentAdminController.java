@@ -28,7 +28,6 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-21 11:32
  */
-@UnCheckIfSystemAdmin
 @CheckPermission(PermissionKey.EQUIPMENT)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/equipment", viewPath = "/_view/admin/equipment")

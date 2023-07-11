@@ -12,7 +12,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
@@ -44,55 +43,42 @@ import java.util.Objects;
  */
 public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements IApprovalService {
 
-	@Inject
-	private GoodsPaymentDService goodsPaymentDservice;
+    private final GoodsPaymentM dao = new GoodsPaymentM().dao();
 
-	private final GoodsPaymentM dao=new GoodsPaymentM().dao();
-	@Override
-	protected GoodsPaymentM dao() {
-		return dao;
-	}
+    @Override
+    protected GoodsPaymentM dao() {
+        return dao;
+    }
 
 	@Override
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-	@Inject
-	private FormApprovalService formApprovalService;
-
-	@Inject
-	private GoodsPaymentDService goodspaymentdservice;
-
-	@Inject
+    @Inject
+    private InventoryService inventoryservice;
+    @Inject
 	private WeekOrderDService weekorderdservice;
-
-	@Inject
+    @Inject
 	private WeekOrderMService weekordermservice;
-	@Inject
+    @Inject
+    private GoodsPaymentDService goodspaymentdservice;
+    @Inject
+    private GoodsPaymentDService goodsPaymentDservice;
+    @Inject
 	private CusFieldsMappingDService cusFieldsMappingdService;
-
-	@Inject
-	private InventoryService inventoryservice;
 
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-
-	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-
-		Page<Record> paginate = dbTemplate("goodspaymentm.recpor", kv).paginate(pageNumber, pageSize);
-
-		return paginate;
+        return dbTemplate("goodspaymentm.recpor", kv).paginate(pageNumber, pageSize);
 	}
 
 	/**
 	 * 保存
-	 * @param goodsPaymentM
-	 * @return
 	 */
 	public Ret save(GoodsPaymentM goodsPaymentM) {
 		if(goodsPaymentM==null || isOk(goodsPaymentM.getIAutoId())) {
@@ -230,14 +216,11 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 		if(!success) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);
 		}
-		return SUCCESS.data(goodsPaymentDS);
+		return successWithData(goodsPaymentDS);
 	}
 
 	/**
 	 * 执行JBoltTable表格整体提交
-	 *
-	 * @param jBoltTable
-	 * @return
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
 		GoodsPaymentM rcvplanm = jBoltTable.getFormModel(GoodsPaymentM.class,"goodspaymentm");
@@ -341,21 +324,6 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 			goodsPaymentDservice.deleteById(id);
 		}
 	}
-
-	/**
-	 * 提审批
-	 */
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-
-			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(), "cn.rjtech.admin.goodspaymentm.GoodsPaymentMService");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			return true;
-		});
-		return SUCCESS;
-	}
-
 
 	/**
 	 * 获取条码列表

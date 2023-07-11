@@ -128,15 +128,6 @@ public class MonthordermAdminController extends BaseAdminController {
     }
 
     /**
-     * 提审
-     */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "ID");
-
-        renderJson(service.submit(iautoid));
-    }
-
-    /**
      * 模板下载
      */
     @SuppressWarnings("unchecked")
