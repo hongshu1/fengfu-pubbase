@@ -19,6 +19,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
@@ -223,42 +224,42 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 	 * 执行JBoltTable表格整体提交
 	 */
 	public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-		GoodsPaymentM rcvplanm = jBoltTable.getFormModel(GoodsPaymentM.class,"goodspaymentm");
+		GoodsPaymentM goodspaymentm = jBoltTable.getFormModel(GoodsPaymentM.class,"goodspaymentm");
 		//获取当前用户信息？
 		User user = JBoltUserKit.getUser();
 		Date now = new Date();
 		tx(()->{
 			//通过 id 判断是新增还是修改
-			if(rcvplanm.getIAutoId() == null){
-				rcvplanm.setCOrgCode(getOrgCode());
-				rcvplanm.setCOrgName(getOrgName());
-				rcvplanm.setCGoodsPaymentNo(JBoltSnowflakeKit.me.nextIdStr());
-				rcvplanm.setICreateBy(user.getId());
-				rcvplanm.setCCreateName(user.getName());
-				rcvplanm.setDCreateTime(now);
-				rcvplanm.setIUpdateBy(user.getId());
-				rcvplanm.setCUpdateName(user.getName());
-				rcvplanm.setDUpdateTime(now);
-				rcvplanm.setIsDeleted(false);
+			if(goodspaymentm.getIAutoId() == null){
+				goodspaymentm.setCOrgCode(getOrgCode());
+				goodspaymentm.setCOrgName(getOrgName());
+				goodspaymentm.setCGoodsPaymentNo(BillNoUtils.genCode(getOrgCode(), table()));
+				goodspaymentm.setICreateBy(user.getId());
+				goodspaymentm.setCCreateName(user.getName());
+				goodspaymentm.setDCreateTime(now);
+				goodspaymentm.setIUpdateBy(user.getId());
+				goodspaymentm.setCUpdateName(user.getName());
+				goodspaymentm.setDUpdateTime(now);
+				goodspaymentm.setIsDeleted(false);
 				//主表新增
-				ValidationUtils.isTrue(rcvplanm.save(), ErrorMsg.SAVE_FAILED);
+				ValidationUtils.isTrue(goodspaymentm.save(), ErrorMsg.SAVE_FAILED);
 			}else{
-				rcvplanm.setIUpdateBy(user.getId());
-				rcvplanm.setCUpdateName(user.getName());
-				rcvplanm.setDUpdateTime(now);
+				goodspaymentm.setIUpdateBy(user.getId());
+				goodspaymentm.setCUpdateName(user.getName());
+				goodspaymentm.setDUpdateTime(now);
 				//主表修改
-				ValidationUtils.isTrue(rcvplanm.update(), ErrorMsg.UPDATE_FAILED);
+				ValidationUtils.isTrue(goodspaymentm.update(), ErrorMsg.UPDATE_FAILED);
 			}
 			//从表的操作
 			// 获取保存数据（执行保存，通过 getSaveRecordList）
-			saveTableSubmitDatas(jBoltTable,rcvplanm);
+			saveTableSubmitDatas(jBoltTable,goodspaymentm);
 			//获取修改数据（执行修改，通过 getUpdateRecordList）
-			updateTableSubmitDatas(jBoltTable,rcvplanm);
+			updateTableSubmitDatas(jBoltTable,goodspaymentm);
 			//获取删除数据（执行删除，通过 getDelete）
 			deleteTableSubmitDatas(jBoltTable);
 			return true;
 		});
-		return Ret.ok().set("autoid", rcvplanm.getIAutoId());
+		return Ret.ok().set("autoid", goodspaymentm.getIAutoId());
 	}
 
 	//可编辑表格提交-新增数据
