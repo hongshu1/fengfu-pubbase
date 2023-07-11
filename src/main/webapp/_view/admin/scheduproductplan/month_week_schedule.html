@@ -408,13 +408,13 @@
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
-        RowCount:24,           //一列多少单元格
+        RowCount:24,            //一列多少单元格
         ColumnCount:10,         //一行多少单元格
         rowindex:0,				//x轴索引
         columnindex:0,			//y轴索引
         data: [],				//当月时间数据
-        dayRow:10,               //day渲染起始下标
-        weekRow:10,              //week渲染起始下标
+        dayRow:10,              //day渲染起始下标
+        weekRow:10,             //week渲染起始下标
         tableData:[],           //接收添加的数据
         planListRowIndex:4,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
@@ -422,7 +422,8 @@
         dschedulebeginData:[],  //已排层级展示数据
         cinvCode:[],            //存储所有存货编码
         dayNumArray:[],         //所有num数组
-        planmonthCol:0,
+        planmonthCol:0,         //休息日所在索引
+        colArr:[],              //需要拼接的col
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
@@ -617,8 +618,8 @@
      * @param initDate
      */
     function initDate(searchData) {
-        let url = searchData!=undefined?Api+`admin/scheduproductplanmonth/getTableHead?level=1&startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
-            :`admin/scheduproductplanmonth/getTableHead?level=1&startDate=&endDate=`;
+        let url = searchData!=undefined?Api+`admin/scheduproductplanmonth/getTableHead?level=${parms.level}&startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
+            :`admin/scheduproductplanmonth/getTableHead?level=${parms.level}&startDate=&endDate=`;
         sheet.setValue(3, 9, '项目');
         //获取接口数据
         Ajax.get(url,(res)=>{
@@ -677,7 +678,7 @@
      * 初始化产线数据
      * @param initData
      */
-    function initData(ilevel){
+    async function initData(ilevel){
         spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
         // sheet.options.isProtected = true; // 开启工作表保护
         // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
@@ -690,7 +691,7 @@
             url,
             type: 'get',
             dataType: 'json',
-            success: function (respons) {
+            success:function (respons){
                 console.log(respons)
                 LayerMsgBox.closeLoading();
                 parms['scheduplanmonth'] = respons;
@@ -698,14 +699,11 @@
                     spreadSuspend();//暂停绘制
                     let rowIndex = 4;
                     let cWorkName = 4;
-                    let rowIndexs = 4;//左视图产品数据渲染起始行
                     let colIndexs = 0;//左视图产品数据渲染起始列
                     let code = 4;//隐藏编码起始行
-                    let gentle = 4;//记录渲染的下标
                     //日计划排版
                     let shiyongRow = 4;//计划使用行下标
                     let shiyongCol = 10;//计划使用列下标
-                    let zaikuCol = 9;//在库下标
                     let isWorkArray = [];
                     //项目
                     for (let i = 0; i < parms['scheduplanmonth'].length; i++) {
@@ -763,11 +761,8 @@
                             }
 
                             //
-                            let B = 9;//在库天数公式嵌入起始行
                             let Z = 10;//在库天数公式嵌入起始列
-                            let jihuaRow = 8;//计划在库公式嵌入起始行
                             let jihuaCol = 10;//计划在库公式嵌入起始列
-                            let valArr = [];
                             for (let k = 0; k < parms['scheduplanmonth'][i].childList[j].day.length; k++) {
                                 sheet.setValue(shiyongRow, shiyongCol+k, parms['scheduplanmonth'][i].childList[j].day[k].shiyong);
                                 sheet.setValue(1 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
@@ -795,10 +790,9 @@
                                 let useArray = [];
                                 for (let f = 0; f < Num; f++) {
                                     useArray.push(`R[-5]C[${f+1}]`);
-                                    // sheet.setValue(shiyongRow, shiyongCol+parms['scheduplanmonth'][i].childList[j].day.length+f, '');
                                 }
-                                // isWorkArray.push(parms['scheduplanmonth'][i].childList[j].day[k].iswork)
-                                // console.log(isWorkArray)
+                                // isWorkArray.push(parms['scheduplanmonth'][i].childList[j].day[k].iswork);
+                                // console.log(isWorkArray);
                                 //嵌入计划在库公式
                                 sheet.setFormula(shiyongRow+5-1,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //判断当天是否为工作日
@@ -806,26 +800,37 @@
                                     //嵌入在库天数公式
                                     sheet.setFormula(AS,Z+k,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
                                 }else{
-                                    parms['colArr'] = [];
-                                    // var col = Z+k; // 初始列值
-                                    var row = AS-5; // 初始行值
-                                    parms.planmonthCol = k;
-                                    for (let l = 0; l < Num; l++) {
-                                        /**
-                                         * @param k {number} 数据下标
-                                         * @param row {number} 要取值的行
-                                         * @param parms['scheduplanmonth'][i].childList[j].day[parms.planmonthCol] 当天数据对象
-                                         */
-                                        findColumns(k,row,parms['scheduplanmonth'][i].childList[j].day[parms.planmonthCol]);
-                                        // parms['formulaCol'] = col;
-                                        // parms['formulaRow'] = row;
-                                    }
-                                        sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})/R${AS+1}C10`);
-                                        parms['colArr'].length=0;
+                                    // let row = AS-5; // 初始行值
+                                    // let planmonthCol = k+Z;
+                                    // let col = planmonthCol;
+                                    // var isWork = parms['scheduplanmonth'][i].childList[j].day;
+                                    // function findColumns() {
+                                    //     setTimeout(function (){
+                                    //         for (let l = 0; l < Num; l++) {
+                                    //             let value = sheet.getValue(row, col+1);
+                                    //             if (value) {
+                                    //                 if(value==0){
+                                    //                     ++col;
+                                    //                     findColumns();
+                                    //                 }else{
+                                    //                     parms.colArr.push(col);
+                                    //                 }
+                                    //             }
+                                    //         }
+                                    //         console.log(parms.colArr)
+                                    //     },100)
+                                    // }
+                                    // findColumns();
+                                    // // console.log(parms.colArr)
+                                    // if(parms.colArr.length>1){
+                                    //     // console.log(parms.colArr);
+                                    // }
                                     // console.log(`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})`)
+                                    // sheet.setFormula(AS,parms.planmonthCol,`=SUM(R${AS-4}C${parms.colArr[0]+1}:R${AS-4}C${parms.colArr[1]+1})/R${AS+1}C10`);
                                     if(parms['scheduplanmonth'][i].childList[j].day.at(-1)||parms['scheduplanmonth'][i].childList[j].day.at(-2)){
                                         // console.log('at')
                                     }
+
                                 }
                                 //控制小数位为1位
                                 sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
@@ -868,31 +873,6 @@
             }
         })
     }
-    /**
-     * @param col {number} 当前公式所在列
-     * @param row {number} 当前公式所在行
-     * @param obj 当天数据对象
-     */
-    function findColumns(col,row,obj){
-        let value = 0;
-        setTimeout(()=>{
-            value = sheet.getValue(row, col+11)
-            if(value!=''&&value!=null){
-                console.log(sheet.getValue(row, col+11),'aaaaaaaaaaa')
-                value = sheet.getValue(row, col+11);
-                if(value==0){
-                    if(obj.iswork){
-                        parms['colArr'].push(col+11);
-                        ++col;
-                    }else{
-                        findColumns(++col,row);
-                    }
-                }else {
-                    parms['colArr'].push(col+11);
-                }
-            }
-        },0)
-    }
     // 订阅 valueChanged 事件
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let {row,col} = info;
@@ -901,7 +881,7 @@
         setTimeout(() => {
             //获取公式计算之后的最新数据
             arr = sheet.getDirtyCells(-1,-1,-1,-1);
-            let newValues = arr.map((item, index) =>{
+            let newValues = arr.map((item) =>{
                 //过滤没发生改变的数据
                 if(item.newValue!=item.oldValue){
                     return {
@@ -909,7 +889,7 @@
                     }
                 }
             });
-            let newValueObj = newValues.map(item=>{
+            newValues.map(item=>{
                     if(item!=undefined){
                         var rowData = sheet.getArray(item.row,0, 1, sheet.getColumnCount());//获取行数据
                         var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
@@ -925,7 +905,7 @@
                     }
                 })
                 sheet.clearPendingChanges({clearType: 1, row: -1, rowCount: -1, col: -1, colCount: -1});
-                findColumns(parms['formulaCol'],parms['formulaRow']);
+                // findColumns(parms['formulaCol'],parms['formulaRow']);
             }, 0);
     });
     /**
@@ -967,8 +947,6 @@
                                 <td>${res.data[i].dscheduleendtime}</td>
                                 <td>${res.data[i].dlockendtime==undefined?'':res.data[i].dlockendtime}</td>
                                 <td width='130px'>
-                                  <span onClick='levelSearch(${res.data[i].ilevel})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
-                                  <span style="margin-right:10px;cursor: pointer;color: #0000FF;">编辑</span>
                                   <span onClick='levelDelete(${i})'style="cursor: pointer;color: #0000FF;">删除</span>
                                  </td>
                                </tr>`;
@@ -979,10 +957,11 @@
             }
         })
     }
-    //表格数据查看
-    function levelSearch(ilevel){
-        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&level=${ilevel}`);
-    }
+    // //表格数据查看
+    // function levelSearch(ilevel){
+    //     parms.level=ilevel;
+    //     window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&level=${ilevel}`);
+    // }
     //删除表格数据
     function levelDelete(index){
         let id = parms.dschedulebeginData[index].iautoid;
@@ -1132,7 +1111,6 @@
                 type:'post',
                 dataType:'json',
                 success:function (res){
-                    console.log(res)
                     parms.getLockDate = res.data;
                     const weekNum = document.getElementById('weekNum');
                     weekNum.innerText = parms.getLockDate[0].weekNum;
