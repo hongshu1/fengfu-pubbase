@@ -104,6 +104,10 @@ public class FormUploadCategoryAdminController extends BaseAdminController {
 	public void downloadTpl() {
 		renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("上传记录-分类导入模板"));
 	}
+
+	/**
+	 * 导入
+	 */
 	@CheckPermission(PermissionKey.FORMUPLOADCATEGORY_IMPORT)
 	public void importExcelClass() {
 		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);

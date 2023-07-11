@@ -105,8 +105,9 @@ public class ContainerClassAdminController extends BaseAdminController {
      * 删除
      */
     @CheckPermission(PermissionKey.CONTAINERCLASS_DELETE)
-    public void delete() {
-        renderJson(service.delete(getLong(0)));
+    public void deleteByIds() {
+        Kv kv = getKv();
+        renderJson(service.delete(kv.getLong("ids")));
     }
 
     /**

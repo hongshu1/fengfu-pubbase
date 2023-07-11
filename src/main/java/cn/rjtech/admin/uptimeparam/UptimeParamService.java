@@ -153,28 +153,6 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 	 * @return
 	 */
 	public Ret importExcelData(File file) {
-//		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
-//		ValidationUtils.isTrue(ret.isOk(), "导入失败");
-//		ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-//		tx(() -> {
-//			// 封装数据
-//			for (Map<String, String> map : datas) {
-//
-//				ValidationUtils.notBlank(map.get("cuptimeparamname"),"参数名称不能为空");
-//				ValidationUtils.notBlank(map.get("iUptimeCategoryId"),"分类名称不能为空");
-//				// 分类名称不存在就新增
-//				Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimeparamname"));
-//				UptimeParam uptimeParam = new UptimeParam();
-//				uptimeParam.setCUptimeParamName(map.get("cuptimeparamname"));
-//				uptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
-//				uptimeParam.setIsEnabled(true);
-//				// 保存数据
-//				save(uptimeParam);
-//			}
-//			return true;
-//		});
-//		return SUCCESS;
-
 		List<Record> records = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);

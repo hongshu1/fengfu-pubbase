@@ -57,6 +57,7 @@ public class SysAssemAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.ASSEM_ADD)
 	public void add() {
 		set("BillType","1659458823869370368");
 		set("sysAssem.BillType","1659458823869370368");
@@ -74,6 +75,7 @@ public class SysAssemAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.ASSEM_EDIT)
 	public void edit() {
 		Long aLong = getLong(0);
 		SysAssem sysAssem=service.findById(getLong(0));
@@ -123,6 +125,7 @@ public class SysAssemAdminController extends BaseAdminController {
    /**
 	* 批量删除
 	*/
+   @CheckPermission(PermissionKey.ASSEM_DELETE_ALL)
 	public void deleteByIds() {
 		renderJson(service.deleteRmRdByIds(get("ids")));
 	}
@@ -130,6 +133,7 @@ public class SysAssemAdminController extends BaseAdminController {
    /**
 	* 删除
 	*/
+   @CheckPermission(PermissionKey.ASSEM_DELETE)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
