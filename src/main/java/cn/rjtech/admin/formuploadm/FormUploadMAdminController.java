@@ -30,7 +30,6 @@ import java.util.List;
  * @date: 2023-05-29 15:35
  */
 @CheckPermission(PermissionKey.FORMUPLOADM)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/formUploadM", viewPath = "/_view/admin/formuploadm")
 public class FormUploadMAdminController extends BaseAdminController {
@@ -59,6 +58,7 @@ public class FormUploadMAdminController extends BaseAdminController {
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.FORMUPLOADM_ADD)
 	public void add() {
 		set("iauditstatus",true);
 		render("add.html");
@@ -83,7 +83,8 @@ public class FormUploadMAdminController extends BaseAdminController {
    /**
 	* 编辑
 	*/
-	public void edit(@Para(value = "iautoid") Long iautoid) {
+   @CheckPermission(PermissionKey.FORMUPLOADM_EDIT)
+   public void edit(@Para(value = "iautoid") Long iautoid) {
 		ValidationUtils.validateId(iautoid, "记录上传ID");
 
 		FormUploadM formUploadM=service.findById(iautoid);
@@ -130,6 +131,7 @@ public class FormUploadMAdminController extends BaseAdminController {
 	/**
 	 * 批量保存
 	 */
+	@CheckPermission(PermissionKey.FORMUPLOADM_ADD_SUBMIT)
 	public void submitAll(){
 		renderJson(service.saveTableSubmit(getJBoltTable()));
 	}
@@ -137,6 +139,7 @@ public class FormUploadMAdminController extends BaseAdminController {
 	/**
 	 * 删除
 	 */
+	@CheckPermission(PermissionKey.FORMUPLOADM_DELETE)
 	public void delete() {
 		renderJson(service.delete(getLong(0)));
 	}
@@ -144,6 +147,7 @@ public class FormUploadMAdminController extends BaseAdminController {
 	/**
 	 * 批量删除
 	 */
+	@CheckPermission(PermissionKey.FORMUPLOADM_DELETE)
 	public void deleteByIds() {
 		renderJson(service.deleteByBatchIds(get("ids")));
 	}

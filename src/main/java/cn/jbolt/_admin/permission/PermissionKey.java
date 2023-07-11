@@ -3609,4 +3609,24 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String PRODFORM_SUBMIT = "prodform_submit";
+	/**
+	 * 导入
+	 */
+	public static final String EQUIPMENTMODEL_IMPORT = "equipmentmodel_import";
+	/**
+	 * 新增
+	 */
+	public static final String FORMUPLOADM_ADD = "formuploadm_add";
+	/**
+	 * 修改
+	 */
+	public static final String FORMUPLOADM_EDIT = "formuploadm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String FORMUPLOADM_DELETE = "formuploadm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String FORMUPLOADM_ADD_SUBMIT = "formuploadm_add_submit";
 }
