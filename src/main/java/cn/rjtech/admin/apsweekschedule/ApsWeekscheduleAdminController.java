@@ -19,7 +19,7 @@ import com.jfinal.core.Path;
  * @date: 2023-04-18 10:57
  */
 @UnCheckIfSystemAdmin
-@CheckPermission(PermissionKey.APS_WEEK_SCHEDULE)
+@CheckPermission(PermissionKey.NONE)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/apsweekschedule", viewPath = "/_view/admin/apsweekschedule")
 public class ApsWeekscheduleAdminController extends BaseAdminController {

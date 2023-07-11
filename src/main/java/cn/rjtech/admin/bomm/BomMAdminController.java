@@ -3,6 +3,7 @@ package cn.rjtech.admin.bomm;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.bomd.BomDService;
 import cn.rjtech.admin.bomdata.BomDataService;
@@ -12,6 +13,7 @@ import cn.rjtech.model.momdata.BomM;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
@@ -26,6 +28,8 @@ import java.util.List;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-08 17:03
  */
+@CheckPermission(PermissionKey.BOMMASTER)
+@Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/bomM", viewPath = "/_view/admin/bomm")
 public class BomMAdminController extends BaseAdminController {
 

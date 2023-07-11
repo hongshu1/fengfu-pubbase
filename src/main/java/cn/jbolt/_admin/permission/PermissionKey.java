@@ -914,10 +914,6 @@ public class PermissionKey {
 	 */
 	public static final String PATCHWORK_BARCODE = "patchwork_barcode";
 	/**
-	 * 月周排产记录时间
-	 */
-	public static final String APS_WEEK_SCHEDULE = "aps_week_schedule";
-	/**
 	 * 特殊领料出库
 	 */
 	public static final String OTHER_OUT_RETURN_LIST = "other_out_return_list";
@@ -4049,4 +4045,76 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String QCINSPECTION_DELETE = "qcinspection_delete";
+	/**
+	 * 导出
+	 */
+	public static final String PLANANDACTUALVIEW_EXPORT = "planandactualview_export";
+	/**
+	 * 查看
+	 */
+	public static final String PLANANDACTUALVIEW_SHOW = "planandactualview_show";
+	/**
+	 * 删除
+	 */
+	public static final String DEMANDFORECASTM_DELETE = "demandforecastm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String DEMANDFORECASTM_EXPORT = "demandforecastm_export";
+	/**
+	 * 查看
+	 */
+	public static final String DEMANDFORECASTM_SHOW = "demandforecastm_show";
+	/**
+	 * 删除
+	 */
+	public static final String DEMANDPLANM_DELETE = "demandplanm_delete";
+	/**
+	 * 导出
+	 */
+	public static final String DEMANDPLANM_EXPORT = "demandplanm_export";
+	/**
+	 * 查看
+	 */
+	public static final String DEMANDPLANM_SHOW = "demandplanm_show";
+	/**
+	 * 齐料检查
+	 */
+	public static final String MODOC_MATERIALSCANLOG = "modoc_materialscanlog";
+	/**
+	 * 材料耗用
+	 */
+	public static final String MODOC_MO_MATERIALSCAN = "modoc_mo_materialscan";
+	/**
+	 * 导出
+	 */
+	public static final String DEMANDPLANSUMVIEW_EXPORT = "demandplansumview_export";
+	/**
+	 * 查看
+	 */
+	public static final String DEMANDPLANSUMVIEW_SHOW = "demandplansumview_show";
+	/**
+	 * 新增
+	 */
+	public static final String UPTIMEM_ADD = "uptimem_add";
+	/**
+	 * 编辑
+	 */
+	public static final String UPTIMEM_EDIT = "uptimem_edit";
+	/**
+	 * 删除
+	 */
+	public static final String UPTIMEM_DELETE = "uptimem_delete";
+	/**
+	 * 新增
+	 */
+	public static final String PLANYEAR_ADD = "planyear_add";
+	/**
+	 * 编辑
+	 */
+	public static final String PLANYEAR_EDIT = "planyear_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PLANYEAR_DELETE = "planyear_delete";
 }

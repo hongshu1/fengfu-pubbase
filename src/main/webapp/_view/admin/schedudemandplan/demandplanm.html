@@ -40,10 +40,14 @@
             <tr data-id="${data.iautoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
             <td>
-                <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
-                    onclick="setectViewBtn2(this,'${data.iautoid}','${data.dbegindate |date_ymd}','${data.denddate |date_ymd}')" data-handler="refreshJBoltTable" data-title="查看计划">查看</a>
+                #permission(PermissionKey.DEMANDPLANM_SHOW)
+                    <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
+                        onclick="setectViewBtn2(this,'${data.iautoid}','${data.dbegindate |date_ymd}','${data.denddate |date_ymd}')" data-handler="refreshJBoltTable" data-title="查看计划">查看</a>
+				#end
 
-                <a class="jbolt_table_delbtn" href="admin/schedudemandplan/deleteDemandplanm/${data.iautoid}" data-title="删除预示" data-handler="refreshJBoltTable" >删除</a>
+                #permission(PermissionKey.DEMANDPLANM_DELETE)
+				    <a class="jbolt_table_delbtn" href="admin/schedudemandplan/deleteDemandplanm/${data.iautoid}" data-title="删除预示" data-handler="refreshJBoltTable" >删除</a>
+				#end
             </td>
             <td>
                 {@if data.istatus == 1}
