@@ -3697,4 +3697,60 @@ public class PermissionKey {
 	 * 二维码
 	 */
 	public static final String RCVDOCDEFECT_QR = "rcvdocdefect_qr";
+	/**
+	 * 新增
+	 */
+	public static final String PROCESSDEFECT_ADD = "processdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String PROCESSDEFECT_EDIT = "processdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PROCESSDEFECT_DELETE = "processdefect_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String PROCESSDEFECT_QR = "processdefect_qr";
+	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_SHELVES_PRINT = "warehouse_shelves_print";
+	/**
+	 * 生成现品票
+	 */
+	public static final String MOMOINVBATCH_CREATEMOMOINVBATCH = "momoinvbatch_createmomoinvbatch";
+	/**
+	 * 现品票批量报工
+	 */
+	public static final String MOMOINVBATCH_WORKBYIDS = "momoinvbatch_workbyids";
+	/**
+	 * 现品票撤回
+	 */
+	public static final String MOMOINVBATCH_WITHDRAW = "momoinvbatch_withdraw";
+	/**
+	 * 现品票修改数量
+	 */
+	public static final String MOMOINVBATCH_UPDATENUMBER = "momoinvbatch_updatenumber";
+	/**
+	 * 现品票打印
+	 */
+	public static final String MOMOINVBATCH_BATCHPRINT = "momoinvbatch_batchprint";
+	/**
+	 * 新增
+	 */
+	public static final String SPOTCHECKFORMM_ADD = "spotcheckformm_add";
+	/**
+	 * 修改
+	 */
+	public static final String SPOTCHECKFORMM_EDIT = "spotcheckformm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SPOTCHECKFORMM_DELETE = "spotcheckformm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String SPOTCHECKFORMM_ADD_SUBMIT = "spotcheckformm_add_submit";
 }

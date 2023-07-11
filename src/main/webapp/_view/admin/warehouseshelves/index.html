@@ -74,8 +74,8 @@
         </button>
 
 
+        #permission(PermissionKey.WAREHOUSE_SHELVES_EXPORT)
         <div class="btn-group dropdown" role="group" aria-label="btn-group">
-          #permission(PermissionKey.WAREHOUSE_SHELVES_EXPORT)
           <div class="btn-group dropdown">
             <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
                     id="exportMenuwarehouseShelvesButton" data-toggle="dropdown" aria-haspopup="true"
@@ -93,8 +93,8 @@
               </button>
             </div>
           </div>
-          #end
         </div>
+        #end
 
         #permission(PermissionKey.WAREHOUSE_SHELVES_IMPORT)
         <div class="btn-group dropdown">
@@ -119,6 +119,7 @@
         </div>
         #end
 
+        #permission(PermissionKey.WAREHOUSE_SHELVES_PRINT)
         <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
           <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
@@ -133,6 +134,7 @@
 
         </div>
       </div>
+      #end
 
 
       <div class="clearfix"></div>

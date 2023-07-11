@@ -61,11 +61,12 @@ public class ProcessDefectAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.PROCESSDEFECT_ADD)
     public void add() {
         render("add.html");
     }
 
-
+    @CheckPermission(PermissionKey.PROCESSDEFECT_ADD)
     public void add2() {
         ProcessDefect processDefect = service.findById(get("iautoid"));
         SpecMaterialsRcvM specMaterialsRcvM = specMaterialsRcvMService.findById(get("iissueid"));
@@ -97,6 +98,7 @@ public class ProcessDefectAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.PROCESSDEFECT_EDIT)
     public void edit() {
         ProcessDefect processDefect = service.findById(getLong(0));
         if (processDefect == null) {
@@ -110,6 +112,7 @@ public class ProcessDefectAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.PROCESSDEFECT_ADD)
     public void save() {
         renderJson(service.save(getModel(ProcessDefect.class, "processdefect")));
     }
@@ -117,6 +120,7 @@ public class ProcessDefectAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.PROCESSDEFECT_EDIT)
     public void update() {
         renderJson(service.update(getModel(ProcessDefect.class, "processdefect")));
     }
@@ -124,6 +128,7 @@ public class ProcessDefectAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.PROCESSDEFECT_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -131,6 +136,7 @@ public class ProcessDefectAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.PROCESSDEFECT_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -151,8 +157,6 @@ public class ProcessDefectAdminController extends BaseAdminController {
      * 保存单据
      */
     public void saveprocessDefect(){
-
-
     renderJson(service.saveprocessDefect(getModel(ProcessDefect.class, "processDefect")));
     }
 
@@ -160,8 +164,6 @@ public class ProcessDefectAdminController extends BaseAdminController {
      * 更新单据
      */
     public void updateprocessDefect(){
-
-
         renderJson(service.updateprocessDefect(getModel(ProcessDefect.class, "processDefect")));
     }
 
@@ -169,16 +171,13 @@ public class ProcessDefectAdminController extends BaseAdminController {
      * 提交单据审批
      */
     public void subprocessDefect(){
-
-
         renderJson(service.subprocessDefect(getModel(ProcessDefect.class, "processDefect")));
     }
-
-
 
     /**
      * 生成二维码
      */
+    @CheckPermission(PermissionKey.PROCESSDEFECT_QR)
     public void QRCode() {
         Kv kv = new Kv();
         kv.setIfNotNull("ids", get("ids"));

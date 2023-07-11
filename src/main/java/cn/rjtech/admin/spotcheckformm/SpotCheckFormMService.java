@@ -17,7 +17,9 @@ import cn.rjtech.admin.spotcheckformdline.SpotcheckformdLineService;
 import cn.rjtech.admin.spotcheckformparam.SpotCheckFormParamService;
 import cn.rjtech.admin.spotcheckformtableitem.SpotCheckFormTableItemService;
 import cn.rjtech.admin.spotcheckformtableparam.SpotCheckFormTableParamService;
+import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
@@ -79,7 +81,14 @@ public class SpotCheckFormMService extends BaseService<SpotCheckFormM> implement
 	 * @param pageSize   每页几条数据
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv para) {
-	    return  dbTemplate("spotcheckformm.list",para).paginate(pageNumber,pageSize);
+		Page<Record> page = dbTemplate("spotcheckformm.list", para).paginate(pageNumber, pageSize);
+		for (Record record : page.getList()) {
+			// 审核中，并且单据审批方式为审批流
+			if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), record.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), record.getInt(IAUDITWAY))) {
+				record.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(record.getLong("iautoid"), 5));
+			}
+		}
+		return page;
 
 	}
 

@@ -170,6 +170,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
     /**
      * 货架打印数据
      */
+    @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_PRINT)
     public void printData() {
         renderJsonData(service.getPrintDataCheck(getKv()));
     }
