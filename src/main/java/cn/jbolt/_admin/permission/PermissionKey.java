@@ -3961,4 +3961,48 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String OTHER_OUT_RETURN_LIST_DELETE = "other_out_return_list_delete";
+	/**
+	 * 新增
+	 */
+	public static final String CURRENTSTOCK_ADD = "currentstock_add";
+	/**
+	 * 编辑
+	 */
+	public static final String CURRENTSTOCK_EDIT = "currentstock_edit";
+	/**
+	 * 删除
+	 */
+	public static final String CURRENTSTOCK_DELETE = "currentstock_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CURRENTSTOCK_EXPORT = "currentstock_export";
+	/**
+	 * 导入
+	 */
+	public static final String CURRENTSTOCK_IMPORT = "currentstock_import";
+	/**
+	 * 导出
+	 */
+	public static final String INVENTORY_BARCODE_TRACEPAGE_EXPORT = "Inventory_barcode_tracepage_export";
+	/**
+	 * 打印
+	 */
+	public static final String INVENTORY_BARCODE_TRACEPAGE_PRINT = "Inventory_barcode_tracepage_print";
+	/**
+	 * 导出
+	 */
+	public static final String BILLNO_BARCODE_TRACEPAGE_EXPORT = "billno_barcode_tracepage_export";
+	/**
+	 * 打印
+	 */
+	public static final String BILLNO_BARCODE_TRACEPAGE_PRINT = "billno_barcode_tracepage_print";
+	/**
+	 * 导出
+	 */
+	public static final String BARCODE_TRACEPAGE_EXPORT = "barcode_tracepage_export";
+	/**
+	 * 打印
+	 */
+	public static final String BARCODE_TRACEPAGE_PRINT = "barcode_tracepage_print";
 }
