@@ -503,57 +503,64 @@ public class BomMService extends BaseService<BomM> {
 		return SUCCESS;
 	}
 	
-	public Ret del(Long bomMasterId) {
-		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
-		BomM bomMaster = findById(bomMasterId);
-		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
+	public Ret batchDel(String bomMasterIds){
 		tx(() -> {
-			// 校验审批中或已审批的数据不能进行删除
-			Integer iAuditStatus = bomMaster.getIAuditStatus();
-//			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
-//			ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行删除");
-			// 校验母件是否有被其他子件引用到
-			List<BomM> bomMList = findBomByPartBomMid(bomMasterId);
-			if (CollUtil.isNotEmpty(bomMList)){
-				List<String> invCodeList = bomMList.stream().map(BomM::getCInvCode).collect(Collectors.toList());
-				String format = String.format("该半成品版本记录，有存在其他地方使用【%s】", CollUtil.join(invCodeList, ","));
-				ValidationUtils.isTrue(CollUtil.isEmpty(bomMList), format);
+			for (String bomMasterId : bomMasterIds.split(",")){
+				remove(Long.valueOf(bomMasterId));
 			}
-			// 查询子件，将子件状态改为删除
-			List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
-			compareList.forEach(bomD -> bomD.setIsDeleted(true));
-			bomDService.batchUpdate(compareList);
-			// 删除母件
-			bomMaster.setIsDeleted(true);
-			bomMaster.setIUpdateBy(JBoltUserKit.getUserId());
-			bomMaster.setCUpdateName(JBoltUserKit.getUserName());
-			bomMaster.setDUpdateTime(DateUtil.date());
-			// 设置为失效
-			bomMaster.setIsEffective(false);
-			bomMaster.update();
 			return true;
 		});
 		return SUCCESS;
 	}
 	
+	private void remove(Long bomMasterId){
+		ValidationUtils.notNull(bomMasterId, JBoltMsg.PARAM_ERROR);
+		BomM bomMaster = findById(bomMasterId);
+		ValidationUtils.notNull(bomMaster, JBoltMsg.DATA_NOT_EXIST);
+		// 校验审批中或已审批的数据不能进行删除
+//			Integer iAuditStatus = bomMaster.getIAuditStatus();
+//			AuditStatusEnum auditStatusEnum = AuditStatusEnum.toEnum(iAuditStatus);
+//			ValidationUtils.isTrue((AuditStatusEnum.NOT_AUDIT.getValue()==iAuditStatus || AuditStatusEnum.REJECTED.getValue()==iAuditStatus), "该物料清单状态为【"+auditStatusEnum.getText()+"】不能进行删除");
+		// 校验母件是否有被其他子件引用到
+//			List<BomM> bomMList = findBomByPartBomMid(bomMasterId);
+//			if (CollUtil.isNotEmpty(bomMList)){
+//				List<String> invCodeList = bomMList.stream().map(BomM::getCInvCode).collect(Collectors.toList());
+//				String format = String.format("该半成品版本记录，有存在其他地方使用【%s】", CollUtil.join(invCodeList, ","));
+//				ValidationUtils.isTrue(CollUtil.isEmpty(bomMList), format);
+//			}
+		// 查询子件，将子件状态改为删除
+		List<BomD> compareList = bomDService.queryBomCompareList(bomMasterId, BomD.IBOMMID);
+		compareList.forEach(bomD -> bomD.setIsDeleted(true));
+		bomDService.batchUpdate(compareList);
+		// 删除母件
+		bomMaster.setIsDeleted(true);
+		bomMaster.setIUpdateBy(JBoltUserKit.getUserId());
+		bomMaster.setCUpdateName(JBoltUserKit.getUserName());
+		bomMaster.setDUpdateTime(DateUtil.date());
+		// 设置为失效
+		bomMaster.setIsEffective(false);
+		bomMaster.update();
+	}
+	
 	/**
 	 * 删除导入文件
-	 * @param id
+	 * @param ids
 	 * @return
 	 */
-	public Ret delFile(Long id){
-		BommTrl bommTrl = bommTrlService.findById(id);
-		Long bomMid = bommTrl.getIBomMid();
-		BomData bomData = bomDataService.getBomData(bomMid);
+	public Ret delFile(String ids){
+		
 		tx(() -> {
-			bommTrlService.deleteById(id);
-			if (ObjectUtil.isNotNull(bomData)){
-				bomDataService.deleteById(bomData.getIAutoId());
+			for (String id : ids.split(",")){
+				BommTrl bommTrl = bommTrlService.findById(id);
+				Long bomMid = bommTrl.getIBomMid();
+				BomData bomData = bomDataService.getBomData(bomMid);
+				bommTrlService.deleteById(id);
+				if (ObjectUtil.isNotNull(bomData)){
+					bomDataService.deleteById(bomData.getIAutoId());
+				}
 			}
 			return true;
 		});
-		bommTrlService.deleteById(id);
-		bomDataService.deleteById(bomData.getIAutoId());
 		
 		return SUCCESS;
 	}
@@ -982,7 +989,8 @@ public class BomMService extends BaseService<BomM> {
 		Map<String, BomD> codeBomCompareMap = createCodeBomCompareMap(bomMasterId, tableData);
 		// 存货id， 子件
 		Map<Long, List<BomD>> parentInvMap = getParentInvMap(bomMasterId, bomMasterInvId, codeBomCompareMap);
-		
+//		String str = null;
+//		System.out.println(str.toLowerCase());
 		// 获取所有的子件
 		List<BomD> compareList = createCodeBomCompareList(codeBomCompareMap);
 		
@@ -1275,7 +1283,6 @@ public class BomMService extends BaseService<BomM> {
 				continue;
 			}
 		}
-		
 		// 把 1-1下的子件去除
 		for (String code : codeBomCompareMap.keySet()){
 			BomD bomD = codeBomCompareMap.get(code);
@@ -1319,7 +1326,7 @@ public class BomMService extends BaseService<BomM> {
 				continue;
 			}
 			// 父级id
-			BomD parentBom = getParentBom(perCode, codeBomCompareMap);
+			BomD parentBom = getParentBom(bomMasterInvId, perCode, codeBomCompareMap);
 			if (ObjectUtil.isNull(parentBom)){
 				continue;
 			}
@@ -1332,19 +1339,31 @@ public class BomMService extends BaseService<BomM> {
 			bomD.setIPid(pid);
 			addParentInvMap(parentInvMap, parentBom.getIInventoryId(), bomD);
 		}
+		
 		return parentInvMap;
 	}
 	
-	private BomD getParentBom(String perCode, Map<String, BomD> codeBomCompareMap){
+	private BomD getParentBom(Long bomMasterInvId, String perCode, Map<String, BomD> codeBomCompareMap){
 		if (!codeBomCompareMap.containsKey(perCode)){
 			return null;
 		}
+		
 		BomD parentBom = codeBomCompareMap.get(perCode);
-		if (ObjectUtil.isNull(parentBom.getIAutoId())){
-			String newPerCode = getPerCode(perCode);
-			return getParentBom(newPerCode, codeBomCompareMap);
+		String cInvName = parentBom.getCInvName();
+		// 不为虚拟件直接返回
+		if ((StrUtil.isNotBlank(cInvName) && !cInvName.contains("虚拟件_")) || ObjUtil.isNotNull(parentBom.getIInventoryId())){
+			return parentBom;
 		}
-		return parentBom;
+		// 虚拟件需要一层一层往上找
+		String newPerCode = getPerCode(perCode);
+		if (StrUtil.isBlank(newPerCode) && ((StrUtil.isNotBlank(cInvName) && cInvName.contains("虚拟件_")))){
+			BomD bomD = new BomD();
+			bomD.setIInventoryId(bomMasterInvId);
+			bomD.setICodeLevel(perCode);
+			bomD.setIAutoId(parentBom.getIAutoId());
+			return bomD;
+		}
+		return getParentBom(bomMasterInvId, newPerCode, codeBomCompareMap);
 	}
 	
 	private void addParentInvMap(Map<Long, List<BomD>> parentInvMap, Long invId, BomD sonBomD){
@@ -1353,15 +1372,22 @@ public class BomMService extends BaseService<BomM> {
 		if (ObjectUtil.isNull(sonBomD)){
 			return;
 		}
+		Inventory inventory = inventoryService.findById(invId);
+		String format = String.format("编码栏【%s】，在系统中未找到编码【%s】的母件", sonBomD.getICodeLevel(), inventory.getCInvCode());
+		ValidationUtils.isTrue(ObjUtil.isNotNull(sonBomD.getIPid()), format);
+		Long pid = sonBomD.getIPid();
+		String cInvCode = inventory.getCInvCode();
+		
 		boolean flag = false;
 		for (BomD bomD : bomDList){
 			Long inventoryId = bomD.getIInventoryId();
-			if (ObjectUtil.isNull(inventoryId)){
+			// 同一个母件存在相同的子件，无需校验重量及基本用量
+			if (ObjectUtil.isNull(inventoryId) || pid.equals(bomD.getIPid())){
 				continue;
 			}
 			if (inventoryId.equals(sonBomD.getIInventoryId())){
 				flag = true;
-				Inventory inventory = inventoryService.findById(invId);
+//				checkQtyOrWeight(bomD, inventory.getCInvCode());
 				checkQtyOrWeight(inventoryId, inventoryId, bomD.getCInvLev(), inventory.getCInvCode(), bomD.getIBaseQty(), bomD.getIWeight(), sonBomD.getIBaseQty(), sonBomD.getIWeight());
 			}
 		}
@@ -1371,6 +1397,20 @@ public class BomMService extends BaseService<BomM> {
 		bomDList.add(sonBomD);
 		parentInvMap.put(invId, bomDList);
 	}
+	
+	private void checkQtyOrWeight(BomD bomD, BomD sonBomD, String cInvCode){
+		
+		BigDecimal bomCompareQty = bomD.getIBaseQty();
+		BigDecimal bomCompareIWeight = bomD.getIWeight();
+		String cInvLev = bomD.getCInvLev();
+		ValidationUtils.notNull(bomCompareQty, qtyErrorMsg(1, cInvLev, cInvCode));
+		
+		if (ObjectUtil.isNotNull(bomCompareIWeight)){
+			ValidationUtils.isTrue(bomCompareIWeight.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(4, cInvLev, cInvCode));
+		}
+		ValidationUtils.isTrue(bomCompareQty.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(3, cInvLev, cInvCode));
+	}
+	
 	
 	private String versionErrorMsg(int type, String code, String cVersion){
 		if (type == 0){

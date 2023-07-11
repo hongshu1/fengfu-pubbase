@@ -1,13 +1,17 @@
 package cn.rjtech.enums;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * @author Kephon
+ */
 public enum CommonMenuTypeEnum {
     /**
      * 枚举列表
      */
-    PROPOSAL(1, "禀议"),
-    MOM(2, "mom平台");
+    PROPOSAL("禀议", 1),
+    MOM("mom平台", 2);
     
     private static final Map<Integer, CommonMenuTypeEnum> COMMONMENU_TYPE_ENUM_MAP = new HashMap<>();
     
@@ -16,11 +20,11 @@ public enum CommonMenuTypeEnum {
         	COMMONMENU_TYPE_ENUM_MAP.put(commonMenuTypeEnum.value, commonMenuTypeEnum);
         }
     }
-    
-    private final int value;
+
     private final String text;
+    private final int value;
     
-    CommonMenuTypeEnum(int value, String text) {
+    CommonMenuTypeEnum(String text, int value) {
         this.value = value;
         this.text  = text;
     }
@@ -28,20 +32,21 @@ public enum CommonMenuTypeEnum {
     public static CommonMenuTypeEnum toEnum(int value) {
         return COMMONMENU_TYPE_ENUM_MAP.get(value);
     }
-    
-    public int getValue() {
-        return value;
-    }
-    
+
     public String getText() {
         return text;
     }
     
+    public int getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "CommonMenuTypeEnum{" +
-                "value=" + value +
-                ", text='" + text + '\'' +
+                "text='" + text + '\'' +
+                ", value=" + value +
                 '}';
     }
+    
 }

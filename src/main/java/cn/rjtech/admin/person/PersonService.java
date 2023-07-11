@@ -8,6 +8,7 @@ import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.kit.DataPermissionKit;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
@@ -275,11 +276,11 @@ public class PersonService extends BaseService<Person> {
     public Ret submitTable(JBoltTable jBoltTable) {
         Person person = jBoltTable.getFormModel(Person.class, "person");
         ValidationUtils.notNull(person, JBoltMsg.PARAM_ERROR);
-
         Long userid = JBoltUserKit.getUserId();
         String username = JBoltUserKit.getUserName();
         Date now = new Date();
-
+        ValidationUtils.isTrue(!isExistsByPersonCode(person.getCpsnNum()), "人员已存在，请勿重复保存!");
+        DataPermissionKit.validateAccess(person.getCdeptNum());
         tx(() -> {
             if (person.getIAutoId() == null) {
                 person.setISource(SourceEnum.MES.getValue())
@@ -544,6 +545,11 @@ public class PersonService extends BaseService<Person> {
         return findFirst(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR).first());
     }
 
+    public boolean isExistsByPersonCode(String cpsnnum) {
+         List<Person> list = find(selectSql().eq(Person.CPSN_NUM, cpsnnum).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR));
+         return CollUtil.isNotEmpty(list);
+    }
+    
     public List<Person> findByCpersonName(String cpersonname) {
         return find(selectSql().eq(Person.CPSN_NAME, cpersonname).eq(Person.IORGID, getOrgId()).eq(Person.ISDELETED, ZERO_STR));
     }

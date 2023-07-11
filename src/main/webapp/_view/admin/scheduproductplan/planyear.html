@@ -45,10 +45,9 @@
                 <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
                     onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',false)" data-handler="refreshJBoltTable" data-title="查看年度计划">查看</a>
 
-                {@if data.iauditstatus == 0}
+                {@if data.iauditstatus == 0 || data.iauditstatus == 3}
                     <a class="jbolt_table_editbtn" href="javascript:void(0)" data-fs="true"
                             onclick="addViewBtn(this,'${data.iautoid}','${data.cplanorderno}','${data.icustomerid}','${data.iyear}',true)" data-handler="refreshJBoltTable" data-title="编辑年度计划">编辑</a>
-
                     <a class="jbolt_table_delbtn" href="admin/scheduproductplanyear/delete/${data.iautoid}" data-title="删除客户订单-年度订单" data-handler="refreshJBoltTable" >删除</a>
                 {@/if}
                 {@if  data.iauditstatus == '1' }

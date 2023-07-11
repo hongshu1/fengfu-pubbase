@@ -22,6 +22,7 @@ import cn.rjtech.model.momdata.Form;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -270,4 +271,8 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 		ValidationUtils.isTrue(codingRuleM.update(), ErrorMsg.SAVE_FAILED);
     }
 
+    public CodingRuleM findByTable(String cformcode) {
+        return daoTemplate("codingrulem.findByTable", Okv.by("cformcode", cformcode)).findFirst();
+    }
+    
 }

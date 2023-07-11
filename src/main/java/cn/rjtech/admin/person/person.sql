@@ -33,6 +33,7 @@ WHERE p.isDeleted = '0' and p.iorgid = #para(iorgid)
 	#if(endtime)
 		and convert(date,p.dhiredate) <= convert(date,#para(endtime))
 	#end
+	#(getDataPermissionSql("p", "cdept_num"))
 #end
 
 #sql("findAll")

@@ -19,14 +19,14 @@
 						   autocomplete="off"
 						   class="form-control"
 						   maxlength="20"
-						   id="startyear"
+						   id="startyear_one"
 						   name="startyear"
 						   value="#datetime(startyear??DateUtil.getNow(),'yyyy')"/>
 
-					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="产线名称" id="cworkname" name="cworkname" value="#(cworkname??)" />
-					<input type="text" class="form-control" placeholder="存货编码"id="cinvcode"  name="cinvcode" value="#(cinvcode??)" />
-					<input type="text" class="form-control" placeholder="客户部番"id="cinvcode1" name=" cinvcode1" value="#(cinvcode1??)" />
-					<input type="text" class="form-control" placeholder="部品名称" id="cinvname1" name="cinvname1" value="#(cinvname1??)" />
+					<input type="text" class="form-control" data-with-clearbtn="true" placeholder="产线名称" id="cworkname_one" name="cworkname" value="#(cworkname??)" />
+					<input type="text" class="form-control" placeholder="存货编码"id="cinvcode_one"  name="cinvcode" value="#(cinvcode??)" />
+					<input type="text" class="form-control" placeholder="客户部番"id="cinvcode1_one" name=" cinvcode1" value="#(cinvcode1??)" />
+					<input type="text" class="form-control" placeholder="部品名称" id="cinvname1_one" name="cinvname1" value="#(cinvname1??)" />
 
 					<button  type="submit" onclick="selectYearPlanBtn(this)" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 					<button type="reset" onclick="clearYearFormBtn(this)"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
@@ -140,20 +140,20 @@
 <script type="text/javascript">
 
 	function selectYearPlanBtn(ele){
-		let startyear = $("#startyear").val();
-		let cworkname = $("#cworkname").val();
-		let cinvcode = $("#cinvcode").val();
-		let cinvcode1 = $("#cinvcode1").val();
-		let cinvname1 = $("#cinvname1").val();
+		let startyear = $("#startyear_one").val();
+		let cworkname = $("#cworkname_one").val();
+		let cinvcode = $("#cinvcode_one").val();
+		let cinvcode1 = $("#cinvcode1_one").val();
+		let cinvname1 = $("#cinvname1_one").val();
 		JBoltTabUtil.currentTabGo(`admin/scheduproductplanyear/planyearsum`,
 				{"startyear":startyear,"cworkname":cworkname,"cinvcode":cinvcode,"cinvcode1":cinvcode1,"cinvname1":cinvname1});
 	}
 	function clearYearFormBtn(ele){
-		$("#startyear").val('');
-		$("#cworkname").val('');
-		$("#cinvcode").val('');
-		$("#cinvcode1").val('');
-		$("#cinvname1").val('');
+		$("#startyear_one").val('');
+		$("#cworkname_one").val('');
+		$("#cinvcode_one").val('');
+		$("#cinvcode1_one").val('');
+		$("#cinvname1_one").val('');
 	}
 
 

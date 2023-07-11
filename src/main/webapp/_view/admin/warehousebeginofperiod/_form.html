@@ -8,7 +8,7 @@
         <div class="card-body">
           <div class="col">
             <div class="btn-group dropdown">
-              <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="importMenuButton"
                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
               </button>
               <div class="dropdown-menu" aria-labelledby="importMenuButton">
@@ -27,8 +27,13 @@
                 </div>
               </div>
             </div>
-            <button onclick="closeHandler()" class="btn btn-info btn-sm"><i class="fa fa-close"></i> 关闭
+              <button onclick="submitAllByStock()" class="btn btn-outline-secondary">
+                  保存
+              </button>
+            <button onclick="closeHandler()" class="btn btn-outline-secondary">
+                关闭
             </button>
+
           </div>
         </div>
       </div>
@@ -48,6 +53,7 @@
                          data-autocomplete
                          data-notnull="true"
                          data-tips="请选择仓库编码"
+                         data-rule="required"
                          autocomplete="off"
                          class="form-control"
                          maxlength="40"
@@ -103,6 +109,7 @@
                          id="icinvcode${data.index}"
                          data-autocomplete
                          data-notnull="true"
+                         data-rule="required"
                          data-tips="请选择存货编码"
                          autocomplete="off"
                          class="form-control"
@@ -169,7 +176,7 @@
       <td>
         <input type="number" data-sync-attr="generatedstockqty" id="generatedstockqty${data.index}" data-tips=""
                data-notnull="true" placeholder="=生成库存条码数量=" autocomplete="off" class="form-control" data-rule="int"
-               maxlength="40" name="generatedstockqty" value="${data.generatedstockqty}"/>
+               maxlength="40" name="generatedstockqty" value="${data.generatedstockqty}" data-rule="required"/>
       </td>
       <td>
         <input type="text" data-sync-attr="ipkgqty" id="ipkgqty${data.index}" data-tips="" data-notnull="true"
@@ -177,17 +184,22 @@
       </td>
       <td>
         <input type="text" data-sync-attr="batch" id="batch${data.index}" data-tips="" data-notnull="true" placeholder="=批次="
-               autocomplete="off" class="form-control" maxlength="40" name="batch" value="${data.batch}"/>
+               autocomplete="off" class="form-control" maxlength="40" name="batch" value="${data.batch}" data-rule="required"/>
       </td>
       <td>
         <input id="createdate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
-               autocomplete="off" class="form-control"
-               placeholder="=选择生产日期=" name="createdate" data-tips="" maxlength="23" value="">
+               autocomplete="off" class="form-control" data-rule="required"
+               placeholder="=选择批次日期=" name="createdate" data-tips="" maxlength="23" value="">
+      </td>
+      <td>
+        <input id="barcodedate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
+               autocomplete="off" class="form-control" data-rule="required"
+               placeholder="=选择生产日期=" name="barcodedate" data-tips="" maxlength="23" value="">
       </td>
       <td>
         <select class="form-control" data-url="admin/dictionary/options?key=beginningofperiod" name="reportfilename" data-autoload
                 data-text="=请选择模板打印标签=" data-value-attr="sn" id="reportfilename" data-value=""
-                data-select="${data.reportfilename}"></select>
+                data-select="${data.reportfilename}" data-rule="required"></select>
       </td>
     </tr>
   {@/each}
@@ -223,24 +235,23 @@
           <thead>
           <tr>
             <th data-width="30px">序号</th>
-            <th data-width="150" data-column="cwhcode">仓库编码</th>
+            <th data-width="150" data-column="cwhcode">仓库编码*</th>
             <th data-width="150" data-column="cwhname">仓库名称</th>
             <th data-width="150" data-column="careacode">库区编码</th>
             <th data-width="150" data-column="careaname">库区名称</th>
-            <th data-width="150" data-column="cinvcode">存货编码</th>
+            <th data-width="150" data-column="cinvcode">存货编码*</th>
             <th data-width="180" data-column="cinvcode1">客户部番</th>
             <th data-width="180" data-column="cinvname1">部品名称</th>
             <th data-width="150" data-column="cinvstd">规格</th>
             <th data-width="120" data-column="cuomname">主计量单位</th>
             <th data-width="150" data-column="cvencode">供应商编码</th>
             <th data-width="150" data-column="cvenname">供应商名称</th>
-            <!--            <th data-width="150" data-column="qty" title="期初库存数量">期初库存数量</th>-->
-            <!--            <th data-width="150" data-column="ungeneratedstockqty" title="未生成条码库存数量">未生成条码库存数量</th>-->
-            <th data-width="150" data-column="generatedStockQty" title="生成条码库存数量">生成条码库存数量</th>
+            <th data-width="150" data-column="generatedStockQty" title="生成条码库存数量">生成条码库存数量*</th>
             <th data-width="130" data-column="ipkgqty">包装数量</th>
-            <th data-width="150" data-column="batch">批次号</th>
-            <th data-width="150" data-column="createdate">生产日期</th>
-            <th data-width="150" data-column="reportfilename" title="标签打印模板">标签打印模板</th>
+            <th data-width="150" data-column="batch">批次号*</th>
+              <th data-width="150" data-column="createdate">批次日期*</th>
+            <th data-width="150" data-column="barcodedate">生产日期*</th>
+            <th data-width="150" data-column="reportfilename" title="标签打印模板">标签打印模板*</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -294,6 +305,7 @@
   var autoidList = null;
   var tableData = null;
   var mark = 'page'
+  var ids = null;
 
   /*
   * 生成
@@ -579,6 +591,70 @@
       return tempTr;
     }
     return false;
+  }
+
+  /*
+  * 保存
+  * */
+  function submitAllByStock(){
+      var printnum = $('#printnum').val();
+      if (printnum == null || printnum == undefined || printnum == '') {
+          printnum = 1;
+      }
+      var autoprint = $('input[name="autoprint"]').is(':checked');
+      //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
+      var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
+      if (!allDatas || allDatas.length == 0) {
+          LayerMsgBox.alert("表格数据不能为空", 2);
+          return;
+      }
+      var flag;
+      tableData = getTableData();
+      for (let i = 0; i < tableData.length; i++) {
+          let element = tableData[i];
+          if (checkisNull(element.cwhcode)) {
+              LayerMsgBox.alert("仓库编码不能为空", 2);
+              return;
+          }
+          if (checkisNull(element.cinvcode)) {
+              LayerMsgBox.alert("存货编码不能为空", 2);
+              return;
+          }
+          if (checkisNull(element.generatedstockqty)) {
+              LayerMsgBox.alert("生成条码库存数量不能为0", 2);
+              return;
+          }
+          if (checkisNull(element.ipkgqty)) {
+              LayerMsgBox.alert("新增期初库存包装数量不能为0", 2);
+              return;
+          }
+          if (checkisNull(element.reportfilename)) {
+              LayerMsgBox.alert("标签打印模板不能为空", 2);
+              return;
+          }
+      }
+
+      var para = {
+          datas: JSON.stringify(tableData),
+          printnum: printnum,
+          autoprint: autoprint
+      };
+      Ajax.post('admin/warehousebeginofperiod/submitAll', para, function (ret) {
+          let retdata = ret.data;
+          if (retdata.state === 'ok') {
+              submitState = true;
+              var split = retdata.ids.split(',');
+              ids = split;
+              autoidList = split;
+              //如果勾选了自动打印，在生成成功后要自动打印
+              LayerMsgBox.success("保存成功", 1000, function () {
+                  parent.refreshPjaxContainer();
+                  // parent.layer.closeAll();
+              });
+          } else {
+              LayerMsgBox.alert(retdata.msg, 2);
+          }
+      });
   }
 
 </script>

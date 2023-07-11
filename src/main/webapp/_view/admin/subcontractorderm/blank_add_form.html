@@ -374,6 +374,18 @@
                 formula: "sum"
             }]
         },
+    #else
+        '#(day.dateStr)': {
+            summary: [
+                {
+                    dir: "h",//纵向统计  v or h
+                    tofixed: 2,//保留两位
+                    roundtag: "round",//四舍五入
+                    removezero: true,//去0
+                    formula: "#(day.sumStr)"
+                }
+            ]
+        },
     #end
     #end
     }

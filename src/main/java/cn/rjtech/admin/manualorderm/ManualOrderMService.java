@@ -395,7 +395,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
         List<ManualOrderM> list = getListByIds(ids);
         List<ManualOrderM> notAuditList = new ArrayList<>();
         for (ManualOrderM manualOrderM : list) {
-            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != manualOrderM.getIOrderStatus()) {
+            if (WeekOrderStatusEnum.NOT_AUDIT.getValue() != manualOrderM.getIOrderStatus() && WeekOrderStatusEnum.REJECTED.getValue() != manualOrderM.getIOrderStatus()) {
                 notAuditList.add(manualOrderM);
             }
 

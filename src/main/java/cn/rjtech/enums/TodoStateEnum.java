@@ -13,11 +13,11 @@ public enum TodoStateEnum {
     /**
      * 枚举列表
      */
-    UNSTART(1, "未开始"),
-    ACCESSING(2, "进行中"),
-    FINISHED(3, "已完成"),
-    CANCEL(4, " 已取消"),
-	UNFINISHED(5, " 未完成");
+    UNSTART("未开始", 1),
+    ACCESSING("进行中", 2),
+    FINISHED("已完成", 3),
+    CANCEL("已取消", 4),
+	UNFINISHED("未完成", 5);
 	
     private static final Map<Integer, TodoStateEnum> TODO_STATE_ENUM_MAP = new HashMap<>();
 
@@ -30,29 +30,29 @@ public enum TodoStateEnum {
     private final String text;
     private final int value;
 
-    TodoStateEnum(int value, String text) {
-        this.value = value;
+    TodoStateEnum(String text, int value) {
         this.text = text;
+        this.value = value;
     }
 
-    public static TodoStateEnum toEnum(int status) {
-        return TODO_STATE_ENUM_MAP.get(status);
-    }
-
-    public int getValue() {
-        return value;
+    public static TodoStateEnum toEnum(int value) {
+        return TODO_STATE_ENUM_MAP.get(value);
     }
 
     public String getText() {
         return text;
     }
 
+    public int getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "TodoStateEnum{" +
-                "value=" + value +
-                ", text=" + text +
+                "text='" + text + '\'' +
+                ", value=" + value +
                 '}';
     }
-
+    
 }
