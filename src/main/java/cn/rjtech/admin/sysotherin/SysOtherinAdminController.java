@@ -70,6 +70,7 @@ public class SysOtherinAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.OTHERIN_ADD)
     public void add() {
         render("add.html");
     }
@@ -84,6 +85,7 @@ public class SysOtherinAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.OTHERIN_EDIT)
     public void edit() {
         SysOtherin sysOtherin = service.findById(getLong("autoid"));
         if (sysOtherin == null) {
@@ -133,6 +135,7 @@ public class SysOtherinAdminController extends BaseAdminController {
     /**
      * 批量删除主从表
      */
+    @CheckPermission(PermissionKey.OTHERIN_DELETE_ALL)
     public void deleteByIds() {
 
         renderJson(service.deleteRmRdByIds(get("ids")));
@@ -141,6 +144,7 @@ public class SysOtherinAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.OTHERIN_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }

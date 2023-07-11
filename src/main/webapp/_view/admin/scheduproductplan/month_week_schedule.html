@@ -2,9 +2,9 @@
 #define css()
 <link href="assets/plugins/Grape/16.0.2/css/gc.spread.sheets.16.0.2.css" rel="stylesheet">
 <link rel="stylesheet" href="assets/js/pagination/layui/layui.css">
+<link rel="stylesheet" href="assets/icon/bootstrap-icons/font/bootstrap-icons.min.css">
 <style>
     .spread-container {
-        /*width:100vh;*/
         height:79vh;
     }
 
@@ -97,6 +97,7 @@
     .popup-layer{
         border: 1px solid rgba(215, 215, 215, 1);
         background-color:#fff;
+        border-radius: 10px;
         width: 560px;
         height: 400px;
         padding: 20px;
@@ -221,17 +222,12 @@
                     <input type="date" id="search_end-time" name="search_end-time" style="height:2rem;">
                 </div>
             </div>
-            <button class="button" onClick="search()" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                </svg>
+            <button class="button" onClick="search()" style="padding: 5px 20px;color: #fff;background-color: #28a745;border-color: #28a745;">
+                <i class="bi bi-search"></i>
                 搜索
             </button>
-            <button class="button" style="height:2rem;padding: 0px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                </svg>
+            <button class="button" onClick="reset()" style="padding: 5px 20px;color: #fff;background-color: #1989fa;border: 1px solid #1989fa;">
+                <i class="bi bi-snow3"></i>
                 重置
             </button>
         </div>
@@ -241,63 +237,45 @@
             <div id="table-tool">
                 <!-- 表格工具开始 -->
                 <div class="but_box">
-                    <button onClick="openPopup()" style="border: #797979 1px solid;padding: 5px 19px;background-color: transparent;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
-                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
-                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
-                        </svg>
+                    <button onClick="openPopup()" style="border: #797979 1px solid;padding: 6px 19px;background-color: transparent;">
+                        <i class="bi bi-arrow-repeat"></i>
                         排产
                     </button>
-                    <button onClick="excelFileSave()" style="border: #797979 1px solid;padding: 5px 10px;background-color: #ffc107;border-color: #ffc107;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
-                            <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
-                        </svg>
+                    <button onClick="excelFileSave()" style="border: #797979 1px solid;padding: 6px 10px;background-color: #ffc107;border-color: #ffc107;">
+                        <i class="bi bi-box-arrow-up-right"></i>
                         数据导出
                     </button>
-                    <button id="loadExcel" style="border: #797979 1px solid;padding: 5px 10px;background-color: #ffc107;border-color: #ffc107;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
-                            <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-                        </svg>
+                    <button id="loadExcel" style="border: #797979 1px solid;padding: 6px 10px;background-color: #ffc107;border-color: #ffc107;">
+                        <i class="bi bi-box-arrow-in-left"></i>
                         数据导入
                     </button>
-                    <button onClick="saveLevel()" class="btn-success btn" style="padding: 3px 15px">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                            <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                            <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                        </svg>
+                    <button onClick="saveLevel()" class="btn-success btn" style="padding: 4px 15px">
+                        <i class="bi bi-check2-square"></i>
                         保存层级
                     </button>
                     <button style="padding:6px 20px;background-color: transparent;border:#797979 1px solid">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
-                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
-                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
-                        </svg>
+                        <i class="bi bi-arrow-repeat"></i>
                         计划使用刷新
                     </button>
                     <button id="content" onClick="lock()" style="padding:6px 20px;background-color: transparent;border:#797979 1px solid">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-bag-x" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M6.146 8.146a.5.5 0 0 1 .708 0L8 9.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 10l1.147 1.146a.5.5 0 0 1-.708.708L8 10.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 10 6.146 8.854a.5.5 0 0 1 0-.708z"/>
-                            <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
-                        </svg>
+                        <i class="bi bi-bag-x"></i>
                         锁定
                     </button>
                     <button onClick="unLock()" onClick="lock()" style="padding:6px 20px;background-color: transparent;border:#797979 1px solid">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-check" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                            <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+                        <i class="bi bi-bag-check"></i>
                         </svg>
                         解锁
                     </button>
-                    <button onClick="freezingCol()" onClick="lock()" style="padding:6px 20px;background-color: transparent;border:#797979 1px solid">冻结列</button>
-                    <button onClick="removeFreezingCol()" onClick="lock()" style="padding:5px 20px;background-color: transparent;border:#797979 1px solid">取消冻结列</button>
+                    <button onClick="freezingCol()" onClick="lock()" style="padding:6px 20px;background-color: transparent;border:#797979 1px solid">
+                        <i class="bi bi-snow3"></i>
+                        冻结列
+                    </button>
+                    <button onClick="removeFreezingCol()" onClick="lock()" style="padding:6px 20px;background-color: transparent;border:#797979 1px solid">取消冻结列</button>
                 </div>
                 <!-- 创建表格目标DOM元素，id为ss的HTML -->
                 <div id="ss" class="spread-container"></div>
                 <div id="statusBar" class="gc-statusbar"></div>
-<!--            </div>-->
-        </div>
+            </div>
         <!--锁定弹框-->
         <div id="alert">
             <p class="alert_title"><span id="title"></span><span id="close">X</span></p>
@@ -330,7 +308,7 @@
             <!-- 表格 -->
             <div style="display: flex">
                 <p style="float: left;width: 70px">已排层级：</p>
-                <table border width="100%" id="popup_table">
+                <table id="popup_table" class="layui-table">
                     <thead>
                     <tr>
                         <th>排产层级</th>
@@ -430,13 +408,13 @@
     var parmsDefault = {
         id:null,                //全局公共id
         level:'',               //排场层级
-        RowCount:24,           //一列多少单元格
+        RowCount:24,            //一列多少单元格
         ColumnCount:10,         //一行多少单元格
         rowindex:0,				//x轴索引
         columnindex:0,			//y轴索引
         data: [],				//当月时间数据
-        dayRow:10,               //day渲染起始下标
-        weekRow:10,              //week渲染起始下标
+        dayRow:10,              //day渲染起始下标
+        weekRow:10,             //week渲染起始下标
         tableData:[],           //接收添加的数据
         planListRowIndex:4,     //计划排产列表起始行下标
         planListColIndex:7,     //计划排产列表起始列下标
@@ -444,6 +422,8 @@
         dschedulebeginData:[],  //已排层级展示数据
         cinvCode:[],            //存储所有存货编码
         dayNumArray:[],         //所有num数组
+        planmonthCol:0,         //休息日所在索引
+        colArr:[],              //需要拼接的col
     };
     var parmsArr = [Object.assign({},parmsDefault)];
     //添加属性
@@ -638,8 +618,8 @@
      * @param initDate
      */
     function initDate(searchData) {
-        let url = searchData!=undefined?Api+`admin/scheduproductplanmonth/getTableHead?level=1&startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
-            :`admin/scheduproductplanmonth/getTableHead?level=1&startDate=&endDate=`;
+        let url = searchData!=undefined?Api+`admin/scheduproductplanmonth/getTableHead?level=${parms.level}&startDate=${searchData.searchStartTime}&endDate=${searchData.searchEndTime}`
+            :`admin/scheduproductplanmonth/getTableHead?level=${parms.level}&startDate=&endDate=`;
         sheet.setValue(3, 9, '项目');
         //获取接口数据
         Ajax.get(url,(res)=>{
@@ -698,7 +678,7 @@
      * 初始化产线数据
      * @param initData
      */
-    function initData(ilevel){
+    async function initData(ilevel){
         spread.getSheet(0).options.colHeaderAutoText = GC.Spread.Sheets.HeaderAutoText["numbers"];//表头列号换成数字
         // sheet.options.isProtected = true; // 开启工作表保护
         // sheet.options.protectionOptions.allowEditObject = true; // 允许编辑对象
@@ -711,7 +691,7 @@
             url,
             type: 'get',
             dataType: 'json',
-            success: function (respons) {
+            success:function (respons){
                 console.log(respons)
                 LayerMsgBox.closeLoading();
                 parms['scheduplanmonth'] = respons;
@@ -719,14 +699,12 @@
                     spreadSuspend();//暂停绘制
                     let rowIndex = 4;
                     let cWorkName = 4;
-                    let rowIndexs = 4;//左视图产品数据渲染起始行
                     let colIndexs = 0;//左视图产品数据渲染起始列
                     let code = 4;//隐藏编码起始行
-                    let gentle = 4;//记录渲染的下标
                     //日计划排版
                     let shiyongRow = 4;//计划使用行下标
                     let shiyongCol = 10;//计划使用列下标
-                    let zaikuCol = 9;//在库下标
+                    let isWorkArray = [];
                     //项目
                     for (let i = 0; i < parms['scheduplanmonth'].length; i++) {
                         //产线名称的跨行
@@ -783,11 +761,8 @@
                             }
 
                             //
-                            let B = 9;//在库天数公式嵌入起始行
                             let Z = 10;//在库天数公式嵌入起始列
-                            let jihuaRow = 8;//计划在库公式嵌入起始行
                             let jihuaCol = 10;//计划在库公式嵌入起始列
-                            let valArr = [];
                             for (let k = 0; k < parms['scheduplanmonth'][i].childList[j].day.length; k++) {
                                 sheet.setValue(shiyongRow, shiyongCol+k, parms['scheduplanmonth'][i].childList[j].day[k].shiyong);
                                 sheet.setValue(1 + shiyongRow, shiyongCol + k, parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].one));
@@ -815,8 +790,9 @@
                                 let useArray = [];
                                 for (let f = 0; f < Num; f++) {
                                     useArray.push(`R[-5]C[${f+1}]`);
-                                    sheet.setValue(shiyongRow, shiyongCol+parms['scheduplanmonth'][i].childList[j].day.length+f, '');
                                 }
+                                // isWorkArray.push(parms['scheduplanmonth'][i].childList[j].day[k].iswork);
+                                // console.log(isWorkArray);
                                 //嵌入计划在库公式
                                 sheet.setFormula(shiyongRow+5-1,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
                                 //判断当天是否为工作日
@@ -824,23 +800,37 @@
                                     //嵌入在库天数公式
                                     sheet.setFormula(AS,Z+k,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
                                 }else{
-                                    parms['colArr'] = [];
-                                    var col = Z+k; // 初始列值
-                                    var row = AS-5; // 初始行值
-                                    for (let l = 0; l < Num; l++) {
-                                        /**
-                                         * @param parms['cols'] {number} 当前公式所在列
-                                         * @param row {number} 当前公式所在行
-                                         * @param parms['scheduplanmonth'][i].childList[j].day[parms['cols']-10] 当天数据对象
-                                         */
-                                        // findColumns(col,row);
-                                    }
-                                        sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})/R${AS+1}C10`);
-                                        parms['colArr'].length=0;
+                                    // let row = AS-5; // 初始行值
+                                    // let planmonthCol = k+Z;
+                                    // let col = planmonthCol;
+                                    // var isWork = parms['scheduplanmonth'][i].childList[j].day;
+                                    // function findColumns() {
+                                    //     setTimeout(function (){
+                                    //         for (let l = 0; l < Num; l++) {
+                                    //             let value = sheet.getValue(row, col+1);
+                                    //             if (value) {
+                                    //                 if(value==0){
+                                    //                     ++col;
+                                    //                     findColumns();
+                                    //                 }else{
+                                    //                     parms.colArr.push(col);
+                                    //                 }
+                                    //             }
+                                    //         }
+                                    //         console.log(parms.colArr)
+                                    //     },100)
+                                    // }
+                                    // findColumns();
+                                    // // console.log(parms.colArr)
+                                    // if(parms.colArr.length>1){
+                                    //     // console.log(parms.colArr);
+                                    // }
                                     // console.log(`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})`)
+                                    // sheet.setFormula(AS,parms.planmonthCol,`=SUM(R${AS-4}C${parms.colArr[0]+1}:R${AS-4}C${parms.colArr[1]+1})/R${AS+1}C10`);
                                     if(parms['scheduplanmonth'][i].childList[j].day.at(-1)||parms['scheduplanmonth'][i].childList[j].day.at(-2)){
                                         // console.log('at')
                                     }
+
                                 }
                                 //控制小数位为1位
                                 sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
@@ -883,29 +873,6 @@
             }
         })
     }
-    /**
-     * @param col {number} 当前公式所在列
-     * @param row {number} 当前公式所在行
-     * @param obj 当天数据对象
-     */
-    function findColumns(col,row,obj){
-        let value = 0;
-        setTimeout(()=>{
-            value = sheet.getValue(row, col);
-            if(value==0){
-                if(obj.iswork){
-                    parms['colArr'].push(col);
-                    ++col;
-                    return;
-                }else{
-                    findColumns(++col,row);
-                }
-            }else {
-                parms['colArr'].push(col);
-                return;
-            }
-        },0)
-    }
     // 订阅 valueChanged 事件
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
         let {row,col} = info;
@@ -914,7 +881,7 @@
         setTimeout(() => {
             //获取公式计算之后的最新数据
             arr = sheet.getDirtyCells(-1,-1,-1,-1);
-            let newValues = arr.map((item, index) =>{
+            let newValues = arr.map((item) =>{
                 //过滤没发生改变的数据
                 if(item.newValue!=item.oldValue){
                     return {
@@ -922,7 +889,7 @@
                     }
                 }
             });
-            let newValueObj = newValues.map(item=>{
+            newValues.map(item=>{
                     if(item!=undefined){
                         var rowData = sheet.getArray(item.row,0, 1, sheet.getColumnCount());//获取行数据
                         var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
@@ -979,8 +946,6 @@
                                 <td>${res.data[i].dscheduleendtime}</td>
                                 <td>${res.data[i].dlockendtime==undefined?'':res.data[i].dlockendtime}</td>
                                 <td width='130px'>
-                                  <span onClick='levelSearch(${res.data[i].ilevel})' style="margin-right:10px;cursor: pointer;color: #0000FF;">查看</span>
-                                  <span style="margin-right:10px;cursor: pointer;color: #0000FF;">编辑</span>
                                   <span onClick='levelDelete(${i})'style="cursor: pointer;color: #0000FF;">删除</span>
                                  </td>
                                </tr>`;
@@ -990,10 +955,6 @@
                 console.log(error);
             }
         })
-    }
-    //表格数据查看
-    function levelSearch(ilevel){
-        window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&level=${ilevel}`);
     }
     //删除表格数据
     function levelDelete(index){
@@ -1039,6 +1000,7 @@
         const searchStartTime = document.getElementById('search_start-time').value;
         const searchEndTime = document.getElementById('search_end-time').value;
         const searchLevel = document.getElementById('search_level').value;
+        parms.level = searchLevel;
         searchData={
             cworkname,
             cinvcode,
@@ -1058,6 +1020,15 @@
         initData(searchLevel);
         initDate(searchData);
         loadInit();
+    }
+    function reset() {
+        document.getElementById('cworkname').value = '';
+        document.getElementById('cinvcode').value = '';
+        document.getElementById('cinvcode1').value = '';
+        document.getElementById('cinvname1').value = '';
+        document.getElementById('search_start-time').value = '';
+        document.getElementById('search_end-time').value = '';
+        document.getElementById('search_level').value = '';
     }
     //排产确定事件
     function savePopup(){
@@ -1135,7 +1106,6 @@
                 type:'post',
                 dataType:'json',
                 success:function (res){
-                    console.log(res)
                     parms.getLockDate = res.data;
                     const weekNum = document.getElementById('weekNum');
                     weekNum.innerText = parms.getLockDate[0].weekNum;

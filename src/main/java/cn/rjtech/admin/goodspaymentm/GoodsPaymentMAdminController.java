@@ -58,6 +58,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.GOODSPAYMENTM_ADD)
     public void add() {
         render("add.html");
     }
@@ -72,6 +73,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.GOODSPAYMENTM_EDIT)
     public void edit() {
         GoodsPaymentM goodsPaymentM = service.findById(getLong(0));
         if (goodsPaymentM == null) {
@@ -97,6 +99,7 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.GOODSPAYMENTM_EDIT)
     public void deleteByIds() {
         renderJson(service.deleteRmRdByIds(get("ids")));
     }

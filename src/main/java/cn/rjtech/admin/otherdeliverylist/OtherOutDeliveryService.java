@@ -17,6 +17,7 @@ import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import com.jfinal.aop.Inject;
@@ -227,6 +228,7 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 				}
 				if (otherOut.getAutoID() == null) {
 					otherOut.setOrganizeCode(OrgCode);
+					otherOut.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
 					//创建人
 					otherOut.setICreateBy(userId);
 					otherOut.setDCreateTime(nowDate);
