@@ -3629,4 +3629,20 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String FORMUPLOADM_ADD_SUBMIT = "formuploadm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String FORMUPLOADM_API_ADD = "formuploadm_api_add";
+	/**
+	 * 修改
+	 */
+	public static final String FORMUPLOADM_API_EDIT = "formuploadm_api_edit";
+	/**
+	 * 删除
+	 */
+	public static final String FORMUPLOADM_API_DELETE = "formuploadm_api_delete";
+	/**
+	 * 提交
+	 */
+	public static final String FORMUPLOADM_API_SUBMIT = "formuploadm_api_submit";
 }
