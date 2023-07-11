@@ -46,6 +46,26 @@
 <div class="jbolt_table_toolbar" id="EquipmentModel_toolbar_#(pageId)">
 <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
 	<button data-dialogbtn data-area="800,600"  data-handler="jboltTablePageToFirst"  id="toolbar_addBtn_#(pageId)"  data-title="新增物料建模-机型档案" data-url="admin/equipmentmodel/add" class="btn btn-outline-primary" ><i class="fa fa-plus"></i> 新增</button>
+	<div class="btn-group dropdown">
+		<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+		</button>
+		<div class="dropdown-menu" aria-labelledby="importMenuButton">
+			<a href="assets/exceltpl/equipmentmodel.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+			<div class="j_upload_file_box"
+				 data-name="file"
+				 data-btn-class="btn dropdown-item"
+				 data-placeholder="上传导入"
+				 data-confirm="确认导入数据？"
+				 data-accept="excel"
+				 data-maxsize="20480"
+				 data-handler="uploadFile"
+				 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+				 data-url="/admin/equipmentmodel/importExcelClass">
+			</div>
+		</div>
+	</div>
+
 
 </div>
 <div class="float-right" role="group" aria-label="btn-group">
