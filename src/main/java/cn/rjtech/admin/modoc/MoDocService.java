@@ -3,6 +3,7 @@ package cn.rjtech.admin.modoc;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -41,6 +42,7 @@ import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.javaparser.utils.Log;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -278,7 +280,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 保存
-   *
    * @param
    * @return
    */
@@ -924,7 +925,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
     String format = DateUtil.format(DateUtil.date(), DatePattern.PURE_DATE_FORMAT);
     String s = momDataFuncService.getNextNo(prefix.concat(format), 4);
 
-    return momDataFuncService.getNextRouteNo(1L, "SCGD", 6);
+    return momDataFuncService.getNextRouteNo(1L, "SCGD"+s, 6);
   }
 
   public List<Record> getDocdetail(Long imodocid, Long iinventoryroutingid) {
@@ -1145,7 +1146,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
     Record jobN = dbTemplate("momaterialsscansum.getByBarcodeF", Kv.by("imodocid", imodocid)).findFirst();
     Record jobY = dbTemplate("momaterialsscansum.getByBarcodeN", Kv.by("imodocid", imodocid)).findFirst();
     String isScanned = "";
-    if (jobN.getInt("iplanqty") == jobY.getInt("irealqty")) {
+    if (jobN.getInt("iplanqty") == jobY.getInt("irealqty") && jobN.getInt("iplanqty") != 0 &&  jobY.getInt("irealqty")!=0) {
       isScanned = "已齐料";
     } else {
       isScanned = "未齐料";
@@ -1325,13 +1326,45 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 处理审批通过的其他业务操作，如有异常返回错误信息
-   *
    * @param formAutoId 单据ID
    * @return 错误信息
    */
   @Override
   public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
 
+    Record record=dbTemplate("modoc.getModocByid",Kv.by("iautoid",formAutoId)).findFirst();
+    MoDoc moDoc=findById(formAutoId);
+    moDoc.setIStatus(2);
+    if(record.getInt("iauditway")==2 && record.getInt("iauditstatus")==2){
+        JSONArray jsonArray=new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("docno", record.getStr("cmodocno"));
+        jsonObject.put("ddate", DateUtil.format(record.getDate("dcreatetime"), "yyyy-MM-dd"));
+        jsonObject.put("cwhcode", record.getStr("cwhcode"));
+        jsonObject.put("cdepcode", record.get("cdepcode"));
+        jsonObject.put("cinvcode", record.get("cinvcode"));
+        jsonObject.put("cinvname", record.get("cinvname"));
+        jsonObject.put("cinvstd", record.get("cInvStd"));
+        jsonObject.put("iquantity", record.get("iquantity"));
+        jsonObject.put("DStartDate",record.getStr("DStartDate"));
+        jsonObject.put("DDueDate",record.getStr("DDueDate"));
+        jsonObject.put("irowno",record.getStr("irowno"));
+        jsonObject.put("cBatch",record.getStr("cbatch"));
+        jsonArray.add(jsonObject);
+        JSONObject params = new JSONObject();
+        params.put("data",jsonArray);
+        LOG.info(params.toJSONString());
+      tx(() -> {
+        moDoc.update();
+        String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/AddMoToERP?dbname=U8Context", params.toString());
+        JSONObject jsonObject2 = JSONObject.parseObject(result);
+        String remark=jsonObject2.getString("remark");
+        if(!jsonObject2.getString("status").equals("S")){
+          ValidationUtils.error(remark);
+        }
+        return true;
+      });
+    }
     return null;
   }
 
@@ -1345,7 +1378,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 实现反审之前的其他业务操作，如有异常返回错误信息
-   *
    * @param formAutoId 单据ID
    * @param isFirst    是否为审批的第一个节点
    * @param isLast     是否为审批的最后一个节点
