@@ -3921,4 +3921,12 @@ public class PermissionKey {
 	 * 查看
 	 */
 	public static final String PLANYEARSUM_SHOW = "planyearsum_show";
+	/**
+	 * 导出
+	 */
+	public static final String PLANMONTHSUM_EXPORT = "planmonthsum_export";
+	/**
+	 * 查看
+	 */
+	public static final String PLANMONTHSUM_SHOW = "planmonthsum_show";
 }
