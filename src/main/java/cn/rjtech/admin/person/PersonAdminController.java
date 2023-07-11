@@ -109,6 +109,7 @@ public class PersonAdminController extends BaseAdminController {
      * 删除
      */
     @CheckPermission(PermissionKey.PERSON_DELETE)
+    @CheckDataPermission(operation = DataOperationEnum.DELETE, type = BusObjectTypeEnum.DEPTARTMENT)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -192,7 +193,7 @@ public class PersonAdminController extends BaseAdminController {
     /**
      * 数据导入
      */
-    @UnCheck
+    @CheckDataPermission(operation = DataOperationEnum.EDIT, type = BusObjectTypeEnum.DEPTARTMENT)
     public void importExcelDatas() {
         //上传到今天的文件夹下
         String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);

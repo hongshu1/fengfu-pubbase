@@ -13,7 +13,9 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.formuploadcategory.FormUploadCategoryService;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.model.momdata.FormUploadD;
 import cn.rjtech.model.momdata.FormUploadM;
 import cn.rjtech.service.approval.IApprovalService;
@@ -70,6 +72,12 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
             }
             if (ObjUtil.isNotNull(formUploadCategoryService.findById(record.getStr("icategoryid")))) {
                 record.set("icategoryid", formUploadCategoryService.findById(record.getStr("icategoryid")).getCCategoryName());
+            }
+            // 审核中，并且单据审批方式为审批流
+            if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), record.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), record.getInt(IAUDITWAY))) {
+                record.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(record.getLong("iautoid"), 5));
+            }else {
+                record.put("approvalusers","");
             }
         }
         return paginate;
