@@ -144,4 +144,12 @@ public class CusOrderSumAdminController extends BaseAdminController {
         render("year.html");
     }
 
+    /**
+     * 导出
+     */
+    @CheckPermission(PermissionKey.CUSORDERSUM_EXPORT)
+    public void export()
+    {
+
+    }
 }

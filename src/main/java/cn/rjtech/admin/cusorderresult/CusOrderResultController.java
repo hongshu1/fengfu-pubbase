@@ -97,4 +97,12 @@ public class CusOrderResultController extends BaseAdminController {
         renderJson(service.algorithmSum());
     }
 
+    /**
+     * 导出z
+     */
+    @CheckPermission(PermissionKey.CUSORDERRESULT_EXPORT)
+    public void export()
+    {
+
+    }
 }

@@ -3821,4 +3821,24 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String MATERIAL_DELIVERY_LIST_DELETE = "material_delivery_list_delete";
+	/**
+	 * 新增
+	 */
+	public static final String PURECEIVE_ADD = "pureceive_add";
+	/**
+	 * 修改
+	 */
+	public static final String PURECEIVE_EDIT = "pureceive_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PURECEIVE_DELETE = "pureceive_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERSUM_EXPORT = "cusordersum_export";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERRESULT_EXPORT = "cusorderresult_export";
 }
