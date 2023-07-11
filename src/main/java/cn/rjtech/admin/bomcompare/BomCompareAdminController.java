@@ -91,6 +91,7 @@ public class BomCompareAdminController extends BaseAdminController {
 //		getBomMaster(bomM);
 //		render("/_view/admin/bommaster/edit.html");
 	}
+	
 	@CheckPermission(PermissionKey.BOMMASTER_VERSION_EDIT)
 	public void info(){
 		BomM bomM = bomMService.findById(getLong(0));
@@ -167,6 +168,7 @@ public class BomCompareAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
+	
 	@CheckPermission(PermissionKey.BOMCOMPARE_ADD)
 	public void manualForm(@Para(value = "pid") Long pid, @Para(value = "isChildren") Boolean isChildren){
 		Kv kv = getKv();

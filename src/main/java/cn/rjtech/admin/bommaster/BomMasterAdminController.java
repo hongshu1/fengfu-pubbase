@@ -6,8 +6,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.bomm.BomMService;
@@ -75,7 +77,7 @@ public class BomMasterAdminController extends BaseAdminController {
     /**
      * 新增
      */
-    @CheckPermission(PermissionKey.BOMMASTER_ADD)
+    @CheckPermission(PermissionKey.BOMMASTER_EXPORT)
     public void add() {
         render("add.html");
     }
@@ -215,7 +217,7 @@ public class BomMasterAdminController extends BaseAdminController {
         renderJson(service.saveCopy(oldId, cVersion));
     }
 
-    @CheckPermission(PermissionKey.BOMMASTER_IMPORT)
+    @CheckPermission(PermissionKey.BOMMASTER_EXPORT)
     public void importExcelFile() throws IOException {
         //上传到今天的文件夹下
         String uploadFile = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);
@@ -235,6 +237,8 @@ public class BomMasterAdminController extends BaseAdminController {
 
     public void versionIndex() {
         keepPara();
+        boolean hasPermission = JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), PermissionKey.BOMMASTER_VERSION_VIEW);
+        set("hasPermission", !hasPermission);
         render("version_index.html");
     }
     

@@ -22,11 +22,12 @@
             <div class="card-header py-2">
                 <div>
                     <div class="" role="group" aria-label="btn-group">
-
+                        #permission(PermissionKey.BOMMASTER_EXPORT)
                         <button data-dialogbtn data-area="100%,100%" data-title="新增物料清单" data-url="admin/bommaster/add" class="btn btn-outline-primary btn-sm" id="addBtn_#(pageId)"><i class="fa fa-plus"></i> 导入新增</button>
-
+                        #end
+                        #permission(PermissionKey.BOMMASTER_ADD)
                         <button data-dialogbtn data-area="100%,100%" data-title="新增物料清单" data-check-handler="checkCanOpenDialogHandler_#(pageId)" data-url="admin/bomcompare/manualForm" class="btn btn-outline-primary btn-sm" id="addEmptyBtn_#(pageId)"><i class="fa fa-plus"></i> 新增物料清单</button>
-
+                        #end
 <!--                        <button data-area="100%,100%" data-title="查看" class="btn btn-outline-info btn-sm"><i class="fa fa-eye c-info"></i> 查看</button>-->
 
 <!--                        <button data-area="400,300" data-title="复制版本提示" class="btn btn-outline-warning btn-sm"><i class="fa fa-copy"></i> 复制</button>-->

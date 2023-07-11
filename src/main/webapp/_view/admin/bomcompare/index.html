@@ -114,7 +114,9 @@
 
 		<div class="jbolt_table_toolbar" id="BomCompare_toolbar_#(pageId)">
 			<div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+				#permission(PermissionKey.BOMMASTER_EXPORT)
 				<button tooltip data-title="导出Excel(查询结果)" data-form="BomCompare_form_index_#(pageId)" class="btn btn-outline-primary btn-sm" data-downloadbtn data-url="admin/bomM/exportExcelByForm?iBomMid=#(iAutoId)&cCode=#(cCode)&iCodeLevel=#(iCodeLevel)"><i class="fa fa-download"> 导出</i></button>
+				#end
 				<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info" ><i class="fa fa-refresh"></i> 刷新</button>
 			</div>
 
