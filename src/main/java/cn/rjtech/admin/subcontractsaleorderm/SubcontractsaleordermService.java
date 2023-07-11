@@ -2,6 +2,7 @@ package cn.rjtech.admin.subcontractsaleorderm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dept.DeptService;
 import cn.jbolt._admin.dictionary.DictionaryService;
@@ -19,13 +20,15 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.customer.CustomerService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
 import cn.rjtech.admin.syssaledeliverplan.SysSaledeliverplanService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
+import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.enums.MonthOrderStatusEnum;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
@@ -61,31 +64,30 @@ import static cn.hutool.core.text.StrPool.COMMA;
 public class SubcontractsaleordermService extends BaseService<Subcontractsaleorderm> implements IApprovalService {
 
     private final Subcontractsaleorderm dao = new Subcontractsaleorderm().dao();
-    @Inject
-    private SubcontractsaleorderdService subcontractsaleorderdService;
+    
     @Inject
     private DeptService deptService;
     @Inject
-    private CusOrderSumService cusOrderSumService;
+    private CustomerService customerService;
     @Inject
-    private FormApprovalService formApprovalService;
+    private SaleTypeService saleTypeService;
+    @Inject
+    private InventoryService inventoryService;
     @Inject
     private WeekOrderMService weekOrderMService;
     @Inject
     private DictionaryService dictionaryService;
     @Inject
-    private SaleTypeService saleTypeService;
-    @Inject
-    private CustomerService customerService;
-    @Inject
-    private InventoryService inventoryService;
+    private CusOrderSumService cusOrderSumService;
     @Inject
     private SysSaledeliverplanService sysSaledeliverplanService;
+    @Inject
+    private SubcontractsaleorderdService subcontractsaleorderdService;
+    
     @Override
     protected Subcontractsaleorderm dao() {
         return dao;
     }
-
 
     /**
      * U8推单
@@ -150,10 +152,14 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
             row.set("cdepname", dept == null ? null : dept.getName());
             row.set("cbususername", JBoltUserCache.me.getUserName(row.getLong("iBusPersonId")));
             row.set("ccurrencyname", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.ccurrency.name(), row.getStr("cCurrency")));
+
+            // 审核中，并且单据审批方式为审批流
+            if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), row.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), row.getInt(IAUDITWAY))) {
+                row.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(row.getLong("iautoid"), 5));
+            }
         }
         weekOrderMService.change(list);
         pageList.setList(list);
-
 
         return pageList;
     }
@@ -210,7 +216,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
             subcontractsaleorderm.setIsDeleted(true);
         }
 
-        ValidationUtils.isTrue(notAuditList.size() == 0, "存在非已保存订单");
+        ValidationUtils.assertEmpty(notAuditList, "存在非已保存订单");
         ValidationUtils.isTrue(batchUpdate(list).length > 0, JBoltMsg.FAIL);
 
         return SUCCESS;
@@ -598,11 +604,10 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     @Override
     public String postBatchBackout(List<Long> formAutoIds) {
         List<Subcontractsaleorderm> subcontractsaleorderms = getListByIds(StringUtils.join(formAutoIds, COMMA));
-        Boolean algorithmSum = subcontractsaleorderms.stream().anyMatch(item -> item.getIOrderStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
-        subcontractsaleorderms.stream().map(item -> {
-            item.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue());
-            return item;
-        }).collect(Collectors.toList());
+        
+        boolean algorithmSum = subcontractsaleorderms.stream().anyMatch(item -> item.getIOrderStatus().equals(WeekOrderStatusEnum.APPROVED.getValue()));
+        
+        subcontractsaleorderms = subcontractsaleorderms.stream().peek(item -> item.setIOrderStatus(WeekOrderStatusEnum.NOT_AUDIT.getValue())).collect(Collectors.toList());
         batchUpdate(subcontractsaleorderms);
 
         if (algorithmSum) {
@@ -611,4 +616,5 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         }
         return null;
     }
+    
 }
