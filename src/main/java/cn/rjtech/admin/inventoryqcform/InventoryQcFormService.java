@@ -656,7 +656,10 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
                 }
             }
-            Strsn.deleteCharAt(Strsn.lastIndexOf(","));
+            if(Strsn.length()>0){
+                Strsn.deleteCharAt(Strsn.lastIndexOf(","));
+            }
+
 
             Date now=new Date();
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
