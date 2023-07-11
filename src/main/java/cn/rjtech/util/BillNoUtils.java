@@ -234,4 +234,50 @@ public class BillNoUtils {
         return MOM_DATA_FUNC_SERVICE.barcodeGenerateForFormID(orgCode, FormCache.ME.getFormId(cformcode), generateQty);
     }
 
+    // ----------------------------------------------------------------
+    // 生成条码
+    // ----------------------------------------------------------------
+
+    /**
+     * 生成条码
+     *
+     * @param orgCode        组织编码
+     * @param cBarcodeTypeSn 条码类型：1. 物料现品票 2.工单现品票
+     */
+    public static String genBarcode(String orgCode, String cBarcodeTypeSn) {
+        return MOM_DATA_FUNC_SERVICE.generateBarcode(orgCode, cBarcodeTypeSn);
+    }
+
+    /**
+     * 生成多个条码
+     *
+     * @param orgCode        组织编码
+     * @param cBarcodeTypeSn 条码类型：1. 物料现品票 2.工单现品票
+     */
+    public static List<String> genBarcodes(String orgCode, String cBarcodeTypeSn, int generateQty) {
+        List<Record> codeRecords = MOM_DATA_FUNC_SERVICE.barcodeGenerateForBarcodeTypeSN(orgCode, cBarcodeTypeSn, generateQty);
+        return CollUtil.getFieldValues(codeRecords, "barcode", String.class);
+    }
+
+    /**
+     * 生成条码记录，已知字段：barcode、seq、serial
+     *
+     * @param orgCode        组织编码
+     * @param cBarcodeTypeSn 条码类型：1. 物料现品票 2.工单现品票
+     */
+    public static Record genBarcodeRecord(String orgCode, String cBarcodeTypeSn) {
+        return MOM_DATA_FUNC_SERVICE.generateBarcodeRecord(orgCode, cBarcodeTypeSn);
+    }
+
+    /**
+     * 生成多个条码记录，已知字段：barcode、seq、serial
+     *
+     * @param orgCode        组织编码
+     * @param cBarcodeTypeSn 条码类型：1. 物料现品票 2.工单现品票
+     * @param generateQty    生成数量
+     */
+    public static List<Record> genBarcodeRecords(String orgCode, String cBarcodeTypeSn, int generateQty) {
+        return MOM_DATA_FUNC_SERVICE.barcodeGenerateForBarcodeTypeSN(orgCode, cBarcodeTypeSn, generateQty);
+    }
+
 }
