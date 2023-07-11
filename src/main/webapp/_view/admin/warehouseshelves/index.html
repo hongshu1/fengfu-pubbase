@@ -51,133 +51,129 @@
 
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="warehouseShelves_toolbar_#(pageId)">
-      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        #permission(PermissionKey.WAREHOUSE_SHELVES_ADD)
-        <button data-openpage="dialog" data-area="700,500" data-handler="jboltTablePageToFirst" data-title="新增货架档案"
-                data-url="admin/warehouseshelves/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i>
-          新增
-        </button>
-        #end
-        #permission(PermissionKey.WAREHOUSE_SHELVES_EDIT)
-        <button data-openpage="dialog" data-area="700,500" data-handler="refreshJBoltTable" data-title="修改货架档案"
-                data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouseshelves/edit/"
-                class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改
-        </button>
-        #end
-        #permission(PermissionKey.WAREHOUSE_SHELVES_DELETE)
-        <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
-                data-url="admin/warehouseshelves/deleteByIds?ids=" data-confirm="确定删除选中数据？"
-                class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除
-        </button>
-        #end
-        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新
-        </button>
+      #permission(PermissionKey.WAREHOUSE_SHELVES_ADD)
+      <button data-openpage="dialog" data-area="700,500" data-handler="jboltTablePageToFirst" data-title="新增货架档案"
+              data-url="admin/warehouseshelves/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i>
+        新增
+      </button>
+      #end
 
+      #permission(PermissionKey.WAREHOUSE_SHELVES_EDIT)
+      <button data-openpage="dialog" data-area="700,500" data-handler="refreshJBoltTable" data-title="修改货架档案"
+              data-check-handler="jboltTableGetCheckedId" data-url="admin/warehouseshelves/edit/"
+              class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改
+      </button>
+      #end
 
-        #permission(PermissionKey.WAREHOUSE_SHELVES_EXPORT)
-        <div class="btn-group dropdown" role="group" aria-label="btn-group">
-          <div class="btn-group dropdown">
-            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                    id="exportMenuwarehouseShelvesButton" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false"> 数据导出
-            </button>
-            <div class="dropdown-menu" aria-labelledby="exportMenuwarehouseShelvesButton">
-              <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
-                      data-url="admin/warehouseshelves/dataExport"><i class="fa fa-download"></i> 导出选中
-              </button>
-              <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouseshelves/dataExport"
-                      data-form="warehouseShelvesForm_#(pageId)"><i class="fa fa-download"></i> 条件导出
-              </button>
-              <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouseshelves/dataExport"><i
-                  class="fa fa-download"></i> 全部导出
-              </button>
-            </div>
-          </div>
-        </div>
-        #end
+      #permission(PermissionKey.WAREHOUSE_SHELVES_DELETE)
+      <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+              data-url="admin/warehouseshelves/deleteByIds?ids=" data-confirm="确定删除选中数据？"
+              class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除
+      </button>
+      #end
 
-        #permission(PermissionKey.WAREHOUSE_SHELVES_IMPORT)
+      <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新
+      </button>
+
+      #permission(PermissionKey.WAREHOUSE_SHELVES_EXPORT)
+      <div class="btn-group dropdown" role="group" aria-label="btn-group">
         <div class="btn-group dropdown">
-          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                  id="exportMenuwarehouseShelvesButton" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false"> 数据导出
           </button>
-          <div class="dropdown-menu" aria-labelledby="importMenuButton">
-            <a data-downloadbtn href="/admin/warehouseshelves/downloadTpl" class="btn dropdown-item"><i
-                class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
-            <div class="j_upload_file_box"
-                 data-name="file"
-                 data-btn-class="btn dropdown-item"
-                 data-placeholder="上传导入"
-                 data-confirm="确认导入数据？"
-                 data-accept="excel"
-                 data-maxsize="20480"
-                 data-handler="uploadFile"
-                 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
-                 data-url="/admin/warehouseshelves/importExcelData">
-            </div>
-          </div>
-        </div>
-        #end
-
-        #permission(PermissionKey.WAREHOUSE_SHELVES_PRINT)
-        <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
-          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
-          </button>
-          <div class="dropdown-menu" aria-labelledby="exportMenuButton">
-            <button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds"
-                    onclick="warehouseshelvesPrint('check')"><i class="fa fa-download"></i> 打印勾选行
+          <div class="dropdown-menu" aria-labelledby="exportMenuwarehouseShelvesButton">
+            <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                    data-url="admin/warehouseshelves/dataExport"><i class="fa fa-download"></i> 导出选中
             </button>
-            <button class="btn dropdown-item" onclick="warehouseshelvesPrint('page')"><i class="fa fa-download"></i> 打印当前页
+            <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouseshelves/dataExport"
+                    data-form="warehouseShelvesForm_#(pageId)"><i class="fa fa-download"></i> 条件导出
+            </button>
+            <button class="btn dropdown-item" data-downloadbtn data-url="admin/warehouseshelves/dataExport"><i
+                class="fa fa-download"></i> 全部导出
             </button>
           </div>
         </div>
-        #end
-
       </div>
+      #end
 
+      #permission(PermissionKey.WAREHOUSE_SHELVES_IMPORT)
+      <div class="btn-group dropdown">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导入
+        </button>
+        <div class="dropdown-menu" aria-labelledby="importMenuButton">
+          <a data-downloadbtn href="/admin/warehouseshelves/downloadTpl" class="btn dropdown-item"><i
+              class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+          <div class="j_upload_file_box"
+               data-name="file"
+               data-btn-class="btn dropdown-item"
+               data-placeholder="上传导入"
+               data-confirm="确认导入数据？"
+               data-accept="excel"
+               data-maxsize="20480"
+               data-handler="uploadFile"
+               data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+               data-url="/admin/warehouseshelves/importExcelData">
+          </div>
+        </div>
+      </div>
+      #end
 
+      #permission(PermissionKey.WAREHOUSE_SHELVES_PRINT)
+      <div class="btn-group dropdown" role="group" aria-label="btn-group" data-require-plugin="hiprint">
+        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="print"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 打印
+        </button>
+        <div class="dropdown-menu" aria-labelledby="exportMenuButton">
+          <button class="btn dropdown-item" data-usecheckedids="true" data-check-handler="jboltTableGetCheckedIds"
+                  onclick="warehouseshelvesPrint('check')"><i class="fa fa-download"></i> 打印勾选行
+          </button>
+          <button class="btn dropdown-item" onclick="warehouseshelvesPrint('page')"><i class="fa fa-download"></i> 打印当前页
+          </button>
+        </div>
+      </div>
+      #end
 
-      <div class="clearfix"></div>
     </div>
 
 
-    <table class="jbolt_table jbolt_main_table table-center"
-           id="jbolt_table_#(pageId)"
-           data-jbolttable
-           data-height="fill"
-           data-ajax="true"
-           data-url="admin/warehouseshelves/datas?isdeleted=0"
-           data-column-resize="true"
-           data-column-prepend="1:checkbox:true"
-           data-conditions-form="warehouseShelvesForm_#(pageId)"
-           data-rowtpl="warehouseShelvesRowtpl_#(pageId)"
-           data-page="warehouseShelvesPage_#(pageId)"
-           data-toolbar="warehouseShelves_toolbar_#(pageId)"
+  <table class="jbolt_table jbolt_main_table table-center"
+         id="jbolt_table_#(pageId)"
+         data-jbolttable
+         data-height="fill"
+         data-ajax="true"
+         data-url="admin/warehouseshelves/datas?isdeleted=0"
+         data-column-resize="true"
+         data-column-prepend="1:checkbox:true"
+         data-conditions-form="warehouseShelvesForm_#(pageId)"
+         data-rowtpl="warehouseShelvesRowtpl_#(pageId)"
+         data-page="warehouseShelvesPage_#(pageId)"
+         data-toolbar="warehouseShelves_toolbar_#(pageId)"
 
 
-           data-fixed-columns-left="1,2,3"
-    >
-      <thead class="fw-normal">
-      <tr>
-        <th data-width="60">序号</th>
-        <th data-min-width="150" data-column="cShelvesCode">货架编码</th>
-        <th data-width="150" data-column="cShelvesName">货架名称</th>
-        <th data-width="150" data-column="cWhName">所属仓库</th>
-        <th data-width="150" data-column="cAreaName">所属库区</th>
-        <th data-width="150" data-column="cMemo">备注</th>
-        <th data-width="150" data-column="cMemo">货架码</th>
-        <th data-width="150" data-column="cCreateName">创建人名称</th>
-        <th data-width="150" data-column="dCreateTime">创建时间</th>
-        <th data-width="150" data-column="isEnabled">是否启用</th>
-      </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
+         data-fixed-columns-left="1,2,3"
+  >
+    <thead class="fw-normal">
+    <tr>
+      <th data-width="60">序号</th>
+      <th data-min-width="150" data-column="cShelvesCode">货架编码</th>
+      <th data-width="150" data-column="cShelvesName">货架名称</th>
+      <th data-width="150" data-column="cWhName">所属仓库</th>
+      <th data-width="150" data-column="cAreaName">所属库区</th>
+      <th data-width="150" data-column="cMemo">备注</th>
+      <th data-width="150" data-column="cMemo">货架码</th>
+      <th data-width="150" data-column="cCreateName">创建人名称</th>
+      <th data-width="150" data-column="dCreateTime">创建时间</th>
+      <th data-width="150" data-column="isEnabled">是否启用</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 
 
-  </div>
+</div>
 </div>
 #end
 
