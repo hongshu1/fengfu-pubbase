@@ -80,7 +80,7 @@ SELECT
 	iSeq irowno,
 	100 KL,
 	0 iNatDisCount,
-	  cPTName cPayType
+	cPTName cPayType
 
 FROM
  PS_PurchaseOrderD_Qty Qty
