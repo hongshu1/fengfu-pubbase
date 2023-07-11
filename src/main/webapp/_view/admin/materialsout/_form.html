@@ -71,11 +71,13 @@
                                value="#(materialsOut.sourcebilldid??)" />
                         <input  type="hidden" id="sourcebilltype" class="form-control border-none" readonly="readonly" name="materialsOut.sourcebilltype" placeholder=""
                                value="#(materialsOut.sourcebilltype??)" />
+                        #if(type!='1'??)
                         <button class="btn btn-primary" data-dialogbtn data-link-para-ele=""
                                 data-area="90%,90%" data-title="选择数据（单选）"
                                 id="supplierButton"
                                 data-url="/admin/materialDeliveryList/chooseSupplierData"><i
                                 class="fa fa-search mr-1"></i></button>
+                        #end
                     </div>
                 </div>
                 <label class="col-sm-2 col-form-label">生产产品（单品）：</label>
