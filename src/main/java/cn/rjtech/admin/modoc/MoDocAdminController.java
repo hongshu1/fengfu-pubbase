@@ -160,6 +160,7 @@ public class MoDocAdminController extends BaseAdminController {
 	/**
 	 * 齐料检查界面
 	 */
+
 	public  void  checkmaterialpage(){
 		set("imodocid",getLong("imodocid"));
 		String isScanned =service.findByisScanned(getLong("imodocid"));
