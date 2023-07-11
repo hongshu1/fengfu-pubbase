@@ -3824,21 +3824,65 @@ public class PermissionKey {
 	/**
 	 * 新增
 	 */
-	public static final String PURECEIVE_ADD = "pureceive_add";
+	public static final String ASSEM_ADD = "assem_add";
 	/**
 	 * 修改
 	 */
-	public static final String PURECEIVE_EDIT = "pureceive_edit";
+	public static final String ASSEM_EDIT = "assem_edit";
 	/**
 	 * 删除
 	 */
-	public static final String PURECEIVE_DELETE = "pureceive_delete";
+	public static final String ASSEM_DELETE = "assem_delete";
 	/**
-	 * 导出
+	 * 批量删除
 	 */
-	public static final String CUSORDERSUM_EXPORT = "cusordersum_export";
+	public static final String ASSEM_DELETE_ALL = "assem_delete_all";
 	/**
-	 * 导出
+	 * 新增
 	 */
-	public static final String CUSORDERRESULT_EXPORT = "cusorderresult_export";
+	public static final String PRODUCTIN_ADD = "productin_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODUCTIN_EDIT = "productin_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODUCTIN_DELETE = "productin_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String PRODUCTIN_DELETE_ALL = "productin_delete_all";
+	/**
+	 * 新增
+	 */
+	public static final String OTHERIN_ADD = "otherin_add";
+	/**
+	 * 修改
+	 */
+	public static final String OTHERIN_EDIT = "otherin_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OTHERIN_DELETE = "otherin_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String OTHERIN_DELETE_ALL = "otherin_delete_all";
+	/**
+	 * 新增
+	 */
+	public static final String GOODSPAYMENTM_ADD = "goodspaymentm_add";
+	/**
+	 * 修改
+	 */
+	public static final String GOODSPAYMENTM_EDIT = "goodspaymentm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String GOODSPAYMENTM_DELETE = "goodspaymentm_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String GOODSPAYMENTM_DELETE_ALL = "goodspaymentm_delete_all";
 }
