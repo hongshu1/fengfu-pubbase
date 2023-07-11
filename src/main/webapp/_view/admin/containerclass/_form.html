@@ -1,0 +1,28 @@
+<form onsubmit="return false;" id="containerClassForm" action="#(action)" method="post">
+  <input type="hidden" name="containerClass.iautoid" value="#(containerClass.iautoid??)"/>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">分类编码</label>
+    <div class="col">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
+             placeholder="请输入分类编码" maxlength="50" name="containerClass.ccontainerclasscode"
+             value="#(containerClass.ccontainerclasscode??)"/>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">分类名称</label>
+    <div class="col">
+      <input type="text" data-with-clearbtn="true" autocomplete="off" class="form-control" data-rule="required"
+             placeholder="请输入分类名称" maxlength="100" name="containerClass.ccontainerclassname"
+             value="#(containerClass.ccontainerclassname??)"/>
+    </div>
+  </div>
+
+</form>
+#define js()
+<script>
+</script>
+#include("/_view/_admin/common/_formjs.html",formId="containerClassForm")
+#end
+

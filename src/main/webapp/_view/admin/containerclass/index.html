@@ -1,0 +1,146 @@
+#@jboltLayout()
+#define main()
+#set(pageId=RandomUtil.random(6))
+<div class="jbolt_page" data-key="#(pmkey)">
+
+  <!--  <div class="jbolt_page_title">-->
+  <!--    <div class="row">-->
+  <!--      <div class="col">-->
+  <!--        <form class="form-inline" id="containerClassForm_#(pageId)" onsubmit="return false;" method="post">-->
+  <!--          <input type="text" autocomplete="off" class="form-control" placeholder="输入关键字搜索" name="keywords" value=""/>-->
+  <!--          <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> 查询</button>-->
+  <!--          <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>-->
+  <!--        </form>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
+
+  <div class="jbolt_page_content">
+    <!-- JBoltTable的数据模板定义-->
+    <textarea class="jb_tpl_box" id="containerClassRowtpl_#(pageId)">
+{@each datas as data,index}
+<tr data-id="${data.iautoid}">
+<td>${pageNumber,pageSize,index | rownum}</td>
+
+<td>${data.ccontainerclasscode}</td>
+<td>${data.ccontainerclassname}</td>
+<td>${data.ccreatename}</td>
+<td>${data.dcreatetime}</td>
+
+</tr>
+{@/each}
+</textarea>
+
+    <!-- 工具条 toolbar -->
+    <div class="jbolt_table_toolbar" id="containerClass_toolbar_#(pageId)">
+      <div class="" role="group" aria-label="btn-group">
+        #permission(PermissionKey.CONTAINERCLASS_ADD)
+        <button data-openpage="dialog" data-area="1200,800" data-handler="jboltTablePageToFirst" data-title="新增"
+                data-url="admin/containerclass/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
+        </button>
+        #end
+
+        #permission(PermissionKey.CONTAINERCLASS_EDIT)
+        <button data-openpage="dialog" data-area="1200,800" data-handler="refreshJBoltTable" data-title="修改"
+                data-check-handler="jboltTableGetCheckedId" data-url="admin/containerclass/edit/"
+                class="btn btn-outline-info btn-sm"><i class="fa fa-edit"></i> 修改
+        </button>
+        #end
+
+        #permission(PermissionKey.CONTAINERCLASS_DELETE)
+        <button data-ajaxbtn data-handler="removeJBoltTableCheckedTr" data-check-handler="jboltTableGetCheckedIds"
+                data-url="admin/containerclass/deleteByIds?ids=" data-confirm="确定删除选中数据？"
+                class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除
+        </button>
+        #end
+
+        <button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm"><i class="fa fa-refresh"></i> 刷新
+        </button>
+
+        #permission(PermissionKey.CONTAINERCLASS_IMPORT)
+        <div class="btn-group dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="importTableButton"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">导入
+          </button>
+          <div class="dropdown-menu" aria-labelledby="importMenuButton">
+            <a href="assets/exceltpl/containerclass.xlsx" class="btn dropdown-item"><i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;模板下载</a>
+            <div class="j_upload_file_box"
+                 data-name="file"
+                 data-btn-class="btn dropdown-item"
+                 data-placeholder="上传导入"
+                 data-confirm="确认导入数据？"
+                 data-accept="excel"
+                 data-maxsize="20480"
+                 data-handler="uploadFile"
+                 data-upload-success-handler="setTimeout(function(){refreshPjaxContainer();},1000)"
+                 data-url="/admin/containerclass/importExcelClass">
+            </div>
+          </div>
+        </div>
+        #end
+
+        #permission(PermissionKey.CONTAINERCLASS_EXPORT)
+        <div class="btn-group dropdown" role="group" aria-label="btn-group">
+          <div class="btn-group dropdown">
+            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出
+            </button>
+            <div class="dropdown-menu" aria-labelledby="exportButton">
+              <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn
+                      data-url="/admin/containerclass/dataExport"><i class="fa fa-download"></i> 导出选中
+              </button>
+              <button class="btn dropdown-item" data-downloadbtn data-url="/admin/containerclass/dataExport"
+                      data-form="ContainerClass_tpl_#(pageId)"><i class="fa fa-download"></i> 条件导出
+              </button>
+            </div>
+          </div>
+        </div>
+        #end
+
+      </div>
+
+      <div class="clearfix"></div>
+    </div>
+
+
+    <table class="jbolt_table jbolt_main_table table-center hover_info"
+           data-jbolttable
+           data-height="fill"
+           data-ajax="true"
+           data-url="admin/containerclass/datas"
+           data-column-resize="true"
+           data-row-click-active="true"
+           data-column-prepend="1:checkbox:true"
+           data-rowtpl="containerClassRowtpl_#(pageId)"
+           data-page="containerClassPage_#(pageId)"
+           data-toolbar="containerClass_toolbar_#(pageId)"
+
+
+           data-fixed-columns-left="1,2,3"
+           data-fixed-columns-right="-1"
+           data-row-dblclick-active="true"
+           data-row-dblclick-handler="jbolt_table_dblclickhandler_#(pageId)"
+    >
+      <thead>
+      <tr>
+        <th data-width="60" data-min-width="60">序号</th>
+        <th data-width="150" data-min-width="150" data-column="cContainerClassCode">分类编码</th>
+        <th data-width="150" data-min-width="150" data-column="cContainerClassName">分类名称</th>
+        <th data-width="150" data-min-width="150" data-column="cCreateName">创建人名称</th>
+        <th data-width="150" data-min-width="150" data-column="dCreateTime">创建时间</th>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+
+  </div>
+</div>
+#end
+
+#define js()
+<script type="text/javascript">
+</script>
+#end
