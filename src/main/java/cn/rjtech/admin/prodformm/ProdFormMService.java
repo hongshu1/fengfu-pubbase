@@ -15,7 +15,9 @@ import cn.rjtech.admin.prodformd.ProdFormDService;
 import cn.rjtech.admin.prodformdline.ProdformdLineService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
+import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.model.momdata.ProdFormD;
 import cn.rjtech.model.momdata.ProdFormM;
 import cn.rjtech.model.momdata.ProdformdLine;
@@ -38,15 +40,12 @@ import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 制造管理-生产表单主表
- *
  * @ClassName: ProdFormMService
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-28 10:04
  */
 public class ProdFormMService extends BaseService<ProdFormM> implements IApprovalService {
-    
 	private final ProdFormM dao=new ProdFormM().dao();
-    
 	@Override
 	protected ProdFormM dao() {
 		return dao;
@@ -72,6 +71,7 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
+	 * @return
 	 */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv para) {
 		Page<Record> page = dbTemplate("prodformm.getAdminDatas", para).paginate(pageNumber, pageSize);
@@ -79,6 +79,10 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 			record.set("iprodformid",prodFormService.findById(record.getStr("iprodformid")).getCProdFormName());
 			record.set("iworkregionmid",workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
 			record.set("iworkshiftmid",workshiftmService.findById(record.getStr("iworkshiftmid")).getCworkshiftname());
+			// 审核中，并且单据审批方式为审批流
+			if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), record.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), record.getInt(IAUDITWAY))) {
+				record.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(record.getLong("iautoid"), 5));
+			}
 		}
 		return page;
 	}

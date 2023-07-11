@@ -682,22 +682,6 @@ public class PermissionKey {
 	 */
 	public static final String RCVDOCDEFECT = "rcvdocdefect";
 	/**
-	 * 来料异常品记录新增
-	 */
-	public static final String RCVDOCDEFECT_ADD = "rcvdocdefect_add";
-	/**
-	 * 来料异常品记录編輯
-	 */
-	public static final String RCVDOCDEFECT_EDIT = "rcvdocdefect_edit";
-	/**
-	 * 来料异常品记录刪除
-	 */
-	public static final String RCVDOCDEFECT_DELETE = "rcvdocdefect_delete";
-	/**
-	 * 来料异常品记录打印二维码
-	 */
-	public static final String RCVDOCDEFECT_QR = "rcvdocdefect_qr";
-	/**
 	 * 采购/委外管理
 	 */
 	public static final String ORDER_MANAGEMENT = "order_management";
@@ -3661,4 +3645,28 @@ public class PermissionKey {
 	 * 提交
 	 */
 	public static final String FORMUPLOADM_API_SUBMIT = "formuploadm_api_submit";
+	/**
+	 * 提交
+	 */
+	public static final String DOUBLE_SCAN_CODE_SUBMIT = "double_scan_code_submit";
+	/**
+	 * 提交
+	 */
+	public static final String SCAN_CODE_SUBMIT = "scan_code_submit";
+	/**
+	 * 新增
+	 */
+	public static final String PRODFORMM_ADD = "prodformm_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODFORMM_EDIT = "prodformm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODFORMM_DELETE = "prodformm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String PRODFORMM_ADD_SUBMIT = "prodformm_add_submit";
 }

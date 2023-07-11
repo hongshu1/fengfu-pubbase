@@ -76,8 +76,6 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
             // 审核中，并且单据审批方式为审批流
             if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), record.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), record.getInt(IAUDITWAY))) {
                 record.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(record.getLong("iautoid"), 5));
-            }else {
-                record.put("approvalusers","");
             }
         }
         return paginate;
