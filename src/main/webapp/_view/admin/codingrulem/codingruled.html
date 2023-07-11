@@ -11,22 +11,26 @@
         <td hidden>${data.cseparator}</td>
         <td>${data.cseparatorname}</td>
         <td hidden>${data.iseq}</td>
+        #if(isView??0 !=1)
         <td>
             <a tabindex="-1"  href="javascript:void(0)" tooltip data-title="插入一行"  onclick="jboltTableInsertEmptyRow(this)"><i class="fa fa-plus"></i></a>
             <a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-trash"></i></a>
             <a tooltip data-title="上移"  href="javascript:void(0)" onclick="jboltTableTrMoveUp(this)"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
             <a tooltip data-title="下移"  href="javascript:void(0)" onclick="jboltTableTrMoveDown(this)"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
         </td>
+        #end
     </tr>
     {@/each}
 </textarea>
 
 <div class="jbolt_table_toolbar" id="CodingRuleD_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
-        <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
-        <button onclick="jboltTableInsertEmptyRowAfterChecked(this)" class="btn btn-outline-secondary btn-sm" ><i class="fa fa-arrow-right"></i>插入行</button>
-        <button onclick="jboltTableRemoveCheckedRow(this,true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除行</button>
-        <button onclick="updateCodingDemoCode(this)" class="btn btn-outline-primary btn-sm">预览编码</button>
+        #if(isView??0 !=1)
+            <button onclick="jboltTableInsertEmptyRow(this)" class="btn btn-outline-primary btn-sm" ><i class="fa fa-plus"></i> 新增行</button>
+            <button onclick="jboltTableInsertEmptyRowAfterChecked(this)" class="btn btn-outline-secondary btn-sm" ><i class="fa fa-arrow-right"></i>插入行</button>
+            <button onclick="jboltTableRemoveCheckedRow(this,true)" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除行</button>
+            <button onclick="updateCodingDemoCode(this)" class="btn btn-outline-primary btn-sm">预览编码</button>
+        #end
     </div>
 </div>
 
@@ -61,7 +65,9 @@
         <th hidden data-width="150" data-column="cseparator">分隔符</th>
         <th data-width="150" data-column="cseparatorname">分隔符</th>
         <th data-width="150" data-column="iseq" hidden>次序</th>
+        #if(isView??0 !=1)
         <th data-width="120">操作</th>
+        #end
     </tr>
     </thead>
     <tbody></tbody>

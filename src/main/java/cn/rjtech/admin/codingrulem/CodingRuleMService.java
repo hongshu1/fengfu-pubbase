@@ -60,27 +60,17 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
+	 * @param iFormId   表单id
      * @param cFormTypeSn 业务对象类型：1. 单据类型 2. 条码号
      * @param iCodingType 编码方式: 1. 自动生成编码，允许手工修改 2. 完全手工编码
-     * @param IsDeleted 删除状态：0. 未删除 1. 已删除
+    
 	 * @return
 	 */
-	public Page<Record> getAdminDatas(int pageNumber, int pageSize, String keywords, String cFormTypeSn, Integer iCodingType, Boolean IsDeleted) {
-	    //创建sql对象
-	    Sql sql = selectSql().page(pageNumber,pageSize);
-	    //sql条件处理
-        sql.eq("cFormTypeSn",cFormTypeSn);
-        sql.eq("iCodingType",iCodingType);
-        sql.eqBooleanToChar("IsDeleted",IsDeleted);
-        //关键词模糊查询
-        sql.likeMulti(keywords,"cOrgName", "cCreateName", "cUpdateName");
-        //排序
-        sql.desc("iAutoId");
-		Page<Record> page = paginateRecord(sql);
+	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
+		
+		Page<Record> page = dbTemplate("codingrulem.datas", Okv.create().set(kv)).paginate(pageNumber, pageSize);
         if (CollUtil.isNotEmpty(page.getList())) {
             page.getList().forEach(row -> {
-                row.set("cformname",formService.getNameByFormId(row.getStr("iformid")));
                 row.set("cformtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.business_type.name(), row.getStr("cformtypesn")));
                 row.set("ccodingtypename", JBoltDictionaryCache.me.getNameBySn(DictionaryTypeKey.iCoding_type.name(), row.getStr("icodingtype")));
             });
@@ -171,7 +161,7 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
     public Ret saveTableSubmit(JBoltTable jBoltTable) {
         CodingRuleM codingRuleM = jBoltTable.getFormModel(CodingRuleM.class,"codingRuleM");
         ValidationUtils.notNull(codingRuleM, JBoltMsg.PARAM_ERROR);
-        tx(() -> {
+		tx(() -> {
             // 新增
             if (ObjUtil.isNull(codingRuleM.getIAutoId())) {
                 doSaveTable(codingRuleM);
@@ -223,6 +213,8 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 			ValidationUtils.notNull(codingRuleM.getIFormId(), JBoltMsg.PARAM_ERROR);
 			Form form = formService.findById(codingRuleM.getIFormId());
 			ValidationUtils.notNull(form, "表单记录不存在，请确认选项是否正确");
+			CodingRuleM ruleM = findByFromId(getOrgId(), codingRuleM.getIFormId(), null);
+			ValidationUtils.isTrue(ObjUtil.isNull(ruleM), "存在重复表单类型数据，请更换");
 			codingRuleM.setCBarcodeTypeSn(null);
 		}else{
 			codingRuleM.setIFormId(null);
@@ -264,6 +256,8 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
 			ValidationUtils.notNull(codingRuleM.getIFormId(), JBoltMsg.PARAM_ERROR);
 			Form form = formService.findById(codingRuleM.getIFormId());
 			ValidationUtils.notNull(form, "表单记录不存在，请确认选项是否正确");
+			CodingRuleM ruleM = findByFromId(dbCodingRuleM.getIOrgId(), codingRuleM.getIFormId(), codingRuleM.getIAutoId());
+			ValidationUtils.isTrue(ObjUtil.isNull(ruleM), "存在重复表单类型数据，请更换");
 			codingRuleM.setCBarcodeTypeSn(null);
 		}else{
 			codingRuleM.setIFormId(null);
@@ -274,5 +268,23 @@ public class CodingRuleMService extends BaseService<CodingRuleM> {
     public CodingRuleM findByTable(String cformcode) {
         return daoTemplate("codingrulem.findByTable", Okv.by("cformcode", cformcode)).findFirst();
     }
-    
+ 
+    public CodingRuleM findByFromId(Long orgId, Long formId, Long id){
+		Sql sql = selectSql();
+		sql.eq(CodingRuleM.ISDELETED , 0).eq(CodingRuleM.IFORMID, formId).eq(CodingRuleM.IORGID, orgId);
+		if (ObjUtil.isNotNull(id)){
+			sql.notEq(CodingRuleM.IAUTOID, id);
+		}
+		return findFirst(sql);
+	}
+	
+	public Ret removeByIds(String ids){
+ 		tx(()->{
+ 			for (String id : ids.split(",")){
+ 				updateColumn(id, CodingRuleM.ISDELETED , "1");
+			}
+ 			return true;
+		});
+ 		return SUCCESS;
+	}
 }
