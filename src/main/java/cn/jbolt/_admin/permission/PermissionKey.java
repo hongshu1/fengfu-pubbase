@@ -2674,6 +2674,10 @@ public class PermissionKey {
 	 */
 	public static final String WAREHOUSE_SHELVES_IMPORT = "warehouse_shelves_import";
 	/**
+	 * 打印
+	 */
+	public static final String WAREHOUSE_SHELVES_PRINT = "warehouse_shelves_print";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_POSITION_ADD = "warehouse_position_add";
