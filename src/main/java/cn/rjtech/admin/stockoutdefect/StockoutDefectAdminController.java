@@ -63,11 +63,13 @@ public class StockoutDefectAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.STOCKOUTDEFECT_ADD)
     public void add() {
         render("add.html");
     }
 
 
+    @CheckPermission(PermissionKey.STOCKOUTDEFECT_ADD)
     public void add2() {
         StockoutDefect stockoutDefect = service.findById(get("iautoid"));
         Record stockoutQcFormM = service.getstockoutQcFormMList(getLong("stockoutQcFormMid"));
@@ -97,6 +99,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.STOCKOUTDEFECT_EDIT)
     public void edit() {
         StockoutDefect stockoutDefect = service.findById(getLong(0));
         if (stockoutDefect == null) {
@@ -124,6 +127,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.STOCKOUTDEFECT_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -131,6 +135,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.STOCKOUTDEFECT_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -157,6 +162,7 @@ public class StockoutDefectAdminController extends BaseAdminController {
     /**
      * 生成二维码
      */
+    @CheckPermission(PermissionKey.STOCKOUTDEFECT_PRINT)
     public void QRCode() {
         Kv kv = new Kv();
         kv.setIfNotNull("ids", get("ids"));

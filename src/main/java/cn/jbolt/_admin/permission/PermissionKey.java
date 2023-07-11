@@ -4005,4 +4005,48 @@ public class PermissionKey {
 	 * 打印
 	 */
 	public static final String BARCODE_TRACEPAGE_PRINT = "barcode_tracepage_print";
+	/**
+	 * 新增
+	 */
+	public static final String INSTOCKDEFECT_ADD = "instockdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String INSTOCKDEFECT_EDIT = "instockdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String INSTOCKDEFECT_DELETE = "instockdefect_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String INSTOCKDEFECT_PRINT = "instockdefect_print";
+	/**
+	 * 新增
+	 */
+	public static final String STOCKOUTDEFECT_ADD = "stockoutdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String STOCKOUTDEFECT_EDIT = "stockoutdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String STOCKOUTDEFECT_DELETE = "stockoutdefect_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String STOCKOUTDEFECT_PRINT = "stockoutdefect_print";
+	/**
+	 * 新增
+	 */
+	public static final String QCINSPECTION_ADD = "qcinspection_add";
+	/**
+	 * 编辑
+	 */
+	public static final String QCINSPECTION_EDIT = "qcinspection_edit";
+	/**
+	 * 删除
+	 */
+	public static final String QCINSPECTION_DELETE = "qcinspection_delete";
 }
