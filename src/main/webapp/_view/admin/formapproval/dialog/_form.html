@@ -5,9 +5,14 @@
 		font-weight: bold;
 	}
 </style>
-
+<div class="jbolt_righttop_btn_group" style="top:0px;margin-left: auto" id="jbolt_righttop_btn_group_#(pageId)">
+	<button onclick="submitTableAndForm_#(pageId)()" data-value="save" class="btn btn-primary btn-sm"><i
+			class="fa fa-save"></i> 提交</button>
+	<button onclick="dialogClose()" class="btn btn-danger btn-sm"><i class="fa fa-close"></i> 关闭</button>
+</div>
 <form onsubmit="return false;" id="approvalMForm" method="post">
 
+	<input type="hidden" name="originalUrl" value="#(originalUrl??)">
 	<input type="hidden" name="formAutoId" value="#(formAutoId??)">
 	<input type="hidden" name="formSn" value="#(formSn??)">
 	<input type="hidden" name="primaryKeyName" value="#(primaryKeyName??)">
@@ -73,12 +78,12 @@
 
 #define js()
 <script>
-
-	hideParentLayerDialogBtn(0);
-
-	addParentLayerDialogBtn("提交","lay_primary",function () {
+	/**
+	 * 提交方法
+	 * */
+	function submitTableAndForm_#(pageId)() {
 		saveForm();
-	})
+	}
 
 	/**
 	 * 提交方法
@@ -87,6 +92,13 @@
 		jboltTableSubmit(getJboltId2());
 	}
 
+	/**
+	 * 关闭弹窗方法
+	 * */
+	function dialogClose() {
+		parent.refreshPjaxContainer();
+		parent.layer.close(parent.layer.getFrameIndex(window.name));
+	}
 </script>
 #include("/_view/_admin/common/_formjs.html",formId="approvalMForm")
 #end

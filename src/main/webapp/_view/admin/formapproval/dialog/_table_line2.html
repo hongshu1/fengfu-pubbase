@@ -111,8 +111,8 @@
         DialogUtil.openNewDialog({
             title: "新增审批节点",
             optionsEle: ele,
-            width: "100%",
-            height: "100%",
+            width: "90%",
+            height: "90%",
             offset: "auto",
             zIndex: 20220610,
             url: "/admin/formapproval/addApprovalD?iseq=" + iseq
@@ -180,10 +180,21 @@
                 url: "/admin/formapproval/submitFormByOptional",
                 success: function (res, table, td) {
                     if (res.state === 'ok') {
+                        var originalUrl = res.originalUrl;
                         LayerMsgBox.success(res.msg, 1000, function () {
-                            refreshPjaxContainer();
                             parent.LayerMsgBox.closeAll();
+                            // parent.layer.close(parent.layer.getFrameIndex(window.name));
                             parent.refreshPjaxContainer();
+                            console.log('decodeURIComponent(originalUrl)',decodeURIComponent(originalUrl));
+                            parent.DialogUtil.openNewDialog({
+                                title: "详情页",
+                                width: "100%",
+                                height: "100%",
+                                offset: "auto",
+                                zIndex: 20220610,
+                                url: decodeURIComponent(originalUrl)
+                            });
+                            // location.href = decodeURIComponent(originalUrl);
                         });
                     } else {
                         LayerMsgBox.alert(res.msg, 2);
