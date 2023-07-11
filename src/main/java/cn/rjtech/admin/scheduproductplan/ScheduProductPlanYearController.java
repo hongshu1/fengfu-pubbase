@@ -312,6 +312,7 @@ public class ScheduProductPlanYearController extends BaseAdminController {
      * 导出数据
      */
     @SuppressWarnings("unchecked")
+    @CheckPermission(PermissionKey.PLANYEARSUM_EXPORT)
     public void dataExport() throws Exception {
         String startYear = get("startyear");
         if (notOk(startYear)){

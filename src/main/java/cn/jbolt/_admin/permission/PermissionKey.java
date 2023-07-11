@@ -3885,4 +3885,48 @@ public class PermissionKey {
 	 * 批量删除
 	 */
 	public static final String GOODSPAYMENTM_DELETE_ALL = "goodspaymentm_delete_all";
+	/**
+	 * 提交
+	 */
+	public static final String WORKCALENDARM_SUBMIT = "workcalendarm_submit";
+	/**
+	 * 新增
+	 */
+	public static final String MATERIAL_RETURN_LIST_ADD = "material_return_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String MATERIAL_RETURN_LIST_EDIT = "material_return_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String MATERIAL_RETURN_LIST_DELETE = "material_return_list_delete";
+	/**
+	 * 导出
+	 */
+	public static final String PLANYEARSUM_EXPORT = "planyearsum_export";
+	/**
+	 * 新增
+	 */
+	public static final String TRANSVOUCH_ADD = "transvouch_add";
+	/**
+	 * 编辑
+	 */
+	public static final String TRANSVOUCH_EDIT = "transvouch_edit";
+	/**
+	 * 删除
+	 */
+	public static final String TRANSVOUCH_DELETE = "transvouch_delete";
+	/**
+	 * 查看
+	 */
+	public static final String PLANYEARSUM_SHOW = "planyearsum_show";
+	/**
+	 * 导出
+	 */
+	public static final String PLANMONTHSUM_EXPORT = "planmonthsum_export";
+	/**
+	 * 查看
+	 */
+	public static final String PLANMONTHSUM_SHOW = "planmonthsum_show";
 }

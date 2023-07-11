@@ -444,6 +444,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
     /**
      * 导出数据
      */
+    @CheckPermission(PermissionKey.PLANMONTHSUM_EXPORT)
     @SuppressWarnings("unchecked")
     public void dataExport() throws Exception {
         String startdate = get("startdate");
