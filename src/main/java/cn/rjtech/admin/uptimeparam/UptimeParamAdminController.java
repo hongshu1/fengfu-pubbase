@@ -3,6 +3,7 @@ package cn.rjtech.admin.uptimeparam;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
+import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -158,19 +159,12 @@ public class UptimeParamAdminController extends BaseAdminController {
 	@SuppressWarnings("unchecked")
 	@CheckPermission(PermissionKey.UPTIMEPARAM_IMPORT)
 	public void importExcelData() {
-		UploadFile uploadFile = getFile("file");
-		ValidationUtils.notNull(uploadFile, "上传文件不能为空");
-
-		File file = uploadFile.getFile();
-
-		List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-
-		// 截取最后一个“.”之前的文件名，作为导入格式名
-		String cformatName = list.get(0);
-
-		String extension = list.get(1);
-
-		ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-		renderJson(service.importExcelData(file, cformatName));
+		String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
+		UploadFile file = getFile("file", uploadPath);
+		if (notExcel(file)) {
+			renderJsonFail("请上传excel文件");
+			return;
+		}
+		renderJson(service.importExcelData(file.getFile()));
 	}
 }

@@ -50,8 +50,7 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
     }
 	@Inject
 	private CusFieldsMappingDService cusFieldsMappingdService;
-	@Inject
-	private CusFieldsMappingDService cusFieldsMappingDService;
+
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -272,7 +271,7 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 	 * 从系统导入字段配置，获得导入的数据
 	 */
 	public Ret importExcelClass(File file) {
-		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		List<Record> records = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
@@ -289,8 +288,10 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 
 			Date now=new Date();
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
-			record.set("iSource", SourceEnum.MES.getValue());
 			record.set("iCreateBy", JBoltUserKit.getUserId());
+			record.set("cOrgCode",getOrgCode());
+			record.set("cOrgName",getOrgName());
+			record.set("iOrgId",getOrgId());
 			record.set("dCreateTime", now);
 			record.set("cCreateName", JBoltUserKit.getUserName());
 			record.set("isDeleted",0);
