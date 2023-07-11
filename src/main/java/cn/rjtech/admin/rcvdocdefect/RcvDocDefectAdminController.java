@@ -51,10 +51,12 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.RCVDOCDEFECT_ADD)
     public void add() {
         render("add.html");
     }
 
+    @CheckPermission(PermissionKey.RCVDOCDEFECT_ADD)
     public void add2() {
         RcvDocDefect rcvDocDefect = service.findById(get("iautoid"));
         Record rcvDocQcFormM = service.getrcvDocQcFormList(getLong("ircvdocqcformmid"));
@@ -82,6 +84,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.RCVDOCDEFECT_EDIT)
     public void edit() {
         RcvDocDefect rcvDocDefect = service.findById(getLong(0));
         if (rcvDocDefect == null) {
@@ -95,6 +98,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.RCVDOCDEFECT_ADD)
     public void save() {
         renderJson(service.save(getModel(RcvDocDefect.class, "rcvdocdefect")));
     }
@@ -102,6 +106,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.RCVDOCDEFECT_EDIT)
     public void update() {
         renderJson(service.update(getModel(RcvDocDefect.class, "rcvdocdefect")));
     }
@@ -109,6 +114,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.RCVDOCDEFECT_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -116,6 +122,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.RCVDOCDEFECT_DELETE)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -142,6 +149,7 @@ public class RcvDocDefectAdminController extends BaseAdminController {
     /**
      * 生成二维码
      */
+    @CheckPermission(PermissionKey.RCVDOCDEFECT_QR)
     public void QRCode() {
         Kv kv = new Kv();
         kv.setIfNotNull("ids", get("ids"));

@@ -1222,6 +1222,10 @@ public class PermissionKey {
 	 */
 	public static final String API_SPOTCHECKFORMM = "api_spotcheckformm";
 	/**
+	 * 收发类型
+	 */
+	public static final String STYLE = "style";
+	/**
 	 * 新增
 	 */
 	public static final String WAREHOUSE_ADD = "warehouse_add";
@@ -3613,4 +3617,84 @@ public class PermissionKey {
 	 * 导入
 	 */
 	public static final String EQUIPMENTMODEL_IMPORT = "equipmentmodel_import";
+	/**
+	 * 新增
+	 */
+	public static final String FORMUPLOADM_ADD = "formuploadm_add";
+	/**
+	 * 修改
+	 */
+	public static final String FORMUPLOADM_EDIT = "formuploadm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String FORMUPLOADM_DELETE = "formuploadm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String FORMUPLOADM_ADD_SUBMIT = "formuploadm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String FORMUPLOADM_API_ADD = "formuploadm_api_add";
+	/**
+	 * 修改
+	 */
+	public static final String FORMUPLOADM_API_EDIT = "formuploadm_api_edit";
+	/**
+	 * 删除
+	 */
+	public static final String FORMUPLOADM_API_DELETE = "formuploadm_api_delete";
+	/**
+	 * 提交
+	 */
+	public static final String FORMUPLOADM_API_SUBMIT = "formuploadm_api_submit";
+	/**
+	 * 提交
+	 */
+	public static final String DOUBLE_SCAN_CODE_SUBMIT = "double_scan_code_submit";
+	/**
+	 * 提交
+	 */
+	public static final String SCAN_CODE_SUBMIT = "scan_code_submit";
+	/**
+	 * 新增
+	 */
+	public static final String PRODFORMM_ADD = "prodformm_add";
+	/**
+	 * 修改
+	 */
+	public static final String PRODFORMM_EDIT = "prodformm_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PRODFORMM_DELETE = "prodformm_delete";
+	/**
+	 * 保存
+	 */
+	public static final String PRODFORMM_ADD_SUBMIT = "prodformm_add_submit";
+	/**
+	 * 新增
+	 */
+	public static final String STYLE_ADD = "style_add";
+	/**
+	 * 删除
+	 */
+	public static final String STYLE_DELETE = "style_delete";
+	/**
+	 * 新增
+	 */
+	public static final String RCVDOCDEFECT_ADD = "rcvdocdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String RCVDOCDEFECT_EDIT = "rcvdocdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String RCVDOCDEFECT_DELETE = "rcvdocdefect_delete";
+	/**
+	 * 二维码
+	 */
+	public static final String RCVDOCDEFECT_QR = "rcvdocdefect_qr";
 }

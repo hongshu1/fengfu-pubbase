@@ -21,7 +21,6 @@ import com.jfinal.core.paragetter.Para;
  * @date: 2023-05-29 15:38
  */
 @CheckPermission(PermissionKey.FORMUPLOADM)
-@UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/formUploadD", viewPath = "/_view/admin/formuploadd")
 public class FormUploadDAdminController extends BaseAdminController {

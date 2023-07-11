@@ -3,7 +3,6 @@ package cn.rjtech.admin.goodspaymentm;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
@@ -17,11 +16,9 @@ import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
-import org.jsoup.select.Evaluator;
 
 import java.io.File;
 import java.util.List;
@@ -124,15 +121,6 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
     @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
-    }
-
-    /**
-     * 提审批
-     */
-    public void submit(@Para(value = "iautoid") Long iautoid) {
-        ValidationUtils.validateId(iautoid, "id");
-
-        renderJson(service.submit(iautoid));
     }
 
     /**

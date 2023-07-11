@@ -2,6 +2,7 @@ package cn.rjtech.admin.rcvplanm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -11,32 +12,33 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.rcvpland.RcvPlanDService;
+import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.constants.ErrorMsg;
+import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.enums.OrderStatusEnum;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.GoodsPaymentD;
+import cn.rjtech.model.momdata.Inventory;
+import cn.rjtech.model.momdata.RcvPlanD;
+import cn.rjtech.model.momdata.RcvPlanM;
 import cn.rjtech.model.momdata.base.BaseRcvPlanD;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.TableMapping;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -48,8 +50,7 @@ import java.util.stream.Collectors;
  */
 public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalService {
 
-    private final RcvPlanM dao      = new RcvPlanM().dao();
-    private final RcvPlanD planDdao = new RcvPlanD().dao();
+    private final RcvPlanM dao = new RcvPlanM().dao();
 
     @Override
     protected RcvPlanM dao() {
@@ -61,18 +62,12 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-
     @Inject
-    private RcvPlanMService     service;
-    @Inject
-    private RcvPlanDService     planDService;
-    @Inject
-    private FormApprovalService formApprovalService;
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
+    private RcvPlanDService planDService;
     @Inject
     private InventoryService inventoryservice;
-
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingdService;
 
     /**
      * 后台管理数据查询
@@ -82,9 +77,11 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         Page<Record> paginate = dbTemplate("rcvplanm.getAdminDatas", kv).paginate(pageNumber, pageSize);
-        for (Record record : paginate.getList()) {
-            List<String> names = formApprovalService.getNextApprovalUserNames(record.getLong("iautoid"), 5);
-            record.set("approveprogress", String.join("，", names));
+        for (Record row : paginate.getList()) {
+            // 审核中，并且单据审批方式为审批流
+            if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), row.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), row.getInt(IAUDITWAY))) {
+                row.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(row.getLong("iautoid"), 5));
+            }
         }
         return paginate;
     }
@@ -319,9 +316,7 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
             return;
         }
         Date now = new Date();
-        for (int i = 0; i < list.size(); i++) {
-
-            Record row = list.get(i);
+        for (Record row : list) {
             row.set("dupdatetime", now);
             row.keep(ArrayUtil.toArray(TableMapping.me().getTable(RcvPlanD.class).getColumnNameSet(), String.class));
         }
@@ -379,23 +374,16 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
 //        rcvPlanDS.add(lines);
 
         //执行批量操作
-        boolean success=tx(new IAtom() {
-            @Override
-            public boolean run() throws SQLException {
-                return true;
-            }
-        });
+        boolean success=tx(() -> true);
 
         if(!success) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL);
         }
-        return SUCCESS.data(rcvPlanDS);
+        return successWithData(rcvPlanDS);
     }
 
     /**
      * 设置参数
-     * @param goodsPaymentDModel
-     * @return
      */
     private GoodsPaymentD setGoodsPaymentDModel(GoodsPaymentD goodsPaymentDModel){
         String cInvCode = goodsPaymentDModel.getCInvCode();

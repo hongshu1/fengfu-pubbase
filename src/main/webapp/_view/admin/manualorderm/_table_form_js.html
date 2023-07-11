@@ -573,4 +573,21 @@
         return false;
     }
 
+    /**
+     * 根据币种设置汇率
+     */
+    function setExchangeRate() {
+        var cexchname = $('select[name="manualOrderM.cCurrency"]').find("option:selected").text();
+        if (cexchname && cexchname != null) {
+            Ajax.get("/admin/exch/getNflatByExchName?cexchname=" + cexchname, function (ret) {
+                if (ret.state === 'ok') {
+                    $('input[name="manualOrderM.iExchangeRate"]').val(ret.data.nflat);
+                } else {
+                    $('input[name="manualOrderM.iExchangeRate"]').val(0);
+                }
+            });
+        } else {
+            $('input[name="manualOrderM.iExchangeRate"]').val(0);
+        }
+    }
 </script>

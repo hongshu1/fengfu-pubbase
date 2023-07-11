@@ -13,7 +13,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.constants.ErrorMsg;
@@ -62,8 +61,6 @@ public class WeekOrderMService extends BaseService<WeekOrderM> implements IAppro
     private WeekOrderDService weekOrderDService;
     @Inject
     private CusOrderSumService cusOrderSumService;
-    @Inject
-    private FormApprovalService formApprovalService;
     @Inject
     private DictionaryService dictionaryService;
     @Inject

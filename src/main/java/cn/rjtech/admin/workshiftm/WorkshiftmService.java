@@ -67,7 +67,7 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
     }
 
     public List<Record> getDataExport(Kv kv) {
-        List<Record> list = dbTemplate("workshiftm.getDataExport", kv).find();
+        List<Record> list = dbTemplate("workshiftm.getDataExport2", kv).find();
         for (Record record : list) {
             record.set("dstarttime", record.getStr("dstarttime"));
             record.set("dendtime", record.getStr("dendtime"));
@@ -300,7 +300,8 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
             workshiftmsSet.add(Kv.by("cworkshiftcode", p.getStr("cworkshiftcode"))
                     .set("cworkshiftname", p.getStr("cworkshiftname"))
                     .set("dstarttime", p.getStr("dstarttime"))
-                    .set("dendtime", p.getStr("dendtime")));
+                    .set("dendtime", p.getStr("dendtime"))
+                    .set("cmemo", p.getStr("cmemo")));
         }
 
         for (Kv kv : workshiftmsSet) {
@@ -311,6 +312,7 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
                     .setCworkshiftname(kv.getStr("cworkshiftname"))
                     .setDstarttime(kv.getStr("dstarttime"))
                     .setDendtime(kv.getStr("dendtime"))
+                    .setCmemo(kv.getStr("cmemo"))
                     .setIcreateby(JBoltUserKit.getUserId())
                     .setCcreatename(JBoltUserKit.getUserName())
                     .setDcreatetime(now)

@@ -10,14 +10,14 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.admin.prodform.ProdFormService;
 import cn.rjtech.admin.prodformd.ProdFormDService;
 import cn.rjtech.admin.prodformdline.ProdformdLineService;
-import cn.rjtech.admin.prodformparam.ProdFormParamService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
+import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.enums.AuditStatusEnum;
+import cn.rjtech.enums.AuditWayEnum;
 import cn.rjtech.model.momdata.ProdFormD;
 import cn.rjtech.model.momdata.ProdFormM;
 import cn.rjtech.model.momdata.ProdformdLine;
@@ -55,20 +55,18 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-	@Inject
-	private ProdFormParamService prodFormParamService;
-	@Inject
-	private ProdformdLineService prodformdLineService;
-	@Inject
-	private ProdFormDService prodFormDService;
-	@Inject
-	private ProdFormService prodFormService;
-	@Inject
-	private WorkregionmService workregionmService;
-	@Inject
-	private WorkshiftmService workshiftmService;
-	@Inject
-	private FormApprovalService formApprovalService;
+
+    @Inject
+    private ProdFormService prodFormService;
+    @Inject
+    private ProdFormDService prodFormDService;
+    @Inject
+    private WorkshiftmService workshiftmService;
+    @Inject
+    private WorkregionmService workregionmService;
+    @Inject
+    private ProdformdLineService prodformdLineService;
+
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -81,14 +79,16 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 			record.set("iprodformid",prodFormService.findById(record.getStr("iprodformid")).getCProdFormName());
 			record.set("iworkregionmid",workregionmService.findById(record.getStr("iworkregionmid")).getCWorkName());
 			record.set("iworkshiftmid",workshiftmService.findById(record.getStr("iworkshiftmid")).getCworkshiftname());
+			// 审核中，并且单据审批方式为审批流
+			if (ObjUtil.equals(AuditStatusEnum.AWAIT_AUDIT.getValue(), record.getInt(IAUDITSTATUS)) && ObjUtil.equals(AuditWayEnum.FLOW.getValue(), record.getInt(IAUDITWAY))) {
+				record.put("approvalusers", FormApprovalCache.ME.getNextApprovalUserNames(record.getLong("iautoid"), 5));
+			}
 		}
 		return page;
 	}
 
 	/**
 	 * 保存
-	 * @param prodFormM
-	 * @return
 	 */
 	public Ret save(ProdFormM prodFormM) {
 		if(prodFormM==null || isOk(prodFormM.getIAutoId())) {
@@ -104,8 +104,6 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 
 	/**
 	 * 更新
-	 * @param prodFormM
-	 * @return
 	 */
 	public Ret update(ProdFormM prodFormM) {
 		if(prodFormM==null || notOk(prodFormM.getIAutoId())) {
@@ -126,7 +124,6 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 	 * 删除数据后执行的回调
 	 * @param prodFormM 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(ProdFormM prodFormM, Kv kv) {
@@ -138,7 +135,6 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 	 * 检测是否可以删除
 	 * @param prodFormM model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkInUse(ProdFormM prodFormM, Kv kv) {
@@ -387,25 +383,6 @@ public class ProdFormMService extends BaseService<ProdFormM> implements IApprova
 		}
 
 		return successWithData(prodFormM2.keep("iautoid"));
-	}
-
-	/**
-	 * 提交审批
-	 */
-	public Ret submit(Long iautoid) {
-		tx(() -> {
-			Ret ret = formApprovalService.submit(table(), iautoid, primaryKey(),"");
-			ValidationUtils.isTrue(ret.isOk(), ret.getStr("msg"));
-
-			ProdFormM prodFormM = findById(iautoid);
-			prodFormM.setIAuditStatus(AuditStatusEnum.AWAIT_AUDIT.getValue());
-			prodFormM.setIUpdateBy(JBoltUserKit.getUserId());
-			prodFormM.setCUpdateName(JBoltUserKit.getUserName());
-			prodFormM.setDUpdateTime(new Date());
-			ValidationUtils.isTrue(prodFormM.update(), JBoltMsg.FAIL);
-			return true;
-		});
-		return SUCCESS;
 	}
 
 	/**

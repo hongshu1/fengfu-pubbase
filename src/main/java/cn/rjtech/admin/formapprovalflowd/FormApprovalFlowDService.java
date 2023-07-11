@@ -4,9 +4,7 @@ import cn.hutool.core.text.StrSplitter;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.formapproval.FormApprovalService;
 import cn.rjtech.model.momdata.FormApprovalFlowD;
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -30,15 +28,8 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 		return dao;
 	}
 
-	@Inject
-	private FormApprovalService formApprovalService;
-
 	/**
 	 * 后台管理分页查询
-	 * @param pageNumber
-	 * @param pageSize
-	 * @param keywords
-	 * @return
 	 */
 	public Page<FormApprovalFlowD> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
 		return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
@@ -46,8 +37,6 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 保存
-	 * @param formApprovalFlowD
-	 * @return
 	 */
 	public Ret save(FormApprovalFlowD formApprovalFlowD) {
 		if(formApprovalFlowD==null || isOk(formApprovalFlowD.getIAutoId())) {
@@ -64,8 +53,6 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 更新
-	 * @param formApprovalFlowD
-	 * @return
 	 */
 	public Ret update(FormApprovalFlowD formApprovalFlowD) {
 		if(formApprovalFlowD==null || notOk(formApprovalFlowD.getIAutoId())) {
@@ -85,8 +72,6 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		return deleteByIds(ids,true);
@@ -94,31 +79,29 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		return deleteById(id,true);
 	}
 
-	/**
-	 * 删除数据后执行的回调
-	 * @param formApprovalFlowD 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
+    /**
+     * 删除数据后执行的回调
+     *
+     * @param formApprovalFlowD 要删除的model
+     * @param kv                携带额外参数一般用不上
+     */
 	@Override
 	protected String afterDelete(FormApprovalFlowD formApprovalFlowD, Kv kv) {
 		//addDeleteSystemLog(formApprovalFlowD.getIautoid(), JBoltUserKit.getUserId(),formApprovalFlowD.getName());
 		return null;
 	}
 
-	/**
-	 * 检测是否可以删除
-	 * @param formApprovalFlowD 要删除的model
-	 * @param kv 携带额外参数一般用不上
-	 * @return
-	 */
+    /**
+     * 检测是否可以删除
+     *
+     * @param formApprovalFlowD 要删除的model
+     * @param kv                携带额外参数一般用不上
+     */
 	@Override
 	public String checkCanDelete(FormApprovalFlowD formApprovalFlowD, Kv kv) {
 		//如果检测被用了 返回信息 则阻止删除 如果返回null 则正常执行删除
@@ -127,7 +110,6 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 设置返回二开业务所属的关键systemLog的targetType
-	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
@@ -136,8 +118,6 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 根据节点ID与单据人员主键ID删除流程从表数据
-	 * @param Did
-	 * @param userIds
 	 */
 	public Integer deleteByMidAndUserId(Long Did, String userIds){
 		int res = 0;
@@ -154,8 +134,6 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 根据节点ID与角色表主键ID找出用户 删除流程从表数据
-	 * @param Did
-	 * @param roleIds
 	 */
 	public void deleteByMidAndRoleId(Long Did, String roleIds){
 		for (String id : StrSplitter.split(roleIds, COMMA, true, true)) {
@@ -178,7 +156,6 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 根据主表ID 删除流程从表数据
-	 * @param Mid
 	 */
 	public void deleteByMid(Long Mid){
 		delete("delete from Bd_FormApprovalFlowD where iFormApprovalFlowMid = "+Mid);
@@ -186,10 +163,9 @@ public class FormApprovalFlowDService extends BaseService<FormApprovalFlowD> {
 
 	/**
 	 * 根据 ids 条件查数据
-	 * @param kv
-	 * @return
 	 */
 	public List<FormApprovalFlowD> findListBySid(Kv kv){
 		return find("select * from Bd_FormApprovalFlowD where iAutoId in ("+kv.getStr("flowIdStr")+")");
 	}
+    
 }
