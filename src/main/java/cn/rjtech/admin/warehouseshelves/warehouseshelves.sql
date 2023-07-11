@@ -87,3 +87,7 @@ WHERE
 	AND war.cWhName = #para(cwhname)
 	AND area.cAreaName =#para(careaname)
 #end
+
+#sql("getPositionById")
+SELECT ISNULL(COUNT(iAutoId), 0) qty FROM Bd_Warehouse_Position WHERE iWarehouseShelvesId IN (#(id)) AND isDeleted = 0
+#end
