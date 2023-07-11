@@ -71,7 +71,6 @@
         </textarea>
 
     <div class="jbolt_table_toolbar" id="Container_toolbar_#(pageId)">
-      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         #permission(PermissionKey.CONTAINER_ADD)
         <button data-dialogbtn data-area="80%,95%" data-handler="jboltTablePageToFirst" id="toolbar_addBtn_#(pageId)"
                 data-title="新增仓库建模-容器档案" data-url="admin/container/add" class="btn btn-outline-primary btn-sm"><i
@@ -89,7 +88,7 @@
         #permission(PermissionKey.CONTAINER_DELETE)
         <button data-ajaxbtn data-handler="refreshJBoltTable" data-check-handler="jboltTableGetCheckedIds"
                 id="toolbar_deleteBtn_#(pageId)" data-url="admin/container/deleteByIds?ids=" data-confirm="确定删除选中数据？"
-                class="btn btn-outline-primary btn-sm"><i class="fa fa-trash"></i> 删除
+                class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> 删除
         </button>
         #end
 
@@ -155,18 +154,18 @@
 
           #permission(PermissionKey.CONTAINER_RK)
           <button data-dialogbtn data-area="60%,85%" data-handler="refreshJBoltTable" id="toolbar_Rk_#(pageId)"
-                  data-title="入库" data-url="admin/container/rk/" class="btn btn-outline-primary"><i
+                  data-title="入库" data-url="admin/container/rk/" class="btn btn-outline-primary btn-sm"><i
               class="fa fa-edit"></i> 入库
           </button>
           #end
 
           #permission(PermissionKey.CONTAINER_CK)
           <button data-dialogbtn data-area="60%,85%" data-handler="refreshJBoltTable" id="toolbar_Ck_#(pageId)"
-                  data-title="出库" data-url="admin/container/ck/" class="btn btn-outline-primary"><i
+                  data-title="出库" data-url="admin/container/ck/" class="btn btn-outline-primary btn-sm"><i
               class="fa fa-edit"></i> 出库
           </button>
           #end
-      </div>
+
     </div>
 
     <table class="jbolt_table jbolt_main_table  table-center "
