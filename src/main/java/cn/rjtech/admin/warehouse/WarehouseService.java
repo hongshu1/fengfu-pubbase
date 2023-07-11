@@ -257,6 +257,10 @@ public class WarehouseService extends BaseService<Warehouse> {
    * 批量删除（逻辑）
    */
   public Ret deleteByBatchIds(String ids) {
+    Integer qty=dbTemplate("warehouse.getWarehouseareaById",Kv.by("id",ids)).queryInt();
+    if (qty > 0) {
+      ValidationUtils.error("数据已被库区档案引用，无法删除！");
+    }
     update("UPDATE Bd_Warehouse SET isDeleted = '1' WHERE iAutoId IN (" + ids + ") ");
     return SUCCESS;
   }
