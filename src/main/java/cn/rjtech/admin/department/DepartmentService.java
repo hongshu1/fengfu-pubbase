@@ -265,7 +265,7 @@ public class DepartmentService extends BaseService<Department> {
         jBoltExcelSheet.setHeaders(
                 JBoltExcelHeader.create("cdepcode", "*部门编码", 20),
                 JBoltExcelHeader.create("cdepname", "*部门名称", 20),
-                JBoltExcelHeader.create("cdeptype", "部门类型", 20),
+                JBoltExcelHeader.create("cdeptype", "*部门类型", 20),
                 JBoltExcelHeader.create("cdepperson", "负责人编码", 20),
                 JBoltExcelHeader.create("cdeppersonname", "负责人名称", 20),
                 JBoltExcelHeader.create("isapsinvoled", "*是否参与排产", 15),
@@ -699,6 +699,35 @@ public class DepartmentService extends BaseService<Department> {
             String cdepname = record.getStr("cdepname");
             ValidationUtils.notNull(cdepname,"部门名称为空!");
 
+
+            String cdeptype = record.getStr("cdeptype");
+            ValidationUtils.notNull(cdeptype,"部门类型为空!");
+            int count = 0;
+            String cType=null;
+            if(cdeptype.equals("总部")){
+                cType="1";
+                count++;
+            }else if(cdeptype.equals("省级公司")){
+                cType="1";
+                count++;
+            }else if(cdeptype.equals("市级公司")){
+                cType="2";
+                count++;
+            }else if(cdeptype.equals("区县级公司")){
+                cType="3";
+                count++;
+            }else if(cdeptype.equals("办事处")){
+                cType="4";
+                count++;
+            }else if(cdeptype.equals("部门")){
+                cType="5";
+                count++;
+            }else if(cdeptype.equals("部门")){
+                cType="6";
+                count++;
+            }
+            ValidationUtils.isTrue(count==1,"部门类型不合法!");
+
             Department dbDepartment = findByCdepcode(cdepcode);
 
             if (dbDepartment != null) {
@@ -739,7 +768,7 @@ public class DepartmentService extends BaseService<Department> {
                 department.setCUpdateName(JBoltUserKit.getUserName());
                 department.setDCreateTime(new Date());
                 department.setDUpdateTime(new Date());
-                department.setCType("1");
+                department.setCType(cType);
                 department.setIOrgId(getOrgId());
                 department.setCOrgCode(getOrgCode());
                 department.setICreateBy(JBoltUserKit.getUserId());
