@@ -1,5 +1,7 @@
 package cn.rjtech.admin.uptimeparam;
 
+import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.uptimecategory.UptimeCategoryService;
@@ -43,6 +45,7 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 	private CusFieldsMappingDService cusFieldsMappingdService;
 	@Inject
 	private UptimeCategoryService uptimeCategoryService;
+
 
 	/**
 	 * 后台管理数据查询
@@ -147,30 +150,72 @@ public class UptimeParamService extends BaseService<UptimeParam> {
 	/**
 	 * 数据导入
 	 * @param file
-	 * @param cformatName
 	 * @return
 	 */
-	public Ret importExcelData(File file, String cformatName) {
-		Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
-		ValidationUtils.isTrue(ret.isOk(), "导入失败");
-		ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-		tx(() -> {
-			// 封装数据
-			for (Map<String, String> map : datas) {
-				// 分类名称不存在就新增
-				Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimeparamname"));
+	public Ret importExcelData(File file) {
+//		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+//		ValidationUtils.isTrue(ret.isOk(), "导入失败");
+//		ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
+//		tx(() -> {
+//			// 封装数据
+//			for (Map<String, String> map : datas) {
+//
+//				ValidationUtils.notBlank(map.get("cuptimeparamname"),"参数名称不能为空");
+//				ValidationUtils.notBlank(map.get("iUptimeCategoryId"),"分类名称不能为空");
+//				// 分类名称不存在就新增
+//				Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimeparamname"));
+//				UptimeParam uptimeParam = new UptimeParam();
+//				uptimeParam.setCUptimeParamName(map.get("cuptimeparamname"));
+//				uptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
+//				uptimeParam.setIsEnabled(true);
+//				// 保存数据
+//				save(uptimeParam);
+//			}
+//			return true;
+//		});
+//		return SUCCESS;
 
-				UptimeParam uptimeParam = new UptimeParam();
-				uptimeParam.setCUptimeParamName(map.get("cuptimeparamname"));
-				uptimeParam.setIUptimeCategoryId(iUptimeCategoryId);
-				uptimeParam.setIsEnabled(true);
-				// 保存数据
-				save(uptimeParam);
+		List<Record> records = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
+		if (notOk(records)) {
+			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+		}
+
+
+		for (Record record : records) {
+
+			if (StrUtil.isBlank(record.getStr("cuptimeparamname"))) {
+				return fail("参数名称不能为空");
 			}
+			if (StrUtil.isBlank(record.getStr("iUptimeCategoryId"))) {
+				return fail("分类名称不能为空");
+			}
+
+			// 分类名称不存在就新增
+			Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(record.get("iUptimeCategoryId"));
+			record.set("IUptimeCategoryId",iUptimeCategoryId);
+			Date now=new Date();
+			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+			record.set("iCreateBy", JBoltUserKit.getUserId());
+			record.set("cOrgCode",getOrgCode());
+			record.set("cOrgName",getOrgName());
+			record.set("iOrgId",getOrgId());
+			record.set("dCreateTime", now);
+			record.set("isEnabled",1);
+			record.set("cCreateName", JBoltUserKit.getUserName());
+			record.set("isDeleted",0);
+			record.set("iUpdateBy", JBoltUserKit.getUserId());
+			record.set("dUpdateTime", now);
+			record.set("cUpdateName", JBoltUserKit.getUserName());
+		}
+
+		// 执行批量操作
+		tx(() -> {
+			batchSaveRecords(records);
 			return true;
 		});
 		return SUCCESS;
 	}
+
 
 	public Long getOrAddUptimeParamByName(Long iUptimeCategoryId, String cuptimeparamname) {
 		UptimeParam uptimeParam = findFirst(selectSql().eq("isDeleted", "0").eq("cUptimeParamName", cuptimeparamname));
