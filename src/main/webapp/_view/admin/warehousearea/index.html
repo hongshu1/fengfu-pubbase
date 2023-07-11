@@ -15,6 +15,7 @@
           <select class="form-control"
                   data-autoload
                   name="iwarehouseid"
+                  data-width="260px"
                   data-select-type="select2"
                   data-tips="所属仓库"
                   data-url="admin/warehouse/list?isDeleted=0"
@@ -69,7 +70,6 @@
 
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="warehouseArea_toolbar_#(pageId)">
-      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         #permission(PermissionKey.WAREHOUSE_AREA_ADD)
         <button data-openpage="dialog" data-area="600,450" data-handler="jboltTablePageToFirst" data-title="新增库区档案"
                 data-url="admin/warehousearea/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
@@ -150,7 +150,6 @@
         </div>
         #end
 
-      </div>
     </div>
 
 
@@ -175,7 +174,7 @@
       <thead>
       <tr>
         <th data-width="60">序号</th>
-        <th data-width="auto" data-column="cAreaCode">库区编码</th>
+        <th data-width="150" data-column="cAreaCode">库区编码</th>
         <th data-width="150" data-column="cAreaName">库区名称</th>
         <th data-width="150" data-column="iWarehouseId">所属仓库</th>
         <th data-width="150" data-column="iMaxCapacity">最大存储数量</th>

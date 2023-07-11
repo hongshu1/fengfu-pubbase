@@ -277,7 +277,7 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
         transVouch.setMemo(moMaterialsreturnm.getCMemo());
         transVouch.setCupdateName(JBoltUserKit.getUserName());
         transVouch.setDcreateTime(now);
-        transVouch.setState(2);//待审核
+        transVouch.setIAuditStatus(2);//待审核
         transVouch.save();
     }
 

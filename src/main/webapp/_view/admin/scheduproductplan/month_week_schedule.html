@@ -390,6 +390,22 @@
             initDate();
             loadInit();
         }
+        let searchStartTime = document.getElementById('search_start-time');
+        // 获取当前日期
+        var currentDate = new Date();
+        // 设置日期为当前月的1号
+        currentDate.setDate(1);
+        // 获取1号的时间戳（单位：毫秒）
+        var timestamp = currentDate.getTime();
+        // 转换为Date对象
+        var date = new Date(timestamp);
+        // 获取年、月、日
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1; // 月份从0开始，需要加1
+        var day = date.getDate();
+        // 拼接成年月日格式
+        var formattedDate = year + '-' + month.toString().padStart(2, '0') + '-' + day.toString().padStart(2, '0');
+        searchStartTime.value = formattedDate;
     }
     var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'), {sheetCount: 1,calcOnDemand: true});
     var excelIo = new GC.Spread.Excel.IO();//开启导入导出api
@@ -432,6 +448,8 @@
     var parms = parmsArr[0];
     //设置全局表单的背景颜色
     spread.options.grayAreaBackColor = '#fff';
+    // let searchStartTime = document.getElementById('search_start-time').value;
+    // console.log()
     /*工作簿暂停活性*/
     function spreadSuspend() {
         spread.suspendPaint(); //渲染前失活(提升性能)
@@ -800,37 +818,18 @@
                                     //嵌入在库天数公式
                                     sheet.setFormula(AS,Z+k,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
                                 }else{
-                                    // let row = AS-5; // 初始行值
-                                    // let planmonthCol = k+Z;
-                                    // let col = planmonthCol;
-                                    // var isWork = parms['scheduplanmonth'][i].childList[j].day;
-                                    // function findColumns() {
-                                    //     setTimeout(function (){
-                                    //         for (let l = 0; l < Num; l++) {
-                                    //             let value = sheet.getValue(row, col+1);
-                                    //             if (value) {
-                                    //                 if(value==0){
-                                    //                     ++col;
-                                    //                     findColumns();
-                                    //                 }else{
-                                    //                     parms.colArr.push(col);
-                                    //                 }
-                                    //             }
-                                    //         }
-                                    //         console.log(parms.colArr)
-                                    //     },100)
-                                    // }
-                                    // findColumns();
-                                    // // console.log(parms.colArr)
-                                    // if(parms.colArr.length>1){
-                                    //     // console.log(parms.colArr);
-                                    // }
+                                    let row = AS-5; // 初始行值
+                                    let planmonthCol = k+Z;
+                                    let col = planmonthCol;
+                                    var isWork = parms['scheduplanmonth'][i].childList[j].day;
+                                    // console.log(++col)
+                                    findColumns(row,col,Num,isWork);
+                                    // console.log(parms.colArr);
                                     // console.log(`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})`)
                                     // sheet.setFormula(AS,parms.planmonthCol,`=SUM(R${AS-4}C${parms.colArr[0]+1}:R${AS-4}C${parms.colArr[1]+1})/R${AS+1}C10`);
                                     if(parms['scheduplanmonth'][i].childList[j].day.at(-1)||parms['scheduplanmonth'][i].childList[j].day.at(-2)){
                                         // console.log('at')
                                     }
-
                                 }
                                 //控制小数位为1位
                                 sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
@@ -872,6 +871,27 @@
                 console.log('error')
             }
         })
+    }
+    function findColumns(row, col, Num, isWork) {
+        // console.log(col)
+        setTimeout(()=>{
+            console.log(isWork[col-10])
+            // for (let i = 0; i < Num; i++) {
+            //     let value = sheet.getValue(row, col+1);
+            //     if(value){
+            //         if(!isWork[col-10].iswork){
+            //             if(value>0){
+            //                 parms.colArr.push(col)
+            //             }else{
+            //                 ++col;
+            //                 findColumns(row, col, Num, isWork)
+            //             }
+            //         }
+            //     }
+            // }
+            // console.log(value);
+        },0)
+        //
     }
     // 订阅 valueChanged 事件
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {

@@ -229,7 +229,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 			//判断form是否为空
 			if (jBoltTable.formIsNotBlank()) {
 				SysPureceive sysPureceive = jBoltTable.getFormModel(SysPureceive.class,"sysPureceive");
-
+                sysPureceive.setOrganizeCode(getOrgCode());
 				String autoID = sysPureceive.getAutoID();
 
 //				新增 根据供应商分组
@@ -263,6 +263,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 							String billNo = BillNoUtils.genCode(getOrgCode(),table());
 							tarSySPuReceive.setBillNo(billNo);
 							tarSySPuReceive.setVenCode(venCode);
+							tarSySPuReceive.setOrganizeCode(getOrgCode());
 							tarSySPuReceive.setDupdatetime(nowDate);
 							tarSySPuReceive.setIcreateby(user.getId());
 							tarSySPuReceive.setDcreatetime(nowDate);
@@ -748,8 +749,14 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
         String autoID = sysPureceive.getAutoID();
         SysPuinstore sysPuinstore = syspuinstoreservice.findFirst("select * from T_Sys_PUInStore where SourceBillID =" +
                 " '" + autoID + "' and isDeleted = '0'");
-        if (isOk(sysPuinstore) && sysPuinstore.getIAuditStatus() > 1){
-            return "已推入库单且入库单已审核/批，不予反审";
+        if (isOk(sysPuinstore)){
+
+            if (sysPuinstore.getIAuditStatus() > 1){
+                return "已推入库单且入库单已审核/批，不予反审";
+            } else {
+                syspuinstoreservice.deleteByAutoId(Long.parseLong(sysPuinstore.getAutoID()));
+            }
+
         }
 
         return null;
@@ -763,7 +770,7 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 	@Override
 	public String preSubmitFunc(long formAutoId) {
         SysPureceive byId = findById(formAutoId);
-        System.out.println(byId);
+        System.out.println("byId===>"+byId);
         return null;
 	}
 
@@ -784,7 +791,22 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
 
 	@Override
 	public String preWithdrawFromAuditted(long formAutoId) {
-		return null;
+
+        SysPureceive sysPureceive = findById(formAutoId);
+        String autoID = sysPureceive.getAutoID();
+        SysPuinstore sysPuinstore = syspuinstoreservice.findFirst("select * from T_Sys_PUInStore where SourceBillID =" +
+                " '" + autoID + "' and isDeleted = '0'");
+        if (isOk(sysPuinstore)){
+
+            if (sysPuinstore.getIAuditStatus() > 1){
+                return "已推入库单且入库单已审核/批，不予反审";
+            } else {
+                syspuinstoreservice.deleteByAutoId(Long.parseLong(sysPuinstore.getAutoID()));
+            }
+
+        }
+
+        return null;
 	}
 
 	@Override

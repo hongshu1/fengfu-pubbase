@@ -138,6 +138,7 @@ public class FormApprovalAdminController extends BaseAdminController {
         ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少单据的提审权限");
         service.optional(formAutoId,formSn,primaryKeyName);
 
+        set("originalUrl", get("originalUrl"));
         set("formAutoId", get("formAutoId"));
         set("formSn", get("formSn"));
         set("primaryKeyName", get("primaryKeyName"));

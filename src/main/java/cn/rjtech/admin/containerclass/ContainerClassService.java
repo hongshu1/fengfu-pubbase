@@ -171,10 +171,19 @@ public class ContainerClassService extends BaseService<ContainerClass> {
     return null;
   }
 
-  public Ret delete(Long id) {
-		ContainerClass containerClass=findById(id);
-		containerClass.setIsDeleted(true);
-  	return ret(containerClass.update());
+  public Ret delete(String ids) {
+    Integer qty = dbTemplate("containerclass.getContainerByDid", Kv.by("ids", ids)).queryInt();
+    if (qty > 0) {
+      ValidationUtils.error("数据已被容器档案引用，无法删除！");
+    }
+    String[] split = ids.split(",");
+    boolean bol = true;
+    for (String id : split) {
+      ContainerClass containerClass = findById(id);
+      containerClass.setIsDeleted(true);
+      bol = containerClass.update();
+    }
+    return ret(bol);
   }
 
   /**

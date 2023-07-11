@@ -23,17 +23,34 @@
     <script>
 
         /**
+         * 截取URL
+         * */
+        function getURLPathAfterPort(url) {
+            let parsedUrl = new URL(url);
+            let portIndex = parsedUrl.href.indexOf(parsedUrl.port) + parsedUrl.port.length;
+            console.log('parsedUrl.pathname',parsedUrl.pathname);
+            console.log('parsedUrl.href',parsedUrl.href);
+            return parsedUrl.href.substring(portIndex);
+        }
+
+        /**
          * 选择审批流回调函数
          */
         function submitConfirm(ele) {
+
+            var attr = $(location).attr("href");
+            var url = getURLPathAfterPort(attr);
+            console.log('url===',encodeURIComponent(url))
+
+
             if (ele==='2'){
                 var temp = $("#button_#(pageId)").data('url',
-                    '/admin/formapproval/optional?formAutoId=#(o.get(primaryKeyName??)??)&formSn=#(formSn??)&primaryKeyName=#(primaryKeyName??)&permissionKey=#(permissionKeyPrefix??)_submit&className=#(className??)')
+                    '/admin/formapproval/optional?formAutoId=#(o.get(primaryKeyName??)??)&formSn=#(formSn??)&primaryKeyName=#(primaryKeyName??)&permissionKey=#(permissionKeyPrefix??)_submit&className=#(className??)&originalUrl='+encodeURIComponent(url))
                     .data('area', '100%,100%')
                     .data('title', '发起人自选')
-                    .data('btn', '提交,取消');
+                    .data('btn', 'no');
 
-                DialogUtil.openBy(temp);
+                parent.DialogUtil.openBy(temp);
             } else {
                 submitThisForm_#(pageId)(true);
             }

@@ -95,3 +95,7 @@ WHERE
 	isDeleted = 0
 	AND cWhName = #para(cwhname)
 #end
+
+#sql("getShelvesById")
+SELECT ISNULL(COUNT(iAutoId), 0) qty FROM Bd_Warehouse_Shelves WHERE iWarehouseAreaId IN (#(id)) AND isDeleted = 0
+#end

@@ -364,7 +364,7 @@
             <div class="row">
                 <span style="margin-top: 5px">日期：</span>
                 <div class="col" style="display:flex;">
-                    <input type="date" id="search_start-time" name="search_start-time" style="height: 2rem">
+                    <input type="date" id="search_start-times" name="search_start-times" style="height: 2rem">
                     <p style="width: 30px;text-align: center;line-height:2rem;">至</p>
                     <input type="date" id="search_end-time" name="search_end-time" style="height: 2rem">
                 </div>
@@ -566,6 +566,24 @@
         parms.activeSheet.setColumnWidth(parms.columnindex+6, 100);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+7, 120);//设置指定单元格的width
         parms.activeSheet.setColumnWidth(parms.columnindex+8, 120);//设置指定单元格的width
+
+
+        let searchStartTime = document.getElementById('search_start-times');
+        // 获取当前日期
+        var currentDate = new Date();
+        // 设置日期为当前月的1号
+        currentDate.setDate(1);
+        // 获取1号的时间戳
+        var timestamp = currentDate.getTime();
+        // 转换为Date对象
+        var date = new Date(timestamp);
+        // 获取年、月、日
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1; // 月份从0开始，需要加1
+        var day = date.getDate();
+        // 拼接成年月日格式
+        var formattedDate = year + '-' + month.toString().padStart(2, '0') + '-' + day.toString().padStart(2, '0');
+        searchStartTime.value = formattedDate;
         spreadResume();// 恢复绘制
     }
     /**
@@ -837,7 +855,7 @@
         const cinvcode = document.getElementById('cinvcode').value;
         const cinvcode1 = document.getElementById('cinvcode1').value;
         const cinvname1 = document.getElementById('cinvname1').value;
-        const searchStartTime = document.getElementById('search_start-time').value;
+        const searchStartTime = document.getElementById('search_start-times').value;
         const searchEndTime = document.getElementById('search_end-time').value;
         searchData={
             cinvcode,
@@ -865,7 +883,7 @@
         document.getElementById('cinvcode').value='';
         document.getElementById('cinvcode1').value='';
         document.getElementById('cinvname1').value='';
-        document.getElementById('search_start-time').value='';
+        document.getElementById('search_start-times').value='';
         document.getElementById('search_end-time').value='';
     }
     /**
@@ -880,6 +898,7 @@
             type:'post',
             dataType:'json',
             success:function (res){
+                console.log(res.data)
                 const datetimeLocalInput = document.getElementById('datetime-locals');
                 datetimeLocalInput.value = res.data;
             },error: function(error) {

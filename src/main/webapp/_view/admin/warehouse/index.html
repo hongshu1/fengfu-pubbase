@@ -15,6 +15,7 @@
                   name="idepid"
                   data-select-type="select2"
                   data-tips="所属部门"
+                  data-width="260px"
                   data-url="admin/department/list"
                   data-text="=所属部门="
                   data-value=""
@@ -76,7 +77,6 @@
 
     <!-- 工具条 toolbar -->
     <div class="jbolt_table_toolbar" id="warehouse_toolbar_#(pageId)">
-      <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
         #permission(PermissionKey.WAREHOUSE_ADD)
         <button data-openpage="dialog" data-area="50%,100%" data-handler="jboltTablePageToFirst" data-title="新增仓库档案"
                 data-url="admin/warehouse/add" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> 新增
@@ -144,8 +144,6 @@
           </div>
         </div>
         #end
-      </div>
-      <div class="clearfix"></div>
     </div>
 
 
@@ -168,8 +166,8 @@
         <th data-min-width="100" width="100" data-column="cwhcode">仓库编码</th>
         <th data-min-width="180" width="180" data-column="cwhname">仓库名称</th>
         <th data-min-width="180" width="180" data-column="cDepName">所属部门</th>
-        <th data-width="150" width="120" data-column="iMaxStock">最大存储数量</th>
-        <th data-width="150" width="120" data-column="iMaxSpace">最大存储空间</th>
+        <th data-min-width="150" width="150" data-column="iMaxStock">最大存储数量</th>
+        <th data-min-width="150" width="150" data-column="iMaxSpace">最大存储空间</th>
         <th data-min-width="120" width="120" data-column="cwhPerson">启用库存预警</th>
         <th data-min-width="80" width="80" data-column="cwhvaluestyle">是否启用</th>
         <th data-min-width="120" width="120" data-column="cMonth">备注</th>

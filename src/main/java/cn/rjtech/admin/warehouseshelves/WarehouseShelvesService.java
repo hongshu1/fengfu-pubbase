@@ -163,7 +163,10 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
   public Ret deleteByBatchIds(String ids) {
     tx(() -> {
       String[] idarry = ids.split(",");
-
+      Integer qty = dbTemplate("warehouseshelves.getPositionById", Kv.by("id", ids)).queryInt();
+      if (qty > 0) {
+        ValidationUtils.error("数据已被货架档案引用，无法删除！");
+      }
 
       //料品档案主表
       //deleteByIds(ids,true);

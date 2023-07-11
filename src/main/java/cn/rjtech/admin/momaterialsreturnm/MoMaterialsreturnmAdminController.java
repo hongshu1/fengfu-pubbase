@@ -45,6 +45,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.MOMATERIALSRETURNM_ADD)
     public void add(@Para(value = "imodocid") Long imodocid) {
         ValidationUtils.validateId(imodocid, "imodocid");
 
@@ -68,6 +69,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     /**
      * 保存
      */
+    @CheckPermission(PermissionKey.MOMATERIALSRETURNM_ADD)
     public void save() {
         renderJson(service.save(getModel(MoMaterialsreturnm.class, "moMaterialsreturnm")));
     }
@@ -143,6 +145,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     /**
      * 保存新增生产退料
      */
+    @CheckPermission(PermissionKey.MOMATERIALSRETURNM_ADD)
     public void saveTableSubmit() {
         renderJson(service.saveTableSubmit(getJBoltTable()));
     }

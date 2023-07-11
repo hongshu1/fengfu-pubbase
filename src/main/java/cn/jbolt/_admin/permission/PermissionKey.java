@@ -4045,6 +4045,7 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String QCINSPECTION_DELETE = "qcinspection_delete";
+
 	/**
 	 * 导出
 	 */
