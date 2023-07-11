@@ -420,7 +420,7 @@ public class PersonService extends BaseService<Person> {
             person.setCPsnMobilePhone(excelRecord.getStr("cpsnmobilephone"));
             person.setJobNumber(excelRecord.getStr("jobnumber"));
             person.setCEcardNo(excelRecord.getStr("cecardno"));
-            person.setCdeptNum(departmentService.getCdepCodeByName(excelRecord.getStr("cdeptnum")));
+            person.setCdeptNum(departmentService.getCdepCodeByName(excelRecord.getCdeptNum()));
             Record remploystateDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.job_type.name());
             String remploystate = excelRecord.getStr("remploystate");
             remploystate = JBoltStringUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
