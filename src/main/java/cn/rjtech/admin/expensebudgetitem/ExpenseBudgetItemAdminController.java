@@ -9,6 +9,7 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import cn.jbolt.core.poi.excel.JBoltExcelPositionData;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -114,13 +115,15 @@ public class ExpenseBudgetItemAdminController extends BaseAdminController {
     public void exportDifferencesManagementDatas(){
         Kv para = getKv();
         List<JBoltExcelPositionData> excelPositionDatas = new ArrayList<>();//定位数据集合
-        service.constructExportDifferencesManagementDatas(para,excelPositionDatas);
+        List<JBoltExcelMerge> mergeList = new ArrayList<JBoltExcelMerge>();
+        service.constructExportDifferencesManagementDatas(para,excelPositionDatas,mergeList);
         //2、创建JBoltExcel
         JBoltExcel jBoltExcel = JBoltExcel
                 .createByTpl("expensebudgetdiff.xlsx")//创建JBoltExcel 从模板加载创建
                 .addSheet(//设置sheet
                         JBoltExcelSheet.create("费用预实差异")//创建sheet name保持与模板中的sheet一致
                                 .setPositionDatas(excelPositionDatas)//设置定位数据
+                                .setMerges(mergeList)
                 )
                 .setFileName("费用预实差异数据");
         //3、导出
