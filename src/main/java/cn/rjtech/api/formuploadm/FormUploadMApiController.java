@@ -1,6 +1,8 @@
 package cn.rjtech.api.formuploadm;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;
@@ -20,7 +22,7 @@ import java.util.Date;
  * @author yjllzy
  */
 @ApiDoc
-@UnCheck
+@CheckPermission(PermissionKey.FORMUPLOADM)
 public class FormUploadMApiController extends BaseApiController {
 
     @Inject
@@ -51,7 +53,7 @@ public class FormUploadMApiController extends BaseApiController {
      * 批量保存
      */
     @ApiDoc(result = NullDataResult.class)
-    @UnCheck
+    @CheckPermission(PermissionKey.FORMUPLOADM_API_SUBMIT)
     public void saveTableSubmit(@Para(value = "iautoid") Long iautoid,
                                 @Para(value = "iworkregionmid") String iworkregionmid,
                                 @Para(value = "icategoryid") String icategoryid,
@@ -69,7 +71,7 @@ public class FormUploadMApiController extends BaseApiController {
      * 删除
      */
     @ApiDoc(result = NullDataResult.class)
-    @UnCheck
+    @CheckPermission(PermissionKey.FORMUPLOADM_API_DELETE)
     public void delete(@Para(value = "iautoid") Long iautoid) {
         renderJBoltApiRet(service.delete(iautoid));
 
@@ -79,7 +81,7 @@ public class FormUploadMApiController extends BaseApiController {
      * 修改状态
      */
     @ApiDoc(result = NullDataResult.class)
-    @UnCheck
+    @CheckPermission(PermissionKey.FORMUPLOADM_API_EDIT)
     public void auditStateUpdate(@Para(value = "iautoid") String iautoid,
                                  @Para(value = "auditstate") Integer auditstate) {
         renderJBoltApiRet(service.auditStateUpdate(iautoid, auditstate));
@@ -100,7 +102,7 @@ public class FormUploadMApiController extends BaseApiController {
      * 行删除
      */
     @ApiDoc(result = NullDataResult.class)
-    @UnCheck
+    @CheckPermission(PermissionKey.FORMUPLOADM_API_DELETE)
     public void lineDeletion(@Para(value = "iautoid") Long iautoid) {
         renderJBoltApiRet(service.delete2(iautoid));
     }
