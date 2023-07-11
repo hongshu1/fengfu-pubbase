@@ -28,7 +28,7 @@ import com.jfinal.kit.Kv;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-01 10:50
  */
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.BOMMASTER)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/bomcompare", viewPath = "/_view/admin/bomcompare")
 public class BomCompareAdminController extends BaseAdminController {

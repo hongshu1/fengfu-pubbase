@@ -7,10 +7,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.JBoltUserAuthKit;
-import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.permission.*;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.customer.CustomerService;
@@ -39,8 +36,9 @@ import java.io.IOException;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-28 16:39
  */
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.BOMMASTER)
 @Before(JBoltAdminAuthInterceptor.class)
+@UnCheckIfSystemAdmin
 @Path(value = "/admin/bommaster", viewPath = "/_view/admin/bommaster")
 public class BomMasterAdminController extends BaseAdminController {
 
@@ -77,7 +75,7 @@ public class BomMasterAdminController extends BaseAdminController {
     /**
      * 新增
      */
-    @CheckPermission(PermissionKey.BOMMASTER_EXPORT)
+    @CheckPermission(PermissionKey.BOMMASTER_IMPORT)
     public void add() {
         render("add.html");
     }

@@ -3766,10 +3766,6 @@ public class PermissionKey {
 	 */
 	public static final String BOMMASTER_VERSION_VIEW = "bommaster_version_view";
 	/**
-	 * 根目录展示开关
-	 */
-	public static final String BOMMASTER_VERSION_VIEW = "bommaster_version_view";
-	/**
 	 * 新增
 	 */
 	public static final String FORMEXTENDFIELDS_ADD = "formextendfields_add";

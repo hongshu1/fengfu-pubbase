@@ -10,8 +10,10 @@
                         <input type="hidden" name="enableIcon"
                               value="
 								  <a tooltip='' data-title='查看' data-dialogbtn='' data-area='90%,90%' href='admin/bomcompare/info/?' style='position: absolute;right:30px;' onClick='myLink1()'><i class='fa fa-eye c-info'></i></a>
+								  #permission(PermissionKey.BOMMASTER_BOMM_DEL)
 								  <a tooltip='' data-title='复制版本提示' data-dialogbtn='' data-area='28%,70%' href='admin/bommaster/copyForm/?' data-handler='refreshPjaxContainer' onClick=='myLink2()' style='position: absolute;right:0px;'><i class='fa fa-copy c-warning'></i></a>
-								  ">
+                                   #end
+">
                         <!--   <a tooltip='' data-ajaxbtn href='admin/bommaster/del/?' data-handler='refreshPjaxContainer' data-confirm='确定要执行此操作？'><i class='fa fa-trash c-danger'  style='position: absolute;left: 95%;'></i></a>
                            <a tooltip='' data-title='编辑' data-dialogbtn='' data-area='90%,90%' href='admin/bommaster/edit/?' ><i class='fa fa-edit c-primary' style='position: absolute;left: 79%;'></i></a>-->
                     </form>
@@ -22,7 +24,7 @@
             <div class="card-header py-2">
                 <div>
                     <div class="" role="group" aria-label="btn-group">
-                        #permission(PermissionKey.BOMMASTER_EXPORT)
+                        #permission(PermissionKey.BOMMASTER_IMPORT)
                         <button data-dialogbtn data-area="100%,100%" data-title="新增物料清单" data-url="admin/bommaster/add" class="btn btn-outline-primary btn-sm" id="addBtn_#(pageId)"><i class="fa fa-plus"></i> 导入新增</button>
                         #end
                         #permission(PermissionKey.BOMMASTER_ADD)

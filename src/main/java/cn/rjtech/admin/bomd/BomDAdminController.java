@@ -1,6 +1,8 @@
 package cn.rjtech.admin.bomd;
 
+import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseAdminController;
@@ -15,6 +17,7 @@ import com.jfinal.core.paragetter.Para;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-06-08 17:03
  */
+@CheckPermission(PermissionKey.BOMMASTER)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/bomD", viewPath = "/_view/admin/bomd")
 public class BomDAdminController extends BaseAdminController {
