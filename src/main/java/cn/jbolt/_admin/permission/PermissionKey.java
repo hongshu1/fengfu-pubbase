@@ -3761,4 +3761,13 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String CODINGRULEM_DEL = "codingrulem_del";
+
+	/**
+	 * 新增
+	 */
+	public static final String FORMEXTENDFIELDS_ADD = "formextendfields_add";
+	/**
+	 * 保存
+	 */
+	public static final String FORMEXTENDFIELDS_SAVE = "formextendfields_save";
 }
