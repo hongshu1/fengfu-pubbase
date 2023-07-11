@@ -6,9 +6,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.UnCheck;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.permission.*;
 import cn.rjtech.admin.bomcompare.BomCompareService;
 import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.customer.CustomerService;
@@ -37,8 +36,9 @@ import java.io.IOException;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-03-28 16:39
  */
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.BOMMASTER)
 @Before(JBoltAdminAuthInterceptor.class)
+@UnCheckIfSystemAdmin
 @Path(value = "/admin/bommaster", viewPath = "/_view/admin/bommaster")
 public class BomMasterAdminController extends BaseAdminController {
 
@@ -75,7 +75,7 @@ public class BomMasterAdminController extends BaseAdminController {
     /**
      * 新增
      */
-    @CheckPermission(PermissionKey.BOMMASTER_ADD)
+    @CheckPermission(PermissionKey.BOMMASTER_IMPORT)
     public void add() {
         render("add.html");
     }
@@ -215,7 +215,7 @@ public class BomMasterAdminController extends BaseAdminController {
         renderJson(service.saveCopy(oldId, cVersion));
     }
 
-    @CheckPermission(PermissionKey.BOMMASTER_IMPORT)
+    @CheckPermission(PermissionKey.BOMMASTER_EXPORT)
     public void importExcelFile() throws IOException {
         //上传到今天的文件夹下
         String uploadFile = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_FILE_UPLOADER);
@@ -235,6 +235,8 @@ public class BomMasterAdminController extends BaseAdminController {
 
     public void versionIndex() {
         keepPara();
+        boolean hasPermission = JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), PermissionKey.BOMMASTER_VERSION_VIEW);
+        set("hasPermission", !hasPermission);
         render("version_index.html");
     }
     

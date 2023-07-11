@@ -257,11 +257,25 @@ public class WarehouseService extends BaseService<Warehouse> {
    * 批量删除（逻辑）
    */
   public Ret deleteByBatchIds(String ids) {
-    Integer qty=dbTemplate("warehouse.getWarehouseareaById",Kv.by("id",ids)).queryInt();
-    if (qty > 0) {
-      ValidationUtils.error("数据已被库区档案引用，无法删除！");
-    }
-    update("UPDATE Bd_Warehouse SET isDeleted = '1' WHERE iAutoId IN (" + ids + ") ");
+    tx(() -> {
+      Integer qty = dbTemplate("warehouse.getWarehouseareaById", Kv.by("id", ids)).queryInt();
+      if (qty > 0) {
+        ValidationUtils.error("数据已被库区档案引用，无法删除！");
+      }
+      String[] split = ids.split(",");
+      for (String id : split) {
+        Warehouse warehouse = findById(ids);
+        if (warehouse.getISource() != null) {
+          if (warehouse.getISource() == 2) {
+            ValidationUtils.error("【"+warehouse.getCWhName() + "】来源U8，无法删除");
+          }
+        }
+        warehouse.setIsDeleted(true);
+        warehouse.update();
+      }
+//    update("UPDATE Bd_Warehouse SET isDeleted = '1' WHERE iAutoId IN (" + ids + ") ");
+      return true;
+    });
     return SUCCESS;
   }
 
@@ -398,7 +412,7 @@ public class WarehouseService extends BaseService<Warehouse> {
     return SUCCESS;
   }
 
-  public List<Warehouse> findByIds(List<Long> ids){
+  public List<Warehouse> findByIds(List<Long> ids) {
     Sql sql = selectSql().in(Warehouse.IAUTOID, ids);
     return find(sql);
   }
