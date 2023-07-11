@@ -161,7 +161,10 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
   public Ret deleteByBatchIds(String ids) {
     tx(() -> {
       String[] idarry = ids.split(",");
-
+      Integer qty = dbTemplate("warehousearea.getShelvesById", Kv.by("id", ids)).queryInt();
+      if (qty > 0) {
+        ValidationUtils.error("数据已被货架档案引用，无法删除！");
+      }
 
       //料品档案主表
       //deleteByIds(ids,true);
@@ -267,11 +270,11 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
   }
 
   public List<Record> options(Kv kv) {
-      Object whcode = kv.get("whcode");
-      if (whcode != null){
+    Object whcode = kv.get("whcode");
+    if (whcode != null) {
       Warehouse warehouse = warehouseService.findByCwhcode(whcode.toString());
-      if (warehouse!=null){
-        kv.set("iwarehouseid",warehouse.getIAutoId());
+      if (warehouse != null) {
+        kv.set("iwarehouseid", warehouse.getIAutoId());
       }
     }
     return dbTemplate("warehousearea.options", kv).find();
