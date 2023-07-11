@@ -3,6 +3,7 @@
     {@each datas as data,index}
         <tr data-id="${data.autoid}">
             <td>${pageNumber,pageSize,index | rownum}</td>
+            <td>${data.poscode}</td> <!--库区-->
             <td>${data.barcode}</td> <!--现品票-->
             <td>${data.invcode}</td> <!--材料编码-->
             <td>${data.cinvaddcode}</td> <!--材料代码-->
@@ -10,15 +11,24 @@
             <td>${data.cinvstd}</td> <!--型号-->
             <td>${data.cuomclassname}</td> <!--主计量单位-->
             <td>${data.qty}</td> <!--数量-->
+            <td>${data.qtys}</td> <!--现存量-->
             <td>${data.citemccode}</td>
             <td>${data.citemcname}</td>
             <td>${data.cinvccode}</td>
             <td>${data.citemname}</td>
 
-            <td  style="display: none">${data.sourcebilltype}</td> <!--来源单据类型-->
-            <td  style="display: none">${data.sourcebillnorow}</td> <!--来源单号+行号-->
-            <td  style="display: none">${data.sourcebillid}</td> <!--来源单据ID-->
-            <td  style="display: none">${data.sourcebilldid}</td> <!--来源单据Did-->
+        //采购单位编码
+        <td hidden>${data.sourcebillno}</td>
+        //来源单号（订单号）
+        <td hidden>${data.sourcebillid}</td>
+        //来源单据ID(订单id)
+        <td hidden>${data.sourcebilltype}</td>
+        //采购PO 委外OM（采购类型）
+        <td hidden>${data.sourcebilldid}</td>
+        //来源单据DID;采购或委外单身ID
+        <td hidden>${data.sourcebillnorow}</td>
+        //来源单号+行号
+        <td hidden>${data.rowno}</td>
         </tr>
     {@/each}
 </textarea>
@@ -60,13 +70,15 @@
           <thead class="fw-normal">
           <tr>
             <th data-width="60" data-column="index">序号</th>
-            <th data-width="180" data-column="barcode">现品票</th>
+              <th data-width="150" data-column="poscode">库区编码</th>
+              <th data-width="180" data-column="barcode">现品票</th>
               <th data-width="150" data-column="invcode">存货编码</th>
               <th data-width="150" data-column="cinvaddcode">存货代码</th>
               <th data-width="150" data-column="cinvname">存货名称</th>
               <th data-width="150" data-column="cinvstd">规格型号</th>
               <th data-width="150" data-column="purchasecuomname">主计量单位</th>
-            <th data-width="150" data-column="qty">现存量</th>
+            <th data-width="150" data-column="qty">数量</th>
+            <th data-width="150" data-column="qtys">现存量</th>
             <th data-width="150" data-column="citemccode">项目大类编码</th>
             <th data-width="150" data-column="citemcname">项目大类名称</th>
             <th data-width="150" data-column="citemcode">项目编码</th>
@@ -172,11 +184,23 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,invcode,cinvaddcode,cinvname,cinvstd,qty,purchasecuomname",
-              header:' 现品票, 存货编码, 存货代码,存货名称, 规格型号,数量,库存主单位',
-              changeColumns:[{column: "barcode", use: "barcode"},{column: "invcode", use: "invcode"},{column: "cinvaddcode", use: "cinvaddcode"},
-                  {column: "cinvname", use: "cinvname"},{column: "cinvstd", use: "cinvstd"},
+              columnAttr: "barcode,invcode,cinvaddcode,cinvname,cinvstd,qty,qtys,purchasecuomname",
+              header:' 现品票, 存货编码, 存货代码,存货名称, 规格型号,数量,现存数,库存主单位',
+              changeColumns:[{column: "barcode", use: "barcode"},
+                  {column: "invcode", use: "invcode"},
+                  {column: "cinvaddcode", use: "cinvaddcode"},
+                  {column: "cinvname", use: "cinvname"},
+                  {column: "cinvstd", use: "cinvstd"},
                   {column: "qty", use: "qty"},
+                  {column: "qtys", use: "qtys"},
+                  {column: "sourcebillno", use: "sourcebillno"},
+                  {column: "sourcebillid", use: "sourcebillid"},
+                  {column: "sourcebilltype", use: "sourcebilltype"},
+                  {column: "sourcebilldid", use: "sourcebilldid"},
+                  {column: "sourcebillnorow", use: "sourcebillnorow"},
+                  {column: "whcode", use: "whcode"},
+                  {column: "poscode", use: "poscode"},
+                  {column: "rowno", use: "rowno"},
                   {column: "purchasecuomname", use: "purchasecuomname"},
                   ],
               handler:function (table,td,text,value,jsonData) {
@@ -247,6 +271,22 @@
                   {column: "citemcode", use: "citemcode"},
                   {column: "citemname", use: "citemname"},
               ],
+          },
+          poscode:{
+              placeholder: "库区",
+              tooltip: "库区",
+              type: "autocomplete",
+              url: "admin/warehousearea/options",
+              maxLength: 100,
+              required: true,
+              placeholder: "请选择库区编码",
+              textAttr: "careacode",
+              width: 500,
+              valueAttr: "careacode",//选择赋值的字段
+              columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
+              header: '库区编码,库区名称',
+              changeColumns: [
+                  {column: "poscode", use: "careacode"}]
           },
           qty: {
               type:"amount",

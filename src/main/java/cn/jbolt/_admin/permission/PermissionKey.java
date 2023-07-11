@@ -3761,7 +3761,10 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String CODINGRULEM_DEL = "codingrulem_del";
-
+	/**
+	 * 根目录展示开关
+	 */
+	public static final String BOMMASTER_VERSION_VIEW = "bommaster_version_view";
 	/**
 	 * 新增
 	 */
@@ -3770,4 +3773,52 @@ public class PermissionKey {
 	 * 保存
 	 */
 	public static final String FORMEXTENDFIELDS_SAVE = "formextendfields_save";
+	/**
+	 * 新增
+	 */
+	public static final String PURECEIVE_ADD = "pureceive_add";
+	/**
+	 * 修改
+	 */
+	public static final String PURECEIVE_EDIT = "pureceive_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PURECEIVE_DELETE = "pureceive_delete";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERSUM_EXPORT = "cusordersum_export";
+	/**
+	 * 导出
+	 */
+	public static final String CUSORDERRESULT_EXPORT = "cusorderresult_export";
+	/**
+	 * 批量删除
+	 */
+	public static final String PURECEIVE_DELETE_ALL = "pureceive_delete_all";
+	/**
+	 * 新增
+	 */
+	public static final String OTHER_DELIVERY_LIST_ADD = "other_delivery_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String OTHER_DELIVERY_LIST_EDIT = "other_delivery_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String OTHER_DELIVERY_LIST_DELETE = "other_delivery_list_delete";
+	/**
+	 * 新增
+	 */
+	public static final String MATERIAL_DELIVERY_LIST_ADD = "material_delivery_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String MATERIAL_DELIVERY_LIST_EDIT = "material_delivery_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String MATERIAL_DELIVERY_LIST_DELETE = "material_delivery_list_delete";
 }
