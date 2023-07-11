@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseFormApproval<M extends BaseFormApproval<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -37,6 +37,8 @@ public abstract class BaseFormApproval<M extends BaseFormApproval<M>> extends JB
     public static final String DCREATETIME = "dCreateTime";
     /**删除状态：0. 未删除 1. 已删除*/
     public static final String ISDELETED = "isDeleted";
+    /**审批流类型：1. 默认审批流 2. 自定审批流*/
+    public static final String IAPPROVALTYPE = "iApprovalType";
 	/**
 	 * 主键ID
 	 */
@@ -116,7 +118,7 @@ public abstract class BaseFormApproval<M extends BaseFormApproval<M>> extends JB
 	/**
 	 * 审批流ID
 	 */
-	@JBoltField(name="iapprovalid" ,columnName="iApprovalId",type="Long", remark="审批流ID", required=true, maxLength=19, fixed=0, order=5)
+	@JBoltField(name="iapprovalid" ,columnName="iApprovalId",type="Long", remark="审批流ID", required=false, maxLength=19, fixed=0, order=5)
 	@JSONField(name = "iapprovalid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIApprovalId() {
 		return getLong("iApprovalId");
@@ -256,6 +258,23 @@ public abstract class BaseFormApproval<M extends BaseFormApproval<M>> extends JB
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
+	}
+
+	/**
+	 * 审批流类型：1. 默认审批流 2. 自定审批流
+	 */
+	public M setIApprovalType(java.lang.Integer iApprovalType) {
+		set("iApprovalType", iApprovalType);
+		return (M)this;
+	}
+
+	/**
+	 * 审批流类型：1. 默认审批流 2. 自定审批流
+	 */
+	@JBoltField(name="iapprovaltype" ,columnName="iApprovalType",type="Integer", remark="审批流类型：1. 默认审批流 2. 自定审批流", required=true, maxLength=10, fixed=0, order=14)
+	@JSONField(name = "iapprovaltype")
+	public java.lang.Integer getIApprovalType() {
+		return getInt("iApprovalType");
 	}
 
 }
