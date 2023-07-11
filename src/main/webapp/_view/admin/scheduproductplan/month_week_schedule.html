@@ -905,7 +905,6 @@
                     }
                 })
                 sheet.clearPendingChanges({clearType: 1, row: -1, rowCount: -1, col: -1, colCount: -1});
-                // findColumns(parms['formulaCol'],parms['formulaRow']);
             }, 0);
     });
     /**
@@ -957,11 +956,6 @@
             }
         })
     }
-    // //表格数据查看
-    // function levelSearch(ilevel){
-    //     parms.level=ilevel;
-    //     window.location.replace(`admin/scheduproductplanmonth/monthweekSchedule?_jb_rqtype_=iframe&level=${ilevel}`);
-    // }
     //删除表格数据
     function levelDelete(index){
         let id = parms.dschedulebeginData[index].iautoid;
@@ -1006,6 +1000,7 @@
         const searchStartTime = document.getElementById('search_start-time').value;
         const searchEndTime = document.getElementById('search_end-time').value;
         const searchLevel = document.getElementById('search_level').value;
+        parms.level = searchLevel;
         searchData={
             cworkname,
             cinvcode,
