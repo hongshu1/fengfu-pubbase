@@ -17,7 +17,7 @@ WHERE wh.isDeleted = 0
 	    AND wh.cWhName  LIKE CONCAT('%', #para(cwhname), '%')
 	#end
 	#if(idepid)
-	    AND wh.cDepCode = #para(idepid)
+	    AND dt.iAutoId = #(idepid)
 	#end
 	#if(imaxstockMin)
     AND wh.iMaxStock >= #para(imaxstockMin)
@@ -137,4 +137,8 @@ select cDepCode from bd_department where cDepName = #para(cdepname)
 
 #sql("getCpsnnameByCpsnnum")
 SELECT cPsn_Num FROM Bd_Person WHERE cPsn_Name = #para(cdepname)
+#end
+
+#sql("getWarehouseareaById")
+select ISNULL(SUM(iAutoId), 0) FROM Bd_Warehouse_Area WHERE iWarehouseId=#(id) AND isDeleted=0
 #end

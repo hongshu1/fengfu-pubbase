@@ -4,6 +4,8 @@
 
         <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
             <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+
+                #if(type != '0')
                 #if(readonly != 'readonly')
                 <button onclick="submitThisForm_#(pageId)(false)" class="btn btn-outline-secondary btn-xs">保存</button>
                 #end
@@ -17,6 +19,7 @@
                 ### redonly:                查看页定义为readonly=readonly, 新增/编辑页 可不传
                 ### className:              实现审批业务的类名
                 #include("/_view/_common/_approval_btns.html", uri="/admin/otherdeliverylist", formSn="T_Sys_OtherOut", o=otherOut, primaryKeyName="AutoID", className="cn.rjtech.admin.otherdeliverylist.OtherOutDeliveryService",permissionKeyPrefix="otherOut")
+                #end
                 #end
                 <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs">关闭</button>
             </div>

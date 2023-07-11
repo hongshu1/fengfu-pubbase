@@ -41,9 +41,7 @@
 <tr data-id="${data.autoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
-	{@if data.iauditstatus != '0'}
 	<a class="jbolt_table_editbtn" href="admin/otherdeliverylist/edit/${data.autoid}?&type=0"  data-fs="true" data-handler="refreshJBoltTable" data-title="其他出库单列表详情">查看</i></a>
-	{@/if}
 	{@if data.iauditstatus == '0'}
 	<a href="admin/otherdeliverylist/deleteByIds?ids=${data.autoid}" data-ajaxbtn data-loading="执行中 "
                            tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？"
@@ -56,7 +54,7 @@
 <td>${data.auditstate}</td>
 <td>${data.typename}</td>
 <td>${data.billno}</td>
-<td>ERP单据号</td><!--ERP单据号-->
+<td>${data.u8billno}</td>
 <td>${data.billdate}</td>
 <td>${data.cwhname}</td>!--仓库-->
 <td>${data.crdname}</td>
@@ -115,7 +113,7 @@ data-row-dblclick-active="true"
 	<th data-width="100">状态</th>
 	<th data-width="100">来源</th>
 	<th data-width="150" data-column="BillNo">出库单号</th>
-	<th data-width="150" data-column="ERPNo">ERP单据号</th>
+	<th data-width="150" data-column="u8billno">ERP单据号</th>
 	<th data-width="150" data-column="BillDate">出库日期</th>
 	<th data-width="150" data-column="Whcode">仓库名称</th>
 	<th data-width="150" data-column="RdCode">出库类别</th>

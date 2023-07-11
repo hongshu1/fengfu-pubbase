@@ -124,11 +124,10 @@ select m.cOrderNo AS sourcebillno,
        a.dPlanDate AS plandate,
        b.cInvStd AS cinvstd,
        a.iQty AS qty,
-       a.iQty AS qtys,
        a.iAutoId AS autoid,
        m.cOrderNo AS SourceBillNo,
        m.iBusType AS SourceBillType,
-       m.cDocNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
+       m.cOrderNo+ '-' + CAST ( tc.iseq AS NVARCHAR ( 10 ) ) AS SourceBillNoRow,
        m.cOrderNo AS SourceBillID,
        d.iAutoId AS SourceBillDid,
        m.iVendorId,
@@ -136,7 +135,12 @@ select m.cOrderNo AS sourcebillno,
        v.cVenName AS venname,
        uom.cUomCode AS purchasecuomcode,
        uom.cUomName AS purchasecuomname,
-       config.iWarehouseId
+       config.iWarehouseId,
+       wh.cWhCode AS WhCode,
+       wh.cWhName AS whname,
+       area.cAreaCode AS poscode,
+       area.cAreaName AS posname,
+       area.iMaxCapacity AS qtys
 FROM
     PS_PurchaseOrderDBatch a
         LEFT JOIN Bd_Inventory b ON a.iinventoryId = b.iAutoId
@@ -149,6 +153,8 @@ FROM
         AND tc.iAutoId = a.iPurchaseOrderdQtyId
         LEFT JOIN Bd_Uom uom ON b.iPurchaseUomId = uom.iAutoId
         LEFT JOIN Bd_InventoryStockConfig config ON config.iInventoryId = b.iAutoId
+        LEFT JOIN Bd_Warehouse_Area area ON area.iAutoId = config.iWarehouseAreaId
+        LEFT JOIN Bd_Warehouse wh ON wh.iAutoId = config.iWarehouseId
 where 1=1
     #if(q)
 		and (b.cinvcode like concat('%',#para(q),'%') or b.cinvcode1 like concat('%',#para(q),'%')
