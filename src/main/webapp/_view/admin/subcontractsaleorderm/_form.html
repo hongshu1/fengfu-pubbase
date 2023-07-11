@@ -157,7 +157,8 @@
 										data-url="admin/dictionary/options?key=cCurrency"
 										data-value-attr="sn"
 										data-text-attr="name"
-										data-text="=请选择="				
+										data-text="=请选择="
+                                        data-handler="setExchangeRate"
 										data-select="#(subcontractsaleorderm.cCurrency??)">
 								</select>									
 							</div>
@@ -1049,6 +1050,24 @@
     {
         $("#icustomerid").val(data.iautoid);
         $("#ccusname").val(data.ccusname);
+    }
+
+    /**
+     * 根据币种设置汇率
+     */
+    function setExchangeRate() {
+        var cexchname = $('select[name="subcontractsaleorderm.cCurrency"]').find("option:selected").text();
+        if (cexchname && cexchname != null) {
+            Ajax.get("/admin/exch/getNflatByExchName?cexchname=" + cexchname, function (ret) {
+                if (ret.state === 'ok') {
+                    $('input[name="subcontractsaleorderm.iExchangeRate"]').val(ret.data.nflat);
+                } else {
+                    $('input[name="subcontractsaleorderm.iExchangeRate"]').val(0);
+                }
+            });
+        } else {
+            $('input[name="subcontractsaleorderm.iExchangeRate"]').val(0);
+        }
     }
 </script>
 #end
