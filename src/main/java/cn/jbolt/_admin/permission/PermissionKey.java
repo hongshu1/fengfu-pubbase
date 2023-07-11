@@ -3701,4 +3701,20 @@ public class PermissionKey {
 	 * 二维码
 	 */
 	public static final String RCVDOCDEFECT_QR = "rcvdocdefect_qr";
+	/**
+	 * 新增
+	 */
+	public static final String PROCESSDEFECT_ADD = "processdefect_add";
+	/**
+	 * 编辑
+	 */
+	public static final String PROCESSDEFECT_EDIT = "processdefect_edit";
+	/**
+	 * 删除
+	 */
+	public static final String PROCESSDEFECT_DELETE = "processdefect_delete";
+	/**
+	 * 二维码打印
+	 */
+	public static final String PROCESSDEFECT_QR = "processdefect_qr";
 }
