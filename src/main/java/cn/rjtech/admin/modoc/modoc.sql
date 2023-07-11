@@ -212,8 +212,8 @@ SELECT
 FROM
 	Bd_Inventory inv
 	LEFT JOIN ( SELECT * FROM Bd_InventoryWorkRegion WHERE isDeleted = 0 AND isDefault = 1 ) wk ON wk.iInventoryId = inv.iAutoId
-	left JOIN Bd_WorkRegionM wm ON wm.iAutoId = wk.iWorkRegionMid
-	left JOIN (SELECT iAutoId,iInventoryId FROM Bd_InventoryRouting WHERE  getdate () >= dFromDate AND getdate ( ) <= dToDate  AND iAuditStatus=2) rt on rt.iInventoryId = inv.iAutoId
+	LEFT JOIN BD_WORKREGIONM WM ON WM.IAUTOID = WK.IWORKREGIONMID
+	LEFT JOIN (SELECT iAutoId,iInventoryId FROM Bd_InventoryRouting WHERE  getdate () >= dFromDate AND getdate ( ) <= dToDate  AND iAuditStatus=2) rt on rt.iInventoryId = inv.iAutoId
     LEFT JOIN Bd_Department dt on dt.iAutoId =wk.iDepId
 WHERE
 	inv.isDeleted = 0
@@ -415,4 +415,15 @@ from Mo_MoRouting a
         #if(imodocid)
         and a.iMoDocId=#para(imodocid)
         #end
+#end
+
+#sql("getModocByid")
+SELECT cMoDocNo,MO.dCreateTime,WH.cWhCode,DT.cDepCode,INV.cInvCode,INV.cInvName,INV.cInvStd,
+'' iquantity,MO.dPlanDate DStartDate,MO.dPlanDate DDueDate,10 irowno,''cBatch,iAuditStatus,iAuditWay
+FROM Mo_MoDoc MO
+LEFT JOIN Bd_WorkRegionM WM ON MO.iWorkRegionMid=WM.iAutoId
+LEFT JOIN Bd_Department DT ON DT.iAutoId=MO.iDepartmentId
+LEFT JOIN Bd_Warehouse WH ON WM.iWarehouseId=WH.iAutoId
+LEFT JOIN Bd_Inventory INV  on INV.iAutoId=MO.iInventoryId
+where MO.iAutoId = #para(iautoid)
 #end

@@ -246,10 +246,12 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		renderJsonData(service.getMrpDemandForecastMList(getPageNumber(),getPageSize(),getKv()));
 	}
 
+	@CheckPermission(PermissionKey.DEMANDFORECASTM_DELETE)
 	public void deleteDemandforecastm() {
 		renderJson(service.deleteDemandforecastm(getLong(0)));
 	}
 
+	@CheckPermission(PermissionKey.DEMANDFORECASTM_SHOW)
 	public void demandforecastd() {
 		String idemandforecastmid = get("idemandforecastmid");
 		String startdate = get("startdate");
@@ -359,6 +361,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 	/**
 	 * 导出数据
 	 */
+	@CheckPermission(PermissionKey.DEMANDFORECASTM_EXPORT)
 	@SuppressWarnings("unchecked")
 	public void dataExport() throws Exception {
 		String startdate = get("startdate");
@@ -427,10 +430,12 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		renderJsonData(service.getMrpDemandPlanMList(getPageNumber(),getPageSize(),getKv()));
 	}
 
+	@CheckPermission(PermissionKey.DEMANDPLANM_DELETE)
 	public void deleteDemandplanm() {
 		renderJson(service.deleteDemandplanm(getLong(0)));
 	}
 
+	@CheckPermission(PermissionKey.DEMANDPLANM_SHOW)
 	public void demandpland() {
 		String idemandplanmid = get("idemandplanmid");
 		String startdate = get("startdate");
@@ -713,6 +718,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 	/**
 	 * 导出数据
 	 */
+	@CheckPermission(PermissionKey.DEMANDPLANSUMVIEW_EXPORT)
 	@SuppressWarnings("unchecked")
 	public void dataExportSum() throws Exception {
 		String startdate = get("startdate");

@@ -28,7 +28,7 @@ import com.jfinal.kit.Kv;
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-04-01 10:50
  */
-@CheckPermission(PermissionKey.NOME)
+@CheckPermission(PermissionKey.BOMMASTER)
 @Before(JBoltAdminAuthInterceptor.class)
 @Path(value = "/admin/bomcompare", viewPath = "/_view/admin/bomcompare")
 public class BomCompareAdminController extends BaseAdminController {
@@ -91,6 +91,7 @@ public class BomCompareAdminController extends BaseAdminController {
 //		getBomMaster(bomM);
 //		render("/_view/admin/bommaster/edit.html");
 	}
+	
 	@CheckPermission(PermissionKey.BOMMASTER_VERSION_EDIT)
 	public void info(){
 		BomM bomM = bomMService.findById(getLong(0));
@@ -167,6 +168,7 @@ public class BomCompareAdminController extends BaseAdminController {
 	public void toggleIsDeleted() {
 	    renderJson(service.toggleBoolean(getLong(0),"isDeleted"));
 	}
+	
 	@CheckPermission(PermissionKey.BOMCOMPARE_ADD)
 	public void manualForm(@Para(value = "pid") Long pid, @Para(value = "isChildren") Boolean isChildren){
 		Kv kv = getKv();
