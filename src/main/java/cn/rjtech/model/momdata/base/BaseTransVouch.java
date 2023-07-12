@@ -74,7 +74,7 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	/**
 	 * AutoID
 	 */
-	public M setAutoID(java.lang.String AutoID) {
+	public M setAutoID(java.lang.Long AutoID) {
 		set("AutoID", AutoID);
 		return (M)this;
 	}
@@ -84,8 +84,8 @@ public abstract class BaseTransVouch<M extends BaseTransVouch<M>> extends JBoltB
 	 */
 	@JBoltField(name="autoid" ,columnName="AutoID",type="String", remark="AutoID", required=true, maxLength=30, fixed=0, order=1)
 	@JSONField(name = "autoid")
-	public java.lang.String getAutoID() {
-		return getStr("AutoID");
+	public java.lang.Long getAutoID() {
+		return getLong("AutoID");
 	}
 
 	/**

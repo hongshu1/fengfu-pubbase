@@ -466,14 +466,14 @@ public class SysScandeliverService extends BaseService<SysScandeliver> {
 		transVouch.setIsDeleted(false);
 		transVouch.save();
 
-		String headerId = transVouch.getAutoID();
+		Long headerId = transVouch.getAutoID();
 
 		List<TransVouchDetail> newList = new ArrayList<>();
 
 		for (int i = 0; i < list.size(); i++) {
 			TransVouchDetail transVouchDetail = new TransVouchDetail();
 			SysScandeliverdetail sysScandeliverdetail = list.get(i);
-			transVouchDetail.setMasID(Long.parseLong(headerId));
+			transVouchDetail.setMasID(headerId);
 			transVouchDetail.setInvCode(sysScandeliverdetail.getInvCode());
 			transVouchDetail.setBarcode(sysScandeliverdetail.getBarcode());
 			transVouchDetail.setQty(sysScandeliverdetail.getQty());

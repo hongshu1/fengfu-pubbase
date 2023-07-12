@@ -112,11 +112,19 @@ SELECT AuditState =
        t1.*,
        t2.InvCode,
        dt.cDepName,
+       i.cInvCode1,
+       i.cInvName1,
+       i.cInvStd,
+       u.cUomClassName,
+       t2.Qty,
        m.cMoDocNo  ###工单号
 FROM T_Sys_OtherOut t1
          LEFT JOIN T_Sys_OtherOutDetail t2 ON t2.MasID = t1.AutoID
          LEFT JOIN Bd_Department dt ON dt.iAutoId = t1.DeptCode
          LEFT JOIN  Mo_MoDoc m ON t1.sourcebilldid=m.iAutoId
+         LEFT JOIN bd_inventory i ON i.cinvcode = t2.Invcode
+         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+         LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 WHERE 1 = 1
    AND t1.BillNo = #para(billno)
     #end

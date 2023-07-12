@@ -286,8 +286,8 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
         Date now = new Date();
         TransVouchDetail transVouchDetail = new TransVouchDetail();
         transVouchDetail.setMasID(1L);//主表ID
-        transVouchDetail.setPosCode("");//入库库区
-//	  transVouchDetail.setOPosCode("");//出库库区
+        transVouchDetail.setIPosCode("");//入库库区
+	  transVouchDetail.setOPosCode("");//出库库区
         transVouchDetail.setInvCode("");//存货编码
         transVouchDetail.setBarcode("");//条码
         transVouchDetail.setNum(BigDecimal.ONE);//件数

@@ -9,60 +9,69 @@
                 <h1>出库管理-特殊领料单出库列表</h1>
             </div>
             <div class="col">
-                <form class="form-inline" id="otherOutForm_#(pageId)"   onsubmit="return false;" method="post">
-                    <input type="text"
-                           class="form-control ml-2"
-                           placeholder="请点击选择领料单"
-                           maxlength="40"
-                           name="billno"
-                           value=""
-                           data-dialogbtn
-                           data-area="80%,60%"
-                           data-handler="jboltTablePageToFirst"
-                           id="billno"
-                           data-title="选择领料单"
-                           data-url="admin/otheroutreturnlist/BillNoreturnList"
-                           readonly
-                           style="background-color: white"
-                    />
-                    <input type="text"
-                           data-notnull="true"
-                           data-tips="请输入现品票扫码"
-                           data-with-clearbtn="true"
-                           autocomplete="off"
-                           class="form-control"
-                           placeholder="请输入现品票扫码"
-                           maxlength="40"
-                           id="barcode"
-                           name="barcode"
-                           value="#(barcode??)"
-                    />
-                    <input type="hidden" id="barcodes" name="barcodes" value="" />
-                    <button onclick="barcode_#(pageId)()" class="btn btn-outline-secondary btn-xs"><i class="fa fa-search" id="suBmit1"></i> 查询</button>
-                    <button type="reset"  class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
-                    <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1" onclick="submitAllTables_#(pageId)()"> 提交领料</button>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">出库部门：</label>
-                        <div class="col-sm-3 col-form-label">
-                            <select class="form-control"
-                                    data-autoload
-                                    name="otherOut.deptcode"
-                                    data-tips="请选择部门"
-                                    data-rule="required"
-                                    data-url="admin/department/getTreeTableDatas"
-                                    data-text="=请选择部门="
-                                    data-value=""
-                                    data-value-attr="iautoid"
-                                    data-text-attr="cdepname"
-                                    data-select="#(otherOut.deptcode??)">
-                            </select>
-                        </div>
-                        <label class="col-sm-2 col-form-label">备注：</label>
-                        <div class="col-sm-3 col-form-label">
-                            <textarea  style="width: 210px; height: 35px; resize: none" placeholder="=请备注=" type="text" maxlength="300" class="form-control border-none" name="otherOut.memo" placeholder="" value="#(otherOut.memo??)">#(otherOut.memo??)</textarea>
-                        </div>
+                <form class="form-inline" id="otherOutForm_#(pageId)" onsubmit="return false;" method="post">
+                    <div class="col-10">
+                        <input type="text"
+                               data-rule="required"
+                               class="form-control ml-2"
+                               placeholder="=请点击选择领料单="
+                               maxlength="40"
+                               name="billno"
+                               value=""
+                               data-dialogbtn
+                               data-area="80%,60%"
+                               data-handler="jboltTablePageToFirst"
+                               id="billno"
+                               data-title="选择领料单"
+                               data-url="admin/otheroutreturnlist/BillNoreturnList"
+                               readonly
+                               style="background-color: white"
+                        />
+                        <input type="text"
+                               data-notnull="true"
+                               data-tips="=请输入现品票扫码="
+                               data-with-clearbtn="true"
+                               autocomplete="off"
+                               class="form-control"
+                               placeholder="请输入现品票扫码"
+                               maxlength="40"
+                               id="barcode"
+                               name="barcode"
+                               value="#(barcode??)"
+                        />
+                        <input type="hidden" id="barcodes" name="barcodes" value=""/>
+                        <button onclick="barcode_#(pageId)()" class="btn btn-outline-secondary btn-xs"><i
+                                class="fa fa-search" id="suBmit1"></i> 查询
+                        </button>
+                        <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-reset"></i> 重置</button>
+                        <button type="button" class="btn btn-outline-secondary" id="sumitMaterials1" onclick="submitAllTables_#(pageId)()"> 提交领料</button>
                     </div>
+                    <div class="col-10">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">出库类别：</label>
+                            <div class="col-sm-2 col-form-label">
+                                <select class="form-control"
+                                        data-autoload
+                                        name="otherOut.deptcode"
+                                        data-tips="请选择部门"
+                                        data-rule="required"
+                                        data-url="admin/department/getTreeTableDatas"
+                                        data-text="=请选择部门="
+                                        data-value=""
+                                        data-value-attr="iautoid"
+                                        data-text-attr="cdepname"
+                                        data-select="#(otherOut.deptcode??)">
+                                </select>
+                            </div>
+                            <label class="col-sm-2 col-form-label">备注：</label>
+                            <div class="col-sm-2 col-form-label">
+                            <textarea style="width: 310px; height: 35px; resize: none" placeholder="=请备注=" type="text"
+                                      maxlength="300" class="form-control border-none" name="otherOut.memo"
+                                      placeholder="" value="#(otherOut.memo??)">#(otherOut.memo??)</textarea>
+                            </div>
+                        </div>
 
+                    </div>
 
                 </form>
             </div>
@@ -78,18 +87,13 @@
 {@each datas as data,index}
 <tr data-id="${data.autoid}" >
 <td>${pageNumber,pageSize,index | rownum}</td>
-<td>${data.auditstate}</td>
-<td>${data.typename}</td>
-<td>${data.sourcebilltype}</td>
 <td>${data.billno}</td>
 <td>${data.invcode}</td> <!--存货编码-->
-<td>${data.billdate}</td>
-<td>${data.cdepname}</td>
-<td>${data.memo}</td>
-<td>${data.reason}</td>
-<td>${data.ccreatename}</td>
-<td>${data.dcreatetime}</td>
-
+<td>${data.cinvcode1}</td>
+<td>${data.cinvname1}</td>
+<td>${data.cinvstd}</td>
+<td>${data.cuomname}</td>
+<td>${data.qty}</td>
 </tr>
 {@/each}
 </textarea>
@@ -131,9 +135,6 @@
                data-rowtpl="otherOutRowtpl_#(pageId)"
                data-page="otherOutPage_#(pageId)"
                data-toolbar="otherOut_toolbar_#(pageId)"
-
-               data-fixed-columns-left="1,2,3"
-               data-fixed-columns-right="-1"
                data-row-dblclick-active="true"
         >
             <thead>
@@ -144,7 +145,7 @@
                 <th data-width="150" data-column="cinvcode1">客户部番</th>
                 <th data-width="150" data-column="cinvname1">部品名称</th>
                 <th data-width="150" data-column="cinvstd">规格</th>
-                <th data-width="100" data-column="purchasecuomname">库存主单位</th>
+                <th data-width="100" data-column="cUomName">库存主单位</th>
                 <th data-width="100" data-column="qty">数量</th>
             </tr>
             </thead>

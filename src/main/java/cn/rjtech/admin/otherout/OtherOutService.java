@@ -11,6 +11,7 @@ import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
 import cn.rjtech.service.approval.IApprovalService;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -230,6 +231,7 @@ public class OtherOutService extends BaseService<OtherOut> implements IApprovalS
 					//保存
 //					//审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 					otherOut.setIAuditStatus(0);
+					otherOut.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
 					otherOut.setICreateBy(userId);
 					otherOut.setDCreateTime(nowDate);
 					otherOut.setCCreateName(userName);

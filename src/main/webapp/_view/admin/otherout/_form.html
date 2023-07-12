@@ -27,7 +27,7 @@
 	<input type="hidden" name="otherOut.sourcebilltype" value="#(otherOut.sourcebilltype??)" />
 	<input type="hidden" name="otherOut.type" value="#(otherOut.type??)" />
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">领料单号：</label>
+		<label class="col-sm-1 col-form-label">领料单号：</label>
 		<div class="col-sm-2 col-form-label">
 			<input type="text" class="form-control border-none"  readonly="readonly"  placeholder=""  name="otherOut.billno" value="#(otherOut.billno??)"/>
 		</div>
@@ -40,7 +40,7 @@
 
 	</div>
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">生产部门：</label>
+		<label class="col-sm-1 col-form-label">生产部门：</label>
 		<div class="col-sm-2 col-form-label">
 			<select class="form-control"
 					data-autoload
@@ -75,7 +75,7 @@
 
 
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">要求原因分析：</label>
+		<label class="col-sm-1 col-form-label">要求原因分析：</label>
 			<div class="col-sm-2 col-form-label"  style="margin-right: 100px">
 				<textarea  style="width: 210px; height: 100px; resize: none" placeholder="=请输入要求原因分析=" type="text" maxlength="300" class="form-control border-none" name="otherOut.reason" placeholder="" value="#(otherOut.reason??)">#(otherOut.reason??)</textarea>
 			</div>
@@ -92,17 +92,15 @@
 	#include("/_view/admin/approvalm/form_approval_flow.html", formAutoId=otherOut.autoid, primaryKeyName="AutoId", formSn="T_Sys_OtherOut", btnNeed=1, pId=pageId, primaryKeyName="AutoId", className="cn.rjtech.admin.otherout.OtherOutService")
 	#end
 </form>
-	<div class="form-group row">
-		<div class="col-11" style="left: 17px;">
+		<div class="col-20">
 			<div class="jbolt_page_content">
 				#render("_table_split.html")
 			</div>
 		</div>
-	</div>
 
 
 	<div class="form-group row">
-		<label class="col-sm-2 col-form-label">制单人：</label>
+		<label class="col-sm-1 col-form-label">制单人：</label>
 		<div class="col-sm-2 col-form-label">
 			<input type="text" class="form-control border-none" readonly="readonly" autocomplete="off"   placeholder="" value="#(otherOut.ccreatename??)"/>
 		</div>

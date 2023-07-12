@@ -206,7 +206,6 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 		String userName = JBoltUserKit.getUserName();
 		Date nowDate = new Date();
 		String OrgCode =getOrgCode();
-		String billNo = BillNoUtils.getcDocNo(getOrgId(), "SCD", 5);
 
 
 		System.out.println("saveTable===>" + jBoltTable.getSave());
@@ -227,9 +226,9 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 			recordList.addAll(updateRecordList);
 		}
 
-		final String[] AutoIDs = {null};
+		final Long[] AutoIDs = {null};
 		tx(()->{
-			String headerId = null;
+			Long headerId = null;
 			// 获取Form对应的数据
 			if (jBoltTable.formIsNotBlank()) {
 				TransVouch transVouch = jBoltTable.getFormModel(TransVouch.class,"transVouch");
@@ -242,8 +241,8 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 				if (transVouch.getAutoID() == null) {
 //					审核状态：0. 未审核 1. 待审核 2. 审核通过 3. 审核不通过
 					transVouch.setIAuditStatus(0);
+					transVouch.setBillNo(BillNoUtils.genCode(getOrgCode(), table()));
 					transVouch.setOrganizeCode(OrgCode);
-					transVouch.setBillNo(billNo);
 					transVouch.setBillType("TransVouch");
 					transVouch.setIsDeleted(false);
 
@@ -272,9 +271,9 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 			if (jBoltTable.saveIsNotBlank()) {
 				List<TransVouchDetail> lines = jBoltTable.getSaveModelList(TransVouchDetail.class);
 
-				String finalHeaderId = headerId;
+				Long finalHeaderId = headerId;
 				lines.forEach(transVouchDetail -> {
-					transVouchDetail.setMasID(Long.valueOf(finalHeaderId));
+					transVouchDetail.setMasID(finalHeaderId);
 					//创建人
 					transVouchDetail.setIcreateby(userId);
 					transVouchDetail.setDcreatetime(nowDate);
@@ -289,7 +288,6 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 			// 获取待更新数据 执行更新
 			if (jBoltTable.updateIsNotBlank()) {
 				List<TransVouchDetail> lines = jBoltTable.getUpdateModelList(TransVouchDetail.class);
-				String finalHeaderId = headerId;
 				lines.forEach(transVouchDetail -> {
 					//更新人
 					transVouchDetail.setIupdateby(userId);
@@ -317,7 +315,7 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
         return dbTemplate("materialsout.getBarcodeDatas", kv).findFirst();
 	}
 
-	public Ret pushU8(String id) {
+	public Ret pushU8(Long id) {
 		List<Record> list = dbTemplate("transvouch.pushU8List", Kv.by("autoid", id)).find();
 		if (list.size() > 0) {
 //          接口参数
@@ -329,15 +327,14 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 			String type = "TransVouch";
 			Record record1 = list.get(0);
 			String organizecode = record1.get("organizecode");
-			String nowDate = DateUtil.format(new Date(), "yyyy-MM-dd");
 
 			JSONObject preAllocate = new JSONObject();
 			preAllocate.put("userCode",userCode);
 			preAllocate.put("Password",Password);
 			preAllocate.put("organizeCode",organizecode);
 			preAllocate.put("CreatePerson",userId);
-			preAllocate.put("CreatePersonName",user.getName());
-			preAllocate.put("loginDate", nowDate);
+			preAllocate.put("CreatePersonName",userCode);
+			preAllocate.put("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
 			preAllocate.put("tag",type);
 			preAllocate.put("type",type);
 
@@ -363,7 +360,7 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 				jsonObject.put("tag", type);
 				jsonObject.put("barcode", record.get("barcode"));
 				jsonObject.put("oposname", record.get("oposname"));
-				jsonObject.put("ORdType", record.get("ordtype"));
+				jsonObject.put("ORdType", record.get("ordcode"));
 				jsonObject.put("ORdName", record.get("ordname"));
 				jsonObject.put("ORdCode", record.get("ordcode"));
 				jsonObject.put("ODeptName", record.get("odeptname"));
@@ -443,16 +440,7 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 
 	@Override
 	public String postApproveFunc(long formAutoId, boolean isWithinBatch) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		TransVouch transVouch = findById(formAutoId);
-		transVouch.setIAuditBy(userId);
-		transVouch.setCAuditName(userName);
-		transVouch.setDAuditTime(nowDate);
-		String ids = String.valueOf(transVouch.getAutoID());
-		this.pushU8(ids);
-		transVouch.update();
+		this.pushU8(formAutoId);
 		return null;
 	}
 
@@ -508,29 +496,8 @@ public class TransVouchService extends BaseService<TransVouch> implements IAppro
 
 	@Override
 	public String postBatchApprove(List<Long> formAutoIds) {
-		Long userId = JBoltUserKit.getUserId();
-		String userName = JBoltUserKit.getUserName();
-		Date nowDate = new Date();
-		/*
-		 * List转换String类型
-		 */
-		if (formAutoIds.size()>0){
-			StringBuilder buffer = new StringBuilder();
-            for (Long formAutoId : formAutoIds) {
-                buffer.append(formAutoId).append(",");
-            }
-			String ids = buffer.substring(0, buffer.length() - 1);
-			List<TransVouch> listByIds = getListByIds(ids);
-			if (listByIds.size() > 0) {
-				for (TransVouch transVouch : listByIds) {
-					//审核人
-					transVouch.setIAuditBy(userId);
-					transVouch.setCAuditName(userName);
-					transVouch.setDAuditTime(nowDate);
-//					this.pushU8(ids);
-					transVouch.update();
-				}
-			}
+		for (Long ids : formAutoIds) {
+			Ret u8 = this.pushU8(ids);
 		}
 		return null;
 	}

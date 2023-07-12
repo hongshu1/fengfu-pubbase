@@ -13,7 +13,7 @@
             <td>${data.iposcode}</td> <!--转入库区-->
             <td>${data.oposcode}</td> <!--转出库区-->
             <td>${data.memo}</td> <!--备注-->
-              <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
+            <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
             <td hidden>${data.sourcebillid}</td> //来源单据ID(订单id)
             <td hidden>${data.sourcebilltype}</td> //采购PO  委外OM（采购类型）
             <td hidden>${data.sourcebilldid}</td> //来源单据DID;采购或委外单身ID
@@ -239,6 +239,38 @@
               changeColumns:[{column: "cinvcode", use: "cinvcode"},{column: "cinvcode1", use: "cinvcode1"},
                   {column: "cinvname1", use: "cinvname1"},{column: "cinvstd", use: "cinvstd"},
                   {column: "caddress", use: "caddress"},{column: "cinvcode2", use: "cinvcode2"}]
+          },
+          IPosCode:{
+              placeholder: "库区",
+              tooltip: "库区",
+              type: "autocomplete",
+              url: "admin/warehousearea/options",
+              maxLength: 100,
+              required: true,
+              placeholder: "请选择库区编码",
+              textAttr: "careacode",
+              width: 500,
+              valueAttr: "careacode",//选择赋值的字段
+              columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
+              header: '库区编码,库区名称',
+              changeColumns: [
+                  {column: "iposcode", use: "careacode"}]
+          },
+          OPosCode:{
+              placeholder: "库区",
+              tooltip: "库区",
+              type: "autocomplete",
+              url: "admin/warehousearea/options",
+              maxLength: 100,
+              required: true,
+              placeholder: "请选择库区编码",
+              textAttr: "careacode",
+              width: 500,
+              valueAttr: "careacode",//选择赋值的字段
+              columnAttr: "careacode,careaname",//下来看的时候显示哪些字段
+              header: '库区编码,库区名称',
+              changeColumns: [
+                  {column: "iposcode", use: "careacode"}]
           },
           qty:{ //单价
               type:"amount",

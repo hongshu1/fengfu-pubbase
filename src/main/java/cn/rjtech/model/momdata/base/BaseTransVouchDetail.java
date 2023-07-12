@@ -10,13 +10,15 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**AutoID*/
     public static final String AUTOID = "AutoID";
     /**MasID*/
     public static final String MASID = "MasID";
-    /**仓位*/
-    public static final String POSCODE = "PosCode";
+    /**调入货位*/
+    public static final String IPOSCODE = "IPosCode";
+    /**调出货位*/
+    public static final String OPOSCODE = "OPosCode";
     /**条码*/
     public static final String BARCODE = "Barcode";
     /**存货编码*/
@@ -83,27 +85,44 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * MasID
 	 */
-	@JBoltField(name="masid" ,columnName="MasID",type="Long", remark="MasID", required=false, maxLength=30, fixed=0, order=2)
+	@JBoltField(name="masid" ,columnName="MasID",type="String", remark="MasID", required=false, maxLength=30, fixed=0, order=2)
 	@JSONField(name = "masid")
 	public java.lang.Long getMasID() {
 		return getLong("MasID");
 	}
 
 	/**
-	 * 仓位
+	 * 调入货位
 	 */
-	public M setPosCode(java.lang.String PosCode) {
-		set("PosCode", PosCode);
+	public M setIPosCode(java.lang.String IPosCode) {
+		set("IPosCode", IPosCode);
 		return (M)this;
 	}
 
 	/**
-	 * 仓位
+	 * 调入货位
 	 */
-	@JBoltField(name="poscode" ,columnName="PosCode",type="String", remark="仓位", required=false, maxLength=30, fixed=0, order=3)
-	@JSONField(name = "poscode")
-	public java.lang.String getPosCode() {
-		return getStr("PosCode");
+	@JBoltField(name="iposcode" ,columnName="IPosCode",type="String", remark="调入货位", required=false, maxLength=30, fixed=0, order=3)
+	@JSONField(name = "iposcode")
+	public java.lang.String getIPosCode() {
+		return getStr("IPosCode");
+	}
+
+	/**
+	 * 调出货位
+	 */
+	public M setOPosCode(java.lang.String OPosCode) {
+		set("OPosCode", OPosCode);
+		return (M)this;
+	}
+
+	/**
+	 * 调出货位
+	 */
+	@JBoltField(name="oposcode" ,columnName="OPosCode",type="String", remark="调出货位", required=false, maxLength=30, fixed=0, order=4)
+	@JSONField(name = "oposcode")
+	public java.lang.String getOPosCode() {
+		return getStr("OPosCode");
 	}
 
 	/**
@@ -117,7 +136,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 条码
 	 */
-	@JBoltField(name="barcode" ,columnName="Barcode",type="String", remark="条码", required=false, maxLength=30, fixed=0, order=4)
+	@JBoltField(name="barcode" ,columnName="Barcode",type="String", remark="条码", required=false, maxLength=30, fixed=0, order=5)
 	@JSONField(name = "barcode")
 	public java.lang.String getBarcode() {
 		return getStr("Barcode");
@@ -134,7 +153,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 存货编码
 	 */
-	@JBoltField(name="invcode" ,columnName="InvCode",type="String", remark="存货编码", required=false, maxLength=30, fixed=0, order=5)
+	@JBoltField(name="invcode" ,columnName="InvCode",type="String", remark="存货编码", required=false, maxLength=30, fixed=0, order=6)
 	@JSONField(name = "invcode")
 	public java.lang.String getInvCode() {
 		return getStr("InvCode");
@@ -151,7 +170,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 件数
 	 */
-	@JBoltField(name="num" ,columnName="Num",type="BigDecimal", remark="件数", required=false, maxLength=18, fixed=6, order=6)
+	@JBoltField(name="num" ,columnName="Num",type="BigDecimal", remark="件数", required=false, maxLength=18, fixed=6, order=7)
 	@JSONField(name = "num")
 	public java.math.BigDecimal getNum() {
 		return getBigDecimal("Num");
@@ -168,7 +187,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 数量
 	 */
-	@JBoltField(name="qty" ,columnName="Qty",type="BigDecimal", remark="数量", required=false, maxLength=18, fixed=6, order=7)
+	@JBoltField(name="qty" ,columnName="Qty",type="BigDecimal", remark="数量", required=false, maxLength=18, fixed=6, order=8)
 	@JSONField(name = "qty")
 	public java.math.BigDecimal getQty() {
 		return getBigDecimal("Qty");
@@ -185,7 +204,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 收容数量
 	 */
-	@JBoltField(name="packrate" ,columnName="PackRate",type="BigDecimal", remark="收容数量", required=false, maxLength=18, fixed=6, order=8)
+	@JBoltField(name="packrate" ,columnName="PackRate",type="BigDecimal", remark="收容数量", required=false, maxLength=18, fixed=6, order=9)
 	@JSONField(name = "packrate")
 	public java.math.BigDecimal getPackRate() {
 		return getBigDecimal("PackRate");
@@ -202,7 +221,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 跟单类型
 	 */
-	@JBoltField(name="tracktype" ,columnName="TrackType",type="String", remark="跟单类型", required=false, maxLength=30, fixed=0, order=9)
+	@JBoltField(name="tracktype" ,columnName="TrackType",type="String", remark="跟单类型", required=false, maxLength=30, fixed=0, order=10)
 	@JSONField(name = "tracktype")
 	public java.lang.String getTrackType() {
 		return getStr("TrackType");
@@ -219,7 +238,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 来源单据类型
 	 */
-	@JBoltField(name="sourcebilltype" ,columnName="SourceBillType",type="String", remark="来源单据类型", required=false, maxLength=30, fixed=0, order=10)
+	@JBoltField(name="sourcebilltype" ,columnName="SourceBillType",type="String", remark="来源单据类型", required=false, maxLength=30, fixed=0, order=11)
 	@JSONField(name = "sourcebilltype")
 	public java.lang.String getSourceBillType() {
 		return getStr("SourceBillType");
@@ -236,7 +255,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 来源单号
 	 */
-	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="来源单号", required=false, maxLength=30, fixed=0, order=11)
+	@JBoltField(name="sourcebillno" ,columnName="SourceBillNo",type="String", remark="来源单号", required=false, maxLength=30, fixed=0, order=12)
 	@JSONField(name = "sourcebillno")
 	public java.lang.String getSourceBillNo() {
 		return getStr("SourceBillNo");
@@ -253,7 +272,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 来源单号+行号
 	 */
-	@JBoltField(name="sourcebillnorow" ,columnName="SourceBIllNoRow",type="String", remark="来源单号+行号", required=false, maxLength=50, fixed=0, order=12)
+	@JBoltField(name="sourcebillnorow" ,columnName="SourceBIllNoRow",type="String", remark="来源单号+行号", required=false, maxLength=50, fixed=0, order=13)
 	@JSONField(name = "sourcebillnorow")
 	public java.lang.String getSourceBIllNoRow() {
 		return getStr("SourceBIllNoRow");
@@ -270,7 +289,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 来源单据ID
 	 */
-	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="来源单据ID", required=false, maxLength=30, fixed=0, order=13)
+	@JBoltField(name="sourcebillid" ,columnName="SourceBillID",type="String", remark="来源单据ID", required=false, maxLength=30, fixed=0, order=14)
 	@JSONField(name = "sourcebillid")
 	public java.lang.String getSourceBillID() {
 		return getStr("SourceBillID");
@@ -287,7 +306,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 来源单据Did
 	 */
-	@JBoltField(name="sourcebilldid" ,columnName="SourceBillDid",type="String", remark="来源单据Did", required=false, maxLength=30, fixed=0, order=14)
+	@JBoltField(name="sourcebilldid" ,columnName="SourceBillDid",type="String", remark="来源单据Did", required=false, maxLength=30, fixed=0, order=15)
 	@JSONField(name = "sourcebilldid")
 	public java.lang.String getSourceBillDid() {
 		return getStr("SourceBillDid");
@@ -304,7 +323,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 备注
 	 */
-	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=15)
+	@JBoltField(name="memo" ,columnName="Memo",type="String", remark="备注", required=false, maxLength=32, fixed=0, order=16)
 	@JSONField(name = "memo")
 	public java.lang.String getMemo() {
 		return getStr("Memo");
@@ -321,7 +340,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 是否删除：0. 否 1. 是
 	 */
-	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=16)
+	@JBoltField(name="isdeleted" ,columnName="isDeleted",type="Boolean", remark="是否删除：0. 否 1. 是", required=false, maxLength=1, fixed=0, order=17)
 	@JSONField(name = "isdeleted")
 	public java.lang.Boolean getIsDeleted() {
 		return getBoolean("isDeleted");
@@ -338,7 +357,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 创建人id
 	 */
-	@JBoltField(name="icreateby" ,columnName="icreateby",type="Long", remark="创建人id", required=false, maxLength=19, fixed=0, order=17)
+	@JBoltField(name="icreateby" ,columnName="icreateby",type="Long", remark="创建人id", required=false, maxLength=19, fixed=0, order=18)
 	@JSONField(name = "icreateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIcreateby() {
 		return getLong("icreateby");
@@ -355,7 +374,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 创建人名称
 	 */
-	@JBoltField(name="ccreatename" ,columnName="ccreatename",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=18)
+	@JBoltField(name="ccreatename" ,columnName="ccreatename",type="String", remark="创建人名称", required=false, maxLength=30, fixed=0, order=19)
 	@JSONField(name = "ccreatename")
 	public java.lang.String getCcreatename() {
 		return getStr("ccreatename");
@@ -372,7 +391,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 创建时间
 	 */
-	@JBoltField(name="dcreatetime" ,columnName="dcreatetime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=19)
+	@JBoltField(name="dcreatetime" ,columnName="dcreatetime",type="Date", remark="创建时间", required=false, maxLength=23, fixed=3, order=20)
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDcreatetime() {
 		return getDate("dcreatetime");
@@ -389,7 +408,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 修改人id
 	 */
-	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="修改人id", required=false, maxLength=19, fixed=0, order=20)
+	@JBoltField(name="iupdateby" ,columnName="iupdateby",type="Long", remark="修改人id", required=false, maxLength=19, fixed=0, order=21)
 	@JSONField(name = "iupdateby", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIupdateby() {
 		return getLong("iupdateby");
@@ -406,7 +425,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 修改人名称
 	 */
-	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="修改人名称", required=false, maxLength=30, fixed=0, order=21)
+	@JBoltField(name="cupdatename" ,columnName="cupdatename",type="String", remark="修改人名称", required=false, maxLength=30, fixed=0, order=22)
 	@JSONField(name = "cupdatename")
 	public java.lang.String getCupdatename() {
 		return getStr("cupdatename");
@@ -423,7 +442,7 @@ public abstract class BaseTransVouchDetail<M extends BaseTransVouchDetail<M>> ex
 	/**
 	 * 修改时间
 	 */
-	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=22)
+	@JBoltField(name="dupdatetime" ,columnName="dupdatetime",type="Date", remark="修改时间", required=false, maxLength=23, fixed=3, order=23)
 	@JSONField(name = "dupdatetime")
 	public java.util.Date getDupdatetime() {
 		return getDate("dupdatetime");

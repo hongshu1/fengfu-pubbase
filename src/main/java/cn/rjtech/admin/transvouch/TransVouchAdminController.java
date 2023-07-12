@@ -75,9 +75,7 @@ public class TransVouchAdminController extends BaseAdminController {
     @CheckPermission(PermissionKey.TRANSVOUCH_ADD)
     public void add() {
         TransVouch transVouch = new TransVouch();
-        String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
         Date nowDate = new Date();
-        transVouch.setBillNo(billNo);
         transVouch.setBillDate(nowDate);
         set("transVouch", transVouch);
         render("add.html");

@@ -74,9 +74,7 @@ public class OtherOutAdminController extends BaseAdminController {
    @CheckPermission(PermissionKey.OTHEROUT_ADD)
 	public void add() {
 		OtherOut otherOut = new OtherOut();
-		String billNo = BillNoUtils.getcDocNo(getOrgId(), "LLD", 5);
 		Date nowDate = new Date();
-		otherOut.setBillNo(billNo);
 		otherOut.setBillDate(nowDate);
 		otherOut.setType("OtherOutMES");
 		set("otherOut",otherOut);

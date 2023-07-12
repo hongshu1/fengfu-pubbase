@@ -61,7 +61,9 @@ select top #(limit)
 
        u.cUomClassName,
        t3.cInvCCode,
-       t3.cInvCName
+       t3.cInvCName,
+       t1.IRdCode,
+       t1.ORdCode
 from
     V_Sys_BarcodeDetail t1
         LEFT JOIN bd_inventory i ON i.cinvcode = t1.Invcode

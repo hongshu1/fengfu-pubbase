@@ -13,6 +13,7 @@
             <td>${data.citemcname}</td>
             <td>${data.cinvccode}</td>
             <td>${data.citemname}</td>
+            <td>${data.memo}</td>
 
             <td  style="display: none">${data.sourcebilltype}</td> <!--来源单据类型-->
             <td  style="display: none">${data.sourcebillnorow}</td> <!--来源单号+行号-->
@@ -46,7 +47,7 @@
         <table class="jbolt_table jbolt_main_table table-center"
                id="jbolt_table_inventory_split_#(pageId)"
                data-jbolttable
-               data-height="200"
+               data-height="300"
                data-ajax="true"
                data-column-resize="true"
                data-url="admin/otherout/getOtherOutLines?autoid=#(otherOut.autoid??)"
@@ -68,6 +69,7 @@
               <th data-width="150" data-column="citemcname">项目大类名称</th>
               <th data-width="150" data-column="citemcode">项目编码</th>
               <th data-width="150" data-column="citemname">项目名称</th>
+              <th data-width="150" data-column="Memo">备注</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -173,6 +175,10 @@
                   formula:"sum"
               }]
           },
+          Memo:{
+              type:"input",
+              submitAttr:"memo"
+          }
       }
     };
     return editableTableOptions;

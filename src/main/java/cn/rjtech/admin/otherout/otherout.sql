@@ -108,17 +108,18 @@ order by t1.dCreateTime desc,t1.BillNo desc
 SELECT
     i.*,
     t2.AutoID,
-    u.cUomClassName,
+    u.cUomName,
     t3.cInvCCode,
     t3.cInvCName,
     t2.Qty AS qtys,
     t2.Qty as qty,
     t2.Barcode,
-    t2.InvCode
+    t2.InvCode,
+    t2.Memo
 FROM T_Sys_OtherOut t1,
      T_Sys_OtherOutDetail t2
          LEFT JOIN bd_inventory i ON i.cinvcode = t2.Invcode
-         LEFT JOIN Bd_UomClass u ON i.iUomClassId = u.iautoid
+         LEFT JOIN Bd_Uom u ON i.iUomClassId = u.iautoid
          LEFT JOIN Bd_InventoryClass t3 ON i.iInventoryClassId = t3.iautoid
 WHERE
     t1.AutoID = t2.MasID AND  t1.AutoID = '#(autoid)'
