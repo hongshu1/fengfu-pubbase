@@ -898,6 +898,7 @@
                         var rowData = sheet.getArray(item.row,0, 1, sheet.getColumnCount());//获取行数据
                         var colData = sheet.getArray(0, col, sheet.getRowCount(), 1);//获取列数据
                         var colDatas = sheet.getArray(0, item.col, sheet.getRowCount(), 1);//获取列数据
+                        // console.log(rowData[0][7])
                         let obj = {
                             plan:rowData[0][7],//计划
                             cInvCode:rowData[0][8],//存户编码
@@ -905,6 +906,7 @@
                             date:colData[1][0],//获取当前年月
                             day:colDatas[2][0],//日
                         }
+                        console.log(obj)
                         parms.tableData.push(obj);
                     }
                 })
@@ -1220,11 +1222,18 @@
      */
     function saveLevel(){
         let jsonArray = JSON.stringify(parms.tableData);
-        let url = Api+ `admin/scheduproductplanmonth/saveLevel?data=${jsonArray}`;
+        let url = Api+ `admin/scheduproductplanmonth/saveLevel`;
         if(parms.tableData.length>0){
             $.ajax({
                 url,
                 type:'post',
+                data:{
+                    data:jsonArray
+                },
+                // headers: {
+                //     "Content-Length": data.length,
+                //     "Content-Type": "application/json"
+                // },
                 dataType:'json',
                 success:function (res){
                     if(res.msg=="操作成功"){
