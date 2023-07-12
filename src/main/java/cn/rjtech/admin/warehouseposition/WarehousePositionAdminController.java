@@ -58,7 +58,7 @@ public class WarehousePositionAdminController extends JBoltBaseController {
    */
   @CheckPermission(PermissionKey.WAREHOUSE_POSITION_ADD)
   public void add() {
-    set("warehouseshelves", service.getWarehousePositionCode());
+    set("warehousePosition", service.getWarehousePositionCode());
     render("add.html");
   }
 
