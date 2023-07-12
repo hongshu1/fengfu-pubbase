@@ -1,5 +1,7 @@
 package cn.rjtech.admin.manualorderdqty;
 
+import cn.rjtech.model.momdata.ManualOrderD;
+import cn.rjtech.model.momdata.ManualOrderM;
 import com.jfinal.plugin.activerecord.Page;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
@@ -9,6 +11,12 @@ import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.rjtech.model.momdata.ManualorderdQty;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * 客户订单-手配订单数量记录
  * @ClassName: ManualorderdQtyService
@@ -102,4 +110,30 @@ public class ManualorderdQtyService extends BaseService<ManualorderdQty> {
 		return null;
 	}
 
+	public Boolean batchDeleteByManualOrderDIds(String manualOrderDIds) {
+		return delete(deleteSql().in("iManualOrderDid", manualOrderDIds)) > 0;
+	}
+
+	public List<ManualorderdQty> findByManualOrderDId(Long manualOrderDId) {
+		return find(selectSql().eq("iManualOrderDid", manualOrderDId));
+	}
+
+	public Boolean batchSaveByManualOrderD(ManualOrderM manualOrderM, ManualOrderD manualOrderD) {
+		List<ManualorderdQty> manualorderdQties = new ArrayList<>();
+		for (int i = 1; i <= 31; i++) {
+			BigDecimal iqty = Optional.ofNullable(manualOrderD.getBigDecimal("iqty" + i)).orElse(BigDecimal.ZERO);
+			if (iqty.doubleValue() > 0) {
+				ManualorderdQty manualorderdQty = new ManualorderdQty();
+				manualorderdQty.setIManualOrderDid(manualOrderD.getIAutoId());
+				manualorderdQty.setIYear(manualOrderM.getIYear());
+				manualorderdQty.setIMonth(manualOrderM.getIMonth());
+				manualorderdQty.setIDate(i);
+				manualorderdQty.setIRowNo(i * 10);
+				manualorderdQty.setIQty(iqty);
+				manualorderdQties.add(manualorderdQty);
+			}
+		}
+
+		return batchSave(manualorderdQties).length > 0;
+	}
 }

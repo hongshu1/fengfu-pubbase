@@ -722,8 +722,8 @@ public class ScanCodeReceiveService extends BaseService<SysPureceive> implements
                     sysPuinstoredetail.setCCreateName(user.getUsername());
                     sysPuinstoredetail.setDCreateTime(now);
                     sysPuinstoredetail.setBarCode(record.getStr("barcode"));
-                    sysPuinstoredetail.setPuUnitCode(record.getStr("uomcode"));
-                    sysPuinstoredetail.setPuUnitName(record.getStr("uomname"));
+                    sysPuinstoredetail.setPuUnitCode(record.getStr("cuomcode"));
+                    sysPuinstoredetail.setPuUnitName(record.getStr("cuomname"));
                     sysPuinstoredetail.setIsDeleted(false);
                     sysPuinstoredetail.setInvcode(record.getStr("invcode"));
                     pureceivedetailList.add(sysPuinstoredetail);
