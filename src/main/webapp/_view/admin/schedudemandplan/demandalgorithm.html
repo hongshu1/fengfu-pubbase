@@ -733,7 +733,7 @@
                                 //嵌入到货计划公式
                                 sheet.setFormula(B,Z++,`=IF(SUM(R[-1]C,R[-1]C[1],R[-1]C[2])-R[1]C[-1]>0,SUM(R[-1]C,R[-1]C[1],R[-1]C[2])-R[1]C[-1],0)`);
                             }else{
-                                sheet.setValue(3*i+shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
+                                sheet.setValue(3*i+shiyongRow,shiyongCol+j,parseFloat(parms['scheduplanmonth'].data[i].day[j].xuqiu));
                                 //控制小数位为1位
                                 sheet.setFormatter(3*i+shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'].data[i].day[j].xuqiu))?"0.00":"0.00");
                                 sheet.setValue(3*i+shiyongRow+1,shiyongCol+j,parseFloat(parms['scheduplanmonth'].data[i].day[j].jihua));

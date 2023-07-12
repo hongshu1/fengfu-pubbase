@@ -207,6 +207,7 @@
             <input style="width:150px;height:2rem;" id="cinvname1"/>
             <span>排产层级:</span>
             <select id="search_level" style="width: 150px;height: 2rem">
+                <option value="1">全部</option>
                 <option value="1">层级1</option>
                 <option value="2">层级2</option>
                 <option value="3">层级3</option>
@@ -1031,7 +1032,7 @@
         document.getElementById('cinvname1').value = '';
         document.getElementById('search_start-time').value = '';
         document.getElementById('search_end-time').value = '';
-        document.getElementById('search_level').value = '';
+        document.getElementById('search_level').value = '1';
     }
     //排产确定事件
     function savePopup(){
