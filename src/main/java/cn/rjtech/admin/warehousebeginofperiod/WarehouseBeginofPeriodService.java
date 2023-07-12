@@ -34,6 +34,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,6 +79,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     private BarcodedetailService barcodedetailService;//条码明细表
     @Inject
     private BarcodemasterService barcodemasterService;//条码表
+    @Inject
+    private StockBarcodePositionService barcodePositionService;
 
     /**
      * 数据源
