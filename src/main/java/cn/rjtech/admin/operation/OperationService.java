@@ -388,7 +388,7 @@ public class OperationService extends BaseService<Operation> {
     }
 
     public List<Operation> findByIworkclassId(Long iworkclassId) {
-        return find("select * from Bd_Operation where iWorkClassId=?", iworkclassId);
+        return find("select * from Bd_Operation where iWorkClassId=? and isDeleted = ? ", iworkclassId,false);
     }
 
     /**
@@ -407,11 +407,13 @@ public class OperationService extends BaseService<Operation> {
             if (StrUtil.isBlank(record.getStr("cOperationName"))) {
                 return fail("工序名称不能为空");
             }
-            if (StrUtil.isBlank(record.getStr("iWorkClassId"))) {
-                return fail("所属工种名称不能为空");
+            if (StrUtil.isBlank(record.getStr("cWorkClassCode"))) {
+                return fail("所属工种编码不能为空");
             }
-            Workclass workclass = workClassService.findModelByCode(record.getStr("iworkclassid"));
-            ValidationUtils.notNull(workclass, record.getStr("iworkclassid") + "：工种编码不存在");
+            String cWorkClassCode = removeZeros(record.getStr("cWorkClassCode"));
+
+            Workclass workclass = workClassService.findModelByCode(cWorkClassCode);
+            ValidationUtils.notNull(workclass, cWorkClassCode + "：工种编码不存在");
 
             record.keep(ArrayUtil.toArray(TableMapping.me().getTable(Operation.class).getColumnNameSet(), String.class));
 
@@ -420,6 +422,7 @@ public class OperationService extends BaseService<Operation> {
             record.set("iOrgId", getOrgId());
             record.set("cOrgCode", getOrgCode());
             record.set("cOrgName", getOrgName());
+            record.set("cOperationCode",removeZeros(record.getStr("cOperationCode")));
             record.set("iSource", SourceEnum.MES.getValue());
             record.set("iCreateBy", JBoltUserKit.getUserId());
             record.set("dCreateTime", now);
@@ -438,5 +441,15 @@ public class OperationService extends BaseService<Operation> {
             return true;
         });
         return SUCCESS;
+    }
+
+    public static String removeZeros(String num) {
+        if (num.indexOf(".") > 0) {
+            // 去掉多余的0
+            num = num.replaceAll("0+?$", "");
+            // 如果最后一位是. 则去掉
+            num = num.replaceAll("[.]$", "");
+        }
+        return num;
     }
 }

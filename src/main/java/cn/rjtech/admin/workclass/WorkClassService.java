@@ -359,7 +359,7 @@ public class WorkClassService extends BaseService<Workclass> {
     }
 
 	public Workclass findModelByCode(String cWorkClassCode) {
-		return findFirst(selectSql().eq("cworkclasscode", cWorkClassCode));
+		return findFirst(selectSql().eq("cworkclasscode", cWorkClassCode).eq("cOrgCode",getOrgCode()));
 	}
     
     public String getIdByCode(String code) {
