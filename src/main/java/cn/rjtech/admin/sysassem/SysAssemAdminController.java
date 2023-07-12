@@ -234,6 +234,10 @@ public class SysAssemAdminController extends BaseAdminController {
 		kv.set("ibeforeinventoryid",notOk(ibeforeinventoryid)?"":ibeforeinventoryid);
 		kv.set("iafterinventoryid",notOk(iafterinventoryid)?"":iafterinventoryid);
 		kv.set("qty",notOk(qty)?"":qty);
+		kv.set("whcode",get("whcode"));
+		kv.set("whname",get("whname"));
+		kv.set("poscode",get("poscode"));
+		kv.set("posname",get("posname"));
 		renderJsonData(service.getBarcodeDatas(kv));
 	}
 
