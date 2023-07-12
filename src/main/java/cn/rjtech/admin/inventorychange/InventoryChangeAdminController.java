@@ -119,14 +119,12 @@ public class InventoryChangeAdminController extends BaseAdminController {
      */
     @SuppressWarnings("unchecked")
     public void downloadTpl()  throws Exception {
-//        renderBytesToExcelXlsFile(service.getImportExcelTpl().setFileName("物料建模-物料形态对照表导入模板"));
         renderJxls("inventorychange.xlsx", Kv.by("rows", null), "物料形态对照表导入模板.xlsx");
     }
 
     /**
      * 数据导入
      */
-    @SuppressWarnings("unchecked")
     public void importExcelClass() {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");
@@ -134,14 +132,9 @@ public class InventoryChangeAdminController extends BaseAdminController {
         File file = uploadFile.getFile();
 
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-
-        // 截取最后一个“.”之前的文件名，作为导入格式名
-        String cformatName = list.get(0);
-
-        String extension = list.get(1);
-
-        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-        renderJson(service.importExcelData(file, cformatName));
+        ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        
+        renderJson(service.importExcelData(file));
     }
 
     /**

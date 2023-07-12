@@ -13,23 +13,18 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.enums.IsOkEnum;
-import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.EquipmentModel;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 物料建模-机型档案
@@ -215,13 +210,10 @@ public class EquipmentModelService extends BaseService<EquipmentModel> {
 			}
 		}
 		//执行批量操作
-		boolean success=tx(new IAtom() {
-			@Override
-			public boolean run() throws SQLException {
-				batchSave(equipmentModels);
-				return true;
-			}
-		});
+		boolean success=tx(() -> {
+            batchSave(equipmentModels);
+            return true;
+        });
 
 		if(!success) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);

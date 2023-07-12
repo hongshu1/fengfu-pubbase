@@ -22,14 +22,15 @@ import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.core.util.JBoltUploadFileUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryqcformtype.InventoryQcFormTypeService;
 import cn.rjtech.admin.qcform.QcFormService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.InventoryQcForm;
 import cn.rjtech.model.momdata.InventoryQcFormType;
 import cn.rjtech.model.momdata.QcForm;
+import cn.rjtech.model.momdata.base.BaseInventoryQcForm;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
@@ -42,7 +43,6 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,8 +54,8 @@ import java.util.stream.Collectors;
  * @date: 2023-04-03 14:20
  */
 public class InventoryQcFormService extends BaseService<InventoryQcForm> {
+    
     private final InventoryQcForm dao = new InventoryQcForm().dao();
-
 
     @Override
     protected InventoryQcForm dao() {
@@ -68,17 +68,15 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
     }
 
     @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
+    private QcFormService qcFormService;
+    @Inject
+    private InventoryService inventoryService;
     @Inject
     private JBoltFileService jboltFileService;
     @Inject
     private DictionaryService dictionaryService;
     @Inject
     private InventoryQcFormTypeService inventoryQcFormTypeService;
-    @Inject
-    private InventoryService inventoryService;
-    @Inject
-    private QcFormService qcFormService;
 
     /**
      * 后台管理数据查询
@@ -91,7 +89,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
      * @param IsDeleted      删除状态：0. 未删除 1. 已删除
      * @param machineType    机型
      * @param inspectionType 检验类型
-     * @return
      */
     public Page<InventoryQcForm> getAdminDatas(int pageNumber, int pageSize, String keywords, String sortColumn, String sortType, Boolean IsDeleted, String machineType, String inspectionType) {
         //创建sql对象
@@ -109,22 +106,13 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
     /**
      * 列表数据源
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param kv
-     * @return
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-        Page<Record> paginate = dbTemplate("inventoryqcform.pageList", kv).paginate(pageNumber, pageSize);
-        return paginate;
+        return dbTemplate("inventoryqcform.pageList", kv).paginate(pageNumber, pageSize);
     }
 
     /**
      * 保存
-     *
-     * @param inventoryQcForm
-     * @return
      */
     public Ret save(InventoryQcForm inventoryQcForm) {
         if (inventoryQcForm == null || isOk(inventoryQcForm.getIAutoId())) {
@@ -141,9 +129,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
     /**
      * 更新
-     *
-     * @param inventoryQcForm
-     * @return
      */
     public Ret update(InventoryQcForm inventoryQcForm) {
         if (inventoryQcForm == null || notOk(inventoryQcForm.getIAutoId())) {
@@ -168,7 +153,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
      *
      * @param inventoryQcForm 要删除的model
      * @param kv              携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(InventoryQcForm inventoryQcForm, Kv kv) {
@@ -181,7 +165,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
      *
      * @param inventoryQcForm model
      * @param kv              携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(InventoryQcForm inventoryQcForm, Kv kv) {
@@ -191,8 +174,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
     /**
      * 生成excel导入使用的模板
-     *
-     * @return
      */
     public JBoltExcel getImportExcelTpl() {
         return JBoltExcel
@@ -222,16 +203,18 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcel(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
         Date now = new Date();
+        
         //存货ID
         Map<String, Inventory> inventoryMap = new HashMap<>();
         //检验表格
         Map<String, QcForm> qcFormMap = new HashMap<>();
+        
         for (Record record : records) {
             //存货编码
             String cinvcode = record.getStr("iInventoryId");
@@ -264,21 +247,21 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
             ValidationUtils.notEmpty(inspectionList, "检验类型【inspection_type】字典未配置");
             String[] typeNames = cTypeNames.split(",");
             // 记录名称类型
-            String cTypeSN = "";
+            StringBuilder cTypeSN = new StringBuilder();
             Map<String, String> inspectionMap = new HashMap<>();
             for (Dictionary dictionary : inspectionList){
                 String name = dictionary.getName();
                 for (String typeName :typeNames){
                     if (typeName.equals(name)){
-                        cTypeSN+=dictionary.getSn()+",";
+                        cTypeSN.append(dictionary.getSn()).append(",");
                         inspectionMap.put(name, dictionary.getSn());
                     }
                 }
             }
-            if (StrUtil.isNotBlank(cTypeSN)){
-                cTypeSN = cTypeSN.substring(0, cTypeSN.length()-1);
+            if (StrUtil.isNotBlank(cTypeSN.toString())){
+                cTypeSN = new StringBuilder(cTypeSN.substring(0, cTypeSN.length() - 1));
             }
-            String newTypeSn = cTypeSN;
+            String newTypeSn = cTypeSN.toString();
 
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iInventoryId", inventory.getIAutoId());
@@ -305,11 +288,8 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
         return SUCCESS;
     }
 
-
     /**
      * 生成要导出的Excel
-     *
-     * @return
      */
     public JBoltExcel exportExcel(List<InventoryQcForm> datas) {
         return JBoltExcel
@@ -367,9 +347,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
     /**
      * 获取存货数据
-     *
-     * @param kv
-     * @return
      */
     public Page<Record> resourceList(Kv kv, int pageNum, int pageSize) {
         Page<Record> recordPage = dbTemplate("inventoryqcform.resourceList", kv).paginate(pageNum, pageSize);
@@ -381,7 +358,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
      * 可编辑表格提交
      *
      * @param jBoltTable 编辑表格提交内容
-     * @return
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
         //当前操作人员  当前时间
@@ -403,21 +379,21 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
             ValidationUtils.notEmpty(inspectionList, "检验类型【inspection_type】字典未配置");
             String[] typeNames = cTypeSN.split(",");
             // 记录名称类型
-            String typeNameStr = "";
+            StringBuilder typeNameStr = new StringBuilder();
             Map<String, String> inspectionMap = new HashMap<>();
             for (Dictionary dictionary : inspectionList){
                 String sn = dictionary.getSn();
                 for (String typeName :typeNames){
                     if (typeName.equals(sn)){
-                        typeNameStr+=dictionary.getName()+",";
+                        typeNameStr.append(dictionary.getName()).append(",");
                         inspectionMap.put(sn, dictionary.getName());
                     }
                 }
             }
-            if (StrUtil.isNotBlank(typeNameStr)){
-                typeNameStr = typeNameStr.substring(0, typeNameStr.length()-1);
+            if (StrUtil.isNotBlank(typeNameStr.toString())){
+                typeNameStr = new StringBuilder(typeNameStr.substring(0, typeNameStr.length() - 1));
             }
-            String newTypeNameStr = typeNameStr;
+            String newTypeNameStr = typeNameStr.toString();
             if (jBoltTable.saveIsNotBlank()) {
                 List<InventoryQcForm> saveModelList = jBoltTable.getSaveModelList(InventoryQcForm.class);
                 List<InventoryQcForm> saveList = new ArrayList<>();
@@ -454,7 +430,7 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                     updateList.add(inventoryQcForm);
                 });
                 batchUpdate(updateList);
-                List<Long> ids = updateList.stream().map(inventoryQcForm -> inventoryQcForm.getIAutoId()).collect(Collectors.toList());
+                List<Long> ids = updateList.stream().map(BaseInventoryQcForm::getIAutoId).collect(Collectors.toList());
                 // 先删除后添加
                 inventoryQcFormTypeService.removeByInventoryQcFormId(ids);
                 List<InventoryQcFormType> qcFormTypeList = inventoryQcFormTypeService.getQcFormTypeList(updateList, inspectionMap);
@@ -470,13 +446,8 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
         return SUCCESS;
     }
 
-
-
     /**
      * 检验表格数据源
-     *
-     * @param kv
-     * @return
      */
     public List<Record> getFormList(Kv kv) {
         return dbTemplate("inventoryqcform.getFormList", kv).find();
@@ -484,9 +455,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
     /**
      * 行数据源
-     *
-     * @param kv
-     * @return
      */
     public List<Record> listData(Kv kv) {
         List<Record> records = dbTemplate("inventoryqcform.listData", kv).find();
@@ -498,8 +466,7 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
                     Record dicBySn = findDicBySn(sn);
                     dic.add(dicBySn);
                 });
-                String inspectionName =
-                        dic.stream().map(m -> m.getStr("name")).collect(Collectors.joining(","));
+                String inspectionName = dic.stream().map(m -> m.getStr("name")).collect(Collectors.joining(","));
                 record.set("inspectionname", inspectionName);
             }
         });
@@ -507,21 +474,18 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
     }
 
     public Record findDicBySn(Object sn) {
-        Kv kv = new Kv();
-        kv.set("sn", sn);
-        return dbTemplate("inventoryqcform.findDicBySn", kv).findFirst();
+        return dbTemplate("inventoryqcform.findDicBySn", Kv.by("sn", sn)).findFirst();
     }
 
     /**
      * 保存文件 并 保存到行数据里
-     *
-     * @return
      */
     public Ret saveFileAndUpdateLine(List<UploadFile> files, String uploadPath) {
         Ret ret = new Ret();
         tx(() -> {
             List<JboltFile> retFiles = new ArrayList<>();
-            JboltFile jboltFile = null;
+            
+            JboltFile jboltFile;
             StringBuilder errorMsg = new StringBuilder();
             for (UploadFile uploadFile : files) {
                 jboltFile = jboltFileService.saveJBoltFile(uploadFile, uploadPath, JboltFile.FILE_TYPE_ATTACHMENT);
@@ -557,9 +521,6 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
     /**
      * 删除文件信息
-     *
-     * @param kv
-     * @return
      */
     public Ret deleteFile(Kv kv) {
         boolean result = tx(() -> {
@@ -610,12 +571,13 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcelClass(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
-
+        Date now=new Date();
+        
         for (Record record : records) {
 
             if (StrUtil.isBlank(record.getStr("iQcFormId"))) {
@@ -644,24 +606,21 @@ public class InventoryQcFormService extends BaseService<InventoryQcForm> {
 
             record.set("iInventoryId",inventory.getIAutoId());
 
-
             List<Dictionary> dictionaryList = dictionaryService.getOptionListByTypeKey("inspection_type", true);
-            StringBuilder Strsn=new StringBuilder();
+            StringBuilder Strsn = new StringBuilder();
             for (Dictionary dictionary : dictionaryList) {
-                for (String cname: StrSplitter.split(cTypeNames,",",true,true)) {
+                for (String cname : StrSplitter.split(cTypeNames, ",", true, true)) {
                     String name = dictionary.getName();
-                    if (name.equals( cname)) {
+                    if (name.equals(cname)) {
                         Strsn.append(dictionary.getSn()).append(",");
                     }
 
                 }
             }
-            if(Strsn.length()>0){
+            if (Strsn.length() > 0) {
                 Strsn.deleteCharAt(Strsn.lastIndexOf(","));
             }
 
-
-            Date now=new Date();
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iOrgId", getOrgId());
             record.set("cOrgCode", getOrgCode());

@@ -26,10 +26,10 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltPinYinUtil;
 import cn.jbolt.extend.config.ExtendProjectOfModule;
 import cn.jbolt.extend.user.ExtendUserOfModuleLinkService;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.userorg.UserOrgService;
 import cn.rjtech.admin.userthirdparty.UserThirdpartyService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.BoolCharEnum;
 import cn.rjtech.enums.ThirdpartySystemEnum;
@@ -57,25 +57,23 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @date: 2020年5月2日
  */
 public class UserService extends JBoltUserService {
-    
-    @Inject
-    private DeptService deptService;
-    @Inject
-    private UserExtendService userExtendService;
-    @Inject
-    private ExtendUserOfModuleLinkService extendUserOfModuleLinkService;
-    @Inject
-    private UserOrgService userOrgService;
-    @Inject
-    private UserThirdpartyService userThirdpartyService;
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
+
     @Inject
     private RoleService roleService;
     @Inject
+    private DeptService deptService;
+    @Inject
     private PersonService personService;
     @Inject
+    private UserOrgService userOrgService;
+    @Inject
     private UserTypeService userTypeService;
+    @Inject
+    private UserExtendService userExtendService;
+    @Inject
+    private UserThirdpartyService userThirdpartyService;
+    @Inject
+    private ExtendUserOfModuleLinkService extendUserOfModuleLinkService;
 
     /**
      * 保存
@@ -636,7 +634,7 @@ public class UserService extends JBoltUserService {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcel(File file, Long orgId, Long userId) {
-        List<Record> users = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> users = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(users)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }

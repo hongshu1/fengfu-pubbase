@@ -25,12 +25,10 @@ import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -207,13 +205,10 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 //			setGoodsPaymentDModel(goodsPaymentD,iAutoId);
 //		}
 		//执行批量操作
-		boolean success=tx(new IAtom() {
-			@Override
-			public boolean run() throws SQLException {
+		boolean success=tx(() -> {
 //				goodsPaymentDservice.batchSave(goodsPaymentDS);
-				return true;
-			}
-		});
+            return true;
+        });
 
 		if(!success) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);

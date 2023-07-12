@@ -1,34 +1,30 @@
 package cn.rjtech.admin.formuploadcategory;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.poi.excel.*;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.FormUploadCategory;
 import cn.rjtech.model.momdata.Workregionm;
-import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +37,12 @@ import java.util.Map;
  * @date: 2023-05-29 15:16
  */
 public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
+    
 	private final FormUploadCategory dao=new FormUploadCategory().dao();
+
+    @Inject
+    private WorkregionmService workregionmService;
+
 	@Override
 	protected FormUploadCategory dao() {
 		return dao;
@@ -52,16 +53,12 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-	@Inject
-	private WorkregionmService workregionmService;
-	@Inject
-	private CusFieldsMappingDService cusFieldsMappingDService;
-	/**
-	 * 后台管理数据查询
-	 * @param pageNumber 第几页
-	 * @param pageSize   每页几条数据
-	 * @return
-	 */
+    /**
+     * 后台管理数据查询
+     *
+     * @param pageNumber 第几页
+     * @param pageSize   每页几条数据
+     */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize,Kv para) {
 		Page<Record> paginate = dbTemplate("formuploadcategory.list",para).paginate(pageNumber, pageSize);
 		for (Record record : paginate.getList()) {
@@ -74,8 +71,6 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 
 	/**
 	 * 保存
-	 * @param formUploadCategory
-	 * @return
 	 */
 	public Ret save(FormUploadCategory formUploadCategory) {
 		if(formUploadCategory==null || isOk(formUploadCategory.getIAutoId())) {
@@ -104,8 +99,6 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 
 	/**
 	 * 更新
-	 * @param formUploadCategory
-	 * @return
 	 */
 	public Ret update(FormUploadCategory formUploadCategory) {
 		if(formUploadCategory==null || notOk(formUploadCategory.getIAutoId())) {
@@ -127,7 +120,6 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	 * 删除数据后执行的回调
 	 * @param formUploadCategory 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(FormUploadCategory formUploadCategory, Kv kv) {
@@ -139,7 +131,6 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	 * 检测是否可以删除
 	 * @param formUploadCategory model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkInUse(FormUploadCategory formUploadCategory, Kv kv) {
@@ -149,7 +140,6 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 
 	/**
      * 生成excel导入使用的模板
-     * @return
      */
     public JBoltExcel getImportExcelTpl() {
         return JBoltExcel
@@ -169,14 +159,15 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	 * 从系统导入字段配置，获得导入的数据
 	 */
 	public Ret importExcelClass(File file) {
-
-		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
-
+        
+        Date now = new Date();
+        
 		// 产线
-		Map<String, Workregionm> workregionmMap = new HashMap<>();
+		Map<String, Workregionm> workregionmMap = new HashMap<>(16);
 		for (Record record : records) {
 
 			if (StrUtil.isBlank(record.getStr("iWorkRegionmId"))) {
@@ -185,6 +176,7 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 			if (StrUtil.isBlank(record.getStr("cCategoryName"))) {
 				return fail("目录名称不能为空");
 			}
+            
 			String iWorkRegionmId = record.getStr("iWorkRegionmId");
 			Workregionm workregionm = workregionmMap.get(iWorkRegionmId);
 			if (ObjUtil.isNull(workregionm)) {
@@ -193,8 +185,6 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 				record.set("iWorkRegionmId",workregionm.getIAutoId());
 				workregionmMap.put(iWorkRegionmId, workregionm);
 			}
-
-			Date now=new Date();
 
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
 			record.set("iOrgId", getOrgId());
@@ -221,7 +211,6 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 
     /**
 	 * 生成要导出的Excel
-	 * @return
 	 */
 	public JBoltExcel exportExcel(List<Record> datas) {
 		for (Record record : datas) {
@@ -248,13 +237,12 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
     		    );
 	}
 
-	/**
-	 *获取类别档案
-	 */
-	public List<Record> options(Kv kv) {
-
-		return dbTemplate("formuploadcategory.options",kv.set("isEnabled",false)).find();
-	}
+    /**
+     * 获取类别档案
+     */
+    public List<Record> options(Kv kv) {
+        return dbTemplate("formuploadcategory.options", kv.set("isEnabled", false)).find();
+    }
 
 	/**
 	 *删除
@@ -273,6 +261,7 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 		});
 		return SUCCESS;
 	}
+    
 	/**
 	 * 切换isenabled属性
 	 */
@@ -290,4 +279,5 @@ public class FormUploadCategoryService extends BaseService<FormUploadCategory> {
 	public List<Record> workregionmOptions(Kv kv) {
 		return dbTemplate("formuploadcategory.workregionmOptions",kv).find();
 	}
+    
 }
