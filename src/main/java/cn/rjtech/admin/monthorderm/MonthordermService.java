@@ -334,6 +334,8 @@ public class MonthordermService extends BaseService<MonthOrderM> implements IApp
         monthOrderM.setCUpdateName(JBoltUserKit.getUserName());
         monthOrderM.setDUpdateTime(new Date());
         monthOrderM.update();
+        // 审批通过生成客户计划汇总
+        cusOrderSumService.algorithmSum();
         return null;
     }
 

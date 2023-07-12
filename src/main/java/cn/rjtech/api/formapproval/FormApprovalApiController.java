@@ -5,6 +5,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
@@ -75,6 +76,29 @@ public class FormApprovalApiController extends BaseApiController {
                 }
             }
         }
+    }
+
+    /**
+     * 适配app 提交审核/提交审批 接口
+     * 支持批量
+     * @param submitData      数据
+     * {
+     *     "data":[{
+     *         "formSn":"T_Sys_PUReceive",
+     *         "formAutoId":5056846201638655374,
+     *         "primaryKeyName":"AutoID",
+     *         "className":"cn.rjtech.admin.scancodereceive.ScanCodeReceiveService",
+     *         "permissionKey":"sysPureceive_submit"
+     *     }]
+     * }
+     */
+    @ApiDoc(result = NullDataResult.class)
+    @CheckPermission(PermissionKey.FORM_APP_SUBMIT)
+    public void submitByJson(@Para("data") JBoltPara submitData) {
+
+        JBoltApiRet ret = service.submitByJson(submitData);
+
+        renderJBoltApiRet(ret);
     }
 
     // --------------------------------------------------------------------------------------------------------------------
