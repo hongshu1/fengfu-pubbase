@@ -5,7 +5,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.modoc.MoDocService;
 import cn.rjtech.admin.momaterialscanusedlog.MoMaterialscanusedlogmService;
-import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.MoMaterialscanlog;
 import cn.rjtech.model.momdata.MoMaterialsscansum;
 import cn.rjtech.model.momdata.MoMojob;
@@ -190,7 +189,7 @@ public class MoMaterialscanlogService extends BaseService<MoMaterialscanlog> {
 				moMaterialsscansum.setIScannedQty(record.getBigDecimal("qty"));
 				moMaterialsscansum.save();
 			}else{
-				//moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
+				//moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(BigDecimal.ONE));
 				//moMaterialsscansum.update();
 			}
 		}

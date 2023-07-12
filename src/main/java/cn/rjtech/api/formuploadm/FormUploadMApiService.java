@@ -43,8 +43,8 @@ public class FormUploadMApiService extends JBoltApiBaseService {
      * 批量保存
      */
     public JBoltApiRet saveTableSubmit(Long iautoid, String iworkregionmid, String icategoryid, Date ddate, String formuploaddsv) {
-        formUploadMService.saveTableSubmitApi(iautoid, iworkregionmid, icategoryid, ddate, JSON.parseArray(formuploaddsv));
-        return JBoltApiRet.API_SUCCESS;
+        return JBoltApiRet.successWithData(formUploadMService.saveTableSubmitApi(iautoid, iworkregionmid, icategoryid, ddate, JSON.parseArray(formuploaddsv)));
+
     }
 
     /**

@@ -324,6 +324,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
      * 主表数据
      */
     public Ret saveTableSubmitApi(Long iautoid, String iworkregionmid, String icategoryid, Date ddate, JSONArray formuploaddsv) {
+        long id = JBoltSnowflakeKit.me.nextId();
 
         tx(() -> {
             //修改
@@ -350,6 +351,7 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
             } else {
                 FormUploadM formUploadM = new FormUploadM();
                 //基础数据
+                formUploadM.setIAutoId(id);
                 formUploadM.setCOrgCode(getOrgCode());
                 formUploadM.setCOrgName(getOrgName());
                 formUploadM.setIOrgId(getOrgId());
@@ -380,7 +382,12 @@ public class FormUploadMService extends BaseService<FormUploadM> implements IApp
 
             return true;
         });
-        return SUCCESS;
+        if (ObjUtil.isNull(iautoid)) {
+            return successWithData(new FormUploadM().setIAutoId(id).keep("iautoid"));
+
+        }else {
+            return successWithData(findById(iautoid).keep("iautoid"));
+        }
     }
 
     /**
