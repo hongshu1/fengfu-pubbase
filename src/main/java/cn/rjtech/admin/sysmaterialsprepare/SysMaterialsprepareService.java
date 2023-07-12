@@ -23,6 +23,7 @@ import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.admin.sysmaterialspreparedetail.SysMaterialspreparedetailService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import cn.smallbun.screw.core.util.CollectionUtils;
@@ -566,7 +567,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             sysMaterialsprepare.setDcreatetime(now);
             sysMaterialsprepare.setIcreateby(user.getId());
             sysMaterialsprepare.setBillDate(DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
-            sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
+            sysMaterialsprepare.setBillNo(BillNoUtils.genCode(getOrgCode(),table()));
+//            sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
             //主表新增
             ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
             //从表的操作
