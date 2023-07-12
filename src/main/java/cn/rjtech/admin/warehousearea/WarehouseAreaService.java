@@ -298,8 +298,8 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
                 ValidationUtils.notNull(data.get("careaname"), "第" + iseq + "行的【库区名称】不能为空！");
                 ValidationUtils.notNull(data.get("cwhname"), "第" + iseq + "行的【所属仓库名称】不能为空！");
 
-                //判断是否存在这个仓库名称
-                Warehouse warehouse = warehouseService.findByWhName(data.get("cwhname") + "");
+                // 判断是否存在这个仓库名称
+                Warehouse warehouse = warehouseService.findByWhName(data.getStr("cwhname"));
                 ValidationUtils.notNull(warehouse, "第" + iseq + "行【" + data.get("cwhname") + "】" + JBoltMsg.DATA_NOT_EXIST);
                 ValidationUtils.isTrue(warehouse.getIsEnabled(), "第" + iseq + "行【" + data.get("cwhname") + "】未启用库区选项");
 

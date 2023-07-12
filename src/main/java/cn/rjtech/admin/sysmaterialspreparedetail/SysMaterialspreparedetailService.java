@@ -520,7 +520,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
                 SysMaterialspreparescan sysMaterialspreparescan = new SysMaterialspreparescan();
                 MoMaterialscanlog moMaterialscanlog = new MoMaterialscanlog();
                 //提交备料存入备料细表
-                sysMaterialspreparedetail.setAutoID(JBoltSnowflakeKit.me.nextId() + "");
+                sysMaterialspreparedetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
                 sysMaterialspreparedetail.setMasID(Long.valueOf(sysMaterialsprepareService.findFirst("SELECT * FROM T_Sys_MaterialsPrepare WHERE BillNo=?", billno).getAutoID()));
                 sysMaterialspreparedetail.setBarcode(data[0]);
                 sysMaterialspreparedetail.setInvCode(data[1]);

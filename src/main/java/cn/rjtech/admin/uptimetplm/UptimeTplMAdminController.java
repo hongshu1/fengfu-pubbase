@@ -6,7 +6,6 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.DataSourceConstants;
@@ -179,6 +178,6 @@ public class UptimeTplMAdminController extends BaseAdminController {
 		String extension = list.get(1);
 
 		ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-		renderJson(service.importExcelData(file, cformatName));
+		renderJson(service.importExcelData(file));
 	}
 }

@@ -3,7 +3,6 @@ package cn.rjtech.admin.warehouseshelves;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -156,7 +155,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
         String extension = list.get(1);
 
         ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-        renderJson(service.importExcelData(file, cformatName));
+        renderJson(service.importExcelData(file));
     }
 
     /**
