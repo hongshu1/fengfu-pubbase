@@ -2,7 +2,6 @@ package cn.rjtech.api.uptimem;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
-import cn.rjtech.admin.momopatchweldm.MoMopatchweldmService;
 import cn.rjtech.admin.uptimem.UptimeMService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;

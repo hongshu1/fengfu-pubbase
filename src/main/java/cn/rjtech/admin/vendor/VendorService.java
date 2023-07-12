@@ -9,18 +9,17 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
 import cn.rjtech.admin.vendorclass.VendorClassService;
 import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -62,8 +61,6 @@ public class VendorService extends BaseService<Vendor> {
     private PersonService            personService;
     @Inject
     private DepartmentService        departmentService;
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
 
     @Override
     protected int systemLogTargetType() {
@@ -429,18 +426,9 @@ public class VendorService extends BaseService<Vendor> {
      * 供应商excel导入数据库
      */
     public Ret importExcelData(File file) {
-        StringBuilder errorMsg = new StringBuilder();
-
         // 使用字段配置维护
-        List<Record> vendors = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
-
-        if (notOk(vendors)) {
-            if (errorMsg.length() > 0) {
-                return fail(errorMsg.toString());
-            } else {
-                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-            }
-        }
+        List<Record> vendors = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(vendors, "导入数据不能为空");
 
         // 读取数据没有问题后判断必填字段
         if (vendors.size() > 0) {
@@ -463,7 +451,7 @@ public class VendorService extends BaseService<Vendor> {
                     return fail("助记码不能为空");
                 }
                 Vendor vendor = findByCode(row.getStr("cvencode"));
-                ValidationUtils.isTrue(vendor == null, row.getStr("cvencode") + "：供应商编码已存在，不能重复");
+                ValidationUtils.assertNull(vendor, row.getStr("cvencode") + "：供应商编码已存在，不能重复");
 
                 VendorClass vendorClass = vendorClassService.findByCVCCode(row.getStr("cvccode"));
                 ValidationUtils.notNull(vendorClass, String.format("供应商分类“%s”不存在", row.getStr("cvccode")));

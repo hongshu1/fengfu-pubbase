@@ -36,7 +36,7 @@ public class DataImportAdminController extends BaseAdminController {
 
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
 
-        // 截取最后一个“.”之前的文件名，作为导入格式名
+        // 截取最后一个“.”之前的文件名，作为导入格式名1
         String cformatName = list.get(0);
 
         String extension = list.get(1);

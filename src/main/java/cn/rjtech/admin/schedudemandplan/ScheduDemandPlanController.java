@@ -11,7 +11,6 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.model.momdata.ApsWeekschedule;
 import cn.rjtech.model.momdata.MrpDemandcomputem;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
@@ -389,6 +388,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		headerList.add(JBoltExcelHeader.create("iinnerinstockdays","标准在库天数"));
 		headerList.add(JBoltExcelHeader.create("colname","项目"));
 
+		String preYearMonth = "";
 		int monthCount = 1;
 		for (int i = 0; i < scheduDateList.size(); i++) {
 			String date = scheduDateList.get(i);
@@ -397,7 +397,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 			int seq = i + 1;
 			int day = Integer.parseInt(date.substring(8));
 			if (i != 0 && day == 1){
-				headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,yearMonth.concat("合计")));
+				headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,preYearMonth.concat("合计")));
 				headerList.add(JBoltExcelHeader.create("qty"+seq,date));
 				monthCount ++;
 				continue;
@@ -408,6 +408,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 				continue;
 			}
 			headerList.add(JBoltExcelHeader.create("qty"+seq,date));
+			preYearMonth = yearMonth;
 		}
 		jBoltExcelSheet.setMerges().setHeaders(1,headerList);
 
@@ -571,6 +572,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		headerList.add(JBoltExcelHeader.create("iinnerinstockdays","标准在库天数"));
 		headerList.add(JBoltExcelHeader.create("colname","项目"));
 
+		String preYearMonth = "";
 		int monthCount = 1;
 		for (int i = 0; i < scheduDateList.size(); i++) {
 			String date = scheduDateList.get(i);
@@ -579,7 +581,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 			int seq = i + 1;
 			int day = Integer.parseInt(date.substring(8));
 			if (i != 0 && day == 1){
-				headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,yearMonth.concat("合计")));
+				headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,preYearMonth.concat("合计")));
 				headerList.add(JBoltExcelHeader.create("qty"+seq,date));
 				monthCount ++;
 				continue;
@@ -590,6 +592,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 				continue;
 			}
 			headerList.add(JBoltExcelHeader.create("qty"+seq,date));
+			preYearMonth = yearMonth;
 		}
 		jBoltExcelSheet.setMerges().setHeaders(1,headerList);
 
@@ -746,6 +749,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 		headerList.add(JBoltExcelHeader.create("iinnerinstockdays","标准在库天数"));
 		headerList.add(JBoltExcelHeader.create("colname","项目"));
 
+		String preYearMonth = "";
 		int monthCount = 1;
 		for (int i = 0; i < scheduDateList.size(); i++) {
 			String date = scheduDateList.get(i);
@@ -754,7 +758,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 			int seq = i + 1;
 			int day = Integer.parseInt(date.substring(8));
 			if (i != 0 && day == 1){
-				headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,yearMonth.concat("合计")));
+				headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,preYearMonth.concat("合计")));
 				headerList.add(JBoltExcelHeader.create("qty"+seq,date));
 				monthCount ++;
 				continue;
@@ -765,6 +769,7 @@ public class ScheduDemandPlanController extends BaseAdminController {
 				continue;
 			}
 			headerList.add(JBoltExcelHeader.create("qty"+seq,date));
+			preYearMonth = yearMonth;
 		}
 		jBoltExcelSheet.setMerges().setHeaders(1,headerList);
 

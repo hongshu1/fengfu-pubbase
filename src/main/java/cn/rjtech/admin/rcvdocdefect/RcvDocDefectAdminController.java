@@ -5,7 +5,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.RcvDocDefect;

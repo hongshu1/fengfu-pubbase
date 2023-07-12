@@ -11,11 +11,6 @@ import cn.rjtech.model.momdata.PadWorkRegion;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 系统管理-平板关联产线

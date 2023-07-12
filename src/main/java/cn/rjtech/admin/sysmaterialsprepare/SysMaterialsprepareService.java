@@ -3,7 +3,6 @@ package cn.rjtech.admin.sysmaterialsprepare;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -25,6 +24,7 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.MoDoc;
 import cn.rjtech.model.momdata.SysMaterialsprepare;
 import cn.rjtech.model.momdata.SysMaterialspreparedetail;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import com.alibaba.fastjson.JSON;
@@ -565,7 +565,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             sysMaterialsprepare.setDcreatetime(now);
             sysMaterialsprepare.setIcreateby(user.getId());
             sysMaterialsprepare.setBillDate(DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
-            sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
+            sysMaterialsprepare.setBillNo(BillNoUtils.genCode(getOrgCode(),table()));
+//            sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
             //主表新增
             ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
             //从表的操作
@@ -806,4 +807,13 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return list;
     }
 
+    public Ret deleteBill(Kv kv) {
+        tx(() -> {
+            moDocS.update(moDocS.findById(findById(kv.get("autoid")).getSourceBillID()).setIStatus(2));
+            deleteById(kv.get("autoid"));
+            return true;
+        });
+
+        return SUCCESS;
+    }
 }

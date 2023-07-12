@@ -4145,4 +4145,36 @@ public class PermissionKey {
 	 * 打印
 	 */
 	public static final String SALES_DELIVERY_LIST_PRINT = "sales_delivery_list_print";
+	/**
+	 * 新增
+	 */
+	public static final String MATERIALSPREPARE_ADD = "materialsprepare_add";
+	/**
+	 * 修改
+	 */
+	public static final String MATERIALSPREPARE_EDIT = "materialsprepare_edit";
+	/**
+	 * 删除
+	 */
+	public static final String MATERIALSPREPARE_DELETE = "materialsprepare_delete";
+	/**
+	 * 批量删除
+	 */
+	public static final String MATERIALSPREPARE_DELETE_ALL = "materialsprepare_delete_all";
+	/**
+	 * 新增
+	 */
+	public static final String MATERIALSPREPARE_ADD1 = "materialsprepare_add1";
+	/**
+	 * 修改
+	 */
+	public static final String MATERIALSPREPARE_EDIT1 = "materialsprepare_edit1";
+	/**
+	 * 删除
+	 */
+	public static final String MATERIALSPREPARE_DELETE1 = "materialsprepare_delete1";
+	/**
+	 * 批量删除
+	 */
+	public static final String MATERIALSPREPARE_DELETE1_ALL = "materialsprepare_delete1_all";
 }

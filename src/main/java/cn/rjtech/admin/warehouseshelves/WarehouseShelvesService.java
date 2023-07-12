@@ -4,14 +4,11 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.admin.warehouse.WarehouseService;
-import cn.rjtech.admin.warehousearea.WarehouseAreaService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.WarehouseShelves;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -19,10 +16,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 货架档案 Service
@@ -39,14 +34,6 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
     return dao;
   }
 
-  @Inject
-  private WarehouseService warehouseService;
-  @Inject
-  private WarehouseAreaService warehouseAreaService;
-
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingdService;
-
   /**
    * 后台管理分页查询
    */
@@ -62,55 +49,50 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
 
   /**
    * 查找此货架编码是否存在
-   *
-   * @param cshelvescode
-   * @return
    */
   public WarehouseShelves findByCshelvesCode(String cshelvescode) {
     return findFirst(Okv.by("cShelvesCode", cshelvescode).set("isDeleted", false), "iautoid", "asc");
   }
 
-  /**
-   * 保存
-   */
-  public Ret save(WarehouseShelves warehouseShelves) {
-    if (warehouseShelves == null || isOk(warehouseShelves.getIautoid())) {
-      return fail(JBoltMsg.PARAM_ERROR);
+    /**
+     * 保存
+     */
+    public Ret save(WarehouseShelves warehouseShelves) {
+        if (warehouseShelves == null || isOk(warehouseShelves.getIautoid())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+
+        Integer cshelvescode = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvescode", warehouseShelves.getCshelvescode()).set("iwarehouseid", warehouseShelves.getIwarehouseid()).set("iwarehouseareaid", warehouseShelves.getIwarehouseareaid())).queryInt();
+        if (cshelvescode >= 1) {
+            ValidationUtils.error("【货架编码】" + warehouseShelves.getCshelvescode() + "已存在，请修改后保存");
+        }
+
+        Integer cshelvesname = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvesname", warehouseShelves.getCshelvesname()).set("iwarehouseid", warehouseShelves.getIwarehouseid()).set("iwarehouseareaid", warehouseShelves.getIwarehouseareaid())).queryInt();
+        if (cshelvesname >= 1) {
+            ValidationUtils.error("【货架名称】" + warehouseShelves.getCshelvesname() + "已存在，请修改后保存");
+        }
+
+        warehouseShelves.setIcreateby(JBoltUserKit.getUserId());
+        warehouseShelves.setCcreatename(JBoltUserKit.getUserName());
+        warehouseShelves.setDcreatetime(new Date());
+
+        warehouseShelves.setCorgcode(getOrgCode());
+        warehouseShelves.setCorgname(getOrgName());
+        warehouseShelves.setIorgid(getOrgId());
+
+        //更新
+        warehouseShelves.setIupdateby(JBoltUserKit.getUserId());
+        warehouseShelves.setCupdatename(JBoltUserKit.getUserName());
+        warehouseShelves.setDupdatetime(new Date());
+
+
+        boolean success = warehouseShelves.save();
+        if (success) {
+            //添加日志
+            //addSaveSystemLog(warehouseShelves.getIautoid(), JBoltUserKit.getUserId(), warehouseShelves.getName());
+        }
+        return ret(success);
     }
-
-    Integer cshelvescode = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvescode", warehouseShelves.getCshelvescode())
-        .set("iwarehouseid", warehouseShelves.getIwarehouseid()).set("iwarehouseareaid", warehouseShelves.getIwarehouseareaid())).queryInt();
-    if (cshelvescode >= 1) {
-      ValidationUtils.error("【货架编码】" + warehouseShelves.getCshelvescode() + "已存在，请修改后保存");
-    }
-
-    Integer cshelvesname = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvesname", warehouseShelves.getCshelvesname())
-        .set("iwarehouseid", warehouseShelves.getIwarehouseid()).set("iwarehouseareaid", warehouseShelves.getIwarehouseareaid())).queryInt();
-    if (cshelvesname >= 1) {
-      ValidationUtils.error("【货架名称】" + warehouseShelves.getCshelvesname() + "已存在，请修改后保存");
-    }
-
-    warehouseShelves.setIcreateby(JBoltUserKit.getUserId());
-    warehouseShelves.setCcreatename(JBoltUserKit.getUserName());
-    warehouseShelves.setDcreatetime(new Date());
-
-    warehouseShelves.setCorgcode(getOrgCode());
-    warehouseShelves.setCorgname(getOrgName());
-    warehouseShelves.setIorgid(getOrgId());
-
-    //更新
-    warehouseShelves.setIupdateby(JBoltUserKit.getUserId());
-    warehouseShelves.setCupdatename(JBoltUserKit.getUserName());
-    warehouseShelves.setDupdatetime(new Date());
-
-
-    boolean success = warehouseShelves.save();
-    if (success) {
-      //添加日志
-      //addSaveSystemLog(warehouseShelves.getIautoid(), JBoltUserKit.getUserId(), warehouseShelves.getName());
-    }
-    return ret(success);
-  }
 
   /**
    * 更新
@@ -261,86 +243,77 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
     return null;
   }
 
+    /**
+     * 数据导入
+     */
+    public Ret importExcelData(File file) {
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(datas, "导入数据不能为空");
 
-  /**
-   * 数据导入
-   *
-   * @param file
-   * @param cformatName
-   * @return
-   */
-  public Ret importExcelData(File file, String cformatName) {
-    Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
-    ValidationUtils.isTrue(ret.isOk(), "导入失败");
-    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-    StringBuilder msg = new StringBuilder();
+        tx(() -> {
+            int iseq = 1;
+            // 封装数据
+            for (Record data : datas) {
+                // 基本信息校验
+                ValidationUtils.notNull(data.get("cshelvescode"), "第【" + iseq + "】行的【货架编码】不能为空！");
+                ValidationUtils.notNull(data.get("cshelvesname"), "第【" + iseq + "】行的【货架名称】不能为空！");
+                ValidationUtils.notNull(data.get("cwhname"), "第【" + iseq + "】行的【所属仓库名称】不能为空！");
+                ValidationUtils.notNull(data.get("careaname"), "第【" + iseq + "】行的【所属货架名称】不能为空！");
 
-    tx(() -> {
-      Integer iseq = 1;
-      // 封装数据
-      for (Map<String, Object> data : datas) {
-        // 基本信息校验
-        ValidationUtils.notNull(data.get("cshelvescode"), "第【" + iseq + "】行的【货架编码】不能为空！");
-        ValidationUtils.notNull(data.get("cshelvesname"), "第【" + iseq + "】行的【货架名称】不能为空！");
-        ValidationUtils.notNull(data.get("cwhname"), "第【" + iseq + "】行的【所属仓库名称】不能为空！");
-        ValidationUtils.notNull(data.get("careaname"), "第【" + iseq + "】行的【所属货架名称】不能为空！");
-
-        //数据完整性校验
-        Record record = dbTemplate("warehouseshelves.integrityCheck", Kv.by("careaname", data.get("careaname")).set("cwhname", data.get("cwhname"))).findFirst();
-        ValidationUtils.notNull(record, "第【" + iseq + "】行的【所属仓库名称】【所属货架名称】未找到对应的数据关联关系！");
+                //数据完整性校验
+                Record record = dbTemplate("warehouseshelves.integrityCheck", Kv.by("careaname", data.get("careaname")).set("cwhname", data.get("cwhname"))).findFirst();
+                ValidationUtils.notNull(record, "第【" + iseq + "】行的【所属仓库名称】【所属货架名称】未找到对应的数据关联关系！");
 
 
-        Integer cshelvescode = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvescode", data.get("cshelvescode"))
-            .set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iautoid"))).queryInt();
-        if (cshelvescode >= 1) {
-          ValidationUtils.error("第【" + iseq + "】行【货架编码】" + data.get("cshelvescode") + "已存在，请修改后保存");
-        }
+                Integer cshelvescode = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvescode", data.get("cshelvescode")).set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iautoid"))).queryInt();
+                if (cshelvescode >= 1) {
+                    ValidationUtils.error("第【" + iseq + "】行【货架编码】" + data.get("cshelvescode") + "已存在，请修改后保存");
+                }
 
-        Integer cshelvesname = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvesname", data.get("cshelvesname"))
-            .set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iautoid"))).queryInt();
-        if (cshelvesname >= 1) {
-          ValidationUtils.error("第【" + iseq + "】行【货架名称】" + data.get("cshelvesname") + "已存在，请修改后保存");
-        }
+                Integer cshelvesname = dbTemplate("warehouseshelves.verifyDuplication", Kv.by("cshelvesname", data.get("cshelvesname"))
+                        .set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iautoid"))).queryInt();
+                if (cshelvesname >= 1) {
+                    ValidationUtils.error("第【" + iseq + "】行【货架名称】" + data.get("cshelvesname") + "已存在，请修改后保存");
+                }
 
-        WarehouseShelves warehouseShelves = new WarehouseShelves();
+                WarehouseShelves warehouseShelves = new WarehouseShelves();
 
-        //组织数据
-        warehouseShelves.setIorgid(getOrgId());
-        warehouseShelves.setCorgcode(getOrgCode());
-        warehouseShelves.setCorgname(getOrgName());
+                //组织数据
+                warehouseShelves.setIorgid(getOrgId());
+                warehouseShelves.setCorgcode(getOrgCode());
+                warehouseShelves.setCorgname(getOrgName());
 
-        //创建人
-        warehouseShelves.setIcreateby(JBoltUserKit.getUserId());
-        warehouseShelves.setCcreatename(JBoltUserKit.getUserName());
-        warehouseShelves.setDcreatetime(new Date());
+                //创建人
+                warehouseShelves.setIcreateby(JBoltUserKit.getUserId());
+                warehouseShelves.setCcreatename(JBoltUserKit.getUserName());
+                warehouseShelves.setDcreatetime(new Date());
 
-        //更新人
-        warehouseShelves.setIupdateby(JBoltUserKit.getUserId());
-        warehouseShelves.setCupdatename(JBoltUserKit.getUserName());
-        warehouseShelves.setDupdatetime(new Date());
+                //更新人
+                warehouseShelves.setIupdateby(JBoltUserKit.getUserId());
+                warehouseShelves.setCupdatename(JBoltUserKit.getUserName());
+                warehouseShelves.setDupdatetime(new Date());
 
-        //是否删除，是否启用,数据来源
-        warehouseShelves.setIsdeleted(false);
-        warehouseShelves.setIsenabled(true);
-        warehouseShelves.setIsource(SourceEnum.MES.getValue());
+                //是否删除，是否启用,数据来源
+                warehouseShelves.setIsdeleted(false);
+                warehouseShelves.setIsenabled(true);
+                warehouseShelves.setIsource(SourceEnum.MES.getValue());
 
-        warehouseShelves.setCshelvescode(data.get("cshelvescode") + "");
-        warehouseShelves.setCshelvesname(data.get("cshelvesname") + "");
-        warehouseShelves.setIwarehouseid(record.getLong("iwarehouseid"));
-        warehouseShelves.setIwarehouseareaid(record.getLong("iautoid"));
-        warehouseShelves.setCmemo(data.get("cmemo") + "");
+                warehouseShelves.setCshelvescode(data.getStr("cshelvescode"));
+                warehouseShelves.setCshelvesname(data.getStr("cshelvesname"));
+                warehouseShelves.setIwarehouseid(record.getLong("iwarehouseid"));
+                warehouseShelves.setIwarehouseareaid(record.getLong("iautoid"));
+                warehouseShelves.setCmemo(data.getStr("cmemo"));
 
-        ValidationUtils.isTrue(warehouseShelves.save(), "第" + iseq + "行保存数据失败");
+                ValidationUtils.isTrue(warehouseShelves.save(), "第" + iseq + "行保存数据失败");
 
-        iseq++;
-      }
+                iseq++;
+            }
 
-      return true;
-    });
+            return true;
+        });
 
-    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
-    return SUCCESS;
-  }
+        return SUCCESS;
+    }
 
   /**
    * 打印

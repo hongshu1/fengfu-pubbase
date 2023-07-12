@@ -24,10 +24,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 设备管理-设备档案
@@ -310,7 +307,7 @@ public class EquipmentService extends BaseService<Equipment> {
 								.setHeaders(2,
 										JBoltExcelHeader.create("cequipmentcode", "设备档案"),
 										JBoltExcelHeader.create("cequipmentname", "设备名称"),
-										JBoltExcelHeader.create("iworkregionmid", "产线名称"),
+										JBoltExcelHeader.create("iworkregionm_name", "产线名称"),
 										JBoltExcelHeader.create("isnozzleswitchenabled", "是否导电咀更换"),
 										JBoltExcelHeader.create("cmemo", "备注")
 								)
@@ -328,6 +325,8 @@ public class EquipmentService extends BaseService<Equipment> {
 			}
 		}
 
+		List<Equipment> addList=new ArrayList<>();
+
 		//List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
@@ -340,12 +339,12 @@ public class EquipmentService extends BaseService<Equipment> {
 		for (Record record : records) {
 
 			if (StrUtil.isBlank(record.getStr("cequipmentcode"))) {
-				return fail("设备编码不能为空");
+				record.set("cequipmentcode",BillNoUtils.genCode(getOrgCode(), table()));
 			}
 			if (StrUtil.isBlank(record.getStr("cequipmentname"))) {
 				return fail("设备名称不能为空");
 			}
-			if (StrUtil.isBlank(record.getStr("iworkregionmid"))) {
+			if (StrUtil.isBlank(record.getStr("iworkregionm_name"))) {
 				return fail("产线名称不能为空");
 			}
 			if (StrUtil.isBlank(record.getStr("isnozzleswitchenabled"))) {
@@ -357,14 +356,10 @@ public class EquipmentService extends BaseService<Equipment> {
 				record.set("cmemo", cmemo);
 			}
 
-			String iWorkRegionmId = record.getStr("iWorkRegionmId");
-			Workregionm workregionm = workregionmMap.get(iWorkRegionmId);
-			if (ObjUtil.isNull(workregionm)) {
-				workregionm = workregionmService.findFirstByWorkName(iWorkRegionmId);
-				ValidationUtils.notNull(workregionm, String.format("产线“%s”不存在", iWorkRegionmId));
-				record.set("iWorkRegionmId",workregionm.getIAutoId());
-				workregionmMap.put(iWorkRegionmId, workregionm);
-			}
+			String iworkregionm_name = record.getStr("iworkregionm_name");
+			Workregionm workregionm = workregionmService.findFirstByWorkName(iworkregionm_name);
+			ValidationUtils.notNull(workregionm, String.format("产线“%s”不存在", iworkregionm_name));
+			record.set("iWorkRegionmId",workregionm.getIAutoId());
 
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
 			record.set("iOrgId", getOrgId());
@@ -380,11 +375,17 @@ public class EquipmentService extends BaseService<Equipment> {
 			record.set("dUpdateTime", now);
 			record.set("cUpdateName", JBoltUserKit.getUserName());
 			record.set("isNozzleSwitchEnabled", "是".equals(record.getStr("isNozzleSwitchEnabled"))? 1 : 0);
+
+			Equipment equipment=new Equipment();
+			equipment.put(record);
+			addList.add(equipment);
 		}
 
 		// 执行批量操作
 		tx(() -> {
-			batchSaveRecords(records);
+			for (Equipment equipment : addList) {
+				equipment.save();
+			}
 			return true;
 		});
 		return SUCCESS;

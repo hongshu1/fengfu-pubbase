@@ -3,7 +3,6 @@ package cn.rjtech.admin.bomd;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -194,7 +193,7 @@ public class BomDService extends BaseService<BomD> {
 			for (Record record : parentBomList){
 				Long iInventoryId = record.getLong(BomD.IINVENTORYID);
 				// pId不为空，则说明是子件
-				if (ObjectUtil.isNotNull(record.getLong(BomD.IPID))){
+				if (ObjUtil.isNotNull(record.getLong(BomD.IPID))){
 					continue;
 				}
 				invMap.put(iInventoryId, record.getLong(BomD.IAUTOID));

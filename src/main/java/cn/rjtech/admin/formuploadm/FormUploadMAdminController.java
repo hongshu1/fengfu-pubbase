@@ -7,7 +7,6 @@ import cn.jbolt.core.bean.MultipleUploadFile;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.service.JBoltFileService;
 import cn.rjtech.admin.formuploadd.FormUploadDService;
 import cn.rjtech.base.controller.BaseAdminController;

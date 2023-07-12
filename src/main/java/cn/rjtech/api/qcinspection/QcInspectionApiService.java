@@ -4,7 +4,6 @@ import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
 import cn.rjtech.admin.qcinspection.QcInspectionService;
 import cn.rjtech.common.upload.UploadController;
-import cn.rjtech.model.momdata.QcInspection;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;

@@ -1,8 +1,8 @@
 package cn.rjtech.common.vouchprocessnote;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.common.model.VouchProcessNote;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;

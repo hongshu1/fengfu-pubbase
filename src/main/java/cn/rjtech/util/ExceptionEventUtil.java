@@ -5,7 +5,6 @@ import cn.rjtech.base.event.ExceptionEvent;
 import cn.rjtech.base.redis.RedisKeys;
 import cn.rjtech.base.redis.RedisUtil;
 import cn.rjtech.event.EmailSendFailEvent;
-
 import com.jfinal.log.Log;
 import net.dreamlu.event.EventKit;
 

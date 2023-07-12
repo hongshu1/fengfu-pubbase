@@ -1,18 +1,16 @@
 package cn.rjtech.admin.sysmaterialspreparescan;
 
-import cn.rjtech.constants.DataSourceConstants;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
-import cn.jbolt._admin.permission.PermissionKey;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.constants.DataSourceConstants;
+import cn.rjtech.model.momdata.SysMaterialspreparescan;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.rjtech.model.momdata.SysMaterialspreparescan;
 /**
  * null管理
  * @ClassName: SysMaterialspreparescanAdminController

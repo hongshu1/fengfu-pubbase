@@ -1,6 +1,7 @@
 package cn.rjtech.enums;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum FormTypeEnum {
     

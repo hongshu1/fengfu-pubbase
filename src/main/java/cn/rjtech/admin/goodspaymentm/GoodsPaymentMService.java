@@ -11,17 +11,16 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.weekorderd.WeekOrderDService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -64,9 +63,6 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
     private GoodsPaymentDService goodspaymentdservice;
     @Inject
     private GoodsPaymentDService goodsPaymentDservice;
-    @Inject
-	private CusFieldsMappingDService cusFieldsMappingdService;
-
 
 	/**
 	 * 后台管理数据查询
@@ -95,8 +91,6 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 
 	/**
 	 * 更新
-	 * @param goodsPaymentM
-	 * @return
 	 */
 	public Ret update(GoodsPaymentM goodsPaymentM) {
 		if(goodsPaymentM==null || notOk(goodsPaymentM.getIAutoId())) {
@@ -118,7 +112,6 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 	 * 删除数据后执行的回调
 	 * @param goodsPaymentM 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(GoodsPaymentM goodsPaymentM, Kv kv) {
@@ -130,7 +123,6 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 	 * 检测是否可以删除
 	 * @param goodsPaymentM model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkInUse(GoodsPaymentM goodsPaymentM, Kv kv) {
@@ -144,7 +136,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 	@Override
 	protected String afterToggleBoolean(GoodsPaymentM goodsPaymentM, String column, Kv kv) {
 		//addUpdateSystemLog(goodsPaymentM.getIAutoId(), JBoltUserKit.getUserId(), goodsPaymentM.getName(),"的字段["+column+"]值:"+goodsPaymentM.get(column));
-		/**
+		/*
 		switch(column){
 		    case "isDeleted":
 		        break;
@@ -169,8 +161,6 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		tx(() -> {
@@ -183,27 +173,12 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 
 	/**
 	 * 读取excel文件
-	 * @param file
-	 * @return
 	 */
-	public Ret importExcel(File file, String cformatName) {
-		StringBuilder errorMsg=new StringBuilder();
+	public Ret importExcel(File file) {
 		//使用字段配置维护
-		Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
-//		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
-		String docInfoRelaStrings= JSON.toJSONString(importData);
-		List<GoodsPaymentD> goodsPaymentDS = JSON.parseArray(docInfoRelaStrings, GoodsPaymentD.class);
-		System.out.println("===="+goodsPaymentDS);
-		if(notOk(goodsPaymentDS)) {
-			if(errorMsg.length()>0) {
-				return fail(errorMsg.toString());
-			}else {
-				return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-			}
-		}
-//		for (GoodsPaymentD goodsPaymentD : goodsPaymentDS) {
-//			setGoodsPaymentDModel(goodsPaymentD,iAutoId);
-//		}
+        List<Record> importData = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notNull(importData, "导入数据不能为空");
+        
 		//执行批量操作
 		boolean success=tx(() -> {
 //				goodsPaymentDservice.batchSave(goodsPaymentDS);
@@ -213,7 +188,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 		if(!success) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);
 		}
-		return successWithData(goodsPaymentDS);
+        return SUCCESS;
 	}
 
 	/**
@@ -528,11 +503,8 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 		return "";
 	}
 
-
 	/**
 	 * 设置参数
-	 * @param goodsPaymentDModel
-	 * @return
 	 */
 	private GoodsPaymentD setGoodsPaymentDModel(GoodsPaymentD goodsPaymentDModel,Long iAutoId){
 		String cInvCode = goodsPaymentDModel.getCInvCode();

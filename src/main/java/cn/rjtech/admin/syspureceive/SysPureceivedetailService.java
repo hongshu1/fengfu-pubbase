@@ -181,4 +181,11 @@ public class SysPureceivedetailService extends BaseService<SysPureceivedetail> {
     public List<SysPureceivedetail> findBySourceBillNoAndId(String sourceBillNo,String sourceBillId) {
         return find("select *  from T_Sys_PUReceiveDetail where SourceBillNo = ? and sourceBillId = ?", sourceBillNo,sourceBillId);
     }
+
+    public SysPureceivedetail getSysPureceivedetail(String barcode) {
+        return findFirst("select * from  T_Sys_PUReceiveDetail where barcode = ? ", barcode);
+    }
+    public SysPureceivedetail getSysPureceivedetailH(String masid,String combination) {
+        return findFirst("select * from  T_Sys_PUReceiveDetail where MasID = ?  and Combination = ? and BarcodeType ='转换后'", masid,combination);
+    }
 }

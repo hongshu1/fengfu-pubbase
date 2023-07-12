@@ -5,7 +5,6 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.rjtech.admin.prodform.ProdFormService;
 import cn.rjtech.admin.prodformitem.ProdFormItemService;
 import cn.rjtech.admin.prodformtableparam.ProdFormTableParamService;

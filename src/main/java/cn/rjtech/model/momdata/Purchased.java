@@ -1,12 +1,8 @@
 package cn.rjtech.model.momdata;
 
-import cn.jbolt.common.util.CACHE;
-import cn.jbolt.core.model.Dictionary;
-import cn.rjtech.model.momdata.base.BasePurchased;
 import cn.jbolt.core.annotation.TableBind;
 import cn.jbolt.core.base.JBoltIDGenMode;
-
-import java.util.Optional;
+import cn.rjtech.model.momdata.base.BasePurchased;
 
 /**
  * 申购单明细表

@@ -160,7 +160,6 @@ public class VendorClassAdminController extends BaseAdminController {
         File file = uploadFile.getFile();
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
 
-        // 截取最后一个“.”之前的文件名，作为导入格式名
         String extension = list.get(1);
         ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
 

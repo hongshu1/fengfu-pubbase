@@ -1,13 +1,13 @@
 package cn.rjtech.admin.prodformtableparam;
-import cn.rjtech.model.momdata.ProdFormTableParam;
-import cn.rjtech.model.momdata.SpotCheckFormTableParam;
-import com.jfinal.aop.Inject;
-import cn.rjtech.base.controller.BaseAdminController;
-import com.jfinal.core.Path;
-import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import com.jfinal.core.paragetter.Para;
+
 import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.model.momdata.ProdFormTableParam;
+import com.jfinal.aop.Before;
+import com.jfinal.aop.Inject;
+import com.jfinal.core.Path;
+import com.jfinal.core.paragetter.Para;
 /**
  * 生产表单设置-生产表格参数录入配置
  * @ClassName: ProdFormTableParamAdminController

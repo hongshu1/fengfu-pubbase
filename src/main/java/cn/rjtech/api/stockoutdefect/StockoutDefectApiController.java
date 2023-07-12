@@ -1,6 +1,5 @@
 package cn.rjtech.api.stockoutdefect;
 
-import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;

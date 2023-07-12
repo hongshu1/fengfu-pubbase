@@ -5,10 +5,10 @@ import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.admin.warehouseshelves.WarehouseShelvesService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.WarehousePosition;
 import cn.rjtech.util.BillNoUtils;
@@ -21,11 +21,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 库位档案 Service
@@ -50,15 +47,11 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
   @Inject
   private WarehouseShelvesService warehouseShelvesService;
 
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingdService;
-
   /**
    * 后台管理分页查询
    */
   public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
     return dbTemplate("warehouseposition.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
-    //return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "iAutoId");
   }
 
   public List<Record> list(Kv kv) {
@@ -274,109 +267,100 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
     return getCommonList(kv, "iAutoId", "asc");
   }
 
-  /**
-   * 数据导入
-   *
-   * @param file
-   * @param cformatName
-   * @return
-   */
-  public Ret importExcelData(File file, String cformatName) {
-    Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
-    ValidationUtils.isTrue(ret.isOk(), "导入失败");
-    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-    StringBuilder msg = new StringBuilder();
+    /**
+     * 数据导入
+     */
+    public Ret importExcelData(File file) {
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(datas, "导入数据不能为空");
+        
+        Date now = new Date();
 
-    tx(() -> {
-      Integer iseq = 1;
-      // 封装数据
-      for (Map<String, Object> data : datas) {
-        // 基本信息校验
-        ValidationUtils.notNull(data.get("cpositioncode"), "第【" + iseq + "】行的【库位编码】不能为空！");
-        ValidationUtils.notNull(data.get("cpositionname"), "第【" + iseq + "】行的【库位名称】不能为空！");
-        ValidationUtils.notNull(data.get("iwarehousename"), "第【" + iseq + "】行的【所属仓库名称】不能为空！");
-        ValidationUtils.notNull(data.get("iwarehouseareaname"), "第【" + iseq + "】行的【所属库区名称】不能为空！");
-        ValidationUtils.notNull(data.get("iwarehouseshelvesname"), "第【" + iseq + "】行的【所属货架名称】不能为空！");
+        tx(() -> {
+            int iseq = 1;
 
-        //数据完整性校验
-        Record record = dbTemplate("warehouseposition.integrityCheck", Kv.by("iwarehousename", data.get("iwarehousename")).set("iwarehouseareaname", data.get("iwarehouseareaname")).
-            set("iwarehouseshelvesname", data.get("iwarehouseshelvesname"))).findFirst();
-        ValidationUtils.notNull(record, "第【" + iseq + "】行的【所属仓库名称】【所属库区名称】【所属货架名称】未找到对应的数据关联关系！");
+            // 封装数据
+            for (Record data : datas) {
+                // 基本信息校验
+                ValidationUtils.notNull(data.get("cpositioncode"), "第【" + iseq + "】行的【库位编码】不能为空！");
+                ValidationUtils.notNull(data.get("cpositionname"), "第【" + iseq + "】行的【库位名称】不能为空！");
+                ValidationUtils.notNull(data.get("iwarehousename"), "第【" + iseq + "】行的【所属仓库名称】不能为空！");
+                ValidationUtils.notNull(data.get("iwarehouseareaname"), "第【" + iseq + "】行的【所属库区名称】不能为空！");
+                ValidationUtils.notNull(data.get("iwarehouseshelvesname"), "第【" + iseq + "】行的【所属货架名称】不能为空！");
 
-        Integer cpositioncode = dbTemplate("warehouseposition.verifyDuplication", Kv.by("cpositioncode", data.get("cpositioncode")).
-            set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iwarehouseareaid")).
-            set("iwarehouseshelvesid", record.getLong("iautoid"))).queryInt();
-        if (cpositioncode > 0) {
-          ValidationUtils.error("第【" + iseq + "】行的【库位编码】" + data.get("cpositioncode") + "已存在，请修改后保存");
-        }
+                //数据完整性校验
+                Record record = dbTemplate("warehouseposition.integrityCheck", Kv.by("iwarehousename", data.get("iwarehousename")).set("iwarehouseareaname", data.get("iwarehouseareaname")).set("iwarehouseshelvesname", data.get("iwarehouseshelvesname"))).findFirst();
+                ValidationUtils.notNull(record, "第【" + iseq + "】行的【所属仓库名称】【所属库区名称】【所属货架名称】未找到对应的数据关联关系！");
 
-        Integer cpositionname = dbTemplate("warehouseposition.verifyDuplication", Kv.by("cpositionname", data.get("cpositionname")).
-            set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iwarehouseareaid")).
-            set("iwarehouseshelvesid", record.getLong("iautoid"))).queryInt();
-        if (cpositionname > 0) {
-          ValidationUtils.error("第【" + iseq + "】行的【库位名称】" + data.get("cpositionname") + "已存在，请修改后保存");
-        }
+                Integer cpositioncode = dbTemplate("warehouseposition.verifyDuplication", Kv.by("cpositioncode", data.get("cpositioncode")).set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iwarehouseareaid")).set("iwarehouseshelvesid", record.getLong("iautoid"))).queryInt();
+                if (cpositioncode > 0) {
+                    ValidationUtils.error("第【" + iseq + "】行的【库位编码】" + data.get("cpositioncode") + "已存在，请修改后保存");
+                }
 
-        WarehousePosition warehousePosition = new WarehousePosition();
+                Integer cpositionname = dbTemplate("warehouseposition.verifyDuplication", Kv.by("cpositionname", data.get("cpositionname")).set("iwarehouseid", record.getLong("iwarehouseid")).set("iwarehouseareaid", record.getLong("iwarehouseareaid")).set("iwarehouseshelvesid", record.getLong("iautoid"))).queryInt();
+                if (cpositionname > 0) {
+                    ValidationUtils.error("第【" + iseq + "】行的【库位名称】" + data.get("cpositionname") + "已存在，请修改后保存");
+                }
 
-        //组织数据
-        warehousePosition.setIorgid(getOrgId());
-        warehousePosition.setCorgcode(getOrgCode());
-        warehousePosition.setCorgname(getOrgName());
+                WarehousePosition warehousePosition = new WarehousePosition();
 
-        //创建人
-        warehousePosition.setIcreateby(JBoltUserKit.getUserId());
-        warehousePosition.setCcreatename(JBoltUserKit.getUserName());
-        warehousePosition.setDcreatetime(new Date());
+                // 组织数据
+                warehousePosition.setIorgid(getOrgId());
+                warehousePosition.setCorgcode(getOrgCode());
+                warehousePosition.setCorgname(getOrgName());
 
-        //更新人
-        warehousePosition.setIupdateby(JBoltUserKit.getUserId());
-        warehousePosition.setCupdatename(JBoltUserKit.getUserName());
-        warehousePosition.setDupdatetime(new Date());
+                // 创建人
+                warehousePosition.setIcreateby(JBoltUserKit.getUserId());
+                warehousePosition.setCcreatename(JBoltUserKit.getUserName());
+                warehousePosition.setDcreatetime(now);
 
-        //是否删除，是否启用,数据来源
-        warehousePosition.setIsdeleted(false);
-        warehousePosition.setIsenabled(true);
-        warehousePosition.setIsource(SourceEnum.MES.getValue());
+                //更新人
+                warehousePosition.setIupdateby(JBoltUserKit.getUserId());
+                warehousePosition.setCupdatename(JBoltUserKit.getUserName());
+                warehousePosition.setDupdatetime(now);
 
-        warehousePosition.setCpositioncode(data.get("cpositioncode") + "");
-        warehousePosition.setCpositionname(data.get("cpositionname") + "");
+                //是否删除，是否启用,数据来源
+                warehousePosition.setIsdeleted(false);
+                warehousePosition.setIsenabled(true);
+                warehousePosition.setIsource(SourceEnum.MES.getValue());
 
-        warehousePosition.setIwarehouseid(record.getLong("iwarehouseid"));
-        warehousePosition.setIwarehouseareaid(record.getLong("iwarehouseareaid"));
-        warehousePosition.setIwarehouseshelvesid(record.getLong("iautoid"));
+                warehousePosition.setCpositioncode(data.getStr("cpositioncode"));
+                warehousePosition.setCpositionname(data.getStr("cpositionname"));
 
-        warehousePosition.setILength(BigDecimal.valueOf(Integer.parseInt(data.get("ilength") + "")));
-        warehousePosition.setIwidth(BigDecimal.valueOf(Integer.parseInt(data.get("iwidth") + "")));
-        warehousePosition.setIheight(BigDecimal.valueOf(Integer.parseInt(data.get("iheight") + "")));
-        warehousePosition.setImaxweight(BigDecimal.valueOf(Integer.parseInt(data.get("imaxweight") + "")));
-        warehousePosition.setImaxbulk(BigDecimal.valueOf(Integer.parseInt(data.get("imaxbulk") + "")));
+                warehousePosition.setIwarehouseid(record.getLong("iwarehouseid"));
+                warehousePosition.setIwarehouseareaid(record.getLong("iwarehouseareaid"));
+                warehousePosition.setIwarehouseshelvesid(record.getLong("iautoid"));
 
-        ValidationUtils.isTrue(warehousePosition.save(), "第" + iseq + "行保存数据失败");
+                warehousePosition.setILength(data.getBigDecimal("ilength"));
+                warehousePosition.setIwidth(data.getBigDecimal("iwidth"));
+                warehousePosition.setIheight(data.getBigDecimal("iheight"));
+                warehousePosition.setImaxweight((data.getBigDecimal("imaxweight")));
+                warehousePosition.setImaxbulk(data.getBigDecimal("imaxbulk"));
 
-        iseq++;
-      }
+                ValidationUtils.isTrue(warehousePosition.save(), "第" + iseq + "行保存数据失败");
 
-      return true;
-    });
+                iseq++;
+            }
 
-    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
+            return true;
+        });
+
     return SUCCESS;
   }
 
-  public List<Record> options(Kv kv) {
-    String iMouldsId = kv.getStr("iMouldsId");
-    if (isOk(iMouldsId)) {
-      return dbTemplate("warehouseposition.findByMouldsId", kv).find();
-    } else {
-      Sql sql = selectSql().eq("isDeleted", false).eq("isEnabled", true).orderBy("dCreateTime", false);
-      Long iAutoid = kv.getLong("iWarehouseId");
-      if (isOk(iAutoid)) {
-        sql.eq("iWarehouseId", iAutoid);
-      }
-      return findRecord(sql);
+    public List<Record> options(Kv kv) {
+        String iMouldsId = kv.getStr("iMouldsId");
+        if (isOk(iMouldsId)) {
+            return dbTemplate("warehouseposition.findByMouldsId", kv).find();
+        } else {
+            Sql sql = selectSql().eq("isDeleted", false).eq("isEnabled", true).orderBy("dCreateTime", false);
+            Long iAutoid = kv.getLong("iWarehouseId");
+            if (isOk(iAutoid)) {
+                sql.eq("iWarehouseId", iAutoid);
+            }
+            return findRecord(sql);
+        }
     }
-  }
 
   public List<WarehousePosition> getIdAndNameList() {
     return find("SELECT iAutoId,cPositionName FROM Bd_Warehouse_Position WHERE isDeleted = '0' ");

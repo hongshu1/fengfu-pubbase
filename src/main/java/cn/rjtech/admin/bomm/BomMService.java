@@ -7,7 +7,6 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
@@ -28,7 +27,6 @@ import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.*;
-import cn.rjtech.model.momdata.base.BaseBomD;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -271,7 +269,7 @@ public class BomMService extends BaseService<BomM> {
 			for (Record record : allList){
 				Long iInventoryId = record.getLong(BomD.IINVENTORYID);
 				// pId不为空，则说明是子件
-				if (ObjectUtil.isNotNull(record.getLong(BomD.IPID))){
+				if (ObjUtil.isNotNull(record.getLong(BomD.IPID))){
 					continue;
 				}
 				invMap.put(iInventoryId, record.getLong(BomD.IAUTOID));
@@ -556,7 +554,7 @@ public class BomMService extends BaseService<BomM> {
 				Long bomMid = bommTrl.getIBomMid();
 				BomData bomData = bomDataService.getBomData(bomMid);
 				bommTrlService.deleteById(id);
-				if (ObjectUtil.isNotNull(bomData)){
+				if (ObjUtil.isNotNull(bomData)){
 					bomDataService.deleteById(bomData.getIAutoId());
 				}
 			}
@@ -1036,7 +1034,7 @@ public class BomMService extends BaseService<BomM> {
 			List<BomD> bomDList = bomMListMap.get(bom);
 			List<BomD> bomDS = new ArrayList<>();
 			for (BomD bomD:bomDList){
-				if (ObjectUtil.isNull(bomD.getIInventoryId())){
+				if (ObjUtil.isNull(bomD.getIInventoryId())){
 					continue;
 				}
 				bomDS.add(bomD);
@@ -1075,7 +1073,7 @@ public class BomMService extends BaseService<BomM> {
 		
 		for (BomM bom : bomMListMap.keySet()){
 			// 赋值
-			if (ObjectUtil.isNotNull(bom.getIInventoryId())){
+			if (ObjUtil.isNotNull(bom.getIInventoryId())){
 				for (BomD bomD : bomMListMap.get(bom)){
 					Inventory inventory = inventoryService.findById(bomD.getIInventoryId());
 					String cVendCode = null;
@@ -1328,7 +1326,7 @@ public class BomMService extends BaseService<BomM> {
 			}
 			// 父级id
 			BomD parentBom = getParentBom(bomMasterInvId, perCode, codeBomCompareMap);
-			if (ObjectUtil.isNull(parentBom)){
+			if (ObjUtil.isNull(parentBom)){
 				continue;
 			}
 			Long pid = parentBom.getIAutoId();
@@ -1370,7 +1368,7 @@ public class BomMService extends BaseService<BomM> {
 	private void addParentInvMap(Map<Long, List<BomD>> parentInvMap, Long invId, BomD sonBomD){
 //		ValidationUtils.notNull(invId, "存货编码不能为空");
 		List<BomD> bomDList = parentInvMap.containsKey(invId) ? parentInvMap.get(invId) : new ArrayList<>();
-		if (ObjectUtil.isNull(sonBomD)){
+		if (ObjUtil.isNull(sonBomD)){
 			return;
 		}
 		Inventory inventory = inventoryService.findById(invId);
@@ -1383,7 +1381,7 @@ public class BomMService extends BaseService<BomM> {
 		for (BomD bomD : bomDList){
 			Long inventoryId = bomD.getIInventoryId();
 			// 同一个母件存在相同的子件，无需校验重量及基本用量
-			if (ObjectUtil.isNull(inventoryId) || pid.equals(bomD.getIPid())){
+			if (ObjUtil.isNull(inventoryId) || pid.equals(bomD.getIPid())){
 				continue;
 			}
 			if (inventoryId.equals(sonBomD.getIInventoryId())){
@@ -1406,7 +1404,7 @@ public class BomMService extends BaseService<BomM> {
 		String cInvLev = bomD.getCInvLev();
 		ValidationUtils.notNull(bomCompareQty, qtyErrorMsg(1, cInvLev, cInvCode));
 		
-		if (ObjectUtil.isNotNull(bomCompareIWeight)){
+		if (ObjUtil.isNotNull(bomCompareIWeight)){
 			ValidationUtils.isTrue(bomCompareIWeight.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(4, cInvLev, cInvCode));
 		}
 		ValidationUtils.isTrue(bomCompareQty.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(3, cInvLev, cInvCode));
@@ -1514,7 +1512,7 @@ public class BomMService extends BaseService<BomM> {
 	private void checkQtyOrWeight(Long invId, Long bomCompareInvId, String cInvLev, String cInvCode, BigDecimal bomCompareQty, BigDecimal bomCompareIWeight, BigDecimal qty, BigDecimal weight){
 		ValidationUtils.notNull(bomCompareQty, qtyErrorMsg(1, cInvLev, cInvCode));
 		
-		if (ObjectUtil.isNotNull(bomCompareIWeight)){
+		if (ObjUtil.isNotNull(bomCompareIWeight)){
 			ValidationUtils.isTrue(bomCompareIWeight.compareTo(BigDecimal.ZERO) >0, qtyErrorMsg(4, cInvLev, cInvCode));
 		}
 		
@@ -1523,14 +1521,14 @@ public class BomMService extends BaseService<BomM> {
 		// 校验存货编码是否一致
 		if (invId.equals(bomCompareInvId)){
 			ValidationUtils.isTrue(bomCompareQty.compareTo(qty)==0, qtyErrorMsg(5, cInvLev, cInvCode));
-			if (ObjectUtil.isNotNull(bomCompareIWeight) && ObjectUtil.isNotNull(weight)){
+			if (ObjUtil.isNotNull(bomCompareIWeight) && ObjUtil.isNotNull(weight)){
 				ValidationUtils.isTrue(bomCompareIWeight.compareTo(weight)==0, qtyErrorMsg(6, cInvLev, cInvCode));
 			}
-			if (ObjectUtil.isNull(bomCompareIWeight) &&  ObjectUtil.isNotNull(weight)){
-				ValidationUtils.isTrue(ObjectUtil.isNotNull(bomCompareIWeight), qtyErrorMsg(7, cInvLev, cInvCode));
+			if (ObjUtil.isNull(bomCompareIWeight) &&  ObjUtil.isNotNull(weight)){
+				ValidationUtils.isTrue(ObjUtil.isNotNull(bomCompareIWeight), qtyErrorMsg(7, cInvLev, cInvCode));
 			}
-			if (ObjectUtil.isNotNull(bomCompareIWeight) &&  ObjectUtil.isNull(weight)){
-				ValidationUtils.isTrue(ObjectUtil.isNotNull(weight), qtyErrorMsg(8, cInvLev, cInvCode));
+			if (ObjUtil.isNotNull(bomCompareIWeight) &&  ObjUtil.isNull(weight)){
+				ValidationUtils.isTrue(ObjUtil.isNotNull(weight), qtyErrorMsg(8, cInvLev, cInvCode));
 			}
 		}
 	}
@@ -1688,7 +1686,7 @@ public class BomMService extends BaseService<BomM> {
 	public List<BomM> findByInventoryId(Long orgId, Long inventoryId){
 		Sql sql = selectSql();
 		sql.eq(BomM.ISDELETED, "0").eq(BomM.IINVENTORYID, inventoryId);
-		if (ObjectUtil.isNotNull(orgId)){
+		if (ObjUtil.isNotNull(orgId)){
 			sql.eq(BomM.IORGID, orgId);
 		}
 		return find(sql);
@@ -1731,15 +1729,15 @@ public class BomMService extends BaseService<BomM> {
 						data.change(BomM.ISEFFECTIVE.toLowerCase(), "1".equals(isEffective) ? "是": "否");
 					}
 					Date dEnableDate = data.getDate(BomM.DENABLEDATE.toLowerCase());
-					if (ObjectUtil.isNotNull(dEnableDate)){
+					if (ObjUtil.isNotNull(dEnableDate)){
 						data.change(BomM.DENABLEDATE.toLowerCase(), DateUtil.formatDate(dEnableDate));
 					}
 					Date dDisableDate = data.getDate(BomM.DDISABLEDATE.toLowerCase());
-					if (ObjectUtil.isNotNull(dDisableDate)){
+					if (ObjUtil.isNotNull(dDisableDate)){
 						data.change(BomM.DDISABLEDATE.toLowerCase(), DateUtil.formatDate(dDisableDate));
 					}
 					Date dCreateTime = data.getDate(BomM.DCREATETIME.toLowerCase());
-					if (ObjectUtil.isNotNull(dCreateTime)){
+					if (ObjUtil.isNotNull(dCreateTime)){
 						data.change(BomM.DCREATETIME.toLowerCase(), DateUtil.formatDate(dDisableDate));
 					}
 				}).setRecordDatas(2, datas)).setFileName("物料清单" + "_" + DateUtil.today());
@@ -1770,15 +1768,15 @@ public class BomMService extends BaseService<BomM> {
 				.addSheet(jBoltExcelSheet.setDataChangeHandler((data, index) -> {
 					
 					Date dEnableDate = data.getDate(BomM.DENABLEDATE.toLowerCase());
-					if (ObjectUtil.isNotNull(dEnableDate)){
+					if (ObjUtil.isNotNull(dEnableDate)){
 						data.change(BomM.DENABLEDATE.toLowerCase(), DateUtil.formatDate(dEnableDate));
 					}
 					Date dDisableDate = data.getDate(BomM.DDISABLEDATE.toLowerCase());
-					if (ObjectUtil.isNotNull(dDisableDate)){
+					if (ObjUtil.isNotNull(dDisableDate)){
 						data.change(BomM.DDISABLEDATE.toLowerCase(), DateUtil.formatDate(dDisableDate));
 					}
 					Date dCreateTime = data.getDate(BomM.DCREATETIME.toLowerCase());
-					if (ObjectUtil.isNotNull(dCreateTime)){
+					if (ObjUtil.isNotNull(dCreateTime)){
 						data.change(BomM.DCREATETIME.toLowerCase(), DateUtil.formatDate(dDisableDate));
 					}
 				}).setRecordDatas(2, recordList)).setFileName("物料清单明细" + "_" + DateUtil.today());
@@ -1811,7 +1809,7 @@ public class BomMService extends BaseService<BomM> {
 			for (Record record : allList){
 				Long iInventoryId = record.getLong(BomD.IINVENTORYID);
 				// pId不为空，则说明是子件
-				if (ObjectUtil.isNotNull(record.getLong(BomD.IPID))){
+				if (ObjUtil.isNotNull(record.getLong(BomD.IPID))){
 					continue;
 				}
 				invMap.put(iInventoryId, record.getLong("id"));

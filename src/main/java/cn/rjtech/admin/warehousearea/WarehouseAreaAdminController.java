@@ -147,26 +147,20 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
     renderJsonData(service.options(getKv()));
   }
 
-  /**
-   * 库区档案excel导入
-   */
-  @SuppressWarnings("unchecked")
-  @CheckPermission(PermissionKey.WAREHOUSE_AREA_IMPORT)
-  public void importExcelClass() {
-    UploadFile uploadFile = getFile("file");
-    ValidationUtils.notNull(uploadFile, "上传文件不能为空");
+    /**
+     * 库区档案excel导入
+     */
+    @CheckPermission(PermissionKey.WAREHOUSE_AREA_IMPORT)
+    public void importExcelClass() {
+        UploadFile uploadFile = getFile("file");
+        ValidationUtils.notNull(uploadFile, "上传文件不能为空");
 
-    File file = uploadFile.getFile();
+        File file = uploadFile.getFile();
 
-    List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+        List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+        ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
 
-    // 截取最后一个“.”之前的文件名，作为导入格式名
-    String cformatName = list.get(0);
-
-    String extension = list.get(1);
-
-    ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-    renderJson(service.importExcelData(file));
-  }
+        renderJson(service.importExcelData(file));
+    }
 
 }

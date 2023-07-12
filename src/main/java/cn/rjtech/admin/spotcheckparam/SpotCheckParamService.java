@@ -1,7 +1,6 @@
 package cn.rjtech.admin.spotcheckparam;
 
 import cn.hutool.core.date.DateUtil;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.db.sql.Sql;
@@ -15,12 +14,10 @@ import cn.rjtech.model.momdata.SpotCheckParam;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

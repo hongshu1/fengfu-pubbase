@@ -12,8 +12,8 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.workshiftd.WorkshiftdService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.Workshiftd;
 import cn.rjtech.model.momdata.Workshiftm;
 import cn.rjtech.util.ValidationUtils;
@@ -46,9 +46,6 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
 
     @Inject
     private WorkshiftdService workshiftdService;
-
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
 
     /**
      * 后台管理分页查询
@@ -276,7 +273,7 @@ public class WorkshiftmService extends BaseService<Workshiftm> {
 
     public Ret importExcelData(File file) {
         // 使用字段配置维护
-        List<Record> datas = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         ValidationUtils.notEmpty(datas, "导入数据不能为空");
         
         List<Workshiftm> workshiftmList = new ArrayList<>();

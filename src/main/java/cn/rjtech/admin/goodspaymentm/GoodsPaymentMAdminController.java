@@ -146,12 +146,11 @@ public class GoodsPaymentMAdminController extends BaseAdminController {
         UploadFile uploadFile = getFile("file");
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");
         File file = uploadFile.getFile();
+        
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-        // 截取最后一个“.”之前的文件名，作为导入格式名
-        String cformatName = list.get(0);
-        String extension = list.get(1);
-        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-        renderJsonData(service.importExcel(file, cformatName));
+        ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        
+        renderJsonData(service.importExcel(file));
     }
 
 }

@@ -26,7 +26,6 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -257,23 +256,22 @@ public class ContainerService extends BaseService<Container> {
                 Record department = dbTemplate("department.getDepartmentByName", Kv.by("name", data.get("idepid"))).findFirst();
                 ValidationUtils.notNull(department, "第" + iseq + "行【部门】未找到对应的部门档案数据！");
 
-                Warehouse warehouse = warehouseService.findByWhName(data.get("iwarehouseid") + "");
+                Warehouse warehouse = warehouseService.findByWhName(data.getStr("iwarehouseid"));
                 ValidationUtils.notNull(warehouse, "第" + iseq + "行【所属仓库】未找到对应的仓库档案数据！");
 
-                if (!"社内".equals(data.get("isinner") + "") && !"社外".equals(data.get("isinner") + "")) {
+                if (!"社内".equals(data.getStr("isinner")) && !"社外".equals(data.getStr("isinner"))) {
                     ValidationUtils.error("第" + iseq + "行【存放地点】数据不正确，只能填写【社内】或【社外】");
                 }
-                boolean isinner = "社内".equals(data.get("isinner") + "");
+                boolean isinner = "社内".equals(data.getStr("isinner"));
 
-                if (!"是".equals(data.get("isenabled") + "") && !"否".equals(data.get("isenabled") + "")) {
+                if (!"是".equals(data.getStr("isenabled")) && !"否".equals(data.getStr("isenabled"))) {
                     ValidationUtils.error("第" + iseq + "行【是否启用】数据不正确，只能填写【是】或【否】");
                 }
-                boolean isenabled = "是".equals(data.get("isenabled") + "");
+                boolean isenabled = "是".equals(data.getStr("isenabled"));
 
-                ValidationUtils.isNumber((data.get("ilength") + ""), "第" + iseq + "行【长(mm)】不是数字类型！");
-                ValidationUtils.isNumber((data.get("iwidth") + ""), "第" + iseq + "行【宽(mm)】不是数字类型！");
-                ValidationUtils.isNumber((data.get("iheight") + ""), "第" + iseq + "行【高(mm)】不是数字类型！");
-
+                ValidationUtils.isNumber(data.getStr("ilength"), "第" + iseq + "行【长(mm)】不是数字类型！");
+                ValidationUtils.isNumber(data.getStr("iwidth"), "第" + iseq + "行【宽(mm)】不是数字类型！");
+                ValidationUtils.isNumber(data.getStr("iheight"), "第" + iseq + "行【高(mm)】不是数字类型！");
 
                 Container container = new Container();
                 //组织数据
@@ -296,22 +294,22 @@ public class ContainerService extends BaseService<Container> {
                 container.setIsEnabled(true);
 
                 if (data.get("icustomerid") != null) {
-                    Record record = dbTemplate("customer.getCustomerByName", Kv.by("icustomername", data.get("icustomerid") + "")).findFirst();
+                    Record record = dbTemplate("customer.getCustomerByName", Kv.by("icustomername", data.getStr("icustomerid"))).findFirst();
                     ValidationUtils.notNull(record, "第" + iseq + "行【客户名称】未找到对应的客户档案数据！");
                     container.setICustomerId(record.getLong("iautoid"));
                 }
 
-                container.setCContainerCode(data.get("ccontainercode") + "");
-                container.setCContainerName(data.get("ccontainername") + "");
+                container.setCContainerCode(data.getStr("ccontainercode"));
+                container.setCContainerName(data.getStr("ccontainername"));
                 container.setIContainerClassId(containerClass.getLong("iautoid"));
                 container.setIDepId(department.getLong("iautoid"));
                 container.setIWarehouseId(warehouse.getIAutoId());
                 container.setIsInner(isinner);
-                container.setILength(BigDecimal.valueOf(Integer.parseInt(data.get("ilength") + "")));
-                container.setIWidth(BigDecimal.valueOf(Integer.parseInt(data.get("iwidth") + "")));
-                container.setIHeight(BigDecimal.valueOf(Integer.parseInt(data.get("iheight") + "")));
-                container.setCVolume(data.get("cvolume") + "");
-                container.setCCommonModel(data.get("iheight") + "");
+                container.setILength(data.getBigDecimal("ilength"));
+                container.setIWidth(data.getBigDecimal("iwidth"));
+                container.setIHeight(data.getBigDecimal("iheight"));
+                container.setCVolume(data.getStr("cvolume"));
+                container.setCCommonModel(data.getStr("ccommonmodel"));
                 container.setIsEnabled(isenabled);
 
                 ValidationUtils.isTrue(container.save(), "第" + iseq + "行保存数据失败");

@@ -320,7 +320,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 
 	public List<JsTreeBean> getMgrTree(Long iinventoryroutingid) {
 		Kv kv = new Kv();
-		kv.put("iinventoryroutingid",iinventoryroutingid);
+		kv.set("iinventoryroutingid",iinventoryroutingid);
 		List<Record> configs = dbTemplate("inventoryclass.getRouingConfigs", kv).find();
 		List<JsTreeBean> jsTreeBeanList = new ArrayList<>();
 		JsTreeBean parent = new JsTreeBean("1","#","成品名称",null,"",false);
@@ -333,7 +333,7 @@ public class InventoryRoutingService extends BaseService<InventoryRouting> {
 		for (Record inventoryClass : configs){
 			Long id = inventoryClass.getLong("iautoid");
 			ids.append(id).append(",");
-			String type = inventoryClass.getInt("itype") + "";
+			String type = String.valueOf(inventoryClass.getInt("itype"));
 			String pid = "";
 			String text ="";
 			if(inventoryClass.getLong("irsinventoryid") == null){

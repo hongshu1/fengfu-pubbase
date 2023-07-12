@@ -1,18 +1,5 @@
 package cn.rjtech.admin.commonmenu;
 
-import static cn.hutool.core.text.StrPool.COMMA;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.jfinal.aop.Inject;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.jbolt._admin.permission.PermissionService;
 import cn.jbolt.common.model.CommonMenu;
@@ -29,6 +16,18 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.CommonMenuTypeEnum;
 import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Okv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 /**
  * 常用菜单 Service
  * @ClassName: CommonMenuService

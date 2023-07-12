@@ -13,7 +13,6 @@ import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.enums.ThirdpartySystemEnum;
 import cn.rjtech.model.main.UserThirdparty;
-
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;

@@ -1,6 +1,5 @@
 package cn.rjtech.api.spotcheckformm;
 
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
@@ -12,11 +11,9 @@ import cn.rjtech.model.momdata.SpotCheckForm;
 import cn.rjtech.model.momdata.SpotCheckFormM;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 点检管理

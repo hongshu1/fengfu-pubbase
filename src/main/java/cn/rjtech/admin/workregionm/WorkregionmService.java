@@ -3,7 +3,6 @@ package cn.rjtech.admin.workregionm;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
@@ -93,12 +92,12 @@ public class WorkregionmService extends BaseService<Workregionm> {
         if (workregionm == null || notOk(workregionm.getIAutoId()) || StrUtil.isBlank(workregionm.getCWorkCode())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        if (ObjectUtil.isNotNull(workregionm.getIDepId())){
+        if (ObjUtil.isNotNull(workregionm.getIDepId())){
             Department department = departmentService.findById(workregionm.getIDepId());
             workregionm.setCDepCode(department.getCDepCode());
             workregionm.setCDepName(department.getCDepName());
         }
-        if (ObjectUtil.isNotNull(workregionm.getIPersonId())){
+        if (ObjUtil.isNotNull(workregionm.getIPersonId())){
             Person person = personService.findById(workregionm.getIPersonId());
             workregionm.setCPersonCode(person.getCpsnNum());
             workregionm.setCPersonName(person.getCpsnName());

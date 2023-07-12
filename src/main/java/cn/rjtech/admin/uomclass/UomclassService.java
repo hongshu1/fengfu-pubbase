@@ -9,8 +9,8 @@ import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.uom.UomService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Uomclass;
 import cn.rjtech.util.ValidationUtils;
@@ -46,8 +46,6 @@ public class UomclassService extends BaseService<Uomclass> {
 
     @Inject
     private UomService uomService;
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
 
     /**
      * 后台管理分页查询
@@ -227,7 +225,6 @@ public class UomclassService extends BaseService<Uomclass> {
      * @param uomclass 要toggle的model
      * @param column   操作的哪一列
      * @param kv       携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkCanToggle(Uomclass uomclass, String column, Kv kv) {
@@ -249,7 +246,6 @@ public class UomclassService extends BaseService<Uomclass> {
      *
      * @param uomclass model
      * @param kv       携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(Uomclass uomclass, Kv kv) {
@@ -296,7 +292,7 @@ public class UomclassService extends BaseService<Uomclass> {
 
     public Ret importExcelData(File file) {
         // 使用字段配置维护
-        List<Record> datas = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         ValidationUtils.notEmpty(datas, "导入数据不能为空");
 
         Long userId = JBoltUserKit.getUserId();

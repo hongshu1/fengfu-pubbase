@@ -40,14 +40,15 @@ import java.util.List;
  * @date: 2023-04-25 21:32
  */
 public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderDBatch> {
-  private final SubcontractOrderDBatch dao = new SubcontractOrderDBatch().dao();
 
-  @Inject
-  private MomDataFuncService momDataFuncService;
-  @Inject
-  private SubcontractOrderDBatchVersionService subcontractOrderDBatchVersionService;
-  @Inject
-  private SubcontractorderdQtyService subcontractorderdQtyService;
+    private final SubcontractOrderDBatch dao = new SubcontractOrderDBatch().dao();
+
+    @Inject
+    private MomDataFuncService momDataFuncService;
+    @Inject
+    private SubcontractorderdQtyService subcontractorderdQtyService;
+    @Inject
+    private SubcontractOrderDBatchVersionService subcontractOrderDBatchVersionService;
 
   @Override
   protected SubcontractOrderDBatch dao() {
@@ -65,7 +66,6 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
    * @param pageNumber  第几页
    * @param pageSize    每页几条数据
    * @param isEffective 是否生效：0. 否  1. 是
-   * @return
    */
   public Page<SubcontractOrderDBatch> getAdminDatas(int pageNumber, int pageSize, Boolean isEffective) {
     //创建sql对象
@@ -79,9 +79,6 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 
   /**
    * 保存
-   *
-   * @param subcontractOrderDBatch
-   * @return
    */
   public Ret save(SubcontractOrderDBatch subcontractOrderDBatch) {
     if (subcontractOrderDBatch == null || isOk(subcontractOrderDBatch.getIAutoId())) {
@@ -98,9 +95,6 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 
   /**
    * 更新
-   *
-   * @param subcontractOrderDBatch
-   * @return
    */
   public Ret update(SubcontractOrderDBatch subcontractOrderDBatch) {
     if (subcontractOrderDBatch == null || notOk(subcontractOrderDBatch.getIAutoId())) {
@@ -125,7 +119,6 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
    *
    * @param subcontractOrderDBatch 要删除的model
    * @param kv                     携带额外参数一般用不上
-   * @return
    */
   @Override
   protected String afterDelete(SubcontractOrderDBatch subcontractOrderDBatch, Kv kv) {
@@ -138,7 +131,6 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
    *
    * @param subcontractOrderDBatch model
    * @param kv                     携带额外参数一般用不上
-   * @return
    */
   @Override
   public String checkInUse(SubcontractOrderDBatch subcontractOrderDBatch, Kv kv) {
@@ -152,7 +144,7 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
   @Override
   protected String afterToggleBoolean(SubcontractOrderDBatch subcontractOrderDBatch, String column, Kv kv) {
     //addUpdateSystemLog(subcontractOrderDBatch.getIAutoId(), JBoltUserKit.getUserId(), subcontractOrderDBatch.getName(),"的字段["+column+"]值:"+subcontractOrderDBatch.get(column));
-    /**
+    /*
      switch(column){
      case "isEffective":
      break;
@@ -194,9 +186,6 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
 
   /**
    * 导出PDF数据源
-   *
-   * @param kv
-   * @return
    */
   public Kv orderDBatchExportDatas(Kv kv, String type) throws IOException {
     // 为true 说明是看所有的
@@ -205,12 +194,14 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     } else {
       kv.set("isEffective", "1");
     }
-    List<Record> rowDatas = new ArrayList<>();
+    
+    List<Record> rowDatas;
     if ("未更改清单".equals(type)) {
       rowDatas = dbTemplate("subcontractorderdbatch.getPdfBySubcontractOrderMId", kv).find();
     } else {
       rowDatas = dbTemplate("subcontractorderdbatch.getVersionFindBySubcontractOrderMId", kv).find();
     }
+    
     Record record = new Record();
     record.set("SequenceNumber", "序号");
     record.set("cBarcode", "现品票");
@@ -254,9 +245,9 @@ public class SubcontractOrderDBatchService extends BaseService<SubcontractOrderD
     sheetNames3.add("现品票更改清单");
 
     for (int j = 0; j < rowDatas.size(); j++) {
-      rowDatas.get(j).set("dPlanDate", rowDatas.get(j).getStr("dPlanDate") + "");
+      rowDatas.get(j).set("dPlanDate", rowDatas.get(j).getStr("dPlanDate"));
 
-      if (kv.getStr("type").equals("1")) {
+      if ("1".equals(kv.getStr("type"))) {
 
         //<editor-fold desc="生成单个条码数据">
         String sheetName = "订货条码" + (j + 1);

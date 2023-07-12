@@ -383,16 +383,15 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
                 ValidationUtils.notNull(data.get("ibeforeinventoryid"), "第" + iseq + "行的【转换前存货编码】不能为空！");
                 ValidationUtils.notNull(data.get("iafterinventoryid"), "第" + iseq + "行的【转换后存货编码】不能为空！");
 
-                Inventory inventory1 = inventoryService.findBycInvCode(data.get("ibeforeinventoryid") + "");
+                Inventory inventory1 = inventoryService.findBycInvCode(data.getStr("ibeforeinventoryid"));
                 ValidationUtils.notNull(inventory1, "第" + iseq + "行的【转换前存货编码】在存货档案未找到对应的数据！");
-                Inventory inventory2 = inventoryService.findBycInvCode(data.get("iafterinventoryid") + "");
+                
+                Inventory inventory2 = inventoryService.findBycInvCode(data.getStr("iafterinventoryid"));
                 ValidationUtils.notNull(inventory2, "第" + iseq + "行的【转换前存货编码】在存货档案未找到对应的数据！");
 
-
-                String beforeInv = data.get("ibeforeinventoryid") + "";
-                String afterInv = data.get("iafterinventoryid") + "";
+                String beforeInv = data.getStr("ibeforeinventoryid");
+                String afterInv = data.getStr("iafterinventoryid");
                 ValidationUtils.isTrue(!beforeInv.equals(afterInv), "第" + iseq + "行【转换前存货编码】【转换前存货编码】一致，请更换");
-
 
                 InventoryChange inventoryChange = new InventoryChange();
 

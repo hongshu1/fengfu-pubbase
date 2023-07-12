@@ -1,7 +1,6 @@
 package cn.rjtech.admin.syspuinstore;
 
-import static cn.hutool.core.text.StrPool.COMMA;
-
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
@@ -23,6 +22,7 @@ import cn.rjtech.admin.rdstyle.RdStyleService;
 import cn.rjtech.admin.subcontractorderm.SubcontractOrderMService;
 import cn.rjtech.admin.sysassem.SysAssemService;
 import cn.rjtech.admin.sysassem.SysAssemdetailService;
+import cn.rjtech.admin.sysassembarcode.SysAssembarcodeService;
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.admin.syspureceive.SysPureceivedetailService;
 import cn.rjtech.admin.vendor.VendorService;
@@ -37,9 +37,9 @@ import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDTO.PreAllocate;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO;
 import cn.rjtech.u9.entity.syspuinstore.SysPuinstoreDeleteDTO.data;
 import cn.rjtech.util.BaseInU8Util;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.StringUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -50,7 +50,10 @@ import com.jfinal.plugin.activerecord.Record;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 采购入库单
@@ -100,6 +103,8 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
     private SysPureceiveService       pureceiveService;
     @Inject
     private SysPureceivedetailService pureceivedetailService;
+    @Inject
+    private SysAssembarcodeService sysassembarcodeservice;
 
     @Override
     protected int systemLogTargetType() {
@@ -672,11 +677,12 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
                 boolean special = checkPUReceiveSpecial(pureceive);
                 if (special) {
                     List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(puinstore.getAutoID());
-                    SysAssem sysAssem = new SysAssem();
-                    List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
-                    createSysAssem(sysAssem, detailList, puinstore, sysAssemdetailList);
-                    ValidationUtils.isTrue(sysAssem.save(), "生成形态转换单失败！！！");
-                    sysAssemdetailService.batchSave(sysAssemdetailList);
+                    this.insertSysAssem(detailList,puinstore);
+//                    SysAssem sysAssem = new SysAssem();
+//                    List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
+//                    createSysAssem(sysAssem, detailList, puinstore, sysAssemdetailList);
+//                    ValidationUtils.isTrue(sysAssem.save(), "生成形态转换单失败！！！");
+//                    sysAssemdetailService.batchSave(sysAssemdetailList);
                 }
                 //2.2 委外订单
                 Integer corderno = subcontractOrderMService.findOderNoIsNotExists(puinstore.getSourceBillNo());
@@ -807,14 +813,93 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
         boolean special = checkPUReceiveSpecial(pureceive);
         if (special) {
             List<SysPuinstoredetail> detailList = syspuinstoredetailservice.findDetailByMasID(sysPuinstore.getAutoID());
-            SysAssem sysAssem = new SysAssem();
-            List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
-            createSysAssem(sysAssem, detailList, sysPuinstore, sysAssemdetailList);
-            ValidationUtils.isTrue(sysAssem.save(), "生成形态转换单失败！！！");
-            sysAssemdetailService.batchSave(sysAssemdetailList);
+            this.insertSysAssem(detailList,sysPuinstore);
+
+//            SysAssem sysAssem = new SysAssem();
+//            List<SysAssemdetail> sysAssemdetailList = new ArrayList<>();
+//            createSysAssem(sysAssem, detailList, sysPuinstore, sysAssemdetailList);
+//            ValidationUtils.isTrue(sysAssem.save(), "生成形态转换单失败！！！");
+//            sysAssemdetailService.batchSave(sysAssemdetailList);
         }
         return null;
     }
+
+    //往形态转换单插数据
+    public void insertSysAssem( List<SysPuinstoredetail> detailList,SysPuinstore sysPuinstore){
+        if(CollectionUtil.isNotEmpty(detailList)){
+            User user = JBoltUserKit.getUser();
+            Date now = new Date();
+            //根据编码获取双单位数据主表数据
+            SysPureceive sysPureceive = pureceiveService.getSysPureceive(detailList.get(0).getBarCode());
+
+            //新增形态转换主表
+            SysAssem sysAssem = new SysAssem();
+            sysAssem.setBillType(sysPuinstore.getBillType());
+            sysAssem.setOrganizeCode(getOrgCode());
+            sysAssem.setBillNo(BillNoUtils.genCode(getOrgCode(), sysAssemService.table()));
+            sysAssem.setDeptCode(sysPuinstore.getDeptCode());
+            // todo 转换方式，入库类型,出库类型 默认是一对一，形态转换
+            sysAssem.setBillType("1659458823869370368");
+            sysAssem.setIRdCode("115");
+            sysAssem.setORdCode("215");
+            sysAssem.setIcreateby(user.getId());
+            sysAssem.setCcreatename(user.getName());
+            sysAssem.setDcreatetime(now);
+            sysAssem.setIupdateby(user.getId());
+            sysAssem.setCupdatename(user.getName());
+            sysAssem.setDupdatetime(now);
+            sysAssem.setIsDeleted(false);
+            sysAssemService.save(sysAssem);
+            ArrayList<SysAssembarcode> sysassembarcodeList = new ArrayList<>();
+            for ( SysPuinstoredetail s : detailList){
+                //获取收料单转换前的数据
+                SysPureceivedetail sysPureceivedetail = pureceivedetailService.getSysPureceivedetail(s.getBarCode());
+                //新增 T_Sys_AssemDetail，并实体T_Sys_AssemBarcode
+                this.insert(sysAssem,sysPureceive,now,user,sysPureceivedetail,sysassembarcodeList);
+                //获取转换后的数据
+                SysPureceivedetail sysPureceivedetailH = pureceivedetailService.getSysPureceivedetailH(sysPureceivedetail.getMasID(), sysPureceivedetail.getCombination());
+                this.insert(sysAssem,sysPureceive,now,user,sysPureceivedetailH,sysassembarcodeList);
+            }
+            sysassembarcodeservice.batchSave(sysassembarcodeList);
+        }
+    }
+    public void insert(SysAssem sysAssem,SysPureceive sysPureceive,Date now,User user,SysPureceivedetail sysPureceivedetail,ArrayList<SysAssembarcode> sysassembarcodeList){
+        SysAssemdetail sysAssemdetail = new SysAssemdetail();
+        sysAssemdetail.setMasID(sysAssem.getAutoID());
+        sysAssemdetail.setSourceBillNo(sysPureceivedetail.getSourceBillNo());
+        sysAssemdetail.setCombination(Integer.valueOf(sysPureceivedetail.getCombination()));
+        sysAssemdetail.setWhCode(sysPureceive.getWhCode());
+        sysAssemdetail.setPosCode(sysPureceivedetail.getPosCode());
+        sysAssemdetail.setRowNo(sysPureceivedetail.getRowNo());
+        sysAssemdetail.setAssemType(sysPureceivedetail.getBarcodeType());
+        sysAssemdetail.setVenCode(sysPureceive.getVenCode());
+        sysAssemdetail.setIcreateby(user.getId());
+        sysAssemdetail.setCcreatename(user.getName());
+        sysAssemdetail.setDcreatetime(now);
+        sysAssemdetail.setIupdateby(user.getId());
+        sysAssemdetail.setCupdatename(user.getName());
+        sysAssemdetail.setDupdatetime(now);
+        sysAssemdetail.setIsDeleted(false);
+        sysAssemdetail.save();
+        //形态转换条码实体
+        SysAssembarcode sysAssembarcode = new SysAssembarcode();
+        sysAssembarcode.setMasID(String.valueOf(sysAssemdetail.getAutoID()));
+        sysAssembarcode.setQty(sysPureceivedetail.getQty());
+        if(Objects.nonNull(sysPureceivedetail.getBarcode())){
+            sysAssembarcode.setBarcode(sysPureceivedetail.getBarcode());
+        }
+        sysAssembarcode.setInvCode(sysPureceivedetail.getInvcode());
+        sysAssembarcode.setIcreateby(user.getId());
+        sysAssembarcode.setCcreatename(user.getName());
+        sysAssembarcode.setDcreatetime(now);
+        sysAssembarcode.setIupdateby(user.getId());
+        sysAssembarcode.setCupdatename(user.getName());
+        sysAssembarcode.setDupdatetime(now);
+        sysAssembarcode.setIsDeleted(false);
+        sysassembarcodeList.add(sysAssembarcode);
+    }
+
+
 
     /*
      * 审核不通过

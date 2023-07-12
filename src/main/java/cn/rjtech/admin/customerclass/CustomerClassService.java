@@ -9,10 +9,9 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.CustomerClass;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -38,9 +37,6 @@ public class CustomerClassService extends BaseService<CustomerClass> {
     protected CustomerClass dao() {
         return dao;
     }
-
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
 
     /**
      * 后台管理分页查询
@@ -325,7 +321,7 @@ public class CustomerClassService extends BaseService<CustomerClass> {
 
     public Ret importExcelData_bak(File file) {
         // 使用字段配置维护
-        List<Record> datas = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         ValidationUtils.notEmpty(datas, "导入数据局不能为空");
 
         // 读取数据没有问题后判断必填字段

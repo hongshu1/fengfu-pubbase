@@ -1,6 +1,5 @@
 package cn.rjtech.api.processdefect;
 
-import cn.jbolt.core.api.OpenAPI;
 import cn.jbolt.core.permission.UnCheck;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.entity.vo.base.NullDataResult;

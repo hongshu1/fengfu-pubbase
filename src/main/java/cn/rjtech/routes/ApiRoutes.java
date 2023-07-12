@@ -1,7 +1,7 @@
 package cn.rjtech.routes;
 
-import cn.rjtech.api.formapproval.FormApprovalApiController;
 import cn.rjtech.api.appversion.AppversionApiController;
+import cn.rjtech.api.formapproval.FormApprovalApiController;
 import cn.rjtech.api.formuploadcategory.FormUploadCategoryApiController;
 import cn.rjtech.api.formuploadm.FormUploadMApiController;
 import cn.rjtech.api.general.GeneralApiController;
@@ -16,15 +16,15 @@ import cn.rjtech.api.moroutingconfigoperation.MoMoroutingconfigOperationApiContr
 import cn.rjtech.api.nfcswipecard.NfcSwipeCardApiController;
 import cn.rjtech.api.org.OrgApiController;
 import cn.rjtech.api.processdefect.ProcessDefectApiController;
+import cn.rjtech.api.prodformm.ProdFormMApiController;
 import cn.rjtech.api.qcinspection.QcInspectionApiController;
 import cn.rjtech.api.rcvdocdefect.RcvDocDefectApiController;
 import cn.rjtech.api.rcvdocqcformm.RcvDocQcFormMApiController;
+import cn.rjtech.api.spotcheckformm.SpotCheckFormMApiController;
 import cn.rjtech.api.stockoutdefect.StockoutDefectApiController;
 import cn.rjtech.api.stockoutqcformm.StockOutQcFormMApiController;
 import cn.rjtech.api.upload.UploadApiController;
 import cn.rjtech.api.uptimem.UptimeMApiController;
-import cn.rjtech.api.prodformm.ProdFormMApiController;
-import cn.rjtech.api.spotcheckformm.SpotCheckFormMApiController;
 import cn.rjtech.api.user.UserApiController;
 import cn.rjtech.api.workregion.WorkRegionmApiController;
 import cn.rjtech.common.CommonApiController;
