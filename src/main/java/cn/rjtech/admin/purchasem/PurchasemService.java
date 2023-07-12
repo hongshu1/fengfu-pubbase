@@ -67,7 +67,6 @@ import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
-
 /**
  * 申购单管理 Service
  *
@@ -297,8 +296,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         DataPermissionKit.validateAccess(purchasem.getCDepCode());
         ValidationUtils.notNull(purchasem, JBoltMsg.PARAM_ERROR);
         JBoltTable attachmentsTable = tableMulti.getJBoltTable("attachments");
-        Boolean flg = true;
-        flg = tx(() -> {
+        boolean flg = tx(() -> {
             // 申购主表数据处理
             if (notOk(purchasem.getIAutoId())) {
                 purchasem.setIOrgId(getOrgId());
@@ -318,7 +316,9 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
             ValidationUtils.isTrue(purchasem.update(), ErrorMsg.UPDATE_FAILED);
             
             //校验申购单本次累计申购金额是否超出了禀议金额的10%或者500元
-            if(!validatePurchaseMoneyIsExceed(purchasem)) return false;
+            if(!validatePurchaseMoneyIsExceed(purchasem)) {
+                return false;
+            }
             // 申购细表数据处理
             if (purchaseTable.saveIsNotBlank()) {
                 List<Record> saveRecordList = purchaseTable.getSaveRecordList();
@@ -340,8 +340,11 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
             saveAttachmentsTable(attachmentsTable,purchasem);
             return true;
         });
-        if(flg) return successWithData(purchasem.keep("iautoid"));
-        else return FAIL;
+        if(flg) {
+            return successWithData(purchasem.keep("iautoid"));
+        } else {
+            return FAIL;
+        }
     }
     private void saveAttachmentsTable(JBoltTable attachmentsTable,Purchasem purchasem){
     	Long ipurchasemid = purchasem.getIAutoId();
@@ -372,19 +375,19 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 		BigDecimal iproposalnatmoney = moneyRc.getBigDecimal("iproposalnatmoney");//禀议金额(本币无税)
 		BigDecimal purchaseRatio = null;
 		BigDecimal purchaseAmountRatio = null;
-		try{
-			purchaseRatio = new BigDecimal(globalConfigService.getConfigValue("purchase_ratio"));
-			purchaseAmountRatio = new BigDecimal(globalConfigService.getConfigValue("purchase_amount_ratio"));
-		}catch(Exception e){
-			ValidationUtils.error( "获取申购金额的金额限制参数出错!");
-		}
-		if(purchaseRatio == null || purchaseAmountRatio == null) ValidationUtils.error( "申购金额的金额限制参数未配置!");
+        try {
+            purchaseRatio = new BigDecimal(globalConfigService.getConfigValue("purchase_ratio"));
+            purchaseAmountRatio = new BigDecimal(globalConfigService.getConfigValue("purchase_amount_ratio"));
+        } catch (Exception e) {
+            ValidationUtils.error("获取申购金额的金额限制参数出错!");
+        }
 		//全局参数配置的限制比例*禀议金额（本币不含税） <= 全局参照配置的限制金额时，以限制比例*禀议金额（本币不含税）作为限制金额，否则直接取全局参数中的限制金额
 		BigDecimal iExceedAmount = iproposalnatmoney.multiply(purchaseRatio);
-		if(iExceedAmount.compareTo(purchaseAmountRatio) == 1) iExceedAmount = purchaseAmountRatio;
-		if(ialreadypurchasenatmoney.subtract(iproposalnatmoney).compareTo(iExceedAmount) == 1) return false;
-		return true;
-		//ValidationUtils.error( "申购金额已超禀议金额10%或500,请追加禀议!");
+		if(iExceedAmount.compareTo(purchaseAmountRatio) > 0) {
+            iExceedAmount = purchaseAmountRatio;
+        }
+        return ialreadypurchasenatmoney.subtract(iproposalnatmoney).compareTo(iExceedAmount) <= 0;
+        //ValidationUtils.error( "申购金额已超禀议金额10%或500,请追加禀议!");
 	}
     
 	/**
@@ -525,14 +528,12 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 
         // 推单状态校验
         long counts = purchasems.stream().filter(item -> item.getIStatus() == 1).count();
-        ValidationUtils.isTrue(!(counts > 0), "细项存在未推送数据");
+        ValidationUtils.isTrue(counts <= 0, "细项存在未推送数据");
         // 获取申购单单据号
         List<String> cPurchaseNos = purchasems.stream().map(Purchasem::getCPurchaseNo).collect(Collectors.toList());
 
         // 获取U8请购单主表ID
-        List<Integer> ids = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccodes", cPurchaseNos)).find().stream().filter(Objects::nonNull).map(item -> {
-            return item.getInt("id");
-        }).collect(Collectors.toList());
+        List<Integer> ids = dbTemplate(u8SourceConfigName(), "purchasem.getAppVouchId", Kv.by("ccodes", cPurchaseNos)).find().stream().filter(Objects::nonNull).map(item -> item.getInt("id")).collect(Collectors.toList());
         ValidationUtils.notEmpty(ids, "未找到对应U8请购单");
 
         // 校验是否有采购单信息
@@ -647,7 +648,9 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         para.set("isSystemAdmin", user.getIsSystemAdmin())
         .set("iorgid", getOrgId());
         List<Record> list = dbTemplate("purchasem.chooseProposalmDatas", para.set("iorgid", getOrgId())).find();
-        if (CollUtil.isEmpty(list)) return null;
+        if (CollUtil.isEmpty(list)) {
+            return null;
+        }
         List<Record> purposeList = dictionaryService.getOptionsByTypeKey(DictionaryTypeKeyEnum.PURPOSE.getValue());
         ValidationUtils.notEmpty(purposeList, "缺少目的区分的字典数据");
         // 目的区分 字典数据
@@ -658,16 +661,16 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         RecordMap<Long, String> categoryMap = new RecordMap<>(proposalcategoryList, "iautoid", "ccategoryname");
         for (Record row : list) {
         	String icategoryid = row.getStr("icategoryid");
-        	String ccategoryname = "";
+        	StringBuilder ccategoryname = new StringBuilder();
         	if(JBoltStringUtil.isNotBlank(icategoryid)){
         		String[] icategoryidList = icategoryid.split(",");
         		for (String id : icategoryidList) {
-        			ccategoryname+=categoryMap.get(Long.parseLong(id))+",";
+        			ccategoryname.append(categoryMap.get(Long.parseLong(id))).append(",");
 				}
-        		ccategoryname = ccategoryname.substring(0,ccategoryname.lastIndexOf(","));
+        		ccategoryname = new StringBuilder(ccategoryname.substring(0, ccategoryname.lastIndexOf(",")));
         	}
             row.set("cpurposename", purposeMap.get(row.getStr("cpurposesn")));
-            row.set("ccategoryname", ccategoryname);
+            row.set("ccategoryname", ccategoryname.toString());
         }
         return list;
     }
@@ -675,9 +678,9 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
      * 参照禀议书界面-禀议书项目数据查询
      * */
 	public List<Record> chooseProposalmDatasDetail(Kv para) {
-		List<Record> list = dbTemplate("purchasem.chooseProposalmDatasDetail", para).find();
-		return list;
+        return dbTemplate("purchasem.chooseProposalmDatasDetail", para).find();
 	}
+    
 	/**
 	 * 申购单生效：
 	 * 	1.反写禀议书累计申购金额(本币无税)
@@ -803,7 +806,9 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 	}
 	//表格提交-新增申购明细数据
 	private void addPurchasedDatas(List<Record> saveRecordList, Purchasem purchasem) {
-		if(CollUtil.isEmpty(saveRecordList)) return;
+		if(CollUtil.isEmpty(saveRecordList)) {
+            return;
+        }
 		Set<String> columnNames = TableMapping.me().getTable(Purchased.class).getColumnNameSet();
 		for (int i=0; i < saveRecordList.size(); i++) {
 			Record saveRecord = saveRecordList.get(i);
@@ -825,7 +830,9 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 	}
 	//表格提交-修改申购明细数据
 	private void updatePurchasedDatas(List<Record> updateRecordList) {
-		if(CollUtil.isEmpty(updateRecordList)) return;
+		if(CollUtil.isEmpty(updateRecordList)) {
+            return;
+        }
 		Set<String> columnNames = TableMapping.me().getTable(Purchased.class).getColumnNameSet();
 		for (int i=0; i < updateRecordList.size(); i++) {
 			Record saveRecord = updateRecordList.get(i);
@@ -845,7 +852,9 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 	}
 	//表格提交-修改申购明细数据
 	private void deletePurchasedDatas(Object[] ids) {
-		if(ArrayUtil.isEmpty(ids)) return;
+		if(ArrayUtil.isEmpty(ids)) {
+            return;
+        }
 		purchasedService.deleteByIds(ids);
 	}
    /**
@@ -901,12 +910,12 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         	record.remove("index");
         	String cbudgetno = record.getStr("cbudgetno");
         	if(JBoltStringUtil.isBlank(cbudgetno)) {
-        		errorMsg.append("第"+nowRow+"行,预算编号不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,预算编号不能为空<br/>");
         		continue;
         	}
         	List<Record> isExistsProposalFilterList = budgetRecordList.stream().filter(item->ObjUtil.equal(item.getStr("cbudgetno"), cbudgetno)).collect(Collectors.toList());
         	if(CollUtil.isEmpty(isExistsProposalFilterList)) {
-        		errorMsg.append("第"+nowRow+"行,预算编号不存在参照禀议书中<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,预算编号不存在参照禀议书中<br/>");
         		continue;
         	}
         	record.set("isourcetype", isExistsProposalFilterList.get(0).get("isourcetype"));
@@ -916,23 +925,26 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         	record.set("iproposaldid", isExistsProposalFilterList.get(0).get("iproposaldid"));
         	//excel中预算编号相同的所有行中第一行默认isubitem=0,其它行为isubitem=1
         	List<Record> isISubItemFilterList = rows.stream().filter(item->ObjUtil.equal(item.getStr("cbudgetno"), cbudgetno) && item.getInt("isubitem") != null).collect(Collectors.toList());
-        	if(CollUtil.isEmpty(isISubItemFilterList)) record.set("isubitem", IsEnableEnum.NO.getValue());
-        	else record.set("isubitem", IsEnableEnum.YES.getValue());
+        	if(CollUtil.isEmpty(isISubItemFilterList)) {
+                record.set("isubitem", IsEnableEnum.NO.getValue());
+            } else {
+                record.set("isubitem", IsEnableEnum.YES.getValue());
+            }
         	String cinvcode = record.getStr("cinvcode");
         	if(JBoltStringUtil.isBlank(cinvcode)){
-        		errorMsg.append("第"+nowRow+"行,存货编码不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,存货编码不能为空<br/>");
         		continue;
         	}
         	Record inventoryRc = inventoryService.findByCinvcode(cinvcode);
         	if(inventoryRc == null){
-        		errorMsg.append("第"+nowRow+"行,存货编码不存在<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,存货编码不存在<br/>");
         		continue;
         	}
         	record.set("cinvname", inventoryRc.getStr("cinvname"));
         	record.set("cinvstd", inventoryRc.getStr("cinvstd"));
         	String cunit = JBoltStringUtil.isNotBlank(record.getStr("cunit")) ? record.getStr("cunit"):inventoryRc.getStr("ccomunitname");
         	if(JBoltStringUtil.isBlank(cunit)){
-        		errorMsg.append("第"+nowRow+"行,单位不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,单位不能为空<br/>");
         		continue;
         	}
         	record.set("cunit", cunit);
@@ -941,27 +953,27 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         		Integer itaxrate = record.getInt("itaxrate");
         		Integer u8itaxrate = inventoryRc.getInt("itaxrate");
         		if(itaxrate == null && u8itaxrate == null) {
-        			errorMsg.append("第"+nowRow+"行,税率不能为空<br/>");
+        			errorMsg.append("第").append(nowRow).append("行,税率不能为空<br/>");
         			continue;
         		}
         		itaxrate = itaxrate != null ? itaxrate : u8itaxrate;
         		if(!(itaxrate>=1 && itaxrate <= 100)){
-            		errorMsg.append("第"+nowRow+"行,税率必须1-100的正整数<br/>");
+            		errorMsg.append("第").append(nowRow).append("行,税率必须1-100的正整数<br/>");
             		continue;
             	}
         		record.set("itaxrate", itaxrate);
         	}catch(Exception e){
-        		errorMsg.append("第"+nowRow+"行,税率必须1-100的正整数<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,税率必须1-100的正整数<br/>");
         		continue;
         	}
         	try{
         		Integer iquantity = record.getInt("iquantity");
         		if(iquantity == null) {
-        			errorMsg.append("第"+nowRow+"行,数量不能为空<br/>");
+        			errorMsg.append("第").append(nowRow).append("行,数量不能为空<br/>");
         			continue;
         		}
         	}catch(Exception e){
-        		errorMsg.append("第"+nowRow+"行,数量必须为正整数<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,数量必须为正整数<br/>");
         		continue;
         	}
         	String ccurrency = record.getStr("ccurrency");
@@ -973,19 +985,19 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         	}
         	nflat = nflat !=null? nflat : u8nflat;
         	if(nflat == null){
-        		errorMsg.append("第"+nowRow+"行,汇率不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,汇率不能为空<br/>");
         		continue;
         	}
         	nflat = NumberUtil.round(nflat,4,RoundingMode.HALF_UP);
         	record.set("nflat", nflat);
         	String cvencode = record.getStr("cvencode");
         	if(JBoltStringUtil.isBlank(cvencode)){
-        		errorMsg.append("第"+nowRow+"行,供应商编码不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,供应商编码不能为空<br/>");
         		continue;
         	}
         	Record vendorRc = vendorRecordService.getRecprdByCVenCode(cvencode);
         	if(vendorRc == null){
-        		errorMsg.append("第"+nowRow+"行,供应商编码不存在<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,供应商编码不存在<br/>");
         		continue;
         	}
         	record.set("cvenname", vendorRc.getStr("cvenname"));
@@ -993,36 +1005,40 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         		BigDecimal iprice = record.getBigDecimal("iprice");
         		BigDecimal u8Price = null;
         		Record u8PriceRc = dbTemplate(u8SourceConfigName(),"veninvprice.getiunitprice", Kv.by("cinvcode", cinvcode).set("cvencode", cvencode).set("cfree2", null)).findFirst();
-        		if(u8PriceRc!=null) u8Price = u8PriceRc.getBigDecimal("iunitprice");
+        		if(u8PriceRc!=null) {
+                    u8Price = u8PriceRc.getBigDecimal("iunitprice");
+                }
         		iprice = iprice != null ? iprice : u8Price;
         		if(iprice == null) {
-        			errorMsg.append("第"+nowRow+"行,单价不能为空<br/>");
+        			errorMsg.append("第").append(nowRow).append("行,单价不能为空<br/>");
         			continue;
         		}
         		iprice = NumberUtil.round(iprice, 2, RoundingMode.HALF_UP);
         		record.set("iprice", iprice);
         	}catch(Exception e){
-        		errorMsg.append("第"+nowRow+"行,单价必须为数字<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,单价必须为数字<br/>");
         		continue;
         	}
         	try{
         		if(JBoltStringUtil.isBlank(record.getStr("ddemandate"))){
-        			errorMsg.append("第"+nowRow+"行,需求日期不能为空<br/>");
+        			errorMsg.append("第").append(nowRow).append("行,需求日期不能为空<br/>");
 	        		continue;
         		}
 				Date ddemandate = JBoltDateUtil.toDate(record.getStr("ddemandate"), "yyyy/MM/dd");
 				if(ddemandate == null){
-					errorMsg.append("第"+nowRow+"行,需求日期格式不正确,请参考:yyyy/MM/dd<br/>");
+					errorMsg.append("第").append(nowRow).append("行,需求日期格式不正确,请参考:yyyy/MM/dd<br/>");
 	        		continue;
 				}
 			} catch (Exception e) {
-				errorMsg.append("第"+nowRow+"行,需求日期格式不正确,请参考:yyyy/MM/dd<br/>");
+				errorMsg.append("第").append(nowRow).append("行,需求日期格式不正确,请参考:yyyy/MM/dd<br/>");
         		continue;
 			}
         }
         String errorStr = errorMsg.toString();
-        if(JBoltStringUtil.isNotBlank(errorStr)) return fail(errorStr);
-        return Ret.ok("rows", rows);
+        if(JBoltStringUtil.isNotBlank(errorStr)) {
+            return fail(errorStr);
+        }
+        return successWithData(Okv.by("rows", rows));
     }
 	/**
 	 * 参考禀议-申购单明细导入 : 查询可导入的数据范围
@@ -1031,8 +1047,7 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
 		ValidationUtils.notNull(ifirstsourceproposalid, "参照禀议书ID为空!");
 		Kv para = Kv.by("ifirstsourceproposalid", ifirstsourceproposalid);
 		para.set("ieffectivestatus",EffectiveStatusEnum.EFFECTIVED.getValue());
-		List<Record> list = dbTemplate("purchasem.findCBudgetNosOfRefProposal",para).find();
-		return list;
+        return dbTemplate("purchasem.findCBudgetNosOfRefProposal",para).find();
 	}
 	
    /**
@@ -1088,12 +1103,12 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         	record.remove("index");
         	String cbudgetno = record.getStr("cbudgetno");
         	if(JBoltStringUtil.isBlank(cbudgetno)) {
-        		errorMsg.append("第"+nowRow+"行,预算编号不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,预算编号不能为空<br/>");
         		continue;
         	}
         	List<Record> isExistsProposalFilterList = budgetRecordList.stream().filter(item->ObjUtil.equal(item.getStr("cbudgetno"), cbudgetno)).collect(Collectors.toList());
         	if(CollUtil.isEmpty(isExistsProposalFilterList)) {
-        		errorMsg.append("第"+nowRow+"行,预算编号不存在可导入的预算数据范围内<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,预算编号不存在可导入的预算数据范围内<br/>");
         		continue;
         	}
         	record.set("isourcetype", isExistsProposalFilterList.get(0).get("isourcetype"));
@@ -1102,23 +1117,26 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         	record.set("isourceid", isExistsProposalFilterList.get(0).get("isourceid"));
         	//excel中预算编号相同的所有行中第一行默认isubitem=0,其它行为isubitem=1
         	List<Record> isISubItemFilterList = rows.stream().filter(item->ObjUtil.equal(item.getStr("cbudgetno"), cbudgetno) && item.getInt("isubitem") != null).collect(Collectors.toList());
-        	if(CollUtil.isEmpty(isISubItemFilterList)) record.set("isubitem", IsEnableEnum.NO.getValue());
-        	else record.set("isubitem", IsEnableEnum.YES.getValue());
+        	if(CollUtil.isEmpty(isISubItemFilterList)) {
+                record.set("isubitem", IsEnableEnum.NO.getValue());
+            } else {
+                record.set("isubitem", IsEnableEnum.YES.getValue());
+            }
         	String cinvcode = record.getStr("cinvcode");
         	if(JBoltStringUtil.isBlank(cinvcode)){
-        		errorMsg.append("第"+nowRow+"行,存货编码不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,存货编码不能为空<br/>");
         		continue;
         	}
         	Record inventoryRc = inventoryService.findByCinvcode(cinvcode);
         	if(inventoryRc == null){
-        		errorMsg.append("第"+nowRow+"行,存货编码不存在<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,存货编码不存在<br/>");
         		continue;
         	}
         	record.set("cinvname", inventoryRc.getStr("cinvname"));
         	record.set("cinvstd", inventoryRc.getStr("cinvstd"));
         	String cunit = JBoltStringUtil.isNotBlank(record.getStr("cunit")) ? record.getStr("cunit"):inventoryRc.getStr("ccomunitname");
         	if(JBoltStringUtil.isBlank(cunit)){
-        		errorMsg.append("第"+nowRow+"行,单位不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,单位不能为空<br/>");
         		continue;
         	}
         	record.set("cunit", cunit);
@@ -1127,27 +1145,27 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         		Integer itaxrate = record.getInt("itaxrate");
         		Integer u8itaxrate = inventoryRc.getInt("itaxrate");
         		if(itaxrate == null && u8itaxrate == null) {
-        			errorMsg.append("第"+nowRow+"行,税率不能为空<br/>");
+        			errorMsg.append("第").append(nowRow).append("行,税率不能为空<br/>");
         			continue;
         		}
         		itaxrate = itaxrate != null ? itaxrate : u8itaxrate;
         		if(!(itaxrate>=1 && itaxrate <= 100)){
-            		errorMsg.append("第"+nowRow+"行,税率必须1-100的正整数<br/>");
+            		errorMsg.append("第").append(nowRow).append("行,税率必须1-100的正整数<br/>");
             		continue;
             	}
         		record.set("itaxrate", itaxrate);
         	}catch(Exception e){
-        		errorMsg.append("第"+nowRow+"行,税率必须1-100的正整数<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,税率必须1-100的正整数<br/>");
         		continue;
         	}
         	try{
         		Integer iquantity = record.getInt("iquantity");
         		if(iquantity == null) {
-        			errorMsg.append("第"+nowRow+"行,数量不能为空<br/>");
+        			errorMsg.append("第").append(nowRow).append("行,数量不能为空<br/>");
         			continue;
         		}
         	}catch(Exception e){
-        		errorMsg.append("第"+nowRow+"行,数量必须为正整数<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,数量必须为正整数<br/>");
         		continue;
         	}
         	String ccurrency = record.getStr("ccurrency");
@@ -1159,19 +1177,19 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         	}
         	nflat = nflat !=null? nflat : u8nflat;
         	if(nflat == null){
-        		errorMsg.append("第"+nowRow+"行,汇率不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,汇率不能为空<br/>");
         		continue;
         	}
         	nflat = NumberUtil.round(nflat,4,RoundingMode.HALF_UP);
         	record.set("nflat", nflat);
         	String cvencode = record.getStr("cvencode");
         	if(JBoltStringUtil.isBlank(cvencode)){
-        		errorMsg.append("第"+nowRow+"行,供应商编码不能为空<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,供应商编码不能为空<br/>");
         		continue;
         	}
         	Record vendorRc = vendorRecordService.getRecprdByCVenCode(cvencode);
         	if(vendorRc == null){
-        		errorMsg.append("第"+nowRow+"行,供应商编码不存在<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,供应商编码不存在<br/>");
         		continue;
         	}
         	record.set("cvenname", vendorRc.getStr("cvenname"));
@@ -1179,32 +1197,36 @@ public class PurchasemService extends BaseService<Purchasem> implements IApprova
         		BigDecimal iprice = record.getBigDecimal("iprice");
         		BigDecimal u8Price = null;
         		Record u8PriceRc = dbTemplate(u8SourceConfigName(),"veninvprice.getiunitprice", Kv.by("cinvcode", cinvcode).set("cvencode", cvencode).set("cfree2", null)).findFirst();
-        		if(u8PriceRc!=null) u8Price = u8PriceRc.getBigDecimal("iunitprice");
+        		if(u8PriceRc!=null) {
+                    u8Price = u8PriceRc.getBigDecimal("iunitprice");
+                }
         		iprice = iprice != null ? iprice : u8Price;
         		if(iprice == null) {
-        			errorMsg.append("第"+nowRow+"行,单价不能为空<br/>");
+        			errorMsg.append("第").append(nowRow).append("行,单价不能为空<br/>");
         			continue;
         		}
         		iprice = NumberUtil.round(iprice, 2, RoundingMode.HALF_UP);
         		record.set("iprice", iprice);
         	}catch(Exception e){
-        		errorMsg.append("第"+nowRow+"行,单价必须为数字<br/>");
+        		errorMsg.append("第").append(nowRow).append("行,单价必须为数字<br/>");
         		continue;
         	}
         	try {
 				Date ddemandate = JBoltDateUtil.toDate(record.getStr("ddemandate"), "yyyy/MM/dd");
 				if(ddemandate == null){
-					errorMsg.append("第"+nowRow+"行,需求日期不能为空<br/>");
+					errorMsg.append("第").append(nowRow).append("行,需求日期不能为空<br/>");
 	        		continue;
 				}
 			} catch (Exception e) {
-				errorMsg.append("第"+nowRow+"行,需求日期格式不正确,请参考:yyyy/MM/dd<br/>");
+				errorMsg.append("第").append(nowRow).append("行,需求日期格式不正确,请参考:yyyy/MM/dd<br/>");
         		continue;
 			}
         }
         String errorStr = errorMsg.toString();
-        if(JBoltStringUtil.isNotBlank(errorStr)) return fail(errorStr);
-        return Ret.ok("rows", rows);
+        if(JBoltStringUtil.isNotBlank(errorStr)) {
+            return fail(errorStr);
+        }
+        return successWithData(Okv.by("rows", rows));
     }
 	//参考预算-申购单明细导入 : 查询可导入的数据范围
 	private List<Record> findEnableImportDatasOfRefBudget(String cdepcode){

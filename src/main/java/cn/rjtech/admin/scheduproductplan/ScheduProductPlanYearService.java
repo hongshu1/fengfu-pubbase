@@ -1,5 +1,6 @@
 package cn.rjtech.admin.scheduproductplan;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
@@ -9,13 +10,11 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.apsannualpland.ApsAnnualplandService;
 import cn.rjtech.admin.apsannualplandqty.ApsAnnualplandQtyService;
-import cn.rjtech.admin.calendar.CalendarService;
 import cn.rjtech.model.momdata.ApsAnnualpland;
 import cn.rjtech.model.momdata.ApsAnnualplandQty;
 import cn.rjtech.model.momdata.ApsAnnualplanm;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.service.func.mom.MomDataFuncService;
-import cn.rjtech.service.func.u9.DateQueryInvTotalFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -27,6 +26,7 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -52,15 +52,11 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
     }
     
     @Inject
-    private CalendarService calendarService;
-    @Inject
     private MomDataFuncService momDataFuncService;
     @Inject
     private ApsAnnualplandService apsAnnualplandService;
     @Inject
     private ApsAnnualplandQtyService apsAnnualplandQtyService;
-    @Inject
-    private DateQueryInvTotalFuncService dateQueryInvTotalFuncService;
 
     /**
      * 后台管理分页查询
@@ -71,8 +67,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
 
     /**
      * 保存
-     * @param apsAnnualplanm
-     * @return
      */
     public Ret save(ApsAnnualplanm apsAnnualplanm) {
         if(apsAnnualplanm==null || isOk(apsAnnualplanm.getIAutoId())) {
@@ -89,8 +83,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
 
     /**
      * 更新
-     * @param apsAnnualplanm
-     * @return
      */
     public Ret update(ApsAnnualplanm apsAnnualplanm) {
         if(apsAnnualplanm==null || notOk(apsAnnualplanm.getIAutoId())) {
@@ -110,8 +102,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
 
     /**
      * 删除 指定多个ID
-     * @param ids
-     * @return
      */
     public Ret deleteByBatchIds(String ids) {
         String[] idsArray = ids.split(",");
@@ -121,8 +111,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
 
     /**
      * 删除
-     * @param id
-     * @return
      */
     public Ret delete(Long id) {
         //deleteById(id,true);
@@ -134,7 +122,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
      * 删除数据后执行的回调
      * @param apsAnnualplanm 要删除的model
      * @param kv 携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(ApsAnnualplanm apsAnnualplanm, Kv kv) {
@@ -146,7 +133,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
      * 检测是否可以删除
      * @param apsAnnualplanm 要删除的model
      * @param kv 携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkCanDelete(ApsAnnualplanm apsAnnualplanm, Kv kv) {
@@ -156,7 +142,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
 
     /**
      * 设置返回二开业务所属的关键systemLog的targetType
-     * @return
      */
     @Override
     protected int systemLogTargetType() {
@@ -175,7 +160,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
      * @param apsAnnualplanm 要toggle的model
      * @param column 操作的哪一列
      * @param kv 携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkCanToggle(ApsAnnualplanm apsAnnualplanm,String column, Kv kv) {
@@ -196,14 +180,12 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
      * 检测是否可以删除
      * @param apsAnnualplanm model
      * @param kv 携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(ApsAnnualplanm apsAnnualplanm, Kv kv) {
         //这里用来覆盖 检测ApsAnnualplanm是否被其它表引用
         return null;
     }
-
 
     public String getEndYear(String startYear){
         Calendar calendar = Calendar.getInstance();
@@ -212,9 +194,9 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
         //第二个年份
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         calendar.add(Calendar.YEAR,1);
-        String endYear = sdf.format(calendar.getTime());
-        return endYear;
+        return sdf.format(calendar.getTime());
     }
+    
     public String getLastYear(String startYear){
         Calendar calendar = Calendar.getInstance();
         Date date = cn.rjtech.util.DateUtils.parseDate(startYear);
@@ -222,8 +204,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
         //上一个年份
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         calendar.add(Calendar.YEAR,-1);
-        String lastYear = sdf.format(calendar.getTime());
-        return lastYear;
+        return sdf.format(calendar.getTime());
     }
 
     //-----------------------------------------------------------------年度生产计划排产-----------------------------------------------
@@ -232,17 +213,12 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
         return findRecord("SELECT iAutoId,cCusName FROM Bd_Customer WHERE isDeleted = '0'");
     }
 
-
-
     public Page<Record> getApsYearPlanMasterPage(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("scheduproductplan.getApsYearPlanMasterList",kv).paginate(pageNumber,pageSize);
     }
 
-
     /**
      * 年度生产计划逻辑处理
-     * @param kv
-     * @return
      */
     public synchronized List<ScheduProductYearViewDTO> scheduPlanYear(Kv kv) {
         //年度生产计划集合
@@ -266,7 +242,6 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
             String PP = "PP";    //计划使用
             String CP = "CP";    //计划数量
             String ZK = "ZK";    //计划在库
-
 
             //TODO: 所有客户的年度每月工作日集合  key：客户id，value：<年份，客户每月工作天数>
             Map<Long,Map<String,Record>> cusWorkMonthNumListMap = new HashMap<>();
@@ -356,8 +331,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
      * CC:客户行事历
      * @param cusWorkMonthNumMap  客户工作天数 <年份，客户每月工作天数>
      */
-    public ScheduProductYearViewDTO getProductYearViewCC(String CC,String startYear,String endYear,
-                                                         Map<String,Record> cusWorkMonthNumMap){
+    public ScheduProductYearViewDTO getProductYearViewCC(String CC,String startYear,String endYear, Map<String,Record> cusWorkMonthNumMap){
         //CC:客户行事历
         ScheduProductYearViewDTO productYearViewCC = new ScheduProductYearViewDTO();
         try {
@@ -483,14 +457,14 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
                     if (i == 12){
                         cc = productYearViewCC.getNextmonth1();
                     }else {
-                        Object ccnum = productYearViewCC.getClass().getMethod("getNowmonth"+(i + 1),new Class[]{}).invoke(productYearViewCC, new Object[]{});
+                        Object ccnum = productYearViewCC.getClass().getMethod("getNowmonth"+(i + 1),new Class[]{}).invoke(productYearViewCC);
                         if (ccnum != null){
                             cc = (BigDecimal) ccnum;
                         }
                     }
                     cc = cc.compareTo(BigDecimal.ZERO) > 0 ? cc : BigDecimal.ONE;
                     //下月计划使用/下月客户行事历*(最低在库天数+最高在库天数)/2
-                    BigDecimal qty = pp.divide(cc,0,BigDecimal.ROUND_UP).multiply(sumStockDays).divide(new BigDecimal(2));
+                    BigDecimal qty = pp.divide(cc,0, RoundingMode.UP).multiply(sumStockDays).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                     productYearViewZK.getClass().getMethod("setNowmonth"+i, new Class[]{BigDecimal.class}).invoke(productYearViewZK, qty);
                     nowMonthSum = nowMonthSum.add(qty);
                 }
@@ -498,19 +472,19 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
                 if (i <= 3){
                     //下月计划使用
                     BigDecimal pp = BigDecimal.ZERO;
-                    Object ppnum = productYearViewPP.getClass().getMethod("getNextmonth"+(i + 1),new Class[]{}).invoke(productYearViewPP, new Object[]{});
+                    Object ppnum = productYearViewPP.getClass().getMethod("getNextmonth"+(i + 1),new Class[]{}).invoke(productYearViewPP);
                     if (ppnum != null){
                         pp = (BigDecimal) ppnum;
                     }
                     //下月客户行事历
                     BigDecimal cc = BigDecimal.ZERO;
-                    Object ccnum = productYearViewCC.getClass().getMethod("getNextmonth"+(i + 1),new Class[]{}).invoke(productYearViewCC, new Object[]{});
+                    Object ccnum = productYearViewCC.getClass().getMethod("getNextmonth"+(i + 1),new Class[]{}).invoke(productYearViewCC);
                     if (ccnum != null){
                         cc = (BigDecimal) ccnum;
                     }
                     cc = cc.compareTo(BigDecimal.ZERO) > 0 ? cc : BigDecimal.ONE;
                     //下月计划使用/下月客户行事历*(最低在库天数+最高在库天数)/2
-                    BigDecimal qty = pp.divide(cc,0,BigDecimal.ROUND_UP).multiply(sumStockDays).divide(new BigDecimal(2));
+                    BigDecimal qty = pp.divide(cc,0, RoundingMode.UP).multiply(sumStockDays).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                     productYearViewZK.getClass().getMethod("setNextmonth"+i, new Class[]{BigDecimal.class}).invoke(productYearViewZK, qty);
                     nextMonthSum = nextMonthSum.add(qty);
                 }
@@ -739,7 +713,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
             apsAnnualplandService.batchSave(annualplandList);
             //apsAnnualplandQtyService.batchSave(annualplandQtyList);
             if (annualplandQtyList.size() > 0) {
-                List<List<ApsAnnualplandQty>> groupList = CollectionUtils.partition(annualplandQtyList, 300);
+                List<List<ApsAnnualplandQty>> groupList = CollUtil.split(annualplandQtyList, 300);
                 CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
                 ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
                 for (List<ApsAnnualplandQty> dataList : groupList) {
@@ -868,7 +842,7 @@ public class ScheduProductPlanYearService extends BaseService<ApsAnnualplanm>  i
             apsAnnualplandService.batchSave(annualplandList);
             //apsAnnualplandQtyService.batchSave(annualplandQtyList);
             if (annualplandQtyList.size() > 0) {
-                List<List<ApsAnnualplandQty>> groupList = CollectionUtils.partition(annualplandQtyList, 300);
+                List<List<ApsAnnualplandQty>> groupList = CollUtil.split(annualplandQtyList, 300);
                 CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
                 ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
                 for (List<ApsAnnualplandQty> dataList : groupList) {

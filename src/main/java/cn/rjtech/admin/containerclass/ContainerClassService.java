@@ -14,7 +14,9 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.model.momdata.Container;
 import cn.rjtech.model.momdata.ContainerClass;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -310,5 +312,11 @@ public class ContainerClassService extends BaseService<ContainerClass> {
       return true;
     });
     return SUCCESS;
+  }
+
+  public ContainerClass getContainerClassCode() {
+    ContainerClass containerClass = new ContainerClass();
+    containerClass.setCContainerClassCode(BillNoUtils.genCode(getOrgCode(), table()));
+    return containerClass;
   }
 }

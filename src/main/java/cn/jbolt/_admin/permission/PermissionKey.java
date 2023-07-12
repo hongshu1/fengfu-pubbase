@@ -4117,4 +4117,32 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String PLANYEAR_DELETE = "planyear_delete";
+	/**
+	 * 删除
+	 */
+	public static final String MOMATERIALSRETURNM_DEL = "momaterialsreturnm_del";
+	/**
+	 * 编辑
+	 */
+	public static final String MOMATERIALSRETURNM_EDIT = "momaterialsreturnm_edit";
+	/**
+	 * 导出
+	 */
+	public static final String SALES_DELIVERY_LIST_EXPORT = "sales_delivery_list_export";
+	/**
+	 * 新增
+	 */
+	public static final String SALES_DELIVERY_LIST_ADD = "sales_delivery_list_add";
+	/**
+	 * 编辑
+	 */
+	public static final String SALES_DELIVERY_LIST_EDIT = "sales_delivery_list_edit";
+	/**
+	 * 删除
+	 */
+	public static final String SALES_DELIVERY_LIST_DELETE = "sales_delivery_list_delete";
+	/**
+	 * 打印
+	 */
+	public static final String SALES_DELIVERY_LIST_PRINT = "sales_delivery_list_print";
 }

@@ -1,5 +1,6 @@
 package cn.rjtech.admin.otheroutreturnlist;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
@@ -13,10 +14,8 @@ import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -328,7 +327,7 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	//推送u8数据接口
 	public Ret pushU8(OtherOut otherout, List<OtherOutDetail> otheroutdetail) {
-		if(!CollectionUtils.isNotEmpty(otheroutdetail)){
+		if(CollUtil.isEmpty(otheroutdetail)){
 			return fail("数据不能为空");
 		}
 
@@ -336,14 +335,14 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 		JSONObject data = new JSONObject();
 
 		data.set("userCode",user.getUsername());
-		data.set("organizeCode",this.getCorgcode());
+		data.set("organizeCode", getOrgCode());
 		data.set("token","");
 
 		JSONObject preallocate = new JSONObject();
 
 
 		preallocate.set("userCode",user.getUsername());
-		preallocate.set("organizeCode",this.getCorgcode());
+		preallocate.set("organizeCode", getOrgCode());
 		preallocate.set("CreatePerson",user.getId());
 		preallocate.set("CreatePersonName",user.getName());
 		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -392,18 +391,13 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 			if (isOk(post)) {
 				if ("201".equals(jsonObject.getString("code"))) {
 					System.out.println(jsonObject);
-					return Ret.ok("提交成功");
+					return success("提交成功");
 				}
 			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}
 		return fail("上传u8失败");
-	}
-
-	public String getCorgcode(){
-		Person person = personservice.findFirstByUserId(JBoltUserKit.getUserId());
-		return null == person ? null : person.getCOrgCode();
 	}
 
 }

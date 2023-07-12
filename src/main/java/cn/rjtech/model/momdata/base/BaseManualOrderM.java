@@ -10,7 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JBoltBaseModel<M>{
-    
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键ID*/
     public static final String IAUTOID = "iAutoId";
     /**组织ID*/
@@ -139,6 +139,10 @@ public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JB
     public static final String CCUSCODE = "cCusCode";
     /**客户名称*/
     public static final String CCUSNAME = "cCusName";
+    /**审批人ID*/
+    public static final String IAUDITBY = "iAuditBy";
+    /**审批人名称*/
+    public static final String CAUDITNAME = "cAuditName";
 	/**
 	 * 主键ID
 	 */
@@ -1227,5 +1231,38 @@ public abstract class BaseManualOrderM<M extends BaseManualOrderM<M>> extends JB
 		return getStr("cCusName");
 	}
 
+	/**
+	 * 审批人ID
+	 */
+	public M setIAuditBy(java.lang.Long iAuditBy) {
+		set("iAuditBy", iAuditBy);
+		return (M)this;
+	}
+
+	/**
+	 * 审批人ID
+	 */
+	@JBoltField(name="iauditby" ,columnName="iAuditBy",type="Long", remark="审批人ID", required=false, maxLength=19, fixed=0, order=65)
+	@JSONField(name = "iauditby", serializeUsing = ToStringSerializer.class)
+	public java.lang.Long getIAuditBy() {
+		return getLong("iAuditBy");
+	}
+
+	/**
+	 * 审批人名称
+	 */
+	public M setCAuditName(java.lang.String cAuditName) {
+		set("cAuditName", cAuditName);
+		return (M)this;
+	}
+
+	/**
+	 * 审批人名称
+	 */
+	@JBoltField(name="cauditname" ,columnName="cAuditName",type="String", remark="审批人名称", required=false, maxLength=50, fixed=0, order=66)
+	@JSONField(name = "cauditname")
+	public java.lang.String getCAuditName() {
+		return getStr("cAuditName");
+	}
 }
 

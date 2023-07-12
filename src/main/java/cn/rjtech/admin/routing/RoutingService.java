@@ -168,7 +168,7 @@ public class RoutingService extends BaseService<BomMaster> {
         List<JsTreeBean> trees = new ArrayList<>();
         for (Record record : recordList){
             String id = record.getStr(InventoryRoutingConfig.IAUTOID);
-			String pid = record.getStr(InventoryRoutingConfig.IPID);
+			String pid = record.getStr(InventoryRoutingConfig.IAUTOID);
 			String partName = record.getStr(InvPart.CPARTNAME);
 			
 			StringBuilder text = new StringBuilder(partName);

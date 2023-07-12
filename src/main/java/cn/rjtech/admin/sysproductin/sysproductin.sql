@@ -19,11 +19,14 @@ where so.isDeleted = '0'
 #if(billno)
 	and so.BillNo like concat('%',#para(billno),'%')
 #end
-#if(deptcode)
-	and so.DeptCode = #para(deptcode)
+#if(deptname)
+	and dept.cDepName = #para(deptname)
 #end
-#if(whcode)
-	and so.Whcode = #para(whcode)
+#if(whname)
+	and ck.cWhName = #para(whname)
+#end
+#if(state)
+    and so.iAuditStatus = #para(state)
 #end
 #if(startTime)
 	and so.dcreatetime >= #para(startTime)

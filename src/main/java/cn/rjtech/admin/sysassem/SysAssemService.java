@@ -30,7 +30,6 @@ import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -310,7 +309,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return Ret.ok().set("autoid", sysotherin.getAutoID());
+        return successWithData(sysotherin.keep("autoid"));
     }
 
     //可编辑表格提交-新增数据
@@ -322,8 +321,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         User user = JBoltUserKit.getUser();
         Date now = new Date();
         ArrayList<SysAssembarcode> sysassembarcodeList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            Record row = list.get(i);
+        for (Record row : list) {
             SysAssemdetail sysAssemdetail = new SysAssemdetail();
             sysAssemdetail.setMasID(sysotherin.getAutoID());
             sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
@@ -460,18 +458,18 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     //推送u8数据接口
     public String pushU8(SysAssem sysassem, List<SysAssemdetail> sysassemdetail) {
-        if (!CollectionUtils.isNotEmpty(sysassemdetail)) {
+        if (CollUtil.isEmpty(sysassemdetail)) {
             return "推u8从表数据不能为空";
         }
         User user = JBoltUserKit.getUser();
         JSONObject data = new JSONObject();
         data.set("userCode", user.getUsername());
-        data.set("organizeCode", this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token", "");
         JSONObject preallocate = new JSONObject();
         preallocate.set("userCode", user.getUsername());
         preallocate.set("password", "123456");
-        preallocate.set("organizeCode", this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson", user.getId());
         preallocate.set("CreatePersonName", user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -517,9 +515,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             e.printStackTrace();
             return "上传u8失败:"+e.getMessage();
         }
-
     }
-
 
     public void setjson(SysAssemdetail s, User user,SysAssembarcode first,SysAssem sysassem,ArrayList<Object> maindata){
         JSONObject jsonObject = new JSONObject();
@@ -527,7 +523,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         jsonObject.set("iwhname", "");
         jsonObject.set("invcode", first.getInvCode());
         jsonObject.set("userCode", user.getUsername());
-        jsonObject.set("organizeCode", this.getdeptid());
+        jsonObject.set("organizeCode", getOrgCode());
         jsonObject.set("OWhCode", s.getPosCode());
         jsonObject.set("owhname", "");
         jsonObject.set("barcode", first.getBarcode());
@@ -584,18 +580,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         return dbTemplate(u8SourceConfigName(), "sysassem.findU8RdRecord01Id", Kv.by("cCode", cCode)).findFirst();
     }
 
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid() {
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if(null != person && "".equals(person)){
-            dept = person.getCOrgCode();
-        }
-        return dept;
-    }
-
     public void commonSaveSysAssemModel(SysAssem sysAssem, SysPuinstore puinstore) {
         Date date = new Date();
         sysAssem.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
@@ -622,8 +606,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     /**
      * 根据条件获取资源
-     * @param kv
-     * @return
      */
     public List<Record> getResource(Kv kv){
         kv.setIfNotNull("orgCode", getOrgCode());
@@ -634,8 +616,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     /**
      * 根据条件获取资源
-     * @param kv
-     * @return
      */
     public Record getBarcode(Kv kv){
         kv.setIfNotNull("orgCode", getOrgCode());
@@ -774,7 +754,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         SysAssem byId = findById(formAutoId);
         //获取转换后的所有数据
         List<SysAssemdetail> firstBy = sysassemdetailservice.findFirst(formAutoId.toString());
-        if(CollectionUtils.isNotEmpty(firstBy)){
+        if(CollUtil.isNotEmpty(firstBy)){
             for(SysAssemdetail detail : firstBy){
                 //生成现品票
                 this.cashNotTransaction(formAutoId,detail);
@@ -796,7 +776,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
             //获取转换后的所有数据
             List<SysAssemdetail> firstBy = sysassemdetailservice.findFirst(formAutoId.toString());
-            if(!CollectionUtils.isEmpty(firstBy)){
+            if(CollUtil.isNotEmpty(firstBy)){
                 for(SysAssemdetail detail : firstBy){
                     //生成现品票
                     this.cashNotTransaction(s,detail);
@@ -867,9 +847,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         SysAssem byId = findById(formAutoId);
         //从表数据
         List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstByall(formAutoId);
-        if(CollectionUtils.isNotEmpty(firstBy)){
+        if(CollUtil.isNotEmpty(firstBy)){
             for (SysAssemdetail s : firstBy ){
-                if(!s.getAssemType().equals("转换前")) {
+                if(!"转换前".equals(s.getAssemType())) {
                     delete("DELETE T_Sys_AssemBarcode where MasID = ? and Barcode is not null and isDeleted = '0'",s.getAutoID());
                 }
             }
@@ -888,9 +868,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             SysAssem byId = findById(d);
             //从表数据
             List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstByall(d);
-            if (CollectionUtils.isNotEmpty(firstBy)) {
+            if (CollUtil.isNotEmpty(firstBy)) {
                 for (SysAssemdetail s : firstBy) {
-                    if (!s.getAssemType().equals("转换前")) {
+                    if (!"转换前".equals(s.getAssemType())) {
                         delete("DELETE T_Sys_AssemBarcode where MasID = ? and Barcode is not null and isDeleted = '0'", s.getAutoID());
                     }
                 }

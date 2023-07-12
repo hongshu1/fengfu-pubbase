@@ -384,7 +384,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             return true;
         });
 
-        return Ret.ok().set("autoid", sysPureceive.getAutoID());
+        return successWithData(sysPureceive.keep("autoid"));
     }
 
     private void saveData(JBoltTable jBoltTable, SysPureceive sysPureceive, String operationType, User user, HashMap<String, String> map) {
@@ -729,8 +729,8 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
                 if (null != firstByBarcode) {
                     SysPuinstore byId = syspuinstoreservice.findById(firstByBarcode.getMasID());
                     if (null != byId) {
-                        if (!"0".equals(String.valueOf(byId.getIAuditStatus()))) {
-                            return "采购入库编号：" + byId.getBillNo() + " 单据，不是未审核状态！！";
+                        if ("1".equals(String.valueOf(byId.getIAuditStatus())) || "2".equals(String.valueOf(byId.getIAuditStatus()))) {
+                            return "采购入库编号：" + byId.getBillNo() + " 单据，已生成下游单据，无法反审！！";
                         }
                     }
                 }
@@ -793,30 +793,26 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             List<SysPureceivedetail> firstBy = syspureceivedetailservice.findFirstBy(s.getAutoID());
             if (firstBy.isEmpty()) return;
             for (SysPureceivedetail d : firstBy) {
-                if ("0".equals(d.getIsInitial())) {
-                    SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
-                    if (null != firstByBarcode && null != firstByBarcode.getAutoID()) {
-                        String autoID = firstByBarcode.getMasID();
-                        //删除从表
-                        syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
-                        SysPuinstore byId = syspuinstoreservice.findById(autoID);
-                        List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
-                        if (detailByMasID.isEmpty()) {
-                            // 从表没数据才删除 主表
-                            syspuinstoreservice.deleteByIds(byId.getAutoID());
+                SysPuinstoredetail firstByBarcode = syspuinstoredetailservice.findFirstByBarcode(d.getBarcode());
+                if (null != firstByBarcode && null != firstByBarcode.getAutoID()) {
+                    String autoID = firstByBarcode.getMasID();
+                    //删除从表
+                    syspuinstoredetailservice.deleteByIds(firstByBarcode.getAutoID());
+                    SysPuinstore byId = syspuinstoreservice.findById(autoID);
+                    List<SysPuinstoredetail> detailByMasID = syspuinstoredetailservice.findDetailByMasID(byId.getAutoID());
+                    if (detailByMasID.isEmpty()) {
+                        // 从表没数据才删除 主表
+                        syspuinstoreservice.deleteByIds(byId.getAutoID());
 
-                        }
-                    }
-                } else {
-                    // 通过主表的入库单号 查质检单数据
-                    List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
-                    if (null != firstBycRcvDocNo && firstBycRcvDocNo.size() > 0) {
-                        for (RcvDocQcFormM r : firstBycRcvDocNo) {
-                            rcvdocqcformmservice.deleteByIds(String.valueOf(r.getIAutoId()));
-                        }
                     }
                 }
-
+                // 通过主表的入库单号 查质检单数据
+                List<RcvDocQcFormM> firstBycRcvDocNo = rcvdocqcformmservice.findFirstBycRcvDocNo(s.getBillNo());
+                if (null != firstBycRcvDocNo && firstBycRcvDocNo.size() > 0) {
+                    for (RcvDocQcFormM r : firstBycRcvDocNo) {
+                        rcvdocqcformmservice.deleteByIds(String.valueOf(r.getIAutoId()));
+                    }
+                }
             }
         }
     }
@@ -993,9 +989,9 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
     public String preReverseApproveFunc(long formAutoId, boolean isFirst, boolean isLast) {
         String checkbelowtwo = null;
         //最后一个节点才判断下游单据状态
-        if (isLast) {
+//        if (isLast) {
             checkbelowtwo = this.checkbelowtwo(formAutoId);
-        }
+//        }
         return checkbelowtwo;
     }
 

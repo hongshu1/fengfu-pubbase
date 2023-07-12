@@ -69,6 +69,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
     @Inject
 	private CusFieldsMappingDService cusFieldsMappingdService;
 
+
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
@@ -259,7 +260,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 			deleteTableSubmitDatas(jBoltTable);
 			return true;
 		});
-		return Ret.ok().set("autoid", goodspaymentm.getIAutoId());
+		return successWithData(goodspaymentm.keep("autoid"));
 	}
 
 	//可编辑表格提交-新增数据
@@ -273,7 +274,11 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 			Record row = list.get(i);
 			GoodsPaymentD goodsPaymentD = new GoodsPaymentD();
 			goodsPaymentD.setIGoodsPaymentMid(rcvplanm.getIAutoId());
-			goodsPaymentD.setIInventoryId(row.getStr("iinventoryid"));
+			//通过存货编码去查询存货id
+			ValidationUtils.notNull(row.getStr("cinvcode"),"存货编码不能为空");
+			Inventory cinvcode = inventoryservice.findFirst("select * from Bd_Inventory where cInvCode = ?", row.getStr("cinvcode"));
+			ValidationUtils.notNull(cinvcode,"存货编码:" +row.getStr("cinvcode")+",查不到对应的id");
+			goodsPaymentD.setIInventoryId(cinvcode.getIAutoId().toString());
 			goodsPaymentD.setCBarcode(row.getStr("cbarcode"));
 			goodsPaymentD.setCVersion(row.getStr("cversion"));
 			goodsPaymentD.setIQty(row.getBigDecimal("iqty"));
