@@ -1,10 +1,30 @@
 #sql("datas")
-SELECT t2.MasID,t2.AutoID,t2.VenCode,t2.Barcode,
-       t2.Invcode,t2.BarcodeDate,t2.Batch,t2.Qty,t2.PrintNum,
-       t2.ReportFileName,t2.CreatePerson,t2.CreateDate,t2.ModifyDate,t2.ModifyPerson,
-       t3.WhCode,t7.cWhName,t3.PosCode,t6.cAreaName,
-       t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,t4.iInventoryClassId,
-       t5.cUomCode,t5.cUomName,t8.cInvCName
+SELECT t2.MasID,
+       t2.AutoID,
+       t2.VenCode,
+       t2.Barcode,
+       t2.Invcode,
+       t2.BarcodeDate,
+       t2.Batch,
+       t2.Qty,
+       t2.PrintNum,
+       t2.ReportFileName,
+       t2.CreatePerson,
+       t2.CreateDate,
+       t2.ModifyDate,
+       t2.ModifyPerson,
+       t3.WhCode,
+       t3.PosCode,
+       t4.cInvName,
+       t4.cInvCode1,
+       t4.cInvName1,
+       t4.iPkgQty,
+       t4.cInvStd,
+       t4.iInventoryClassId,
+       t5.cUomCode,t5.cUomName,
+       t6.cAreaName,
+       t7.cWhName,
+       t8.cInvCName
 from T_Sys_BarcodeMaster t1
          LEFT JOIN T_Sys_BarcodeDetail t2 on t1.AutoID = t2.MasID
          LEFT JOIN T_Sys_StockBarcodePosition t3 on t2.Barcode = t3.Barcode and t2.Batch = t3.Batch
@@ -117,7 +137,13 @@ order by t1.ModifyDate desc
 
 #sql("whoptions")
 select t1.*,
-       t2.cInvName,t2.cInvCode1,t2.cInvAddCode,t2.cInvName1,t2.cInvStd,t2.iPkgQty,t2.iInventoryClassId,
+       t2.cInvName,
+       t2.cInvCode1,
+       t2.cInvAddCode,
+       t2.cInvName1,
+       t2.cInvStd,
+       t2.iPkgQty,
+       t2.iInventoryClassId,
        t3.cUomName
 from UFDATA_001_2023.dbo.V_Sys_CurrentStock t1
 left join bd_inventory t2 on t1.invcode = t2.cInvCode
@@ -139,11 +165,25 @@ order by t1.dUpdateTime desc
 #end
 
 #sql("printData")
-SELECT t1.autoid,t3.masid,t3.Barcode as cbarcode,
-       t3.Batch as cbatch,t3.qty as planiqty,t3.BarcodeDate,t3.CreatePerson,t3.CreateDate,t3.ReportFileName,t3.PrintNum,
-       t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,
-       t5.cUomCode,t5.cUomName,
-       t6.cVenCode,t6.cVenName,
+SELECT t1.autoid,
+       t3.masid,
+       t3.Barcode as cbarcode,
+       t3.Batch as cbatch,
+       t3.qty as planiqty,
+       t3.BarcodeDate,
+       t3.CreatePerson,
+       t3.CreateDate,
+       t3.ReportFileName,
+       t3.PrintNum,
+       t4.cInvName,
+       t4.cInvCode1,
+       t4.cInvName1,
+       t4.iPkgQty,
+       t4.cInvStd,
+       t5.cUomCode,
+       t5.cUomName,
+       t6.cVenCode,
+       t6.cVenName,
        t7.autoid as positionautoid
 from T_Sys_BarcodeMaster t1
          left join T_Sys_BarcodeDetail t3 on t1.autoid = t3.masid
@@ -162,12 +202,26 @@ order by t3.CreateDate desc
 #end
 
 #sql("addPrintData")
-SELECT t3.autoid,t3.masid,t3.Barcode as cbarcode,
-       t3.Batch as cbatch,t3.qty as planiqty,t3.BarcodeDate,t3.CreatePerson,t3.CreateDate,t3.ReportFileName,t3.PrintNum,
-        t4.cInvName,t4.cInvCode1,t4.cInvName1,t4.iPkgQty,t4.cInvStd,
-        t5.cUomCode,t5.cUomName,
-        t6.cVenCode,t6.cVenName,
-        t7.autoid as positionautoid
+SELECT t3.autoid,
+       t3.masid,
+       t3.Barcode as cbarcode,
+       t3.Batch as cbatch,
+       t3.qty as planiqty,
+       t3.BarcodeDate,
+       t3.CreatePerson,
+       t3.CreateDate,
+       t3.ReportFileName,
+       t3.PrintNum,
+       t4.cInvName,
+       t4.cInvCode1,
+       t4.cInvName1,
+       t4.iPkgQty,
+       t4.cInvStd,
+       t5.cUomCode,
+       t5.cUomName,
+       t6.cVenCode,
+       t6.cVenName,
+       t7.autoid as positionautoid
 from T_Sys_BarcodeDetail t3
          left join bd_inventory t4 on t3.invcode = t4.cinvcode
          left join Bd_Uom t5 on t4.iInventoryUomId1 = t5.iAutoId

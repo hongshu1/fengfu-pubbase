@@ -98,17 +98,18 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         for (Record record : list) {
             List<Record> records = findGeneratedstockqtyByCodes(kv, record);
             BigDecimal generatedstockqty = records.stream().map(e -> e.getBigDecimal("qty")).reduce(BigDecimal.ZERO, BigDecimal::add);
-            BigDecimal qty = record.getBigDecimal("qty");
+
             if (null == generatedstockqty) {
                 generatedstockqty = BigDecimal.ZERO;
             }
-            //record.set("ungeneratedstockqty", qty.subtract(generatedstockqty));//未生成条码库存数量
             record.set("generatedstockqty", generatedstockqty);//已生成条码库存数量
             record.set("availablestockqty", records.size());//可用条码数
-            //record.set("state", "");//已使用、未使用
             if (StrUtil.isBlank(record.getStr("poscode"))) {
                 record.set("poscode", "");
             }
+            //BigDecimal qty = record.getBigDecimal("qty");
+            //record.set("ungeneratedstockqty", qty.subtract(generatedstockqty));//未生成条码库存数量
+            //record.set("state", "");//已使用、未使用
         }
         paginate.setList(list);
         return paginate;
@@ -300,7 +301,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     }
 
     /*
-     * 保存新增期初库存
+     * 生成期初库存
      * */
     public Ret submitStock(JBoltPara jBoltPara) {
         Integer printnum = jBoltPara.getInteger("printnum");//打印张数
@@ -339,8 +340,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
                 int parseInt = Integer.parseInt(divide.toString());//要生成几次条码
                 for (int i = 0; i < parseInt; i++) {
                     // 生成条码
-                    String barcode = BillNoUtils.getcDocNo(getOrgId(), "QC", 5);//todo 生成条码的功能未完成，待改
-                    kv.set("barcode", barcode);
+                    String genBarcode = BillNoUtils.genBarcode(getOrgCode(), "1");
+                    //String barcode = BillNoUtils.getcDocNo(getOrgId(), "QC", 5);
+                    kv.set("barcode", genBarcode);
                     int j = i;
                     if ((j + 1) == parseInt) {
                         kv.set("qty", lastScale);
@@ -367,7 +369,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
                 }
             }
             //主表
-            ValidationUtils.isTrue(batchSave(barcodemasters).length>0,"生成失败");
+            ValidationUtils.isTrue(batchSave(barcodemasters).length>0,"生成期初库存失败");
             //5、最终将期初库存保存在条码表和条码库存表
             barcodedetailService.batchSave(barcodedetails);
             barcodePositionService.batchSave(positions);
@@ -377,7 +379,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     }
 
     /*
-     * 保存新增期初条码
+     * 生成期初条码
      * */
     public Ret submitAddBarcode(JBoltPara jBoltPara) {
         int printnum = jBoltPara.getInteger("printnum");//打印张数

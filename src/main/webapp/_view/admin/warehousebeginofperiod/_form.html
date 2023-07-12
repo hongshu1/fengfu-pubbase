@@ -353,6 +353,7 @@
       printnum: printnum,
       autoprint: autoprint
     };
+      LayerMsgBox.loading("生成中......", 2000);
     Ajax.post('admin/warehousebeginofperiod/submitStock', para, function (ret) {
       let retdata = ret.data;
       if (retdata.state === 'ok') {
