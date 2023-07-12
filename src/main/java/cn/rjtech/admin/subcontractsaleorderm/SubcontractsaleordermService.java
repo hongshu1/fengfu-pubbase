@@ -376,7 +376,7 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
         Object[] deletes = jBoltTable.getDelete();
         if (ArrayUtil.isNotEmpty(deletes)) {
-            subcontractsaleorderdService.findByIds(deletes);
+            subcontractsaleorderdService.deleteByIds(deletes);
             subcontractsaleorderdQtyService.batchDeleteByManualOrderDIds(JBoltArrayUtil.join(deletes, ","));
         }
     }
