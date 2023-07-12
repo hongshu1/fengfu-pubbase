@@ -418,7 +418,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 //				sysMaterialspreparedetail.setInvCode(record.getStr("cInvCode")==null?"":record.getStr("cInvCode"));
                 sysMaterialspreparedetail.setNum(new BigDecimal(split1[1]).add(sysMaterialspreparedetail.getNum()));
 //				sysMaterialspreparedetail.setQty(new BigDecimal(split1[1]));
-//				sysMaterialspreparedetail.setPackRate(record.getBigDecimal("PackRate")==null?new BigDecimal(0):record.getBigDecimal("PackRate"));
+//				sysMaterialspreparedetail.setPackRate(record.getBigDecimal("PackRate")==null?BigDecimal.ZERO:record.getBigDecimal("PackRate"));
 //            sysMaterialspreparedetail.setSourceBillType();
 //            sysMaterialspreparedetail.setSourceBillNo()
 //            sysMaterialspreparedetail.setSourceBillNoRow()

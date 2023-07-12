@@ -290,9 +290,9 @@ public class MoMaterialsreturnmService extends BaseService<MoMaterialsreturnm> i
 //	  transVouchDetail.setOPosCode("");//出库库区
         transVouchDetail.setInvCode("");//存货编码
         transVouchDetail.setBarcode("");//条码
-        transVouchDetail.setNum(new BigDecimal(1));//件数
-        transVouchDetail.setQty(new BigDecimal(1));//数量
-        transVouchDetail.setPackRate(new BigDecimal(0));//包装比率
+        transVouchDetail.setNum(BigDecimal.ONE);//件数
+        transVouchDetail.setQty(BigDecimal.ONE);//数量
+        transVouchDetail.setPackRate(BigDecimal.ZERO);//包装比率
         transVouchDetail.setSourceBillType("生产工单");//来源单据类型
         transVouchDetail.setSourceBillNo("");//来源单据ID
         transVouchDetail.setSourceBillNo("");//来源单据明细ID

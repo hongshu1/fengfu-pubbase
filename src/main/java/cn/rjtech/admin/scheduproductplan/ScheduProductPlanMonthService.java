@@ -458,10 +458,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         calendarType = calendarType != null ? calendarType : "1";
         //1S 2S上班小时数
         BigDecimal workTime = getConfigValueBig(Kv.by("configkey", "aps_workTime"));
-        workTime = workTime != null ? workTime : new BigDecimal(8);
+        workTime = workTime != null ? workTime : BigDecimal.valueOf(8);
         //加班小时数
         BigDecimal overTime = getConfigValueBig(Kv.by("configkey", "aps_workOvertime"));
-        overTime = overTime != null ? overTime : new BigDecimal(3);
+        overTime = overTime != null ? overTime : BigDecimal.valueOf(3);
 
 
         //TODO:根据层级查询本次排产物料集信息

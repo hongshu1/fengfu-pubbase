@@ -1,6 +1,7 @@
 package cn.rjtech.admin.expensebudgetitemd;
 
 import cn.hutool.core.text.StrSplitter;
+import cn.hutool.core.util.NumberUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
@@ -178,15 +179,6 @@ public class ExpenseBudgetItemdService extends BaseService<ExpenseBudgetItemd> {
 	}
 
 	/**
-	 *判断值如果为null 赋值为0
-	 */
-	public BigDecimal judgeIsNull(BigDecimal big){
-		BigDecimal decimal = new BigDecimal(0);
-		decimal = big == null ? BigDecimal.ZERO:big;
-		return decimal;
-	}
-
-	/**
 	 * 列表数据处理
 	 */
 	public void  dataDispose(Record row){
@@ -207,18 +199,18 @@ public class ExpenseBudgetItemdService extends BaseService<ExpenseBudgetItemd> {
 		BigDecimal nowyearmounthquantity11 = row.getBigDecimal("nowyearmounthquantity11") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthquantity11");
 		BigDecimal nowyearmounthquantity12 = row.getBigDecimal("nowyearmounthquantity12") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthquantity12");
 
-		nowyearmounthquantity1=	judgeIsNull(nowyearmounthquantity1);
-		nowyearmounthquantity2=	judgeIsNull(nowyearmounthquantity2);
-		nowyearmounthquantity3=	judgeIsNull(nowyearmounthquantity3);
-		nowyearmounthquantity4=	judgeIsNull(nowyearmounthquantity4);
-		nowyearmounthquantity5=	judgeIsNull(nowyearmounthquantity5);
-		nowyearmounthquantity6=	judgeIsNull(nowyearmounthquantity6);
-		nowyearmounthquantity7=	judgeIsNull(nowyearmounthquantity7);
-		nowyearmounthquantity8=	judgeIsNull(nowyearmounthquantity8);
-		nowyearmounthquantity9=	judgeIsNull(nowyearmounthquantity9);
-		nowyearmounthquantity10=judgeIsNull(nowyearmounthquantity10);
-		nowyearmounthquantity11=judgeIsNull(nowyearmounthquantity11);
-		nowyearmounthquantity12=judgeIsNull(nowyearmounthquantity12);
+		nowyearmounthquantity1=	NumberUtil.null2Zero(nowyearmounthquantity1);
+		nowyearmounthquantity2=	NumberUtil.null2Zero(nowyearmounthquantity2);
+		nowyearmounthquantity3=	NumberUtil.null2Zero(nowyearmounthquantity3);
+		nowyearmounthquantity4=	NumberUtil.null2Zero(nowyearmounthquantity4);
+		nowyearmounthquantity5=	NumberUtil.null2Zero(nowyearmounthquantity5);
+		nowyearmounthquantity6=	NumberUtil.null2Zero(nowyearmounthquantity6);
+		nowyearmounthquantity7=	NumberUtil.null2Zero(nowyearmounthquantity7);
+		nowyearmounthquantity8=	NumberUtil.null2Zero(nowyearmounthquantity8);
+		nowyearmounthquantity9=	NumberUtil.null2Zero(nowyearmounthquantity9);
+		nowyearmounthquantity10=NumberUtil.null2Zero(nowyearmounthquantity10);
+		nowyearmounthquantity11=NumberUtil.null2Zero(nowyearmounthquantity11);
+		nowyearmounthquantity12=NumberUtil.null2Zero(nowyearmounthquantity12);
 
 		BigDecimal totalquantity1 = nowyearmounthquantity1.add(nowyearmounthquantity2).add(nowyearmounthquantity3).add(nowyearmounthquantity4).add(nowyearmounthquantity5)
 				.add(nowyearmounthquantity6).add(nowyearmounthquantity7).add(nowyearmounthquantity8).add(nowyearmounthquantity9).add(nowyearmounthquantity10)
@@ -237,18 +229,18 @@ public class ExpenseBudgetItemdService extends BaseService<ExpenseBudgetItemd> {
 		BigDecimal nowyearmounthamount11 = row.getBigDecimal("nowyearmounthamount11") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount11");
 		BigDecimal nowyearmounthamount12 = row.getBigDecimal("nowyearmounthamount12") == null ? BigDecimal.ZERO:row.getBigDecimal("nowyearmounthamount12");
 
-		nowyearmounthamount1=judgeIsNull(nowyearmounthamount1);
-		nowyearmounthamount2=judgeIsNull(nowyearmounthamount2);
-		nowyearmounthamount3=judgeIsNull(nowyearmounthamount3);
-		nowyearmounthamount4=judgeIsNull(nowyearmounthamount4);
-		nowyearmounthamount5=judgeIsNull(nowyearmounthamount5);
-		nowyearmounthamount6=judgeIsNull(nowyearmounthamount6);
-		nowyearmounthamount7=judgeIsNull(nowyearmounthamount7);
-		nowyearmounthamount8=judgeIsNull(nowyearmounthamount8);
-		nowyearmounthamount9=judgeIsNull(nowyearmounthamount9);
-		nowyearmounthamount10=judgeIsNull(nowyearmounthamount10);
-		nowyearmounthamount11=judgeIsNull(nowyearmounthamount11);
-		nowyearmounthamount12=judgeIsNull(nowyearmounthamount12);
+		nowyearmounthamount1=NumberUtil.null2Zero(nowyearmounthamount1);
+		nowyearmounthamount2=NumberUtil.null2Zero(nowyearmounthamount2);
+		nowyearmounthamount3=NumberUtil.null2Zero(nowyearmounthamount3);
+		nowyearmounthamount4=NumberUtil.null2Zero(nowyearmounthamount4);
+		nowyearmounthamount5=NumberUtil.null2Zero(nowyearmounthamount5);
+		nowyearmounthamount6=NumberUtil.null2Zero(nowyearmounthamount6);
+		nowyearmounthamount7=NumberUtil.null2Zero(nowyearmounthamount7);
+		nowyearmounthamount8=NumberUtil.null2Zero(nowyearmounthamount8);
+		nowyearmounthamount9=NumberUtil.null2Zero(nowyearmounthamount9);
+		nowyearmounthamount10=NumberUtil.null2Zero(nowyearmounthamount10);
+		nowyearmounthamount11=NumberUtil.null2Zero(nowyearmounthamount11);
+		nowyearmounthamount12=NumberUtil.null2Zero(nowyearmounthamount12);
 
 		BigDecimal totalamount1 = nowyearmounthamount1.add(nowyearmounthamount2).add(nowyearmounthamount3).add(nowyearmounthamount4).add(nowyearmounthamount5)
 				.add(nowyearmounthamount6).add(nowyearmounthamount7).add(nowyearmounthamount8).add(nowyearmounthamount9).add(nowyearmounthamount10)
@@ -261,15 +253,13 @@ public class ExpenseBudgetItemdService extends BaseService<ExpenseBudgetItemd> {
 		BigDecimal nextyearmounthamount2 = row.getBigDecimal("nextyearmounthamount2") == null ? BigDecimal.ZERO:row.getBigDecimal("nextyearmounthquantity2");
 		BigDecimal nextyearmounthamount3 = row.getBigDecimal("nextyearmounthamount3") == null ? BigDecimal.ZERO:row.getBigDecimal("nextyearmounthquantity3");
 
-		nextyearmounthquantity1=judgeIsNull(nextyearmounthquantity1);
-		nextyearmounthquantity2=judgeIsNull(nextyearmounthquantity2);
-		nextyearmounthquantity3=judgeIsNull(nextyearmounthquantity3);
+		nextyearmounthquantity1=NumberUtil.null2Zero(nextyearmounthquantity1);
+		nextyearmounthquantity2=NumberUtil.null2Zero(nextyearmounthquantity2);
+		nextyearmounthquantity3=NumberUtil.null2Zero(nextyearmounthquantity3);
 
-		nextyearmounthamount1=judgeIsNull(nextyearmounthamount1);
-		nextyearmounthamount2=judgeIsNull(nextyearmounthamount2);
-		nextyearmounthamount3=judgeIsNull(nextyearmounthamount3);
-
-
+		nextyearmounthamount1=NumberUtil.null2Zero(nextyearmounthamount1);
+		nextyearmounthamount2=NumberUtil.null2Zero(nextyearmounthamount2);
+		nextyearmounthamount3=NumberUtil.null2Zero(nextyearmounthamount3);
 
 		BigDecimal totalquantity2 = nowyearmounthquantity4.add(nowyearmounthquantity5).add(nowyearmounthquantity6).add(nowyearmounthquantity7).add(nowyearmounthquantity8)
 				.add(nowyearmounthquantity9).add(nowyearmounthquantity10).add(nowyearmounthquantity11).add(nowyearmounthquantity12).add(nextyearmounthquantity1)
