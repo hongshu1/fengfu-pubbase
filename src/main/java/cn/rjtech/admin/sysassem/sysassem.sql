@@ -11,7 +11,7 @@ select so.AutoID, CASE so.iAuditStatus
         '审核不通过'
         END AS statename,so.iAuditStatus,so.BillNo as billno,so.dcreatetime as createdate,so.DeptCode as deptcode,
 				so.IRdCode as irdcode,so.ORdCode as ordcode,so.cAuditname as auditperson,so.dAuditTime as auditdate,so.Memo as memo,so.ccreatename as createperson,
-				a.name as billtypename,st.cRdName as irdcodename,stc.cRdName as ordcodename
+				a.name as billtypename,st.cRdName as irdcodename,stc.cRdName as ordcodename,so.U8BillNo
 FROM T_Sys_Assem so
 LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary a ON so.BillType = a.id
 LEFT JOIN Bd_Rd_Style st on st.cRdCode = so.IRdCode
@@ -25,7 +25,7 @@ where 1=1
 		and so.DeptCode like concat('%',#para(deptcode),'%')
 	#end
 	#if(state)
-		and so.state = #para(state)
+		and so.iAuditStatus = #para(state)
 	#end
 	#if(startTime)
 		and so.dcreatetime >= #para(startTime)
