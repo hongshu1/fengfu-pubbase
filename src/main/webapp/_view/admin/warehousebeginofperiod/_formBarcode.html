@@ -26,9 +26,9 @@
                                 </div>
                             </div>
                         </div>
-                        <button onclick="submitAllByStock()" class="btn btn-outline-secondary">
+                        <!--<button onclick="submitAllByStock()" class="btn btn-outline-secondary">
                             保存
-                        </button>
+                        </button>-->
                         <button onclick="closeHandler()" class="btn btn-outline-secondary">
                             关闭
                         </button>
@@ -676,6 +676,101 @@
             } else {
                 LayerMsgBox.alert(retdata.msg, 2);
             }
+        });
+    }
+
+    function uploadHandler(uploader, type, fileInput, res) {
+        //jboltTableClear("#warehousebeginform_TableId_#(pageId)");
+        var data = res.data;
+        console.log(data)
+        if (!data || data.length === 0) {
+            LayerMsgBox.alert('导入数据不能为空', 2);
+            return;
+        }
+
+        var list = [];
+        $.each(data, function (idx, row) {
+            let cwhcode = row.cwhcode;
+            let cinvcode = row.cinvcode;
+            let qty = row.qty;
+            let batch = row.batch;
+            let createdate = row.createdate;//批次日期
+            let barcodedate = row.barcodedate;//生产日期
+            let reportfilename = row.reportfilename;//打印模板标签
+            let barcode = row.barcode;//条码号
+            if (cwhcode=='' || cwhcode==null ||cwhcode == undefined){
+                LayerMsgBox.error("仓库编码不能为空")
+                return;
+            }
+            if (cinvcode=='' || cinvcode==null ||  cinvcode== undefined){
+                LayerMsgBox.error("存货编码不能为空")
+                return;
+            }
+            if (qty=='' || qty==null ||  qty== undefined){
+                LayerMsgBox.error("生成条码库存数量不能为空")
+                return;
+            }
+            if (batch=='' || batch==null || batch== undefined){
+                LayerMsgBox.error("批次号不能为空")
+                return;
+            }
+            if (createdate=='' || createdate==null || createdate== undefined){
+                LayerMsgBox.error("批次日期不能为空")
+                return;
+            }
+            if (barcodedate=='' || barcodedate==null || barcodedate== undefined){
+                LayerMsgBox.error("生产日期不能为空")
+                return;
+            }
+            if (reportfilename=='' || reportfilename==null || reportfilename== undefined){
+                LayerMsgBox.error("打印模板标签不能为空")
+                return;
+            }
+            if (barcodee=='' || barcodee==null || barcodee== undefined){
+                LayerMsgBox.error("条码号不能为空")
+                return;
+            }
+
+            var obj = {
+                cwhcode:cwhcode,
+                cinvcode:cinvcode,
+                qty:qty,
+                batch:batch,
+                createdate:createdate,
+                barcodedate:barcodedate,
+                reportfilename:reportfilename,
+                careacode:row.careacode,
+                cvencode:row.cvencode,
+                barcode:barcode
+            };
+            list.push(obj);
+        });
+
+        var para={
+            list:JSON.stringify(list)
+        }
+
+        var index = LayerMsgBox.loading('正在匹配信息...', 10000);
+
+        Ajax.post('admin/warehousebeginofperiod/getBarcodeImportData', para, function (res) {
+
+            LayerMsgBox.close(index);
+
+            if (res.state === 'ok') {
+                let allDatas = getJboltTableAllDatas('#warehousebeginform_TableId_#(pageId)');
+                var i = allDatas && allDatas.length > 0 ? allDatas.length - 1 : 0;
+                $.each(res.data,function (index,row){
+                    // 导入行数据
+                    i++;
+                    row.index = i;
+                    jboltTableInsertRow('#warehousebeginform_TableId_#(pageId)', row);
+                })
+
+            } else {
+                LayerMsgBox.error(res.msg);
+            }
+        }, function () {
+            LayerMsgBox.close(index);
         });
     }
 

@@ -3,7 +3,6 @@ package cn.rjtech.admin.prodparam;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -53,7 +52,6 @@ public class ProdParamAdminController extends BaseAdminController {
      */
     public void datas() {
         renderJsonData(service.pageList(getKv()));
-        //renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKeywords(), getBoolean("isEnabled"), getBoolean("isDeleted")));
     }
 
     /**
@@ -67,8 +65,6 @@ public class ProdParamAdminController extends BaseAdminController {
     /**
      * 保存
      */
-    @Before(Tx.class)
-    @TxConfig(DataSourceConstants.MOMDATA)
     @CheckPermission(PermissionKey.PRODPARAM_ADD)
     public void save(@Para("prodParam") ProdParam prodParam) {
         renderJson(service.save(prodParam));
@@ -91,8 +87,6 @@ public class ProdParamAdminController extends BaseAdminController {
     /**
      * 更新
      */
-    @Before(Tx.class)
-    @TxConfig(DataSourceConstants.MOMDATA)
     @CheckPermission(PermissionKey.PRODPARAM_EDIT)
     public void update(@Para("prodParam") ProdParam prodParam) {
         renderJson(service.update(prodParam));
@@ -101,7 +95,6 @@ public class ProdParamAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
-    @Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
@@ -120,7 +113,6 @@ public class ProdParamAdminController extends BaseAdminController {
     /**
      * 切换isEnabled
      */
-    @Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
     public void toggleIsEnabled() {
         renderJson(service.toggleBoolean(getLong(0), "isEnabled"));
@@ -129,7 +121,6 @@ public class ProdParamAdminController extends BaseAdminController {
     /**
      * 切换isDeleted
      */
-    @Before(Tx.class)
     @TxConfig(DataSourceConstants.MOMDATA)
     public void toggleIsDeleted() {
         renderJson(service.toggleBoolean(getLong(0), "isDeleted"));
@@ -174,6 +165,7 @@ public class ProdParamAdminController extends BaseAdminController {
             ValidationUtils.error("模板下载失败");
         }
     }
+
     @CheckPermission(PermissionKey.PRODPARAM_IMPORT)
     public void importExcelClass() {
         UploadFile uploadFile = getFile("file");
@@ -182,13 +174,9 @@ public class ProdParamAdminController extends BaseAdminController {
         File file = uploadFile.getFile();
 
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
+        ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
 
-        // 截取最后一个“.”之前的文件名，作为导入格式名
-        String cformatName = "生产表单参数";
-
-        String extension = list.get(1);
-
-        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-        renderJson(service.importExcelClass(file, cformatName));
+        renderJson(service.importExcelClass(file));
     }
+
 }

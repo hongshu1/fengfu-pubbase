@@ -34,7 +34,7 @@
 	<td>${data.iusageuom}</td>
 	#if(ObjUtil.isEmpty(routingId))
 		<td>
-			<a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger"></i></a>
+			<a class="btn" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove c-danger">删除</i></a>
 		</td>
 	#end
 </tr>
@@ -50,7 +50,7 @@
 						<button onclick="jboltTableRemoveCheckedRow(this, true, false)" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> 删除</button>
 						<button onclick="jboltTableRefresh(this)" class="btn btn-outline-info btn-sm" ><i class="fa fa-refresh"></i> 刷新</button>
 						#if(configid)
-						<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>
+<!--						<button onclick="jboltTableSubmit(this)" class="btn btn-primary btn-sm" ><i class="fa fa-save"></i> 保存</button>-->
 						#end
 					</div>
 					#end
@@ -77,16 +77,16 @@
 			<tr>
 				<!--<th data-min-width="150" data-column="iItemId">料品档案ID</th>-->
 				<th data-width="60" data-min-width="60" data-column="index">序号</th>
-				<th data-min-width="150" data-column="cinvcode">子件料号</th>
-				<th data-min-width="150" data-column="iinventoryid" hidden>子件料号</th>
-				<th data-width="150" data-column="cinvname">子件品名</th>
-				<th data-width="150" data-column="cinvname1">部品名称</th>
-				<th data-width="150" data-column="cinvstd">规格</th>
-				<th data-width="100" data-column="manufactureuom">生产单位</th>
-				<th data-width="100" data-column="purchaseuom">采购单位</th>
-				<th data-width="100" data-column="iusageuom">基本用量</th>
+				<th data-width="150" data-column="cinvcode">子件料号</th>
+				<th data-width="150" data-column="iinventoryid" hidden>子件料号</th>
+				<th data-width="250" data-column="cinvname">子件品名</th>
+				<th data-width="250" data-column="cinvname1">部品名称</th>
+				<th data-width="250" data-column="cinvstd">规格</th>
+				<th data-width="200" data-column="manufactureuom">生产单位</th>
+				<th data-width="150" data-column="purchaseuom">采购单位</th>
+				<th data-width="150" data-column="iusageuom">基本用量</th>
 				#if(ObjUtil.isEmpty(routingId))
-				<th data-width="100">操作</th>
+				<th data-width="120">操作</th>
 				#end
 			</tr>
 			</thead>
@@ -97,33 +97,6 @@
 	</div>
 </div>
 <script>
-	/*function submitThisForm(callback){
-		var data=getJboltTableCheckedDatas("workpositionid");
-		if(data){
-			//LayerMsgBox.confirm("确认选择此数据?",function(){
-			parent.jboltTableProcessTdByDialogChooser(data.coperationname,data.iautoid,data);
-			if(callback){
-				callback();
-			}
-			//});
-		}
-	}*/
-
-	// $(function(){
-	// 	hideParentLayerDialogBtn(0);
-	// 	addParentLayerDialogBtn("保存","lay_success",function(data){
-	// 		//获取表格数据
-	// 		var data = getJboltTableAllDatas('#invctableid');
-	// 		// jboltTableSubmit('#invctableid');
-	// 		debugger;
-	// 		if(data){
-	// 			parent.jboltTableProcessTdByDialogChooser('','',{});
-	// 			if(callback){
-	// 				callback();
-	// 			}
-	// 		}
-	// 	});
-	// });
 
 	function submitThisForm(callback){
 		var datas=getJboltTableAllDatas("invctableid");
@@ -160,7 +133,12 @@
 	}
 
 	function addTableRow(ele){
-		jboltTableInsertRow(ele)
+		var routingConfigData = parent.getRoutingConfigData();
+		var url="admin/inventoryroutinginvc/iteminvc_dialog_index?iinventoryid=#(iinventoryid)&routingConfigData="+encodeURIComponent(routingConfigData);
+		$(ele).data("url",url)
+				.attr("data-area","60%,60%")
+				.data('title', '选择料品');
+		DialogUtil.openBy(ele);
 	}
 
 	function getEditableTableOptions_workposition(){
@@ -168,7 +146,6 @@
 			trigger:"click",
 			initRowCount:0,
 			maxRowCount:30,
-			//keepCellStyleCols:[1,2,3,"total","enable"],//不可填 但是也不需要设置不可填样式的列
 			submit:{
 				// withForm:[""],
 				type:"all",//cell|all
@@ -189,22 +166,22 @@
 				iautoid:{
 					submitAttr:"iautoid",
 				},
-				cinvcode:{
-					type:"dialogbtn",
-					placeholder:"选择料品",
-					required:true,
-					dialog:{
-						url:"admin/inventoryroutinginvc/iteminvc_dialog_index?iinventoryid=#(iinventoryid)&isAdd=#(isAdd)",
-						area:"95%,95%",
-						title:"选择料品",
-						btn:"确定,关闭"
-					},
-					header: "子件品名,别名,规格,生产单位,采购单位,基本用量,母件底数,损耗率",
-					columnAttr:"cinvcode,cinvname,cinvname1,cinvstd,manufactureuom,purchaseuom",
-					changeColumns:[{column:"cinvname",use:"cinvname"},{column:"cinvname1",use:"cinvname1"},
-						{column:"cinvstd",use:"cinvstd"},{column:"manufactureuom",use:"manufactureuom"},
-						{column:"purchaseuom",use:"purchaseuom"},{column:"iinventoryid",use: "iautoid"}],
-				},
+				// cinvcode:{
+				// 	type:"dialogbtn",
+				// 	placeholder:"选择料品",
+				// 	required:true,
+				// 	dialog:{
+				// 		url:"admin/inventoryroutinginvc/iteminvc_dialog_index?iinventoryid=#(iinventoryid)&isAdd=#(isAdd)",
+				// 		area:"95%,95%",
+				// 		title:"选择料品",
+				// 		btn:"确定,关闭"
+				// 	},
+				// 	header: "子件品名,别名,规格,生产单位,采购单位,基本用量,母件底数,损耗率",
+				// 	columnAttr:"cinvcode,cinvname,cinvname1,cinvstd,manufactureuom,purchaseuom",
+				// 	changeColumns:[{column:"cinvname",use:"cinvname"},{column:"cinvname1",use:"cinvname1"},
+				// 		{column:"cinvstd",use:"cinvstd"},{column:"manufactureuom",use:"manufactureuom"},
+				// 		{column:"purchaseuom",use:"purchaseuom"},{column:"iinventoryid",use: "iautoid"}],
+				// },
 				iusageuom:{type:"input_number", rule:"number",required:true, placeholder:"0"},
 				iparentqty:{type:"input_number", rule:"number",required:true, placeholder:"0"},
 				ilossrate:{type:"input_number", rule:"number", required:true, placeholder:"0.00"},

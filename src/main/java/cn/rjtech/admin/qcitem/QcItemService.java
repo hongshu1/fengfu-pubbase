@@ -12,11 +12,9 @@ import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.QcItem;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
@@ -47,8 +45,6 @@ public class QcItemService extends BaseService<QcItem> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
     /**
      * 后台管理数据查询
      *
@@ -125,17 +121,14 @@ public class QcItemService extends BaseService<QcItem> {
         return query(selectSql().select(QcItem.CQCITEMNAME).eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
     }
     public QcItem findQcItemName(String cqcItemName,Long id) {
-        QcItem qcItem = findFirst("SELECT cQcItemCode FROM [Bd_QcItem] WHERE isDeleted = 0 AND cQcItemName = ? AND iAutoId <> ? ",cqcItemName,id);
-        return qcItem;
+        return findFirst("SELECT cQcItemCode FROM [Bd_QcItem] WHERE isDeleted = 0 AND cQcItemName = ? AND iAutoId <> ? ",cqcItemName,id);
     }
-
-
+    
     /**
      * 检验项目名称
      */
     public QcItem findFristQcItemName(String cqcItemName) {
-        QcItem qcItem = findFirst(selectSql().eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
-        return qcItem;
+        return findFirst(selectSql().eq(QcItem.CQCITEMNAME, cqcItemName).eq(QcItem.ISDELETED, "0"));
     }
 
     /**
@@ -158,7 +151,7 @@ public class QcItemService extends BaseService<QcItem> {
         if (!result){
             return fail(JBoltMsg.FAIL);
         }
-        return ret(result);
+        return SUCCESS;
     }
 
     /**
@@ -245,7 +238,7 @@ public class QcItemService extends BaseService<QcItem> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcel(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
@@ -260,6 +253,7 @@ public class QcItemService extends BaseService<QcItem> {
             if (StrUtil.isBlank(record.getStr("cQcItemName"))) {
                 return fail("检验项目名称不能为空");
             }
+            
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("cQcItemCode", record.getStr("cQcItemCode"));
             record.set("cQcItemName", record.getStr("cQcItemName"));
@@ -272,7 +266,7 @@ public class QcItemService extends BaseService<QcItem> {
             record.set("iUpdateBy", JBoltUserKit.getUserId());
             record.set("dUpdateTime", now);
             record.set("cUpdateName", JBoltUserKit.getUserName());
-            record.set("isDeleted",0);
+            record.set("isDeleted", ZERO_STR);
         }
 
         // 执行批量操作
@@ -291,11 +285,12 @@ public class QcItemService extends BaseService<QcItem> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcelClass(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
+        Date now = new Date();
 
         for (Record record : records) {
 
@@ -305,9 +300,6 @@ public class QcItemService extends BaseService<QcItem> {
             if (StrUtil.isBlank(record.getStr("cQcItemName"))) {
                 return fail("检验项目名称不能为空");
             }
-
-
-            Date now=new Date();
 
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iOrgId", getOrgId());
@@ -329,4 +321,5 @@ public class QcItemService extends BaseService<QcItem> {
         });
         return SUCCESS;
     }
+    
 }

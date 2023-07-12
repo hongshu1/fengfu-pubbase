@@ -66,7 +66,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group row">
-                                    <input type="hidden" name="sysAssem.BillType" value="#(BillType??)"
+                                    <input type="hidden" name="sysAssem.BillType" value="#(sysAssem.BillType??)"
                                         id="idcode" data-value-attr="id" />
                                     <label class="col-sm-3 col-form-label">转换方式</label>
                                     <div class="col-9">
@@ -410,7 +410,8 @@
                         $("#barcode").val('');
                         Ajax.post("admin/formConversionList/getBarCodeData",
                             {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
-                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty},
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty,
+                                "whcode":trJsonData.whcode, "whname":trJsonData.whname, "poscode": trJsonData.poscode , "posname": trJsonData.posname  },
                             function(rres) {
                                 console.log('rres', rres)
                                 if (rres.state==='ok'){
@@ -518,11 +519,9 @@
                 type: "all",
                 url: "/admin/formConversionList/submitAll",
                 success: function (res) {
-                    var state = res.state;
-                    if (state==='ok'){
-                        var autoid = res.autoid;
-                        if (submit){
-                            submit_#(pageId)(autoid,function () {
+                    if (res.state === 'ok') {
+                        if (submit) {
+                            submit_#(pageId)(res.data.autoid,function () {
                                 LayerMsgBox.success("提交成功", 600, function () {
                                     parent.refreshPjaxContainer();
                                     parent.layer.closeAll();
@@ -712,7 +711,8 @@
                         , {column: "ibeforeinventoryid", use: "ibeforeinventoryid"}],
                     handler:function(table,td,text,value,trJsonData){
                         Ajax.post("admin/formConversionList/getBarCodeData", {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
-                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty},
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty,
+                                "whcode":trJsonData.whcode, "whname":trJsonData.whname, "poscode": trJsonData.poscode , "posname": trJsonData.posname  },
                             function(res) {
                                 console.log('res', res)
                                 if (res.state==='ok'){

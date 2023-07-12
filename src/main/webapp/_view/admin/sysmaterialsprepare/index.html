@@ -48,6 +48,9 @@
 <td>${pageNumber,pageSize,index | rownum}</td>
 <td>
 	<a class="text-info mr-1" data-openpage="dialog" href="admin/sysMaterialsprepare/detailShow/?autoid=${data.autoid}&ifinish=${data.isfinish}" data-handler="refreshJBoltTable" data-area="100%,100%" data-title="备料一览表详情"><i class="fa fa-eye">查看</i></a>
+	{@if data.isfinish == "待备料"}
+     <a class="text-info mr-1"  href="admin/sysMaterialsprepare/deleteBill/?autoid=${data.autoid}" data-handler="refreshJBoltTable"><i class="fa fa-trash">删除</i></a>
+    {@/if}
 </td>
 <td>${data.billtype}</td>
 <td>${data.isfinish}</td>
@@ -109,7 +112,7 @@
             <thead class="fw-normal">
             <tr>
 				<th data-width="60" data-column="">序号</th>
-				<th data-width="100" data-column="">操作</th>
+				<th data-width="150" data-column="">操作</th>
 				<th data-width="100" data-column="">来源</th>
 				<th data-width="100" data-column="">状态</th>
 				<th data-width="150" data-column="">备料单号</th>

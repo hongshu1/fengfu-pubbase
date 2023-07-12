@@ -4,7 +4,8 @@ SELECT
 	NULL AS iPid,
 	master.iInventoryId,
 	master.cInvCode,
-	master.cInvName
+	master.cInvName,
+	0 iBaseQty
 FROM
 	Bd_BomM master
 WHERE
@@ -23,7 +24,8 @@ SELECT
 	compare.iPid,
 	compare.iInventoryId,
 	compare.cInvCode,
-	compare.cInvName
+	compare.cInvName,
+	compare.iBaseQty
 FROM
 	Bd_BomD compare
 WHERE
@@ -235,4 +237,50 @@ WHERE
 	    AND minv.cInvName1 LIKE CONCAT('%',#para(cInvName1),'%')
 	#end
 	ORDER BY m.dCreateTime DESC
+#end
+
+#sql("findBomCompareByBomMasterInvId")
+SELECT
+    bom.iAutoId AS id,
+    bom.iPid,
+	bom.iInventoryId,
+	bom.iBaseQty AS iUsageUOM,
+	ic.cInvCName cinvcname,
+	manuuom.cUomName manufactureuom,
+	purUom.cUomName purchaseuom,
+	inv.iAutoId,
+	inv.cInvStd,
+	inv.cInvName,
+	inv.cInvName1,
+	inv.cInvName2,
+	inv.cInvCode,
+	inv.cInvCode1,
+	inv.cInvAddCode,
+	inv.cInvAddCode1,
+	inv.cInvAddCode1
+FROM
+	Bd_Inventory inv
+	INNER JOIN Bd_InventoryClass ic ON ic.iautoid = inv.iInventoryClassId
+	LEFT JOIN Bd_Uom manuuom ON manuuom.iAutoId = inv.iManufactureUomId
+	LEFT JOIN Bd_Uom puruom ON puruom.iAutoId = inv.iPurchaseUomId
+	INNER JOIN V_Bd_BomMasterInvId bom ON bom.iInventoryId = inv.iAutoId
+	WHERE
+	    1 = 1
+	#if(orgId)
+	    AND bom.iOrgId = #para(orgId)
+	#end
+
+	#if(masterInvId)
+       AND bom.masterInvId = #para(masterInvId) OR inv.iAutoId = #para(masterInvId)
+	#end
+	#if(cInvCode1)
+         AND inv.cInvCode1 like CONCAT('%', #para(cInvCode1), '%')
+    #end
+    #if(cInvName)
+        AND inv.cInvName like CONCAT('%', #para(cInvName), '%')
+    #end
+    #if(cInvCode)
+        AND inv.cInvCode like CONCAT('%', #para(cInvCode), '%')
+    #end
+
 #end

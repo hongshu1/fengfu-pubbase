@@ -15,7 +15,6 @@ import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -454,17 +453,6 @@ public class OtherOutDeliveryService extends BaseService<OtherOut> implements IA
 		Pattern p = Pattern.compile(regEx);
 		Matcher m = p.matcher(message);
 		return m.replaceAll("").trim();
-	}
-
-	//通过当前登录人名称获取部门id
-	public String getdeptid(){
-		String dept = "001";
-		User user = JBoltUserKit.getUser();
-		Person person = personservice.findFirstByUserId(user.getId());
-		if(null != person && "".equals(person)){
-			dept = person.getCOrgCode();
-		}
-		return dept;
 	}
 
 	@Override

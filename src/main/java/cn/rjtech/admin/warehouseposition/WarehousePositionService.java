@@ -1,23 +1,16 @@
 package cn.rjtech.admin.warehouseposition;
 
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
+import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.admin.warehouseshelves.WarehouseShelvesService;
-import cn.jbolt.core.service.base.BaseService;
-import cn.rjtech.model.momdata.Warehouse;
-import cn.rjtech.model.momdata.WarehouseArea;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.WarehousePosition;
-import cn.rjtech.model.momdata.WarehouseShelves;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
@@ -33,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 库位档案 Service
@@ -346,7 +337,7 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
         //是否删除，是否启用,数据来源
         warehousePosition.setIsdeleted(false);
         warehousePosition.setIsenabled(true);
-        warehousePosition.setIsource(1);
+        warehousePosition.setIsource(SourceEnum.MES.getValue());
 
         warehousePosition.setCpositioncode(data.get("cpositioncode") + "");
         warehousePosition.setCpositionname(data.get("cpositionname") + "");

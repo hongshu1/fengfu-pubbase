@@ -9,6 +9,7 @@ import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
+import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
@@ -23,6 +24,9 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.upload.UploadFile;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * 仓库期初 Controller
@@ -39,9 +43,9 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     @Inject
     private WarehouseBeginofPeriodService service;
     @Inject
-    private InventoryService              inventoryService;
+    private InventoryService inventoryService;
     @Inject
-    private WarehouseService              warehouseService;
+    private WarehouseService warehouseService;
 
     /*
      * 主页面
@@ -107,14 +111,14 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     /*
      * 保存期初库存
      * */
-    public void submitAllByStock(JBoltPara jBoltPara){
+    public void submitAllByStock(JBoltPara jBoltPara) {
         renderJsonData(service.submitByStock(jBoltPara));
     }
 
     /*
      * 保存期初库存
      * */
-    public void submitAllBybarcode(JBoltPara jBoltPara){
+    public void submitAllBybarcode(JBoltPara jBoltPara) {
         renderJsonData(service.submitAllBybarcode(jBoltPara));
     }
 
@@ -158,30 +162,23 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     }
 
     /*
-     * 期初库存数据导入
+     * 获取期初库存导入的数据
      * */
-    public void importStockExcel() {
-        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
-        UploadFile file = getFile("file", uploadPath);
-        if (notExcel(file)) {
-            renderJsonFail("请上传excel文件");
-            return;
-        }
-        renderJson(service.importStockExcel(file.getFile()));
+    public void getStockImportData(@Para(value = "list") String list) {
+        ValidationUtils.notBlank(list, "导入数据不能为空");
+
+        renderJsonData(service.getStockImportData(list));
     }
 
     /*
-     * 期初条码数据导入
+     * 获取期初条码导入的数据
      * */
-    public void importBarcodeExcel() {
-        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
-        UploadFile file = getFile("file", uploadPath);
-        if (notExcel(file)) {
-            renderJsonFail("请上传excel文件");
-            return;
-        }
-        renderJson(service.importBarcodeExcel(file.getFile()));
+    public void getBarcodeImportData(@Para(value = "list") String list){
+        ValidationUtils.notBlank(list, "导入数据不能为空");
+
+        renderJsonData(service.getBarcodeImportData(list));
     }
+
 
     /**
      * 打印条码明细
@@ -190,16 +187,8 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         renderJsonData(service.detailPrintData(getKv()));
     }
 
-    public void addPrintData(){
+    public void addPrintData() {
         renderJsonData(service.addPrintData(getKv()));
-    }
-
-    /**
-     * 根据仓库编码查询库区编码
-     */
-    @UnCheck
-    public void findAreaByWhcode() {
-        renderJsonData(service.findAreaByWhcode());
     }
 
     public void inventoryDialogIndex(@Para(value = "index") String index, @Para(value = "type") String type) {
@@ -268,7 +257,15 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
         render("cvencode_dialog_index.html");
     }
 
-    public void wareHouseOptions(){
+    public void wareHouseOptions() {
         renderJsonData(service.wareHouseOptions(getKv()));
+    }
+
+    /**
+     * 根据仓库编码查询库区编码
+     */
+    @UnCheck
+    public void findAreaByWhcode() {
+        renderJsonData(service.findAreaByWhcode());
     }
 }

@@ -1,17 +1,15 @@
 package cn.rjtech.admin.sysmaterialspreparedetail;
 
 import cn.hutool.core.date.DateUtil;
+import cn.jbolt.core.permission.*;
 import cn.rjtech.admin.sysmaterialsprepare.SysMaterialsprepareService;
 import cn.rjtech.admin.syspureceive.SysPureceiveService;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import com.jfinal.core.Path;
 import com.jfinal.aop.Before;
-import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
@@ -56,6 +54,7 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
    /**
 	* 数据源
 	*/
+   @UnCheck
 	public void datas() {
 		renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), get("SourceBillType"), get("State")));
 	}
@@ -63,6 +62,7 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
    /**
 	* 新增
 	*/
+   @CheckPermission(PermissionKey.MATERIALSPREPARE_ADD1)
 	public void add() {
 		render("add.html");
 	}
@@ -77,6 +77,7 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
    /**
 	* 编辑
 	*/
+   @CheckPermission(PermissionKey.MATERIALSPREPARE_EDIT1)
 	public void edit() {
 		SysMaterialspreparedetail sysMaterialspreparedetail=service.findById(getLong(0));
 		if(sysMaterialspreparedetail == null){
@@ -97,6 +98,7 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
    /**
 	* 批量删除
 	*/
+   @CheckPermission(PermissionKey.MATERIALSPREPARE_DELETE1_ALL)
 	public void deleteByIds() {
 		renderJson(service.deleteByIds(get("ids")));
 	}
@@ -104,6 +106,7 @@ public class SysMaterialspreparedetailAdminController extends BaseAdminControlle
    /**
 	* 删除
 	*/
+   @CheckPermission(PermissionKey.MATERIALSPREPARE_DELETE1)
 	public void delete() {
 		renderJson(service.deleteById(getLong(0)));
 	}

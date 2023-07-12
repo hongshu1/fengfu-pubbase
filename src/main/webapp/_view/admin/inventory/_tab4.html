@@ -28,7 +28,7 @@
 									<td>
 										<a tooltip data-title="上移"  href="javascript:void(0)" onclick="moveUpBtn(this,'${data.iautoid}','${data.iseq}')"   class="jbolt_table_btn"><i class="fa fa-arrow-up c-info"></i></a>
 										<a tooltip data-title="下移"  href="javascript:void(0)" onclick="moveDownBtn(this,'${data.iautoid}','${data.iseq}')"  class="jbolt_table_btn"><i class="fa fa-arrow-down c-info"></i></a>
-										<a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this)" ><i class="fa fa-remove text-danger"></i></a>
+										<a tabindex="-1" class="ml-1" href="javascript:void(0)" tooltip data-title="移除此行" onclick="jboltTableRemoveRow(this);batchSetColumns('#itemroutingconfigid')" ><i class="fa fa-remove text-danger"></i></a>
 										<!--									<a href="admin/inventoryroutingconfig/deleteByIds?ids=${data.iautoid}" data-ajaxbtn data-loading="执行中" tooltip data-title="删除" data-handler="refreshJBoltTable" data-confirm="确定删除此数据？" class="jbolt_table_delbtn"><i class="fa fa-remove  c-danger"></i></a>-->
 									</td>
 									<td>${data.iseq}</td>
@@ -40,7 +40,7 @@
 										   {@else if data.itype == '2'}
 										   <span>并序</span>
 										{@/if}</td>
-									<td data-value="${data.irsinventoryid}">${data.rsinventoryname}</td>
+									<td>${data.crsinventoryname}</td>
 									<td >
 									   {@if data.cproductsn == '1'}
 										   <span>内作</span>
@@ -133,7 +133,7 @@
                 	    <th data-width="160" data-column="cmergedseq">合并工序</th>
                 	    <th data-width="260" data-column="coperationname">工序名称</th>
                 	    <th data-width="120" data-column="itype">工序类型</th>
-                	    <th data-width="150" data-column="irsinventoryid">半成品/成品名称</th>
+                	    <th data-width="150" data-column="crsinventoryname">半成品/成品名称</th>
                 	    <th data-width="120" data-column="cproductsn">生产方式</th>
                 	    <th data-width="120" data-column="cproducttechsn">生产工艺</th>
                 	    <th data-width="120" data-column="imergednum">合并要员（人）</th>

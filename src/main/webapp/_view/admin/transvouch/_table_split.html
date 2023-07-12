@@ -8,9 +8,10 @@
             <td>${data.cinvcode1}</td> <!--客户部番-->
             <td>${data.cinvname1}</td> <!--部品名称-->
             <td>${data.cinvstd}</td> <!--规格-->
-            <td>${data.caddress}</td> <!--品牌-->
-            <td>${data.puunitname}</td> <!--采购单位-->
+            <td>${data.purchasecuomname}</td> <!--主计量单位-->
             <td>${data.qty ,2|number_format}</td> <!--数量-->
+            <td>${data.iposcode}</td> <!--转入库区-->
+            <td>${data.oposcode}</td> <!--转出库区-->
             <td>${data.memo}</td> <!--备注-->
               <td hidden>${data.sourcebillno}</td> //来源单号（订单号）
             <td hidden>${data.sourcebillid}</td> //来源单据ID(订单id)
@@ -62,10 +63,11 @@
               <th data-width="150" data-column="cinvcode1">客户部番</th>
               <th data-width="150" data-column="cinvname1">部品名称</th>
               <th data-width="150" data-column="cinvstd">规格型号</th>
-              <th data-width="100" data-column="caddress">品牌</th>
-              <th data-width="100" data-column="puunitname">采购单位</th>
-            <th data-width="150" data-column="qty">数量</th><!--iInventoryUomId1-->
-            <th data-width="150" data-column="memo">备注</th>
+              <th data-width="100" data-column="purchasecuomname">主计量单位</th>
+            <th data-width="150" data-column="qty">数量</th>
+              <th data-width="100" data-column="IPosCode">转入库区</th>
+              <th data-width="100" data-column="OPosCode">转出库区</th>
+              <th data-width="150" data-column="memo">备注</th>
 
               <th hidden data-width="100" data-column="sourcebillno"></th>
               <th hidden data-width="100" data-column="sourcebillid"></th>
@@ -180,7 +182,7 @@
         },
           barcode: { //条码
               maxLength: 100,
-              // required: true,
+              required: true,
               placeholder: "=请选择=",
               linkPara: "#barcodes",
               type:"autocomplete",
@@ -189,15 +191,15 @@
               width: 800,
               sync:"" ,
               valueAttr: "barcode",
-              columnAttr: "barcode,invcode,cinvcode1,cinvname1,cinvstd,caddress,puunitname,qty",
-              header:'条码,存货编码,客户部番,部品名称,规格型号,品牌,采购单位,数量',
+              columnAttr: "barcode,invcode,cinvcode1,cinvname1,cinvstd,purchasecuomname,qty",
+              header:'条码,存货编码,客户部番,部品名称,规格型号,主计量单位,数量',
               changeColumns:[{column: "barcode", use: "barcode"},
                   {column: "invcode", use: "invcode"},
                   {column: "cinvcode1", use: "cinvcode1"},
                   {column: "cinvname1", use: "cinvname1"},
                   {column: "cinvstd", use: "cinvstd"},
                   {column: "qty", use: "qty"},
-                  {column: "puunitname", use: "puunitname"},
+                  {column: "purchasecuomname", use: "purchasecuomname"},
 
                   {column: "sourcebillno", use: "sourcebillno"},
                   {column: "sourcebillid", use: "sourcebillid"},

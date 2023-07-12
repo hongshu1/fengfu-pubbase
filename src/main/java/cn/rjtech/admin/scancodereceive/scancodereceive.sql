@@ -282,6 +282,7 @@ SELECT  t1.*, t2.*, v.cVenName, v.iAutoId as veniAutoId,
        b.cInvName1,
        b.cInvStd  as cinvstd,
        uom.cUomName,
+       uom.cUomCode,
 ###info.isIQC1,
 qc.iAutoId as qcIAutoId, qc.cDcCode
 FROM T_Sys_PUReceiveDetail t1

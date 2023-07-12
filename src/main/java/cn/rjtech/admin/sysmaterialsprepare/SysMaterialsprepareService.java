@@ -23,9 +23,10 @@ import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.admin.sysmaterialspreparedetail.SysMaterialspreparedetailService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.MoDoc;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysMaterialsprepare;
 import cn.rjtech.model.momdata.SysMaterialspreparedetail;
+import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import com.alibaba.fastjson.JSON;
@@ -566,7 +567,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             sysMaterialsprepare.setDcreatetime(now);
             sysMaterialsprepare.setIcreateby(user.getId());
             sysMaterialsprepare.setBillDate(DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
-            sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
+            sysMaterialsprepare.setBillNo(BillNoUtils.genCode(getOrgCode(),table()));
+//            sysMaterialsprepare.setBillNo("BL" + DateUtil.format(new Date(), "yyyyMMdd") + RandomUtil.randomNumbers(6));
             //主表新增
             ValidationUtils.isTrue(sysMaterialsprepare.save(), ErrorMsg.SAVE_FAILED);
             //从表的操作
@@ -674,7 +676,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         JSONObject data = new JSONObject();
 
         data.set("userCode", user.getUsername());
-        data.set("organizeCode", this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token", "");
 
         JSONObject preallocate = new JSONObject();
@@ -682,7 +684,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
         preallocate.set("userCode", user.getUsername());
         preallocate.set("password", "123456");
-        preallocate.set("organizeCode", this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson", user.getId());
         preallocate.set("CreatePersonName", user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -697,7 +699,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             jsonObject.set("iwhname", "");
             jsonObject.set("invcode", "");
             jsonObject.set("userCode", user.getUsername());
-            jsonObject.set("organizeCode", this.getdeptid());
+            jsonObject.set("organizeCode", getOrgCode());
             jsonObject.set("OWhCode", s.getPosCode());
             jsonObject.set("owhname", "");
             jsonObject.set("barcode", s.getBarcode());
@@ -738,15 +740,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Ret.msg("上传u8失败");
-    }
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid() {
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        return dept;
+        return fail("上传u8失败");
     }
 
     public Page<Record> getgetManualAdddatas(int pageNumber, int pageSize, Kv kv) {
@@ -755,9 +749,9 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
     public Page<Record> manualmanual(int pageNumber, int pageSize, List list) {
         ArrayList<Record> records = new ArrayList<>();
-        for (int z=0;z<list.size();z++){
+        for (Object o : list) {
             Kv kv = new Kv();
-            kv.set("iAutoId",list.get(z));
+            kv.set("iAutoId", o);
             Record record = dbTemplate("materialsprepare.mm", kv).findFirst();
             records.add(record);
         }
@@ -772,7 +766,6 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
 
     /**
      * 生成要导出的Excel
-     * @return
      */
     public JBoltExcel exportExcel(List<Record> records) {
         return JBoltExcel
@@ -816,4 +809,13 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return list;
     }
 
+    public Ret deleteBill(Kv kv) {
+        tx(() -> {
+            moDocS.update(moDocS.findById(findById(kv.get("autoid")).getSourceBillID()).setIStatus(2));
+            deleteById(kv.get("autoid"));
+            return true;
+        });
+
+        return SUCCESS;
+    }
 }

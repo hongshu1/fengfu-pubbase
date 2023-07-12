@@ -22,14 +22,14 @@
                      data-accept="excel"
                      data-maxsize="20480"
                      data-handler="uploadFile"
-                     data-upload-success-handler="setTimeout(function(){parent.refreshPjaxContainer();parent.layer.closeAll();},1000)"
-                     data-url="/admin/warehousebeginofperiod/importStockExcel">
+                     data-upload-success-handler="uploadHandler"
+                     data-url="/admin/dataimport/importExcelData">
                 </div>
               </div>
             </div>
-              <button onclick="submitAllByStock()" class="btn btn-outline-secondary">
+              <!--<button onclick="submitAllByStock()" class="btn btn-outline-secondary">
                   保存
-              </button>
+              </button>-->
             <button onclick="closeHandler()" class="btn btn-outline-secondary">
                 关闭
             </button>
@@ -86,6 +86,7 @@
                          autocomplete="off"
                          class="form-control"
                          maxlength="40"
+                         value="${data.careacode}"
                          data-url="admin/warehousearea/options"
                          data-sync-ele="#careacode${data.index},#careaname${data.index}"
                          data-text-attr="careacode"
@@ -120,11 +121,11 @@
                          data-text-attr="cinvcode"
                          data-column-attr="cinvcode"/>
                   <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" data-dialogbtn
-                              data-link-para-ele="#iBeforeInventoryId${data.index}"
+                      <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#cinvcode${data.index}"
                               data-area="1280,600" data-title="选择数据（单选）"
                               data-url="admin/warehousebeginofperiod/inventoryDialogIndex?index=${data.index}&type=0">
-                        <i class="fa fa-search"></i></button>
+                        <i class="fa fa-search"></i>
+                    </button>
                   </div>
               </div>
       </td>
@@ -174,7 +175,7 @@
                autocomplete="off" class="form-control" maxlength="40" name="cvenname" value="${data.cvenname}" readonly/>
       </td>
       <td>
-        <input type="number" data-sync-attr="generatedstockqty" id="generatedstockqty${data.index}" data-tips=""
+        <input type="text" data-sync-attr="generatedstockqty" id="generatedstockqty${data.index}" data-tips=""
                data-notnull="true" placeholder="=生成库存条码数量=" autocomplete="off" class="form-control" data-rule="int"
                maxlength="40" name="generatedstockqty" value="${data.generatedstockqty}" data-rule="required"/>
       </td>
@@ -189,12 +190,12 @@
       <td>
         <input id="createdate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
                autocomplete="off" class="form-control" data-rule="required"
-               placeholder="=选择批次日期=" name="createdate" data-tips="" maxlength="23" value="">
+               placeholder="=选择批次日期=" name="createdate" data-tips="" maxlength="23" value="${data.createdate}">
       </td>
       <td>
         <input id="barcodedate${data.index}" data-date data-type="date" data-fmt="yyyy-MM-dd" readonly="readonly"
                autocomplete="off" class="form-control" data-rule="required"
-               placeholder="=选择生产日期=" name="barcodedate" data-tips="" maxlength="23" value="">
+               placeholder="=选择生产日期=" name="barcodedate" data-tips="" maxlength="23" value="${data.barcodedate}">
       </td>
       <td>
         <select class="form-control" data-url="admin/dictionary/options?key=beginningofperiod" name="reportfilename" data-autoload
@@ -316,7 +317,6 @@
       printnum = 1;
     }
     var autoprint = $('input[name="autoprint"]').is(':checked');
-    //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
     var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
     if (!allDatas || allDatas.length == 0) {
       LayerMsgBox.alert("表格数据不能为空", 2);
@@ -419,7 +419,6 @@
       //初始行数
       initRowCount: 0,
       //插入数据时默认属性值
-      //insertDefaultValues:{age:10,briefInfo:"xxxxx"},
       cols: {
         id: {
           submitAttr: "iautoid",
@@ -596,13 +595,13 @@
   /*
   * 保存
   * */
-  function submitAllByStock(){
+  /*function submitAllByStock(){
       var printnum = $('#printnum').val();
       if (printnum == null || printnum == undefined || printnum == '') {
           printnum = 1;
       }
       var autoprint = $('input[name="autoprint"]').is(':checked');
-      //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
+      //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*!/
       var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
       if (!allDatas || allDatas.length == 0) {
           LayerMsgBox.alert("表格数据不能为空", 2);
@@ -654,6 +653,95 @@
           } else {
               LayerMsgBox.alert(retdata.msg, 2);
           }
+      });
+  }*/
+
+  function uploadHandler(uploader, type, fileInput, res) {
+      //jboltTableClear("#warehousebeginform_TableId_#(pageId)");
+      var data = res.data;
+      console.log(data)
+      if (!data || data.length === 0) {
+          LayerMsgBox.alert('导入数据不能为空', 2);
+          return;
+      }
+
+      var list = [];
+      $.each(data, function (idx, row) {
+          let cwhcode = row.cwhcode;
+          let cinvcode = row.cinvcode;
+          let qty = row.qty;
+          let batch = row.batch;
+          let createdate = row.createdate;//批次日期
+          let barcodedate = row.barcodedate;//生产日期
+          let reportfilename = row.reportfilename;//打印模板标签
+          if (cwhcode=='' || cwhcode==null ||cwhcode == undefined){
+              LayerMsgBox.error("仓库编码不能为空")
+              return;
+          }
+          if (cinvcode=='' || cinvcode==null ||  cinvcode== undefined){
+              LayerMsgBox.error("存货编码不能为空")
+              return;
+          }
+          if (qty=='' || qty==null ||  qty== undefined){
+              LayerMsgBox.error("生成条码库存数量不能为空")
+              return;
+          }
+          if (batch=='' || batch==null || batch== undefined){
+              LayerMsgBox.error("批次号不能为空")
+              return;
+          }
+          if (createdate=='' || createdate==null || createdate== undefined){
+              LayerMsgBox.error("批次日期不能为空")
+              return;
+          }
+          if (barcodedate=='' || barcodedate==null || barcodedate== undefined){
+              LayerMsgBox.error("生产日期不能为空")
+              return;
+          }
+          if (reportfilename=='' || reportfilename==null || reportfilename== undefined){
+              LayerMsgBox.error("打印模板标签不能为空")
+              return;
+          }
+
+          var obj = {
+              cwhcode:cwhcode,
+              cinvcode:cinvcode,
+              qty:qty,
+              batch:batch,
+              createdate:createdate,
+              barcodedate:barcodedate,
+              reportfilename:reportfilename,
+              careacode:row.careacode,
+              cvencode:row.cvencode
+          };
+          list.push(obj);
+      });
+
+      var para={
+          list:JSON.stringify(list)
+      }
+
+      var index = LayerMsgBox.loading('正在匹配信息...', 10000);
+
+      Ajax.post('admin/warehousebeginofperiod/getStockImportData', para, function (res) {
+
+          LayerMsgBox.close(index);
+
+          if (res.state === 'ok') {
+              let allDatas = getJboltTableAllDatas('#warehousebeginform_TableId_#(pageId)');
+              var i = allDatas && allDatas.length > 0 ? allDatas.length - 1 : 0;
+              $.each(res.data,function (index,row){
+                  // 导入行数据
+                  i++;
+                  row.index = i;
+                  jboltTableInsertRow('#warehousebeginform_TableId_#(pageId)', row);
+              })
+
+          } else {
+              LayerMsgBox.error(res.msg);
+          }
+      }, function () {
+          LayerMsgBox.close(index);
       });
   }
 

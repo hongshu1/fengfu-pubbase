@@ -1439,9 +1439,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		}
 		
 		if (CollUtil.isNotEmpty(commonInvMap)){
-			Ret ok = Ret.ok("data", commonInvMap);
-			ok.set("flag", flag);
-			return ok;
+			return successWithData(Okv.by("data", commonInvMap).set("flag", flag));
 		}
 		return SUCCESS;
 	}
@@ -1455,7 +1453,7 @@ public class BomMasterService extends BaseService<BomMaster> {
 		BomMaster bomMaster = findById(id);
 		// 获取所有数据
 		List<Record> compareList = findRecords("EXEC BD_BOMTree @orgId = ?, @pId =?", getOrgId(), id);
-		JBoltListMap<Long, Record> listMap = new JBoltListMap();
+		JBoltListMap<Long, Record> listMap = new JBoltListMap<>();
 		for (Record record : compareList){
 			listMap.addItem(record.getLong("pid"), record);
 		}
