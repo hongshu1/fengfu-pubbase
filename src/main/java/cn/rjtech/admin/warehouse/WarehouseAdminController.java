@@ -172,20 +172,16 @@ public class WarehouseAdminController extends BaseAdminController {
     File file = uploadFile.getFile();
 
     List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-
-    // 截取最后一个“.”之前的文件名，作为导入格式名
-    String cformatName = list.get(0);
-
-    String extension = list.get(1);
-
-    ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+    ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+    
     renderJson(service.importExcelData(file));
   }
 
-  /**
-   * 导入模板下载
-   */
-  public void templateDownload() throws Exception {
-    renderJxls("warehouse_import.xlsx", Kv.by("rows", null), "仓库档案导入模板.xlsx");
-  }
+    /**
+     * 导入模板下载
+     */
+    @SuppressWarnings("unchecked")
+    public void templateDownload() throws Exception {
+        renderJxls("warehouse_import.xlsx", Kv.by("rows", null), "仓库档案导入模板.xlsx");
+    }
 }

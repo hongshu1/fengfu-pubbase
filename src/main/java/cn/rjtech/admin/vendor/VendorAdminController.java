@@ -14,7 +14,6 @@ import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.model.momdata.base.BaseVendorAddr;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -187,12 +186,11 @@ public class VendorAdminController extends BaseAdminController {
         ValidationUtils.notNull(uploadFile, "上传文件不能为空");
 
         File file = uploadFile.getFile();
+        
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-
-        // 截取最后一个“.”之前的文件名，作为导入格式名
-        String extension = list.get(1);
-        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
 
         renderJson(service.importExcelData(file));
     }
+    
 }

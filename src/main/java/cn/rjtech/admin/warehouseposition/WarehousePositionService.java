@@ -270,8 +270,8 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
     /**
      * 数据导入
      */
-    public Ret importExcelData(File file, String cformatName) {
-        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, cformatName);
+    public Ret importExcelData(File file) {
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         ValidationUtils.notEmpty(datas, "导入数据不能为空");
         
         Date now = new Date();

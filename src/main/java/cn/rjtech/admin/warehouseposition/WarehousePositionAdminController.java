@@ -3,7 +3,6 @@ package cn.rjtech.admin.warehouseposition;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -144,7 +143,6 @@ public class WarehousePositionAdminController extends JBoltBaseController {
   /**
    * 数据导入
    */
-  @SuppressWarnings("unchecked")
   @CheckPermission(PermissionKey.WAREHOUSE_POSITION_IMPORT)
   public void importExcelData() {
     UploadFile uploadFile = getFile("file");
@@ -153,14 +151,9 @@ public class WarehousePositionAdminController extends JBoltBaseController {
     File file = uploadFile.getFile();
 
     List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-
-    // 截取最后一个“.”之前的文件名，作为导入格式名
-    String cformatName = list.get(0);
-
-    String extension = list.get(1);
-
-    ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-    renderJson(service.importExcelData(file, cformatName));
+    ValidationUtils.equals( list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+    
+    renderJson(service.importExcelData(file));
   }
 
   @UnCheck

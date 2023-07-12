@@ -341,9 +341,9 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
     /**
      * 读取excel文件
      */
-    public Ret importExcel(File file, String cformatName) {
+    public Ret importExcel(File file) {
         //使用字段配置维护
-        List<Record> importData = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, cformatName);
+        List<Record> importData = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         ValidationUtils.notEmpty(importData, "导入数据不能为空");
         
         //执行批量操作

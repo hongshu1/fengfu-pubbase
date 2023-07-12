@@ -133,16 +133,16 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	/**
 	 * 导出
 	 */
+    @SuppressWarnings("unchecked")
 	@CheckPermission(PermissionKey.UPTIMETPLM_EXPORT)
 	public void exportExcelAll() throws Exception {
 		Page<Record> recordPage = service.getAdminDatas(1, 100000, getKv());
 		List<Record> rows = recordPage.getList();
 		if (!rows.isEmpty()) {
-			rows = rows.stream().map(row -> {
+			rows = rows.stream().peek(row -> {
 				row.put("isenabled", row.getBoolean("isenabled") ? "是" : "否");
 				row.put("dcreatetime", DateUtil.format(row.getDate("dcreatetime"), "yyyy-MM-dd HH:mm"));
-				return row;
-			}).collect(Collectors.toList());
+            }).collect(Collectors.toList());
 		}
 		renderJxls("uptimetplm.xlsx", Kv.by("rows", recordPage.getList()), "稼动时间模板导出_" + DateUtil.today() + ".xlsx");
 	}
@@ -151,18 +151,13 @@ public class UptimeTplMAdminController extends BaseAdminController {
 	 * 模板下载
 	 */
 	@SuppressWarnings("unchecked")
-	public void downloadTpl() {
-		try {
-			renderJxls("uptimetplmtemplate.xlsx", Kv.by("rows", null), "稼动时间模板.xlsx");
-		} catch (Exception e) {
-			ValidationUtils.error("模板下载失败");
-		}
+	public void downloadTpl() throws Exception {
+        renderJxls("uptimetplmtemplate.xlsx", Kv.by("rows", null), "稼动时间模板.xlsx");
 	}
 
 	/**
 	 * 数据导入
 	 */
-	@SuppressWarnings("unchecked")
 	@CheckPermission(PermissionKey.UPTIMETPLM_IMPORT)
 	public void importExcelData() {
 		UploadFile uploadFile = getFile("file");
@@ -171,13 +166,9 @@ public class UptimeTplMAdminController extends BaseAdminController {
 		File file = uploadFile.getFile();
 
 		List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-
-		// 截取最后一个“.”之前的文件名，作为导入格式名
-		String cformatName = list.get(0);
-
-		String extension = list.get(1);
-
-		ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+		ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        
 		renderJson(service.importExcelData(file));
 	}
+    
 }
