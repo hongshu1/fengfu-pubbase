@@ -58,7 +58,7 @@ function submitThisForm() {
     Ajax.post('/admin/proposalm/checkBudgetItemAndPlanItem', {expensebudgetitemid: iautoids_expensebudget_#(pageId),investmentplanitemid : iautoids_investmentplan_#(pageId),isSupplemental:true}, function (ret) {
         if (ret.state === 'ok') {
             //插入数据
-            parent.insertSupplementalItem(ret.proposalds);
+            parent.insertSupplementalItem(ret.data.proposalds);
          	//关闭当前页面
             parent.layer.close(parent.layer.getFrameIndex(window.name));
         } else {

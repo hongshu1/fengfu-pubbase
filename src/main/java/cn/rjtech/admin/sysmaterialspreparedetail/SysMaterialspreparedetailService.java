@@ -285,7 +285,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
         JSONObject data = new JSONObject();
 
         data.set("userCode", user.getUsername());
-        data.set("organizeCode", this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token", "");
 
         JSONObject preallocate = new JSONObject();
@@ -293,7 +293,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
         preallocate.set("userCode", user.getUsername());
         preallocate.set("password", "123456");
-        preallocate.set("organizeCode", this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson", user.getId());
         preallocate.set("CreatePersonName", user.getUsername());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -308,7 +308,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
             jsonObject.set("iwhname", "");
             jsonObject.set("invcode", "");
             jsonObject.set("userCode", user.getUsername());
-            jsonObject.set("organizeCode", this.getdeptid());
+            jsonObject.set("organizeCode", getOrgCode());
             jsonObject.set("OWhCode", s.getPosCode());
             jsonObject.set("owhname", "");
             jsonObject.set("barcode", s.getBarcode());
@@ -343,26 +343,14 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("201".equals(jsonObject.getString("code"))) {
-                    return Ret.ok().setOk().data(jsonObject);
+                    return successWithData(jsonObject);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Ret.msg("上传u8失败");
+        return fail("上传u8失败");
     }
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid() {
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if (null != person && "".equals(person)) {
-            dept = person.getCOrgCode();
-        }
-        return dept;
-    }
-
 
     public Ret submitByJBoltTableGo(String map1) {
         String[] split = map1.split(",");

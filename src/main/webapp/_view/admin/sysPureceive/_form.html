@@ -365,9 +365,8 @@ className="cn.rjtech.admin.syspureceive.SysPureceiveService",o=sysPureceive)
                     jboltTableSetCell(table, tr, 'autoid', null, null, true);
                 },
                 success: function (res) {
-                    var state = res.state;
-                    if (state==='ok'){
-                        var autoid = res.autoid;
+                    if (res.state === 'ok') {
+                        var autoid = res.data.autoid;
                         if (submit){
                             submit_#(pageId)(autoid,function () {
                                 LayerMsgBox.success("提交成功", 600, function () {

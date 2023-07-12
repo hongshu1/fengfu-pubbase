@@ -27,6 +27,7 @@ import cn.rjtech.admin.proposalattachment.ProposalAttachmentService;
 import cn.rjtech.admin.proposald.ProposaldService;
 import cn.rjtech.admin.subjectm.SubjectmService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.cache.UserCache;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.ProposaldTypeEnum;
@@ -38,7 +39,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -116,9 +117,6 @@ public class ProposalmAdminController extends BaseAdminController {
 
     /**
      * 新增禀议书-参照预算/投资
-     *
-     * @param cdepcode
-     * @param itemidandtypes
      */
     public void addBudgetOrInvestmentPlan(@Para(value = "expensebudgetitemid") String expensebudgetitemid, @Para(value = "investmentplanitemid") String investmentplanitemid) {
         String itemidandtypes = "";
@@ -133,7 +131,7 @@ public class ProposalmAdminController extends BaseAdminController {
         proposalm.setDApplyDate(new Date());
         proposalm.setCDepCode(cdepcode);
         proposalm.setIsSupplemental(false);
-        Record contro = personService.findFirstByCuserid(user.getId());
+        Person contro = personService.findById(UserCache.ME.getPersonId(user.getId(), getOrgId()));
         if (null != contro) {
             proposalm.setCApplyPersonCode(contro.getStr("cpsn_num"));
             proposalm.setCApplyPersonName(user.getName());
@@ -326,7 +324,7 @@ public class ProposalmAdminController extends BaseAdminController {
         List<Record> proposalds = null;
         //追加禀议-对追加选定的项目进行处理后回填到表格
         if (isSupplemental != null) proposalds = getProposaldDatas(expensebudgetitemid, investmentplanitemid, new Proposalm(), isSupplemental);
-        renderJson(Ret.ok().set("proposalds", proposalds));
+        renderJsonData(Okv.by("proposalds", proposalds));
     }
 
     /**

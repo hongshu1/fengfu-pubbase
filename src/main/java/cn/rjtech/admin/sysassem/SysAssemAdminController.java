@@ -59,9 +59,9 @@ public class SysAssemAdminController extends BaseAdminController {
 	*/
    @CheckPermission(PermissionKey.ASSEM_ADD)
 	public void add() {
-		set("BillType","1659458823869370368");
-		set("sysAssem.BillType","1659458823869370368");
-		set("zhname","一对一");
+//		set("BillType","1659458823869370368");
+//		set("sysAssem.BillType","1659458823869370368");
+//		set("zhname","一对一");
 		render("add.html");
 	}
 
