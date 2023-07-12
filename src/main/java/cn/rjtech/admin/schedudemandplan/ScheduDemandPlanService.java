@@ -723,7 +723,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					for (String pInv : pInvMap.keySet()){
 						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
 						//父级需求计划
-						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv);
+						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv) != null ? invPlanDateOutAllMap.get(pInv) : new HashMap<>();
 						BigDecimal pQty = datePQtyAllMap.get(date);
 						if (pQty != null){
 							BigDecimal qty = pQty.multiply(realQty);

@@ -22,6 +22,7 @@ import cn.rjtech.admin.containerstockind.ContainerStockOutMService;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.model.momdata.*;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -523,5 +524,11 @@ public class ContainerService extends BaseService<Container> {
       return true;
     });
     return SUCCESS;
+  }
+
+  public Container getContainerCode() {
+    Container container = new Container();
+    container.setCContainerCode(BillNoUtils.genCode(getOrgCode(), table()));
+    return container;
   }
 }

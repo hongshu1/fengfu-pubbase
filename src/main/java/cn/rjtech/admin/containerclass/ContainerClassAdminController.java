@@ -68,6 +68,7 @@ public class ContainerClassAdminController extends BaseAdminController {
      */
     @CheckPermission(PermissionKey.CONTAINERCLASS_ADD)
     public void add() {
+        set("containerClass", service.getContainerClassCode());
         render("add.html");
     }
 
