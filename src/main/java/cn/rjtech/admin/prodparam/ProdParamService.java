@@ -202,6 +202,17 @@ public class ProdParamService extends BaseService<ProdParam> {
                 prodParam.setCProdParamName(cprodparamname);
                 prodParam.setIProdItemId(iUptimeCategoryId);
                 prodParam.setIsEnabled(true);
+                prodParam.setIsDeleted(false);
+
+                Date now =new Date();
+                prodParam.setICreateBy(JBoltUserKit.getUserId());
+                prodParam.setCCreateName(JBoltUserKit.getUserName());
+                prodParam.setCUpdateName(JBoltUserKit.getUserName());
+                prodParam.setDCreateTime(now);
+                prodParam.setIUpdateBy(JBoltUserKit.getUserId());
+                prodParam.setDUpdateTime(now);
+
+
                 // 保存数据
                 prodParam.save();
             }
