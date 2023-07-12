@@ -1281,5 +1281,12 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             return true;
         });
     }
+
+    public SysPureceive getSysPureceive(String barcode) {
+        return findFirst("select a.* from T_Sys_PUReceive a LEFT JOIN T_Sys_PUReceiveDetail b on a.AutoID = b.MasID where b.Barcode = ?  order BY a.dcreatetime DESC",barcode);
+    }
+
+
+
 }
 
