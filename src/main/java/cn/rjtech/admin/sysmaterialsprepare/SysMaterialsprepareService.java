@@ -819,4 +819,13 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         return list;
     }
 
+    public Ret deleteBill(Kv kv) {
+        tx(() -> {
+            moDocS.update(moDocS.findById(findById(kv.get("autoid")).getSourceBillID()).setIStatus(2));
+            deleteById(kv.get("autoid"));
+            return true;
+        });
+
+        return SUCCESS;
+    }
 }

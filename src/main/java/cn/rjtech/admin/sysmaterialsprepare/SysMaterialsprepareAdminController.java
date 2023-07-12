@@ -392,6 +392,9 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
                 ).setFileName("销售出库单列表-" + new SimpleDateFormat("yyyyMMdd").format(new Date()));
         //3、导出
         renderBytesToExcelXlsFile(jBoltExcel);
-
+    }
+    @Before(Tx.class)
+    public void deleteBill() {
+        renderJson(service.deleteBill(getKv()));
     }
 }
