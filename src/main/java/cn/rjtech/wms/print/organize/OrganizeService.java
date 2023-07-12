@@ -14,7 +14,6 @@ import com.jfinal.plugin.activerecord.Page;
 import java.util.List;
 
 import static cn.hutool.core.util.StrUtil.COMMA;
-import static com.jfinal.plugin.activerecord.Db.tx;
 
 /**
  * WMS组织 Service

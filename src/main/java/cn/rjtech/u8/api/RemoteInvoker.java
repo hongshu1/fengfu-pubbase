@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import cn.rjtech.u8.constants.U8ApiConstants;
-import static cn.rjtech.u8.constants.U8ApiConstants.*;
 import cn.rjtech.u8.pojo.req.BaseReq;
 import cn.rjtech.u8.pojo.req.BaseReqData;
 import cn.rjtech.u8.pojo.resp.U8ApiResp;
@@ -18,8 +17,11 @@ import com.jfinal.log.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.rjtech.u8.constants.U8ApiConstants.*;
 
 /**
  * 远程调用

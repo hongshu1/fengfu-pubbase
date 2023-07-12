@@ -1,7 +1,6 @@
 package cn.rjtech.api.uptimem;
 
 import cn.jbolt.core.permission.UnCheck;
-import cn.rjtech.admin.uptimem.UptimeMService;
 import cn.rjtech.base.controller.BaseApiController;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;

@@ -9,8 +9,6 @@ import cn.rjtech.admin.stockoutqcformd.StockoutQcFormDService;
 import cn.rjtech.admin.stockoutqcformdline.StockoutqcformdLineService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
 import cn.rjtech.model.momdata.StockoutQcFormD;
-import cn.rjtech.model.momdata.StockoutQcFormM;
-
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;

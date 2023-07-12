@@ -2,11 +2,8 @@ package cn.rjtech.api.instockdefect;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
-import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.instockdefect.InStockDefectService;
 import cn.rjtech.admin.instockqcformm.InStockQcFormMService;
-import cn.rjtech.model.momdata.InStockDefect;
-import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 

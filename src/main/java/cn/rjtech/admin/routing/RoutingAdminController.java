@@ -11,16 +11,13 @@ import cn.rjtech.admin.inventorychange.InventoryChangeService;
 import cn.rjtech.admin.inventoryroutingconfig.InventoryRoutingConfigService;
 import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.base.controller.BaseAdminController;
-
 import cn.rjtech.model.momdata.InvPart;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-
 import com.jfinal.plugin.activerecord.Record;
-
 
 import java.util.List;
 

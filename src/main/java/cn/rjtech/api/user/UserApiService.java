@@ -1,6 +1,5 @@
 package cn.rjtech.api.user;
 
-import cn.hutool.core.date.DateTime;
 import cn.jbolt._admin.permission.PermissionService;
 import cn.jbolt._admin.user.UserService;
 import cn.jbolt.core.api.*;
@@ -9,12 +8,9 @@ import cn.jbolt.core.model.Org;
 import cn.jbolt.core.model.User;
 import cn.rjtech.admin.org.OrgService;
 import cn.rjtech.admin.pad.PadService;
-import cn.rjtech.model.momdata.Pad;
-import cn.rjtech.model.momdata.PadLoginLog;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Okv;
-import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 用户API

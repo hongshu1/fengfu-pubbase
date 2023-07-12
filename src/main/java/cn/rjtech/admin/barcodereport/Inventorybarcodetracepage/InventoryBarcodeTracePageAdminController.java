@@ -1,7 +1,6 @@
 package cn.rjtech.admin.barcodereport.Inventorybarcodetracepage;
 
 import cn.jbolt._admin.hiprint.HiprintTplService;
-
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
@@ -13,16 +12,15 @@ import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
 
-
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 物料现品票汇总管理 Controller

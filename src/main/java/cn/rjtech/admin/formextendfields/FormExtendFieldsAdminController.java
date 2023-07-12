@@ -13,8 +13,6 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 
-import java.util.List;
-
 /**
  * 系统管理-拓展字段配置表
  * @ClassName: FormExtendFieldsAdminController

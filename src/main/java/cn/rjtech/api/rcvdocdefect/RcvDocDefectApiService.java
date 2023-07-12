@@ -2,11 +2,8 @@ package cn.rjtech.api.rcvdocdefect;
 
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
-import cn.jbolt.core.base.JBoltMsg;
 import cn.rjtech.admin.rcvdocdefect.RcvDocDefectService;
 import cn.rjtech.admin.rcvdocqcformm.RcvDocQcFormMService;
-import cn.rjtech.model.momdata.RcvDocDefect;
-import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 

@@ -1,14 +1,11 @@
 package cn.rjtech.admin.uptimeparam;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
-import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.model.momdata.UptimeParam;
@@ -24,7 +21,6 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.plugin.activerecord.tx.TxConfig;
 import com.jfinal.upload.UploadFile;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 

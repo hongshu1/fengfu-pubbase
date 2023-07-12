@@ -1,6 +1,7 @@
 package cn.rjtech.enums;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 存货档案提交table名称：inventoryWorkRegion 所属生产线，inventorRouting 工艺路线（工序） inventoryCapacity 班组产能

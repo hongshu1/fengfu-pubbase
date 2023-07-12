@@ -1,11 +1,11 @@
 package cn.rjtech.u8.pojo.req.purchaseapp;
+
+import cn.rjtech.u8.pojo.req.BaseBody;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import cn.rjtech.u8.pojo.req.BaseBody;
-
 import java.util.ArrayList;
 import java.util.List;
 
