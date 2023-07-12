@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syssaledeliver;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -14,12 +15,10 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.rjtech.admin.syssaledeliverdetail.SysSaledeliverdetailService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.model.momdata.SysSaledeliver;
 import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -182,7 +181,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
         Kv kv = new Kv();
         kv.set("ids",get("ids"));
         List<SysSaledeliver> getpushu = service.getpushu(kv);
-        if(!CollectionUtils.isNotEmpty(getpushu)){
+        if(CollUtil.isEmpty(getpushu)){
             return ;
         }
         getpushu.stream().forEach(s -> {

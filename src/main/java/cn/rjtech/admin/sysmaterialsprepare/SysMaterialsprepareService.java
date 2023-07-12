@@ -22,18 +22,18 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.admin.sysmaterialspreparedetail.SysMaterialspreparedetailService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.MoDoc;
+import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.SysMaterialsprepare;
+import cn.rjtech.model.momdata.SysMaterialspreparedetail;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -114,8 +114,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                     kv0.set("AutoID",zhuID);
                     List<Record> records65 = dbTemplate("materialsprepare.hh", kv0).find();
 
-                    BigDecimal tag1=new BigDecimal(0);
-                    BigDecimal tag2=new BigDecimal(0);
+                    BigDecimal tag1=BigDecimal.ZERO;
+                    BigDecimal tag2=BigDecimal.ZERO;
                     //各子件物料的计划数量
                     for (int c=0;c<records65.size();c++){
                         BigDecimal Allqty=records65.get(c).get("Qty");
@@ -126,7 +126,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                         kv74.set("invcode",invcode);
                         List<Record> records55 = dbTemplate("materialsprepare.bb", kv74).find();
 
-                        BigDecimal nnn=new BigDecimal(0);
+                        BigDecimal nnn=BigDecimal.ZERO;
                         //计算已备料数量
                         for (int q=0;q<records55.size();q++){
                             nnn=nnn.add(records55.get(q).get("Qty"));
@@ -158,7 +158,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                 List<Record> zijianwuliaojiS = dbTemplate("materialsprepare.zijianwuliaoji", kv1).find();
                 //计算子件物料计划总数
                 if (zijianwuliaojiS!=null && !zijianwuliaojiS.isEmpty()){
-                    BigDecimal qtyAll = new BigDecimal(0);
+                    BigDecimal qtyAll = BigDecimal.ZERO;
                     for (int c=0;c<zijianwuliaojiS.size();c++){
                         qtyAll=qtyAll.add(zijianwuliaojiS.get(c).get("planIqty"));
                     }
@@ -166,7 +166,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                     Kv kv2 = new Kv();
                     kv2.set("autoID",autoID);
                     List<Record> yibeiliao = dbTemplate("materialsprepare.checkQty", kv2).find();
-                    BigDecimal qtyAll1 = new BigDecimal(0);
+                    BigDecimal qtyAll1 = BigDecimal.ZERO;
                     String daxiao="";
                     if (yibeiliao!=null && !yibeiliao.isEmpty()){
                         for (int r=0;r<yibeiliao.size();r++){
@@ -296,7 +296,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                 //有库存的子件物料,单个存货编码,批次号已排序
                 List<Record> record4s = dbTemplate("materialsprepare.cc", kv1).find();
                 //累计物料数量
-                BigDecimal qtyyy = new BigDecimal(0);
+                BigDecimal qtyyy = BigDecimal.ZERO;
                 if (record4s.size()>0){
                     ArrayList<String> test = new ArrayList<>();
                     for (int d=0;d<record4s.size();d++){
@@ -335,7 +335,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                         kv10.set("icode",invcodee);
                         kv10.set("masid",Long.valueOf(record2.get("AutoID")));
                         List<Record> recordOfHasBeenPreparedss = dbTemplate("materialsprepare.vv", kv10).find();
-                        BigDecimal HasBeenPrepared = new BigDecimal(0);
+                        BigDecimal HasBeenPrepared = BigDecimal.ZERO;
                         //判断是否已有备料
                         if (recordOfHasBeenPreparedss.size()<1){
                             record5.set("num",0);
@@ -391,7 +391,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         List<Record> objects = new ArrayList<>();
         int j=0;
         String BATCH="";
-        BigDecimal QTYTOLL = new BigDecimal("0");
+        BigDecimal QTYTOLL = BigDecimal.ZERO;
         List<Record> recordList = dbTemplate("materialsprepare.xianjinxianchu", kv).find();
         if (recordList.size()==0){
             return null;
@@ -431,7 +431,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                         kv1.set("iAutoId",recordList.get(i).get("AutoID"));
                         kv1.set("InvCode",recordList.get(i).get("cInvCode"));
                         List<Record> recordOfHasBeenPrepared = dbTemplate("materialsprepare.HasBeenPrepared", kv1).find();
-                        BigDecimal HasBeenPrepared = new BigDecimal(0);
+                        BigDecimal HasBeenPrepared = BigDecimal.ZERO;
                         //判断是否已有备料
                         if (recordOfHasBeenPrepared.size()<1){
                             record.set("num",0);
@@ -441,7 +441,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                             }
                             record.set("num",HasBeenPrepared);
                         }
-                        HasBeenPrepared=new BigDecimal(0);
+                        HasBeenPrepared=BigDecimal.ZERO;
                         objects.add(record);
                         j++;
                         //添加没有库存的物料
@@ -493,7 +493,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                 kv1.set("iAutoId",recordList.get(i).get("AutoID"));
                 kv1.set("InvCode",recordList.get(i).get("cInvCode"));
                 List<Record> recordOfHasBeenPrepared = dbTemplate("materialsprepare.HasBeenPrepared", kv1).find();
-                BigDecimal HasBeenPrepared = new BigDecimal(0);
+                BigDecimal HasBeenPrepared = BigDecimal.ZERO;
                 //判断是否已有备料
                 if (recordOfHasBeenPrepared.size()<1){
                     record.set("num",0);
@@ -504,7 +504,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
                     }
                     record.set("num",HasBeenPrepared);
                 }
-                HasBeenPrepared=new BigDecimal(0);
+                HasBeenPrepared=BigDecimal.ZERO;
                 objects.add(record);
                 j++;
                 //添加没有库存的物料
@@ -600,7 +600,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             sysMaterialspreparedetail.setPosCode(records.get(i).getStr("PosCode"));
             sysMaterialspreparedetail.setBarcode(records.get(i).getStr("Barcode"));
             sysMaterialspreparedetail.setInvCode(records.get(i).getStr("cInvCode"));
-            sysMaterialspreparedetail.setNum(new BigDecimal(0));
+            sysMaterialspreparedetail.setNum(BigDecimal.ZERO);
             sysMaterialspreparedetail.setQty(records.get(i).getBigDecimal("Qty"));
             sysMaterialspreparedetail.setPackRate(records.get(i).getBigDecimal("PackRate"));
 //            sysMaterialspreparedetail.setSourceBillType();
@@ -666,8 +666,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
     }
 
     public Ret pushU8(SysMaterialsprepare sysMaterialsprepare, List<SysMaterialspreparedetail> sysMaterialspreparedetails) {
-        if (!CollectionUtils.isNotEmpty(sysMaterialspreparedetails)) {
-            return Ret.ok().msg("数据不能为空");
+        if (CollUtil.isEmpty(sysMaterialspreparedetails)) {
+            return fail("数据不能为空");
         }
 
         User user = JBoltUserKit.getUser();
@@ -732,7 +732,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("201".equals(jsonObject.getString("code"))) {
-                    return Ret.ok().setOk().data(jsonObject);
+                    return successWithData(jsonObject);
                 }
             }
         } catch (Exception e) {
@@ -746,9 +746,6 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         String dept = "001";
         User user = JBoltUserKit.getUser();
         Person person = personservice.findFirstByUserId(user.getId());
-        if (null != person && "".equals(person)) {
-            dept = person.getCOrgCode();
-        }
         return dept;
     }
 

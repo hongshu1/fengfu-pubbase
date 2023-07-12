@@ -1,7 +1,6 @@
 package cn.rjtech.admin.momaterialscanusedlog;
 
 import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -251,9 +250,9 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 					moMaterialscanusedlogd.setIAutoId(iMaterialScanUsedLogMid);
 					moMaterialscanusedlogd.setCBarcode(barcode);
 					moMaterialscanusedlogd.setIQty(record.getBigDecimal("qty"));
-					moMaterialscanusedlogd.setIScannedQty(new BigDecimal(1));
+					moMaterialscanusedlogd.setIScannedQty(BigDecimal.ONE);
 				}else{
-					moMaterialscanusedlogd.setIScannedQty(moMaterialscanusedlogd.getIScannedQty().add(new BigDecimal(1)));
+					moMaterialscanusedlogd.setIScannedQty(moMaterialscanusedlogd.getIScannedQty().add(BigDecimal.ONE));
 					moMaterialscanusedlogd.update();
 				}
 			}
@@ -333,7 +332,7 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 				materialsOutDetail.setMasID(materialsOut.getAutoID());
 				materialsOutDetail.setPosCode(sysMaterialspreparedetail.getPosCode());
 				materialsOutDetail.setBarcode(moMaterialscanusedlogd.getCBarcode());
-				materialsOutDetail.setNum(new BigDecimal(0));//备料件数
+				materialsOutDetail.setNum(BigDecimal.ZERO);//备料件数
 				materialsOutDetail.setQty(moMaterialscanusedlogd.getIScannedQty());//取耗费数量
 				materialsOutDetail.setSourceBillType("制造工单");
 				materialsOutDetail.setSourceBillNo(moDoc.getCMoDocNo());//来源单号
@@ -384,7 +383,7 @@ public class MoMaterialscanusedlogmService extends BaseService<MoMaterialscanuse
 
 				materialsOutDetail.setPosCode(sysMaterialspreparedetail.getPosCode());
 				materialsOutDetail.setBarcode(moMaterialscanusedlogd.getCBarcode());
-				materialsOutDetail.setNum(new BigDecimal(0));//备料件数
+				materialsOutDetail.setNum(BigDecimal.ZERO);//备料件数
 				materialsOutDetail.setQty(moMaterialscanusedlogd.getIScannedQty());//取耗费数量
 				materialsOutDetail.setSourceBillType("制造工单");
 				materialsOutDetail.setSourceBillNo(moDoc.getCMoDocNo());//来源单号

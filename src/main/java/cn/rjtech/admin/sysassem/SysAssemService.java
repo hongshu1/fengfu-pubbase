@@ -30,7 +30,6 @@ import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -460,7 +459,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     //推送u8数据接口
     public String pushU8(SysAssem sysassem, List<SysAssemdetail> sysassemdetail) {
-        if (!CollectionUtils.isNotEmpty(sysassemdetail)) {
+        if (CollUtil.isEmpty(sysassemdetail)) {
             return "推u8从表数据不能为空";
         }
         User user = JBoltUserKit.getUser();
@@ -774,7 +773,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         SysAssem byId = findById(formAutoId);
         //获取转换后的所有数据
         List<SysAssemdetail> firstBy = sysassemdetailservice.findFirst(formAutoId.toString());
-        if(CollectionUtils.isNotEmpty(firstBy)){
+        if(CollUtil.isNotEmpty(firstBy)){
             for(SysAssemdetail detail : firstBy){
                 //生成现品票
                 this.cashNotTransaction(formAutoId,detail);
@@ -796,7 +795,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
             //获取转换后的所有数据
             List<SysAssemdetail> firstBy = sysassemdetailservice.findFirst(formAutoId.toString());
-            if(!CollectionUtils.isEmpty(firstBy)){
+            if(CollUtil.isNotEmpty(firstBy)){
                 for(SysAssemdetail detail : firstBy){
                     //生成现品票
                     this.cashNotTransaction(s,detail);
@@ -867,9 +866,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         SysAssem byId = findById(formAutoId);
         //从表数据
         List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstByall(formAutoId);
-        if(CollectionUtils.isNotEmpty(firstBy)){
+        if(CollUtil.isNotEmpty(firstBy)){
             for (SysAssemdetail s : firstBy ){
-                if(!s.getAssemType().equals("转换前")) {
+                if(!"转换前".equals(s.getAssemType())) {
                     delete("DELETE T_Sys_AssemBarcode where MasID = ? and Barcode is not null and isDeleted = '0'",s.getAutoID());
                 }
             }
@@ -888,9 +887,9 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             SysAssem byId = findById(d);
             //从表数据
             List<SysAssemdetail> firstBy = sysassemdetailservice.findFirstByall(d);
-            if (CollectionUtils.isNotEmpty(firstBy)) {
+            if (CollUtil.isNotEmpty(firstBy)) {
                 for (SysAssemdetail s : firstBy) {
-                    if (!s.getAssemType().equals("转换前")) {
+                    if (!"转换前".equals(s.getAssemType())) {
                         delete("DELETE T_Sys_AssemBarcode where MasID = ? and Barcode is not null and isDeleted = '0'", s.getAutoID());
                     }
                 }
