@@ -19,7 +19,6 @@ import cn.rjtech.admin.vouchtypedic.VouchTypeDicService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysOtherin;
 import cn.rjtech.model.momdata.SysOtherindetail;
 import cn.rjtech.model.momdata.VouchTypeDic;
@@ -29,7 +28,6 @@ import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -180,7 +178,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      * 执行JBoltTable表格整体提交
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-
         SysOtherin sysotherin = jBoltTable.getFormModel(SysOtherin.class, "sysotherin");
 
         // 获取当前用户信息？
@@ -207,7 +204,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return Ret.ok().set("autoid", sysotherin.getAutoID());
+        return successWithData(sysotherin.keep("autoid"));
     }
 
     // 可编辑表格提交-新增数据
@@ -289,7 +286,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     public String insertSysOtherIn(SysOtherindetail sysOtherindetail,Record record,HashMap<String, String> invcodemap,HashMap<String, String> vencodemap,SysOtherin sysOtherin){
         //空的是走 存货编码
         if(Objects.isNull(sysOtherindetail.getBarcode())){
-            if(CollectionUtils.isNotEmpty(invcodemap)){
+            if(CollUtil.isNotEmpty(invcodemap)){
                 for (Map.Entry<String, String> entry : vencodemap.entrySet()) {
                     return entry.getValue();
                 }
@@ -315,7 +312,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             return sysOtherin.getAutoID();
         }else {
             //走条码，按照供应商分类
-            if(CollectionUtils.isNotEmpty(vencodemap)){
+            if(CollUtil.isNotEmpty(vencodemap)){
                 for (Map.Entry<String, String> entry : vencodemap.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
@@ -351,18 +348,18 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     //推送u8数据接口
     public String pushU8(SysOtherin sysotherin,List<SysOtherindetail> sysotherindetail) {
-        if(!CollectionUtils.isNotEmpty(sysotherindetail)){
+        if(CollUtil.isEmpty(sysotherindetail)){
             return "数据不能为空";
         }
 
         User user = JBoltUserKit.getUser();
         JSONObject data = new JSONObject();
         data.set("userCode",user.getUsername());
-        data.set("organizeCode",this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token","");
         JSONObject preallocate = new JSONObject();
         preallocate.set("userCode",user.getUsername());
-        preallocate.set("organizeCode",this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson",user.getId());
         preallocate.set("CreatePersonName",user.getName());
         preallocate.set("loginDate",DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -376,7 +373,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             jsonObject.set("iwhcode",s.getPosCode());
             jsonObject.set("barcodeqty","");
             jsonObject.set("defwhcode",sysotherin.getWhcode());
-            jsonObject.set("organizecode",this.getdeptid());
+            jsonObject.set("organizecode", getOrgCode());
             jsonObject.set("invname","");
             jsonObject.set("index","1");
             jsonObject.set("vt_id","");
@@ -463,19 +460,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     }
     public Record findU8RdRecord01Id(String cCode) {
         return dbTemplate(u8SourceConfigName(), "sysotherin.findU8RdRecord01Id", Kv.by("cCode", cCode)).findFirst();
-    }
-
-
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid(){
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if(null != person && "".equals(person)){
-            dept = person.getCOrgCode();
-        }
-        return dept;
     }
 
     /**

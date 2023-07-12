@@ -21,19 +21,17 @@ import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * 其它入库单
+ *
  * @ClassName: SysOtherinAdminController
  * @author: 佛山市瑞杰科技有限公司
  * @date: 2023-05-05 17:57
  */
-
 @CheckPermission(PermissionKey.OTHER_IN_LIST)
 @UnCheckIfSystemAdmin
 @Before(JBoltAdminAuthInterceptor.class)
@@ -42,15 +40,12 @@ public class SysOtherinAdminController extends BaseAdminController {
 
     @Inject
     private SysOtherinService service;
-
-    @Inject
-    private WarehouseService warehouseservice;
-
-    @Inject
-    private RdStyleService rdstyleservice;
-
     @Inject
     private VendorService vendorservice;
+    @Inject
+    private RdStyleService rdstyleservice;
+    @Inject
+    private WarehouseService warehouseservice;
 
     /**
      * 首页
@@ -152,7 +147,6 @@ public class SysOtherinAdminController extends BaseAdminController {
     /**
      * 新增-可编辑表格-批量提交
      */
-    @Before(Tx.class)
     public void submitAll() {
         renderJson(service.submitByJBoltTable(getJBoltTable()));
     }
@@ -173,18 +167,11 @@ public class SysOtherinAdminController extends BaseAdminController {
         String barcode = get("detailHidden");
         if(null != barcode &&  !"".equals(barcode)){
             String[] split = barcode.split(",");
-            for (int i = 0; i < split.length; i++) {
-                String s = split[i].replaceAll("'", "");
-                Iterator<Record> iterator = barcodeDatas.iterator();
-                while (iterator.hasNext()) {
-                    Record r = iterator.next();
-                    if (r.getStr("barcode").equals(s)) {
-                        iterator.remove();
-                    }
-                }
+            for (String value : split) {
+                String s = value.replaceAll("'", "");
+                barcodeDatas.removeIf(r -> r.getStr("barcode").equals(s));
             }
         }
-
         renderJsonData(barcodeDatas);
     }
 

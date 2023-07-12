@@ -14,14 +14,12 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -235,7 +233,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return Ret.ok().set("autoid", sysotherin.getAutoID());
+        return successWithData(sysotherin.keep("autoid"));
     }
 
     // 可编辑表格提交-新增数据
@@ -244,8 +242,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
         if (CollUtil.isEmpty(list)) return;
         ArrayList<SysProductindetail> sysproductindetail = new ArrayList<>();
         Date now = new Date();
-        for (int i = 0; i < list.size(); i++) {
-            Record row = list.get(i);
+        for (Record row : list) {
             SysProductindetail sysdetail = new SysProductindetail();
             sysdetail.setBarcode(row.get("barcode"));
             sysdetail.setInvCode(row.get("cinvcode"));
@@ -321,7 +318,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
 
     //推送u8数据接口,返回 null 表示成功
     public String pushU8(SysProductin sysproductin, List<SysProductindetail> sysproductindetail) {
-        if(!CollectionUtils.isNotEmpty(sysproductindetail)){
+        if(CollUtil.isEmpty(sysproductindetail)){
             return "从表数据不能为空";
         }
 
@@ -343,7 +340,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
         preallocate.set("tag","ProductionIn");
         preallocate.set("type","ProductionIn");
 
-        data.put("PreAllocate",preallocate);
+        data.set("PreAllocate",preallocate);
 
         ArrayList<Object> maindata = new ArrayList<>();
         sysproductindetail.forEach(s -> {
@@ -408,18 +405,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
             e.printStackTrace();
         }
         return "上传u8失败";
-    }
-
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid(){
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if(null != person && "".equals(person)){
-            dept = person.getCOrgCode();
-        }
-        return dept;
     }
 
     /**

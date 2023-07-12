@@ -197,9 +197,9 @@ public class InventoryRoutingConfigService extends BaseService<InventoryRoutingC
 			inventoryRoutingConfig.setCMergedSeq(record.getStr(InventoryRoutingConfig.CMERGEDSEQ));
 			inventoryRoutingConfig.setCOperationName(record.getStr(InventoryRoutingConfig.COPERATIONNAME));
 			inventoryRoutingConfig.setIType(record.getInt(InventoryRoutingConfig.ITYPE));
-			String invIdStr = record.getStr(InventoryRoutingConfig.IRSINVENTORYID);
-			Long invId = StrUtil.isBlank(invIdStr) ? null : Long.valueOf(invIdStr);
-			inventoryRoutingConfig.setIRsInventoryId(invId);
+//			String invIdStr = record.getStr(InventoryRoutingConfig.IRSINVENTORYID);
+//			Long invId = StrUtil.isBlank(invIdStr) ? null : Long.valueOf(invIdStr);
+			
 			inventoryRoutingConfig.setCProductSn(record.getStr(InventoryRoutingConfig.CPRODUCTSN));
 			inventoryRoutingConfig.setCProductTechSn(record.getStr(InventoryRoutingConfig.CPRODUCTTECHSN));
 			inventoryRoutingConfig.setIMergedNum(record.getInt(InventoryRoutingConfig.IMERGEDNUM));

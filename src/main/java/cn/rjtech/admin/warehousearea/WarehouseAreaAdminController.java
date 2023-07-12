@@ -63,6 +63,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
    */
   @CheckPermission(PermissionKey.WAREHOUSE_AREA_ADD)
   public void add() {
+    set("warehouseArea", service.getWarehouseAreaCode());
     render("add.html");
   }
 

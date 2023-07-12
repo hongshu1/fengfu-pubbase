@@ -24,7 +24,7 @@ where 1=1
     and ck.cWhName like concat('%',#para(whname),'%')
 #end
 #if(state)
-    and so.state = #para(state)
+    and so.iAuditStatus = #para(state)
 #end
 #if(startTime)
     and so.dcreatetime >= #para(startTime)

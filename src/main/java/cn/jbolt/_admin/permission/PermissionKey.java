@@ -4117,4 +4117,12 @@ public class PermissionKey {
 	 * 删除
 	 */
 	public static final String PLANYEAR_DELETE = "planyear_delete";
+	/**
+	 * 删除
+	 */
+	public static final String MOMATERIALSRETURNM_DEL = "momaterialsreturnm_del";
+	/**
+	 * 编辑
+	 */
+	public static final String MOMATERIALSRETURNM_EDIT = "momaterialsreturnm_edit";
 }
