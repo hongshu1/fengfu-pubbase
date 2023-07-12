@@ -31,13 +31,11 @@ import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -370,12 +368,9 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             setStockCheckVouchBarcode(stockCheckVouchBarcode,autoid);
         }
         //执行批量操作
-        boolean success=tx(new IAtom() {
-            @Override
-            public boolean run() throws SQLException {
-                stockCheckVouchBarcodeService.batchSave(stockCheckVouchBarcodes);
-                return true;
-            }
+        boolean success=tx(() -> {
+            stockCheckVouchBarcodeService.batchSave(stockCheckVouchBarcodes);
+            return true;
         });
 
         if(!success) {

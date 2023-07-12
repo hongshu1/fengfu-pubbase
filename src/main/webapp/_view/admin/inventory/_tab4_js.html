@@ -61,23 +61,23 @@
             LayerMsgBox.alert("请先设置工艺路线！",2);
             return;
         }
-        let seq = 0;
-        var tableDatas = getJboltTableAllDatas(ele);
-        var iPid ='';
-        var cParentInvName = ''
-        if (tableDatas != null){
-            seq = tableDatas.length * 10;
-        }
-        var data = {
-            iseq: Number(seq+10),
-            iinventoryroutingid: routingId
-        };
-        insertRoutingOperationDataRow('itemroutingconfigid', data);
 
-        // let url = "admin/inventoryroutingconfig/saveItemRoutingConfig?iitemroutingid="+routingId+"&iseq="+Number(seq+10)+"&cParentInvName="+cParentInvName+"&iPid="+iPid;
-        // Ajax.get(url,function(res){
-        //     refreshJBoltTable("#itemroutingconfigid");
-        // });
+        let cInvCode = $("#citemcode").val();
+        if (!cInvCode){
+            LayerMsgBox.alert("请先输入存货编码！",2);
+            return;
+        }
+        // let seq = 0;
+        // var tableDatas = getJboltTableAllDatas(ele);
+        // if (tableDatas != null){
+        //     seq = tableDatas.length * 10;
+        // }
+        var data = {
+            iinventoryroutingid: routingId,
+        };
+
+        insertRoutingOperationDataRow('itemroutingconfigid', data);
+        batchSetColumns('#itemroutingconfigid');
     }
 
     function getEditableTableOptions4(){
@@ -144,20 +144,20 @@
                         btn:"选择,关闭"
                     }
                 },
-                irsinventoryid:{  //半成品/成品名称
-                    type:"dialogbtn",
-                    placeholder:"选择存货",
-                    maxLength:100,
-                    linkColumn:"coperationname",
-                    linkPara:"#iautoid,#cinvcode,#cinvcode1,#cinvname1,#cinvstd,#iInventoryUomId1",
-                    dialog:{
-                        url:"admin/inventoryroutingconfig/inventory_dialog_index?masterInvId=#(inventory.iAutoId)",
-                        jbt_link_ele_id:"iautoid,cinvcode,cinvcode1,cinvname1,cinvstd,iInventoryUomId1",
-                        area:"60%,70%",
-                        title:"选择存货",
-                        btn:"选择,关闭"
-                    }
-                },
+                // irsinventoryid:{  //半成品/成品名称
+                //     type:"dialogbtn",
+                //     placeholder:"选择存货",
+                //     maxLength:100,
+                //     linkColumn:"coperationname",
+                //     linkPara:"#iautoid,#cinvcode,#cinvcode1,#cinvname1,#cinvstd,#iInventoryUomId1",
+                //     dialog:{
+                //         url:"admin/inventoryroutingconfig/inventory_dialog_index?masterInvId=#(inventory.iAutoId)",
+                //         jbt_link_ele_id:"iautoid,cinvcode,cinvcode1,cinvname1,cinvstd,iInventoryUomId1",
+                //         area:"60%,70%",
+                //         title:"选择存货",
+                //         btn:"选择,关闭"
+                //     }
+                // },
                 itype:{  //工序类型
                     type:"select",
                     required: true,
@@ -294,8 +294,6 @@
         }
     }
 
-
-
     function insertRoutingOperationRows(table,tr,insertEmptyData,insertToBefore,forceTrChange){
         var canInsertTr=table.me.checkCanInsertNewTr(table,1);
         if(canInsertTr){
@@ -322,6 +320,19 @@
             return tempTr;
         }
         return false;
+    }
+
+    function getRoutingConfigData() {
+        var datas = jboltTableGetAllDatas('#itemroutingconfigid');
+        var cRsInventoryNameStr = '';
+        for (var i = 0; i<datas.length; i++){
+            if (i == datas.length -1){
+                break;
+            }
+            var item = datas[i];
+            cRsInventoryNameStr+= item['crsinventoryname']+',';
+        }
+        return cRsInventoryNameStr;
     }
 
 </script>

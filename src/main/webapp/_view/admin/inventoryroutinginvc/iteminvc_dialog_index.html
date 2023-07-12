@@ -12,7 +12,7 @@
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入存货名称" name="cInvName" value="#(cInvName)" />
 					<input type="text" autocomplete="off"  class="form-control"  placeholder="输入客户部番" name="cInvCode1" value="#(cInvCode1)" />
 					<input type="hidden" autocomplete="off"  class="form-control"  placeholder="料品id" name="invId" value="#(iinventoryid)" />
-					<input type="hidden" autocomplete="off" class=" " name="isAdd" value="#(isAdd)" >
+					<input type="hidden" autocomplete="off" name="routingConfigData" value="#(routingConfigData)" >
 					<button  type="submit" class="btn btn-outline-secondary" ><i class="fa fa-search"></i> 查询</button>
 				</form>
 			</div>
@@ -44,7 +44,7 @@
 			   data-ajax="true"
 			   data-url="admin/inventory/findBomCompareByBomMasterInvId"
 			   data-column-resize="true"
-			   data-column-prepend="1:radio"
+			   data-column-prepend="1:checkbox:true"
 			   data-conditions-form="itemmasterForm_#(pageId)"
 			   data-rowtpl="itemmasterRowtpl_#(pageId)"
 			   data-page="itemmasterPage_#(pageId)"
@@ -72,13 +72,14 @@
 <script>
 
 	function submitThisForm(callback){
-		var data=getJboltTableCheckedData("iteminvtableid");
-		if(data){
+		var datas=getJboltTableCheckedDatas("iteminvtableid");
+		if(datas){
+			var action=parent.DialogUtil.getCurrentTriggerEle();
 			//LayerMsgBox.confirm("确认选择此数据?",function(){
-			parent.jboltTableProcessTdByDialogChooser(data.cinvcode,data.iautoid,data);
-			if(callback){
-				callback();
-			}
+				parent.jboltTableInsertRowsByDialogChooser(action,datas,'prepend',false, false, true);
+				if(callback){
+					callback();
+				}
 			//});
 		}
 	}

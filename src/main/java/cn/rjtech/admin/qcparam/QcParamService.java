@@ -14,8 +14,8 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.qcitem.QcItemService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.QcItem;
 import cn.rjtech.model.momdata.QcParam;
 import cn.rjtech.util.ValidationUtils;
@@ -52,8 +52,6 @@ public class QcParamService extends BaseService<QcParam> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
     /**
      * 后台管理数据查询
      *
@@ -198,7 +196,7 @@ public class QcParamService extends BaseService<QcParam> {
      * 上传excel文件
      */
     public Ret importExcelData(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
@@ -277,7 +275,6 @@ public class QcParamService extends BaseService<QcParam> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcelClass(File file) {
-
         StringBuilder errorMsg = new StringBuilder();
         JBoltExcel excel = JBoltExcel
                 // 从excel文件创建JBoltExcel实例
@@ -299,7 +296,8 @@ public class QcParamService extends BaseService<QcParam> {
 
         List<QcParam> addList=new ArrayList<>();
 
-
+        Date now = new Date();
+        
         for (Record record : rows) {
             String cQcItemName = record.getStr("cQcItemName");
             if (StrUtil.isBlank(cQcItemName)) {
@@ -314,11 +312,6 @@ public class QcParamService extends BaseService<QcParam> {
             if(qcItem==null){
                 return fail(cQcItemName+",查无此项目");
             }
-
-
-
-            Date now=new Date();
-
 
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iOrgId", getOrgId());
@@ -335,8 +328,6 @@ public class QcParamService extends BaseService<QcParam> {
 
             QcParam qcParam=new QcParam();
             qcParam.put(record);
-
-
             qcParam.setIqcitemid(qcItem.getIAutoId());
             addList.add(qcParam);
         }

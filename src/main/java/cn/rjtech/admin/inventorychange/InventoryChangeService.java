@@ -2,41 +2,33 @@ package cn.rjtech.admin.inventorychange;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventory.InventoryService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.Inventory;
 import cn.rjtech.model.momdata.InventoryChange;
-import cn.rjtech.model.momdata.QcForm;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 物料建模-物料形态对照表
@@ -46,6 +38,7 @@ import java.util.Map;
  * @date: 2023-03-23 15:45
  */
 public class InventoryChangeService extends BaseService<InventoryChange> {
+    
   private final InventoryChange dao = new InventoryChange().dao();
 
   @Override
@@ -54,11 +47,7 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
   }
 
   @Inject
-  private CusFieldsMappingDService cusFieldsMappingDService;
-
-  @Inject
   private InventoryService inventoryService;
-
 
   @Override
   protected int systemLogTargetType() {
@@ -72,7 +61,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
    * @param pageSize   每页几条数据
    * @param sortColumn 排序列名
    * @param sortType   排序方式 asc desc
-   * @return
    */
   public Page<Record> getAdminDatas(int pageNumber, int pageSize, String sortColumn, String sortType, Kv kv) {
     kv.set("orgId", getOrgId());
@@ -86,9 +74,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 
   /**
    * 保存
-   *
-   * @param inventoryChange
-   * @return
    */
   public Ret save(InventoryChange inventoryChange) {
     if (inventoryChange == null || isOk(inventoryChange.getIAutoId())) {
@@ -119,9 +104,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 
   /**
    * 更新
-   *
-   * @param inventoryChange
-   * @return
    */
   public Ret update(InventoryChange inventoryChange) {
     if (inventoryChange == null || notOk(inventoryChange.getIAutoId())) {
@@ -150,7 +132,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
    *
    * @param inventoryChange 要删除的model
    * @param kv              携带额外参数一般用不上
-   * @return
    */
   @Override
   protected String afterDelete(InventoryChange inventoryChange, Kv kv) {
@@ -163,7 +144,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
    *
    * @param inventoryChange model
    * @param kv              携带额外参数一般用不上
-   * @return
    */
   @Override
   public String checkInUse(InventoryChange inventoryChange, Kv kv) {
@@ -173,8 +153,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 
   /**
    * 生成excel导入使用的模板
-   *
-   * @return
    */
   public JBoltExcel getImportExcelTpl() {
     return JBoltExcel
@@ -191,12 +169,8 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
         );
   }
 
-
   /**
    * 读取excel文件
-   *
-   * @param file
-   * @return
    */
   public Ret importExcel(File file) {
     StringBuilder errorMsg = new StringBuilder();
@@ -234,15 +208,12 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
       }
     }
     //执行批量操作
-    boolean success = tx(new IAtom() {
-      @Override
-      public boolean run() throws SQLException {
-        for (InventoryChange inventoryChange : inventoryChanges) {
-          verifyData(inventoryChange);
-          save(inventoryChange);
-        }
-        return true;
+    boolean success = tx(() -> {
+      for (InventoryChange inventoryChange : inventoryChanges) {
+        verifyData(inventoryChange);
+        save(inventoryChange);
       }
+      return true;
     });
 
     if (!success) {
@@ -253,8 +224,6 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
 
   /**
    * 生成要导出的Excel
-   *
-   * @return
    */
   public JBoltExcel exportExcel(List<Record> datas) {
     return JBoltExcel
@@ -363,110 +332,105 @@ public class InventoryChangeService extends BaseService<InventoryChange> {
     return dbTemplate("inventorychange.findInventoryChangeByInventoryId", Kv.by("iiventoryid", iiventoryid)).find();
   }
 
-  /**
-   * 从系统导入字段配置，获得导入的数据
-   */
-  public Ret importExcelClass(File file) {
-    List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
-    if (notOk(records)) {
-      return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+    /**
+     * 从系统导入字段配置，获得导入的数据
+     */
+    public Ret importExcelClass(File file) {
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        if (notOk(records)) {
+            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+        }
+
+        Date now = new Date();
+
+        for (Record record : records) {
+            record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+            record.set("iOrgId", getOrgId());
+            record.set("cOrgCode", getOrgCode());
+            record.set("cOrgName", getOrgName());
+            record.set("iCreateBy", JBoltUserKit.getUserId());
+            record.set("dCreateTime", now);
+            record.set("cCreateName", JBoltUserKit.getUserName());
+            record.set("isDeleted", ZERO_STR);
+            record.set("iUpdateBy", JBoltUserKit.getUserId());
+            record.set("dUpdateTime", now);
+            record.set("cUpdateName", JBoltUserKit.getUserName());
+        }
+
+        // 执行批量操作
+        tx(() -> {
+            batchSaveRecords(records);
+            return true;
+        });
+        return SUCCESS;
     }
 
+    /**
+     * 数据导入
+     */
+    public Ret importExcelData(File file) {
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(datas, "导入数据不能为空");
 
-    for (Record record : records) {
+        tx(() -> {
+            int iseq = 1;
 
-      Date now = new Date();
-      record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
-      record.set("iOrgId", getOrgId());
-      record.set("cOrgCode", getOrgCode());
-      record.set("cOrgName", getOrgName());
-      record.set("iCreateBy", JBoltUserKit.getUserId());
-      record.set("dCreateTime", now);
-      record.set("cCreateName", JBoltUserKit.getUserName());
-      record.set("isDeleted", 0);
-      record.set("iUpdateBy", JBoltUserKit.getUserId());
-      record.set("dUpdateTime", now);
-      record.set("cUpdateName", JBoltUserKit.getUserName());
+            Date now = new Date();
+                    
+            // 封装数据
+            for (Record data : datas) {
+                // 基本信息校验
+                ValidationUtils.notNull(data.get("ibeforeinventoryid"), "第" + iseq + "行的【转换前存货编码】不能为空！");
+                ValidationUtils.notNull(data.get("iafterinventoryid"), "第" + iseq + "行的【转换后存货编码】不能为空！");
+
+                Inventory inventory1 = inventoryService.findBycInvCode(data.get("ibeforeinventoryid") + "");
+                ValidationUtils.notNull(inventory1, "第" + iseq + "行的【转换前存货编码】在存货档案未找到对应的数据！");
+                Inventory inventory2 = inventoryService.findBycInvCode(data.get("iafterinventoryid") + "");
+                ValidationUtils.notNull(inventory2, "第" + iseq + "行的【转换前存货编码】在存货档案未找到对应的数据！");
+
+
+                String beforeInv = data.get("ibeforeinventoryid") + "";
+                String afterInv = data.get("iafterinventoryid") + "";
+                ValidationUtils.isTrue(!beforeInv.equals(afterInv), "第" + iseq + "行【转换前存货编码】【转换前存货编码】一致，请更换");
+
+
+                InventoryChange inventoryChange = new InventoryChange();
+
+                inventoryChange.setIBeforeInventoryId(inventory1.getIAutoId());
+                inventoryChange.setIAfterInventoryId(inventory2.getIAutoId());
+                //组织数据
+                inventoryChange.setIOrgId(getOrgId());
+                inventoryChange.setCOrgCode(getOrgCode());
+                inventoryChange.setCOrgName(getOrgName());
+
+                //创建人
+                inventoryChange.setICreateBy(JBoltUserKit.getUserId());
+                inventoryChange.setCCreateName(JBoltUserKit.getUserName());
+                inventoryChange.setDCreateTime(now);
+
+                //更新人
+                inventoryChange.setIUpdateBy(JBoltUserKit.getUserId());
+                inventoryChange.setCUpdateName(JBoltUserKit.getUserName());
+                inventoryChange.setDUpdateTime(now);
+
+                //是否删除，是否启用,数据来源
+                inventoryChange.setIsDeleted(false);
+
+                InventoryChange change = findByBeforeInventoryId(inventoryChange.getIBeforeInventoryId(), null);
+                ValidationUtils.notNull(change, "第" + iseq + "行【转换前存货编码】已存在");
+                
+                InventoryChange change1 = findByAfterInventoryId(inventoryChange.getIAfterInventoryId(), null);
+                ValidationUtils.notNull(change1, "第" + iseq + "行【转换后存货编码】已存在");
+
+                ValidationUtils.isTrue(inventoryChange.save(), "第" + iseq + "行保存数据失败");
+
+                iseq++;
+            }
+
+            return true;
+        });
+
+        return SUCCESS;
     }
-
-    // 执行批量操作
-    tx(() -> {
-      batchSaveRecords(records);
-      return true;
-    });
-    return SUCCESS;
-  }
-
-  /**
-   * 数据导入
-   *
-   * @param file
-   * @param cformatName
-   * @return
-   */
-  public Ret importExcelData(File file, String cformatName) {
-    Ret ret = cusFieldsMappingDService.getImportDatas(file, cformatName);
-    ValidationUtils.isTrue(ret.isOk(), "导入失败");
-    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-    StringBuilder msg = new StringBuilder();
-
-    tx(() -> {
-      Integer iseq = 1;
-      // 封装数据
-      for (Map<String, Object> data : datas) {
-        // 基本信息校验
-        ValidationUtils.notNull(data.get("ibeforeinventoryid"), "第" + iseq + "行的【转换前存货编码】不能为空！");
-        ValidationUtils.notNull(data.get("iafterinventoryid"), "第" + iseq + "行的【转换后存货编码】不能为空！");
-
-        Inventory inventory1 = inventoryService.findBycInvCode(data.get("ibeforeinventoryid") + "");
-        ValidationUtils.notNull(inventory1, "第" + iseq + "行的【转换前存货编码】在存货档案未找到对应的数据！");
-        Inventory inventory2 = inventoryService.findBycInvCode(data.get("iafterinventoryid") + "");
-        ValidationUtils.notNull(inventory2, "第" + iseq + "行的【转换前存货编码】在存货档案未找到对应的数据！");
-
-
-        String beforeInv = data.get("ibeforeinventoryid") + "";
-        String afterInv = data.get("iafterinventoryid") + "";
-        ValidationUtils.isTrue(!beforeInv.equals(afterInv), "第" + iseq + "行【转换前存货编码】【转换前存货编码】一致，请更换");
-
-
-        InventoryChange inventoryChange = new InventoryChange();
-
-        inventoryChange.setIBeforeInventoryId(inventory1.getIAutoId());
-        inventoryChange.setIAfterInventoryId(inventory2.getIAutoId());
-        //组织数据
-        inventoryChange.setIOrgId(getOrgId());
-        inventoryChange.setCOrgCode(getOrgCode());
-        inventoryChange.setCOrgName(getOrgName());
-
-        //创建人
-        inventoryChange.setICreateBy(JBoltUserKit.getUserId());
-        inventoryChange.setCCreateName(JBoltUserKit.getUserName());
-        inventoryChange.setDCreateTime(new Date());
-
-        //更新人
-        inventoryChange.setIUpdateBy(JBoltUserKit.getUserId());
-        inventoryChange.setCUpdateName(JBoltUserKit.getUserName());
-        inventoryChange.setDUpdateTime(new Date());
-
-        //是否删除，是否启用,数据来源
-        inventoryChange.setIsDeleted(false);
-
-        InventoryChange change = findByBeforeInventoryId(inventoryChange.getIBeforeInventoryId(), null);
-        ValidationUtils.isTrue(change == null, "第" + iseq + "行【转换前存货编码】已存在");
-        InventoryChange change1 = findByAfterInventoryId(inventoryChange.getIAfterInventoryId(), null);
-        ValidationUtils.isTrue(change1 == null, "第" + iseq + "行【转换后存货编码】已存在");
-
-        ValidationUtils.isTrue(inventoryChange.save(), "第" + iseq + "行保存数据失败");
-
-        iseq++;
-      }
-
-      return true;
-    });
-
-    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
-    return SUCCESS;
-  }
-
 
 }

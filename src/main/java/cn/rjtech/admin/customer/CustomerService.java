@@ -463,7 +463,7 @@ public class CustomerService extends BaseService<Customer> {
             customer.setDUpdateTime(new Date());
             customer.setCCreateName(JBoltUserKit.getUserName());
             customer.setCUpdateName(JBoltUserKit.getUserName());
-            customer.setISource(1);
+            customer.setISource(SourceEnum.MES.getValue());
             customermList.add(customer);
         }
 

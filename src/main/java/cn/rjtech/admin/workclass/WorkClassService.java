@@ -3,7 +3,6 @@ package cn.rjtech.admin.workclass;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
-import cn.jbolt.common.util.CACHE;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltUserCache;
 import cn.jbolt.core.db.sql.Sql;
@@ -12,20 +11,17 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -42,14 +38,10 @@ public class WorkClassService extends BaseService<Workclass> {
 
     private final Workclass dao = new Workclass().dao();
 
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
     @Override
     protected Workclass dao() {
         return dao;
     }
-    // @Inject
-    // private PersonService personService;
 
     /**
      * 后台管理分页查询
@@ -65,7 +57,7 @@ public class WorkClassService extends BaseService<Workclass> {
         if (workclass == null || isOk(workclass.getIautoid())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
-        ValidationUtils.isTrue(findWorkClassCodeInfo(workclass.getCworkclasscode()) == null, "编码重复！");
+        ValidationUtils.assertNull(findWorkClassCodeInfo(workclass.getCworkclasscode()), "编码重复！");
         saveWorkClassHandle(workclass, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(), getOrgName());
         boolean success = workclass.save();
         return ret(success);
@@ -275,12 +267,9 @@ public class WorkClassService extends BaseService<Workclass> {
         }
         savaModelHandle(models);
         // 执行批量操作
-        boolean success = tx(new IAtom() {
-            @Override
-            public boolean run() throws SQLException {
-                batchSave(models);
-                return true;
-            }
+        boolean success = tx(() -> {
+            batchSave(models);
+            return true;
         });
         if (!success) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL);
@@ -375,11 +364,12 @@ public class WorkClassService extends BaseService<Workclass> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcelClass(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
 
+        Date now = new Date();
 
         for (Record record : records) {
 
@@ -389,9 +379,6 @@ public class WorkClassService extends BaseService<Workclass> {
             if (StrUtil.isBlank(record.getStr("cWorkClassName"))) {
                 return fail("名称不能为空");
             }
-
-
-            Date now=new Date();
 
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iOrgId", getOrgId());

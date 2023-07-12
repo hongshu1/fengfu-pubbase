@@ -9,7 +9,6 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
-import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.Container;
@@ -149,14 +148,9 @@ public class ContainerAdminController extends BaseAdminController {
         File file = uploadFile.getFile();
 
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-
-        // 截取最后一个“.”之前的文件名，作为导入格式名
-        String cformatName = list.get(0);
-
-        String extension = list.get(1);
-
-        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-        renderJson(service.importExcelData(file, cformatName));
+        ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        
+        renderJson(service.importExcelData(file));
     }
 
     /**

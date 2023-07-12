@@ -2,27 +2,24 @@ package cn.rjtech.admin.proditem;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltUserCache;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.util.JBoltRandomUtil;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.model.momdata.QcItem;
-import cn.rjtech.model.momdata.UptimeCategory;
-import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.util.JBoltRandomUtil;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.ProdItem;
+import cn.rjtech.model.momdata.QcItem;
+import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
@@ -46,16 +43,15 @@ public class ProdItemService extends BaseService<ProdItem> {
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
-	@Inject
-	private CusFieldsMappingDService cusFieldsMappingDService;
-	/**
-	 * 后台管理数据查询
-	 * @param pageNumber 第几页
-	 * @param pageSize   每页几条数据
-	 * @param keywords   关键词
-     * @param isDeleted 删除状态;0. 未删除 1. 已删除
-	 * @return
-	 */
+
+    /**
+     * 后台管理数据查询
+     *
+     * @param pageNumber 第几页
+     * @param pageSize   每页几条数据
+     * @param keywords   关键词
+     * @param isDeleted  删除状态;0. 未删除 1. 已删除
+     */
 	public Page<ProdItem> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isDeleted) {
 	    //创建sql对象
 	    Sql sql = selectSql().page(pageNumber,pageSize);
@@ -140,11 +136,8 @@ public class ProdItemService extends BaseService<ProdItem> {
 		if (!result){
 			return fail(JBoltMsg.FAIL);
 		}
-		return ret(result);
+		return SUCCESS;
 	}
-
-
-
 
 	public List<Record> list(Kv kv) {
 		return dbTemplate("proditem.list", kv).find();
@@ -193,7 +186,7 @@ public class ProdItemService extends BaseService<ProdItem> {
 	 * 从系统导入字段配置，获得导入的数据
 	 */
 	public Ret importExcel(File file) {
-		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
@@ -208,6 +201,7 @@ public class ProdItemService extends BaseService<ProdItem> {
 			if (StrUtil.isBlank(record.getStr("cQcItemName"))) {
 				return fail("检验项目名称不能为空");
 			}
+            
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
 			record.set("cQcItemCode", record.getStr("cQcItemCode"));
 			record.set("cQcItemName", record.getStr("cQcItemName"));
@@ -220,7 +214,7 @@ public class ProdItemService extends BaseService<ProdItem> {
 			record.set("iUpdateBy", JBoltUserKit.getUserId());
 			record.set("dUpdateTime", now);
 			record.set("cUpdateName", JBoltUserKit.getUserName());
-			record.set("isDeleted",0);
+			record.set("isDeleted", ZERO_STR);
 		}
 
 		// 执行批量操作
@@ -239,11 +233,12 @@ public class ProdItemService extends BaseService<ProdItem> {
 	 * 从系统导入字段配置，获得导入的数据
 	 */
 	public Ret importExcelClass(File file) {
-		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
 
+        Date now = new Date();
 
 		for (Record record : records) {
 
@@ -253,9 +248,6 @@ public class ProdItemService extends BaseService<ProdItem> {
 			if (StrUtil.isBlank(record.getStr("cQcItemName"))) {
 				return fail("检验项目名称不能为空");
 			}
-
-
-			Date now=new Date();
 
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
 			record.set("iOrgId", getOrgId());

@@ -25,7 +25,6 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bomm.BomMService;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorycapacity.InventoryCapacityService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
@@ -38,6 +37,7 @@ import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
 import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.uom.UomService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -83,8 +83,6 @@ public class InventoryService extends BaseService<Inventory> {
     @Inject
     private InventoryAdditionService inventoryAdditionService;
     @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
-    @Inject
     private InventoryCapacityService inventoryCapacityService;
     @Inject
     private InventoryWorkRegionService inventoryWorkRegionService;
@@ -126,10 +124,11 @@ public class InventoryService extends BaseService<Inventory> {
         }
         String iInventoryClassCode = kv.getStr("iInventoryClassCode");
         if (StrUtil.isNotBlank(iInventoryClassCode)) {
-            if (!iInventoryClassCode.contains("["))
+            if (!iInventoryClassCode.contains("[")) {
                 kv.remove("iInventoryClassCode");
-            else
+            } else {
                 kv.set("iInventoryClassCode", iInventoryClassCode.substring(1, iInventoryClassCode.indexOf("]")));
+            }
         }
         return dbTemplate("inventoryclass.inventoryList", kv).paginate(pageNumber, pageSize);
     }
@@ -1202,7 +1201,7 @@ public class InventoryService extends BaseService<Inventory> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcelClass(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }

@@ -10,11 +10,9 @@ import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodedetail.BarcodedetailService;
 import cn.rjtech.admin.barcodemaster.BarcodemasterService;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.scanlog.ScanLogService;
 import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
@@ -63,29 +61,23 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     }
 
     @Inject
-    private BarcodemasterService barcodemasterService;//条码表
+    private UomService uomService;
     @Inject
-    private BarcodedetailService barcodedetailService;//条码明细表
-    @Inject
-    private StockBarcodePositionService barcodePositionService;//条码库存表
-    @Inject
-    private WarehouseService warehouseService;//仓库档案
-    @Inject
-    private WarehouseAreaService warehouseAreaService;//库区档案
+    private VendorService vendorService;
     @Inject
     private ScanLogService scanLogService;//扫描日志
     @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
-    @Inject
-    private VendorService vendorService;
+    private WarehouseService warehouseService;//仓库档案
     @Inject
     private InventoryService inventoryService;
     @Inject
     private HiprintTplService hiprintTplService;
     @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
+    private WarehouseAreaService warehouseAreaService;//库区档案
     @Inject
-    private UomService uomService;
+    private BarcodedetailService barcodedetailService;//条码明细表
+    @Inject
+    private BarcodemasterService barcodemasterService;//条码表
 
     /**
      * 数据源
@@ -142,8 +134,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
      * 自动条码明细页面加载数据
      * */
     public Page<Record> detailDatas(Integer pageNumber, Integer pageSize, Kv kv) {
-        kv.set("organizecode", getOrgCode());
-        Page<Record> paginate = dbTemplate("warehousebeginofperiod.detailDatas", kv).paginate(pageNumber, pageSize);
+        Page<Record> paginate = dbTemplate("warehousebeginofperiod.detailDatas", kv.set("organizecode", getOrgCode())).paginate(pageNumber, pageSize);
         List<Dictionary> dictionaries = JBoltDictionaryCache.me.getListByTypeKey("beginningofperiod", true);
         for (Record record : paginate.getList()) {
             Dictionary dictionary = dictionaries.stream().filter(e -> e.getSn().equals(record.getStr("reportFileName"))).findFirst().orElse(new Dictionary());
@@ -153,9 +144,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return paginate;
     }
 
-    /*
+    /**
      * 保存
-     * */
+     */
     public Ret save(Barcodemaster barcodemaster) {
         if (barcodemaster == null || isOk(barcodemaster.getAutoid())) {
             return fail(JBoltMsg.PARAM_ERROR);
@@ -222,9 +213,9 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return delete(sql);
     }
 
-    /*
+    /**
      * 保存期初库存
-     * */
+     */
     public Ret submitByStock(JBoltPara jBoltPara) {
         String datas = jBoltPara.getString("datas");//打印张数
         List<Kv> kvList = JSON.parseArray(datas, Kv.class);
@@ -332,8 +323,8 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
                 //包装数量
                 BigDecimal ipkgqty = kv.getBigDecimal("ipkgqty");
                 //generatedStockQty ÷ ipkgqty
-                BigDecimal divide = generatedStockQty.divide(ipkgqty, 0, BigDecimal.ROUND_UP);
-                BigDecimal remainder = generatedStockQty.remainder(ipkgqty).setScale(6, BigDecimal.ROUND_HALF_UP);
+                BigDecimal divide = generatedStockQty.divide(ipkgqty, 0, RoundingMode.UP);
+                BigDecimal remainder = generatedStockQty.remainder(ipkgqty).setScale(6, RoundingMode.HALF_UP);
                 BigDecimal lastScale = remainder.compareTo(BigDecimal.ZERO) == 0 ? ipkgqty : remainder;//余数，最后一张条码要打印的数量
 
                 //3、生成条码，并保存参数
@@ -554,16 +545,14 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
 
 
     public List<Record> findAreaByWhcode() {
-        Kv kv = new Kv();
-        kv.set("corgcode", getOrgCode());
-        return dbTemplate("warehousebeginofperiod.findAreaByWhcode", kv).find();
+        return dbTemplate("warehousebeginofperiod.findAreaByWhcode", Kv.by("corgcode", getOrgCode())).find();
     }
 
     public List<Record> wareHouseOptions(Kv kv) {
         if (StrUtil.isNotBlank(kv.getStr("q"))) {
             kv.set("cwhcode", kv.getStr("q"));
         }
-        List<Record> records = dbTemplate("warehousebeginofperiod.wareHouseOptions", kv.of("isenabled", "true")).find();
-        return records;
+        return dbTemplate("warehousebeginofperiod.wareHouseOptions", kv.set("isenabled", "true")).find();
     }
+
 }

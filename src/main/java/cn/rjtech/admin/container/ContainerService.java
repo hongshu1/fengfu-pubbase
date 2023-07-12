@@ -1,26 +1,20 @@
 package cn.rjtech.admin.container;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.containerclass.ContainerClassService;
 import cn.rjtech.admin.containerstockind.ContainerStockInDService;
 import cn.rjtech.admin.containerstockind.ContainerStockInMService;
 import cn.rjtech.admin.containerstockind.ContainerStockOutDService;
 import cn.rjtech.admin.containerstockind.ContainerStockOutMService;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -33,10 +27,8 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static cn.hutool.core.text.StrPool.COMMA;
 
@@ -48,10 +40,8 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @date: 2023-03-22 14:48
  */
 public class ContainerService extends BaseService<Container> {
+    
   private final Container dao = new Container().dao();
-
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingDService;
 
   @Override
   protected Container dao() {
@@ -63,31 +53,16 @@ public class ContainerService extends BaseService<Container> {
     return ProjectSystemLogTargetType.NONE.getValue();
   }
 
-  @Inject
-  private WarehouseService warehouseService;
-
-  @Inject
-  private ContainerClassService containerClassService;
-
-  //明细入库明细service
-  @Inject
-  private ContainerStockInDService containerStockInDService;
-
-  //明细入库主表service
-  @Inject
-  private ContainerStockInMService containerStockInMService;
-
-  //明细出库明细service
-  @Inject
-  private ContainerStockOutDService stockOutDService;
-
-  //明细出库主表service
-  @Inject
-  private ContainerStockOutMService stockOutMService;
-
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingdService;
-
+    @Inject
+    private WarehouseService warehouseService;
+    @Inject
+    private ContainerStockOutDService stockOutDService;
+    @Inject
+    private ContainerStockOutMService stockOutMService;
+    @Inject
+    private ContainerStockInDService containerStockInDService;
+    @Inject
+    private ContainerStockInMService containerStockInMService;
 
   /**
    * 后台管理数据查询
@@ -96,7 +71,6 @@ public class ContainerService extends BaseService<Container> {
    * @param pageSize   每页几条数据
    * @param keywords   关键词
    * @param isInner    社内/社外：0. 社内 1. 社外
-   * @return
    */
   public Page<Container> getAdminDatas(int pageNumber, int pageSize, String keywords, Boolean isInner) {
     //创建sql对象
@@ -112,9 +86,6 @@ public class ContainerService extends BaseService<Container> {
 
   /**
    * 保存
-   *
-   * @param container
-   * @return
    */
   public Ret save(Container container) {
     if (container == null || isOk(container.getIAutoId())) {
@@ -147,20 +118,13 @@ public class ContainerService extends BaseService<Container> {
 
   /**
    * 查找容器编码
-   *
-   * @param cContainerCode
-   * @return
    */
   public Container findByContainerCode(String cContainerCode) {
     return findFirst(Okv.by("cContainerCode", cContainerCode).set("isDeleted", false), "iautoid", "asc");
   }
 
-
   /**
    * 更新
-   *
-   * @param container
-   * @return
    */
   public Ret update(Container container) {
     if (container == null || notOk(container.getIAutoId())) {
@@ -198,7 +162,6 @@ public class ContainerService extends BaseService<Container> {
    *
    * @param container 要删除的model
    * @param kv        携带额外参数一般用不上
-   * @return
    */
   @Override
   protected String afterDelete(Container container, Kv kv) {
@@ -211,7 +174,6 @@ public class ContainerService extends BaseService<Container> {
    *
    * @param container model
    * @param kv        携带额外参数一般用不上
-   * @return
    */
   @Override
   public String checkInUse(Container container, Kv kv) {
@@ -225,7 +187,7 @@ public class ContainerService extends BaseService<Container> {
   @Override
   protected String afterToggleBoolean(Container container, String column, Kv kv) {
     //addUpdateSystemLog(container.getIAutoId(), JBoltUserKit.getUserId(), container.getName(),"的字段["+column+"]值:"+container.get(column));
-    /**
+    /*
      switch(column){
      case "isInner":
      break;
@@ -238,11 +200,6 @@ public class ContainerService extends BaseService<Container> {
 
   /**
    * 分页查询
-   *
-   * @param pageNumber
-   * @param pageSize
-   * @param kv
-   * @return
    */
   public Object paginateAdminDatas(Integer pageNumber, Integer pageSize, Kv kv) {
     return dbTemplate("container.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
@@ -258,126 +215,119 @@ public class ContainerService extends BaseService<Container> {
     return SUCCESS;
   }
 
-  /**
-   * 数据导入
-   *
-   * @param file
-   * @param cformatName
-   * @return
-   */
-  public Ret importExcelData(File file, String cformatName) {
-    Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
-    ValidationUtils.isTrue(ret.isOk(), "导入失败");
-    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-    StringBuilder msg = new StringBuilder();
+    /**
+     * 数据导入
+     */
+    public Ret importExcelData(File file) {
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(datas, "导入记录不能为空");
 
-    tx(() -> {
-      Integer iseq = 1;
-      // 封装数据
-      for (Map<String, Object> data : datas) {
-        // 基本信息校验
-        ValidationUtils.notNull(data.get("ccontainercode"), "第" + iseq + "行【容器编码】不能为空！");
-        ValidationUtils.notNull(data.get("ccontainername"), "第" + iseq + "行【容器名称】不能为空！");
-        ValidationUtils.notNull(data.get("icontainerclassid"), "第" + iseq + "行【容器类型】不能为空！");
-        ValidationUtils.notNull(data.get("idepid"), "第" + iseq + "行【部门】不能为空！");
-        ValidationUtils.notNull(data.get("iwarehouseid"), "第" + iseq + "行【所属仓库】不能为空！");
-        ValidationUtils.notNull(data.get("isinner"), "第" + iseq + "行【存放地点】不能为空！");
-        ValidationUtils.notNull(data.get("ilength"), "第" + iseq + "行【长(mm)】不能为空！");
-        ValidationUtils.notNull(data.get("iwidth"), "第" + iseq + "行【宽(mm)】不能为空！");
-        ValidationUtils.notNull(data.get("iheight"), "第" + iseq + "行【高(mm)】不能为空！");
-        ValidationUtils.notNull(data.get("isenabled"), "第" + iseq + "行【是否启用】不能为空！");
+        tx(() -> {
+            int iseq = 1;
 
-        //唯一校验
-        Integer recordCodes = dbTemplate("container.uniqueCheck", Kv.by("ccontainercode", data.get("ccontainercode"))).queryInt();
-        if (recordCodes > 0) {
-          ValidationUtils.error("第" + iseq + "行【容器编码】已存在，请修改后保存！");
-        }
+            // 封装数据
+            for (Record data : datas) {
+                // 基本信息校验
+                ValidationUtils.notNull(data.get("ccontainercode"), "第" + iseq + "行【容器编码】不能为空！");
+                ValidationUtils.notNull(data.get("ccontainername"), "第" + iseq + "行【容器名称】不能为空！");
+                ValidationUtils.notNull(data.get("icontainerclassid"), "第" + iseq + "行【容器类型】不能为空！");
+                ValidationUtils.notNull(data.get("idepid"), "第" + iseq + "行【部门】不能为空！");
+                ValidationUtils.notNull(data.get("iwarehouseid"), "第" + iseq + "行【所属仓库】不能为空！");
+                ValidationUtils.notNull(data.get("isinner"), "第" + iseq + "行【存放地点】不能为空！");
+                ValidationUtils.notNull(data.get("ilength"), "第" + iseq + "行【长(mm)】不能为空！");
+                ValidationUtils.notNull(data.get("iwidth"), "第" + iseq + "行【宽(mm)】不能为空！");
+                ValidationUtils.notNull(data.get("iheight"), "第" + iseq + "行【高(mm)】不能为空！");
+                ValidationUtils.notNull(data.get("isenabled"), "第" + iseq + "行【是否启用】不能为空！");
 
-        Integer recordNames = dbTemplate("container.uniqueCheck", Kv.by("ccontainercode", data.get("ccontainercode"))).queryInt();
-        if (recordNames > 0) {
-          ValidationUtils.error("第" + iseq + "行【容器名称】已存在，请修改后保存！");
-        }
+                // 唯一校验
+                Integer recordCodes = dbTemplate("container.uniqueCheck", Kv.by("ccontainercode", data.get("ccontainercode"))).queryInt();
+                if (recordCodes > 0) {
+                    ValidationUtils.error("第" + iseq + "行【容器编码】已存在，请修改后保存！");
+                }
 
-        //数据检验是否正确
-        Record containerClass = dbTemplate("container.getContainerClassByName", Kv.by("name", data.get("icontainerclassid"))).findFirst();
-        ValidationUtils.notNull(containerClass, "第" + iseq + "行【容器类型】未找到对应的容器类型数据！");
+                Integer recordNames = dbTemplate("container.uniqueCheck", Kv.by("ccontainercode", data.get("ccontainercode"))).queryInt();
+                if (recordNames > 0) {
+                    ValidationUtils.error("第" + iseq + "行【容器名称】已存在，请修改后保存！");
+                }
 
-        Record department = dbTemplate("department.getDepartmentByName", Kv.by("name", data.get("idepid"))).findFirst();
-        ValidationUtils.notNull(department, "第" + iseq + "行【部门】未找到对应的部门档案数据！");
+                //数据检验是否正确
+                Record containerClass = dbTemplate("container.getContainerClassByName", Kv.by("name", data.get("icontainerclassid"))).findFirst();
+                ValidationUtils.notNull(containerClass, "第" + iseq + "行【容器类型】未找到对应的容器类型数据！");
 
-        Warehouse warehouse = warehouseService.findByWhName(data.get("iwarehouseid") + "");
-        ValidationUtils.notNull(warehouse, "第" + iseq + "行【所属仓库】未找到对应的仓库档案数据！");
+                Record department = dbTemplate("department.getDepartmentByName", Kv.by("name", data.get("idepid"))).findFirst();
+                ValidationUtils.notNull(department, "第" + iseq + "行【部门】未找到对应的部门档案数据！");
 
-        if (!(data.get("isinner") + "").equals("社内") && !(data.get("isinner") + "").equals("社外")) {
-          ValidationUtils.error("第" + iseq + "行【存放地点】数据不正确，只能填写【社内】或【社外】");
-        }
-        boolean isinner = (data.get("isinner") + "").equals("社内") ? true : false;
+                Warehouse warehouse = warehouseService.findByWhName(data.get("iwarehouseid") + "");
+                ValidationUtils.notNull(warehouse, "第" + iseq + "行【所属仓库】未找到对应的仓库档案数据！");
 
-        if (!(data.get("isenabled") + "").equals("是") && !(data.get("isenabled") + "").equals("否")) {
-          ValidationUtils.error("第" + iseq + "行【是否启用】数据不正确，只能填写【是】或【否】");
-        }
-        boolean isenabled = (data.get("isenabled") + "").equals("是") ? true : false;
+                if (!"社内".equals(data.get("isinner") + "") && !"社外".equals(data.get("isinner") + "")) {
+                    ValidationUtils.error("第" + iseq + "行【存放地点】数据不正确，只能填写【社内】或【社外】");
+                }
+                boolean isinner = "社内".equals(data.get("isinner") + "");
 
-        ValidationUtils.isNumber((data.get("ilength") + ""), "第" + iseq + "行【长(mm)】不是数字类型！");
-        ValidationUtils.isNumber((data.get("iwidth") + ""), "第" + iseq + "行【宽(mm)】不是数字类型！");
-        ValidationUtils.isNumber((data.get("iheight") + ""), "第" + iseq + "行【高(mm)】不是数字类型！");
+                if (!"是".equals(data.get("isenabled") + "") && !"否".equals(data.get("isenabled") + "")) {
+                    ValidationUtils.error("第" + iseq + "行【是否启用】数据不正确，只能填写【是】或【否】");
+                }
+                boolean isenabled = "是".equals(data.get("isenabled") + "");
+
+                ValidationUtils.isNumber((data.get("ilength") + ""), "第" + iseq + "行【长(mm)】不是数字类型！");
+                ValidationUtils.isNumber((data.get("iwidth") + ""), "第" + iseq + "行【宽(mm)】不是数字类型！");
+                ValidationUtils.isNumber((data.get("iheight") + ""), "第" + iseq + "行【高(mm)】不是数字类型！");
 
 
-        Container container = new Container();
-        //组织数据
-        container.setIOrgId(getOrgId());
-        container.setCOrgCode(getOrgCode());
-        container.setCOrgName(getOrgName());
+                Container container = new Container();
+                //组织数据
+                container.setIOrgId(getOrgId());
+                container.setCOrgCode(getOrgCode());
+                container.setCOrgName(getOrgName());
 
-        //创建人
-        container.setICreateBy(JBoltUserKit.getUserId());
-        container.setCCreateName(JBoltUserKit.getUserName());
-        container.setDCreateTime(new Date());
+                //创建人
+                container.setICreateBy(JBoltUserKit.getUserId());
+                container.setCCreateName(JBoltUserKit.getUserName());
+                container.setDCreateTime(new Date());
 
-        //更新人
-        container.setIUpdateBy(JBoltUserKit.getUserId());
-        container.setCUpdateName(JBoltUserKit.getUserName());
-        container.setDUpdateTime(new Date());
+                //更新人
+                container.setIUpdateBy(JBoltUserKit.getUserId());
+                container.setCUpdateName(JBoltUserKit.getUserName());
+                container.setDUpdateTime(new Date());
 
-        //是否删除，是否启用,数据来源
-        container.setIsDeleted(false);
-        container.setIsEnabled(true);
+                //是否删除，是否启用,数据来源
+                container.setIsDeleted(false);
+                container.setIsEnabled(true);
 
-        if (data.get("icustomerid") != null) {
-          Record record = dbTemplate("customer.getCustomerByName", Kv.by("icustomername", data.get("icustomerid") + "")).findFirst();
-          ValidationUtils.notNull(record, "第" + iseq + "行【客户名称】未找到对应的客户档案数据！");
-          container.setICustomerId(record.getLong("iautoid"));
-        }
+                if (data.get("icustomerid") != null) {
+                    Record record = dbTemplate("customer.getCustomerByName", Kv.by("icustomername", data.get("icustomerid") + "")).findFirst();
+                    ValidationUtils.notNull(record, "第" + iseq + "行【客户名称】未找到对应的客户档案数据！");
+                    container.setICustomerId(record.getLong("iautoid"));
+                }
 
-        container.setCContainerCode(data.get("ccontainercode") + "");
-        container.setCContainerName(data.get("ccontainername") + "");
-        container.setIContainerClassId(containerClass.getLong("iautoid"));
-        container.setIDepId(department.getLong("iautoid"));
-        container.setIWarehouseId(warehouse.getIAutoId());
-        container.setIsInner(isinner);
-        container.setILength(BigDecimal.valueOf(Integer.parseInt(data.get("ilength") + "")));
-        container.setIWidth(BigDecimal.valueOf(Integer.parseInt(data.get("iwidth") + "")));
-        container.setIHeight(BigDecimal.valueOf(Integer.parseInt(data.get("iheight") + "")));
-        container.setCVolume(data.get("cvolume") + "");
-        container.setCCommonModel(data.get("iheight") + "");
-        container.setIsEnabled(isenabled);
+                container.setCContainerCode(data.get("ccontainercode") + "");
+                container.setCContainerName(data.get("ccontainername") + "");
+                container.setIContainerClassId(containerClass.getLong("iautoid"));
+                container.setIDepId(department.getLong("iautoid"));
+                container.setIWarehouseId(warehouse.getIAutoId());
+                container.setIsInner(isinner);
+                container.setILength(BigDecimal.valueOf(Integer.parseInt(data.get("ilength") + "")));
+                container.setIWidth(BigDecimal.valueOf(Integer.parseInt(data.get("iwidth") + "")));
+                container.setIHeight(BigDecimal.valueOf(Integer.parseInt(data.get("iheight") + "")));
+                container.setCVolume(data.get("cvolume") + "");
+                container.setCCommonModel(data.get("iheight") + "");
+                container.setIsEnabled(isenabled);
 
-        ValidationUtils.isTrue(container.save(), "第" + iseq + "行保存数据失败");
+                ValidationUtils.isTrue(container.save(), "第" + iseq + "行保存数据失败");
 
-        iseq++;
-      }
+                iseq++;
+            }
 
-      return true;
-    });
+            return true;
+        });
 
-    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
-    return SUCCESS;
-  }
+        return SUCCESS;
+    }
 
   public List<Record> list(Kv kv) {
     return dbTemplate("container.paginateAdminDatas", kv).find();
   }
-
 
   /**
    * 出入库处理
@@ -402,7 +352,7 @@ public class ContainerService extends BaseService<Container> {
     Long[] ids = containers.stream().map(Container::getIAutoId).toArray(Long[]::new);
 
     //记号Mark ——入库：1 出库：0
-    if (mark.equals("1")) {
+    if ("1".equals(mark)) {
       //入库
       //修改容器存放地点
       updateInnerByCRk(ids, "0");
@@ -455,7 +405,6 @@ public class ContainerService extends BaseService<Container> {
    * 打印数据
    *
    * @param kv 参数
-   * @return
    */
   public Object getPrintDataCheck(Kv kv) {
     return dbTemplate("container.containerPrintData", kv).find();
@@ -465,12 +414,13 @@ public class ContainerService extends BaseService<Container> {
    * 从系统导入字段配置，获得导入的数据
    */
   public Ret importExcelClass(File file) {
-    List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
-    if (notOk(records)) {
-      return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-    }
+      List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+      if (notOk(records)) {
+          return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
+      }
 
-
+      Date now = new Date();
+      
     for (Record record : records) {
 
       if (StrUtil.isBlank(record.getStr("iContainerClassId"))) {
@@ -500,8 +450,6 @@ public class ContainerService extends BaseService<Container> {
       if (StrUtil.isBlank(record.getStr("iHeight"))) {
         return fail("高不能为空");
       }
-
-      Date now = new Date();
 
       record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
       record.set("iOrgId", getOrgId());

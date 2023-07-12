@@ -16,11 +16,9 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -144,12 +142,9 @@ public class UserOrgService extends JBoltBaseService<UserOrg> {
             }
         }
         // 执行批量操作
-        boolean success = tx(new IAtom() {
-            @Override
-            public boolean run() throws SQLException {
-                batchSave(userOrgs);
-                return true;
-            }
+        boolean success = tx(() -> {
+            batchSave(userOrgs);
+            return true;
         });
 
         if (!success) {

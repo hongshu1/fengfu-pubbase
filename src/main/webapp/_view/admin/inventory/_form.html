@@ -231,15 +231,22 @@
         if(isOk(table)){
             var jboltTable=table.jboltTable("inst");
             if(jboltTable){
+                let cInvName = $("#citemname").val();
+                let cInvCode = $("#citemcode").val();
                 jboltTable.me.processEditingTds(jboltTable);
                 var trs = jboltTable.tbody.find("tr[data-index]");
                 var seq = Number(0);
                 if(isOk(trs)){
                     var tr;
-                    trs.each(function(){
+                    trs.each(function(i, item){
                         tr=$(this);
                         seq = Number(10+seq);
                         jboltTable.me.setCell(jboltTable,tr,'iseq',seq,seq,dontExeValueChangeHandler);
+                        var rsinventoryname = cInvCode+'-'+seq
+                        if (trs.length-1 == i){
+                            rsinventoryname = cInvName;
+                        }
+                        jboltTable.me.setCell(jboltTable,tr,'crsinventoryname',rsinventoryname,rsinventoryname,dontExeValueChangeHandler);
                     });
                     return;
                 }
