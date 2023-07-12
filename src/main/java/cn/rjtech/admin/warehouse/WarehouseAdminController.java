@@ -60,6 +60,7 @@ public class WarehouseAdminController extends BaseAdminController {
    */
   @CheckPermission(PermissionKey.WAREHOUSE_ADD)
   public void add() {
+    set("warehouse", service.getWarehouseCode());
     render("add.html");
   }
 

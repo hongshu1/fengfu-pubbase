@@ -168,9 +168,20 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
         ValidationUtils.error("数据已被货架档案引用，无法删除！");
       }
 
+      String[] split = ids.split(",");
+      for (String id : split) {
+        WarehouseShelves warehouseShelves = findById(id);
+        if (warehouseShelves.getIsource() != null) {
+          if (warehouseShelves.getIsource() == 2) {
+            ValidationUtils.error("【" + warehouseShelves.getCshelvesname() + "】来源U8，无法删除");
+          }
+        }
+        warehouseShelves.setIsdeleted(true);
+        warehouseShelves.update();
+      }
       //料品档案主表
       //deleteByIds(ids,true);
-      update("UPDATE Bd_Warehouse_Shelves SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
+//      update("UPDATE Bd_Warehouse_Shelves SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
       return true;
     });
     return SUCCESS;
