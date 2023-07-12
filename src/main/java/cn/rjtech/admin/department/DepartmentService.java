@@ -667,11 +667,12 @@ public class DepartmentService extends BaseService<Department> {
                                 .setHeaders(2,
                                         JBoltExcelHeader.create("cdepcode", "部门编码"),
                                         JBoltExcelHeader.create("cdepname", "部门名称"),
-                                        JBoltExcelHeader.create("cdeptype", "部门类型"),
+                                        JBoltExcelHeader.create("orgtype", "组织类型"),
                                         JBoltExcelHeader.create("cdepperson", "负责人编码"),
                                         JBoltExcelHeader.create("", "负责人名称"),
                                         JBoltExcelHeader.create("isapsinvoled", "是否参与排产"),
-                                        JBoltExcelHeader.create("cdepmemo", "备注")
+                                        JBoltExcelHeader.create("cdepmemo", "备注"),
+                                        JBoltExcelHeader.create("cdeptype", "部门类型")
                                 )
                                 // 从第三行开始读取
                                 .setDataStartRow(2)
@@ -698,35 +699,34 @@ public class DepartmentService extends BaseService<Department> {
             ValidationUtils.notNull(cdepcode,"部门编码为空!");
             String cdepname = record.getStr("cdepname");
             ValidationUtils.notNull(cdepname,"部门名称为空!");
-
-
+            //部门类型
             String cdeptype = record.getStr("cdeptype");
-            ValidationUtils.notNull(cdeptype,"部门类型为空!");
+
+
+            String orgtype = record.getStr("orgtype");
+            ValidationUtils.notNull(orgtype,"组织类型为空!");
             int count = 0;
             String cType=null;
-            if(cdeptype.equals("总部")){
+            if(orgtype.equals("总部")){
+                cType="0";
+                count++;
+            }else if(orgtype.equals("省级公司")){
                 cType="1";
                 count++;
-            }else if(cdeptype.equals("省级公司")){
-                cType="1";
-                count++;
-            }else if(cdeptype.equals("市级公司")){
+            }else if(orgtype.equals("市级公司")){
                 cType="2";
                 count++;
-            }else if(cdeptype.equals("区县级公司")){
+            }else if(orgtype.equals("区县级公司")){
                 cType="3";
                 count++;
-            }else if(cdeptype.equals("办事处")){
+            }else if(orgtype.equals("办事处")){
                 cType="4";
                 count++;
-            }else if(cdeptype.equals("部门")){
+            }else if(orgtype.equals("部门")){
                 cType="5";
                 count++;
-            }else if(cdeptype.equals("部门")){
-                cType="6";
-                count++;
             }
-            ValidationUtils.isTrue(count==1,"部门类型不合法!");
+            ValidationUtils.isTrue(count==1,"组织类型不合法!");
 
             Department dbDepartment = findByCdepcode(cdepcode);
 
@@ -769,6 +769,7 @@ public class DepartmentService extends BaseService<Department> {
                 department.setDCreateTime(new Date());
                 department.setDUpdateTime(new Date());
                 department.setCType(cType);
+                department.setCDepType(cdeptype);
                 department.setIOrgId(getOrgId());
                 department.setCOrgCode(getOrgCode());
                 department.setICreateBy(JBoltUserKit.getUserId());
