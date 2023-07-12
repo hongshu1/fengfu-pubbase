@@ -399,7 +399,7 @@ public class CodeGenService extends JBoltBaseService<CodeGen> {
         if (notOk(codeGen.getMainJavaPackage())) {
             return fail("未指定Java主包package");
         }
-        return Ret.ok();
+        return SUCCESS;
     }
 
     /**

@@ -309,7 +309,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return Ret.ok().set("autoid", sysotherin.getAutoID());
+        return successWithData(sysotherin.keep("autoid"));
     }
 
     //可编辑表格提交-新增数据
@@ -321,8 +321,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         User user = JBoltUserKit.getUser();
         Date now = new Date();
         ArrayList<SysAssembarcode> sysassembarcodeList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            Record row = list.get(i);
+        for (Record row : list) {
             SysAssemdetail sysAssemdetail = new SysAssemdetail();
             sysAssemdetail.setMasID(sysotherin.getAutoID());
             sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
@@ -465,12 +464,12 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         User user = JBoltUserKit.getUser();
         JSONObject data = new JSONObject();
         data.set("userCode", user.getUsername());
-        data.set("organizeCode", this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token", "");
         JSONObject preallocate = new JSONObject();
         preallocate.set("userCode", user.getUsername());
         preallocate.set("password", "123456");
-        preallocate.set("organizeCode", this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson", user.getId());
         preallocate.set("CreatePersonName", user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -516,9 +515,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             e.printStackTrace();
             return "上传u8失败:"+e.getMessage();
         }
-
     }
-
 
     public void setjson(SysAssemdetail s, User user,SysAssembarcode first,SysAssem sysassem,ArrayList<Object> maindata){
         JSONObject jsonObject = new JSONObject();
@@ -526,7 +523,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         jsonObject.set("iwhname", "");
         jsonObject.set("invcode", first.getInvCode());
         jsonObject.set("userCode", user.getUsername());
-        jsonObject.set("organizeCode", this.getdeptid());
+        jsonObject.set("organizeCode", getOrgCode());
         jsonObject.set("OWhCode", s.getPosCode());
         jsonObject.set("owhname", "");
         jsonObject.set("barcode", first.getBarcode());
@@ -583,18 +580,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         return dbTemplate(u8SourceConfigName(), "sysassem.findU8RdRecord01Id", Kv.by("cCode", cCode)).findFirst();
     }
 
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid() {
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if(null != person && "".equals(person)){
-            dept = person.getCOrgCode();
-        }
-        return dept;
-    }
-
     public void commonSaveSysAssemModel(SysAssem sysAssem, SysPuinstore puinstore) {
         Date date = new Date();
         sysAssem.setAutoID(JBoltSnowflakeKit.me.nextIdStr());
@@ -621,8 +606,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     /**
      * 根据条件获取资源
-     * @param kv
-     * @return
      */
     public List<Record> getResource(Kv kv){
         kv.setIfNotNull("orgCode", getOrgCode());
@@ -633,8 +616,6 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
 
     /**
      * 根据条件获取资源
-     * @param kv
-     * @return
      */
     public Record getBarcode(Kv kv){
         kv.setIfNotNull("orgCode", getOrgCode());
@@ -672,6 +653,14 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         firstRecord.set("ibeforeinventoryid",kv.get("ibeforeinventoryid"));
         firstRecord.set("iafterinventoryid",kv.get("iafterinventoryid"));
         firstRecord.set("qty",kv.get("qty"));
+        //如果没有设置默认仓库，则获使用转换前的仓库
+        if(Objects.isNull(firstRecord.getStr("whcode"))){
+            firstRecord.set("whcode",kv.get("whcode"));
+            firstRecord.set("whname",kv.get("whname"));
+            firstRecord.set("poscode",kv.get("poscode"));
+            firstRecord.set("posname",kv.get("posname"));
+        }
+
         return firstRecord;
     }
 
@@ -813,9 +802,12 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         SysAssembarcode first7 = sysassembarcodeservice.findFirst("select * from T_Sys_AssemBarcode where MasID = ? and isDeleted = '0'", detail.getAutoID());
         //获取转换后的数量
         BigDecimal sourceQty = first7.getQty();
+        BigDecimal pkgQty = sourceQty;
         //根据存货编码获取包装数量
         Inventory first8 = inventoryService.findFirst("select * from Bd_Inventory where cInvCode = ?", first7.getInvCode());
-        BigDecimal pkgQty = new BigDecimal(first8.getIPkgQty());
+        if(Objects.nonNull(first8.getIPkgQty())){
+            pkgQty = new BigDecimal(first8.getIPkgQty());
+        }
 
         //保存当前包装数量
         detail.setIPkgQty(pkgQty.intValue());

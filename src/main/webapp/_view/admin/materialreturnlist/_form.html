@@ -1,7 +1,6 @@
 #@hiprintcss()
 #set(pageId=RandomUtil.random(6))
 <div class="jbolt_page">
-    <div style="text-align: center; font-size: 24px; color: red">采购入库单</div>
     <div class="jbolt_page_content">
         <form onsubmit="return false;" id="PuinstoreForm" action="#(action)" method="post">
             <div class="jbolt_table_toolbar" id="bomcompare_split_toolbar_#(pageId)">
@@ -29,19 +28,19 @@
             <input type="hidden" id="puinstoreautoid" name="puinstore.autoid" value="#(puinstore.autoid??)"/>
             #end
 
-            <div class="col-md-10">
+            <div class="col-md-20">
                 <div class="form-group row">
                     <label class="col-sm-1 col-form-label">入库单号：</label>
                     <div class="col-sm-2 col-form-label">
                         #(puinstore.billno??)
                     </div>
-                    <label class="col-sm-2 col-form-label">入库日期：</label>
+                    <label class="col-sm-1 col-form-label">入库日期：</label>
                     <div class="col-sm-2 col-form-label">
                         #datetime(puinstore.billdate??,'yyyy-MM-dd')
                     </div>
 
 
-                    <label class="col-sm-2 col-form-label">仓库名称：</label>
+                    <label class="col-sm-1 col-form-label">仓库名称：</label>
                     <div class="col-sm-2 col-form-label">
                         #(puinstore.whname??)
                     </div>
@@ -56,14 +55,19 @@
                     </div>
 
 
-                    <label class="col-sm-2 col-form-label">部门：</label>
+                    <label class="col-sm-1 col-form-label">部门：</label>
                     <div class="col-sm-2 col-form-label">
                         #(puinstoreName.cdepname??)
                     </div>
 
-                    <label class="col-sm-2 col-form-label">采购类型：</label>
+                    <label class="col-sm-1 col-form-label">采购类型：</label>
                     <div class="col-sm-2 col-form-label">
                         #(puinstoreName.cptname??)
+                    </div>
+
+                    <label class="col-sm-1 col-form-label">到货日期：</label>
+                    <div class="col-sm-2 col-form-label">
+                        未使用，空白
                     </div>
                 </div>
 
@@ -73,14 +77,19 @@
                         #(puinstoreName.cvenname??)
                     </div>
 
-                    <label class="col-sm-2 col-form-label">审批日期：</label>
+                    <label class="col-sm-1 col-form-label">审批日期：</label>
                     <div class="col-sm-2 col-form-label">
                         #datetime(puinstore.dCreateTime??,'yyyy-MM-dd')
                     </div>
 
-                    <label class="col-sm-2 col-form-label">入库类别：</label>
+                    <label class="col-sm-1 col-form-label">入库类别：</label>
                     <div class="col-sm-2 col-form-label">
                         #(puinstoreName.crdname??)
+                    </div>
+
+                    <label class="col-sm-1 col-form-label">到货单号：</label>
+                    <div class="col-sm-2 col-form-label">
+                        未使用，空白
                     </div>
                 </div>
 
@@ -90,18 +99,18 @@
                         #(puinstore.memo??)
                     </div>
 
-                    <label class="col-sm-2 col-form-label">业务员：</label>
+                    <label class="col-sm-1 col-form-label">业务员：</label>
                     <div class="col-sm-2 col-form-label">
                         #(puinstore.createperson??)
                     </div>
                 </div>
-                <div class="form-group row">
-                    <div class="col-11">
+
+                    <div class="col-20">
                         <div class="jbolt_page_content">
                             #render("_table_split.html")
                         </div>
                     </div>
-                </div>
+
             </div>
 
             <div class="form-group row">
@@ -109,7 +118,7 @@
                     <div class="col-sm-2 col-form-label">
                         #(puinstore.ccreatename??)
                     </div>
-                    <label class="col-sm-2 col-form-label">审核人：</label>
+                    <label class="col-sm-1 col-form-label">审核人：</label>
                     <div class="col-sm-2 col-form-label">
                         #(puinstore.auditperson??)
                     </div>

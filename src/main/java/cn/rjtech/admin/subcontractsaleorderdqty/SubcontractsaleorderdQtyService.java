@@ -1,14 +1,21 @@
 package cn.rjtech.admin.subcontractsaleorderdqty;
 
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.model.momdata.Subcontractsaleorderd;
 import cn.rjtech.model.momdata.SubcontractsaleorderdQty;
+import cn.rjtech.model.momdata.Subcontractsaleorderm;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * 客户订单-委外订单数量记录
  * @ClassName: SubcontractsaleorderdQtyService
@@ -102,4 +109,30 @@ public class SubcontractsaleorderdQtyService extends BaseService<Subcontractsale
 		return null;
 	}
 
+	public Boolean batchSaveByManualOrderD(Subcontractsaleorderm subcontractsaleorderm, Subcontractsaleorderd subcontractsaleorderd) {
+		List<SubcontractsaleorderdQty> subcontractsaleorderdQties = new ArrayList<>();
+		for (int i = 1; i <= 31; i++) {
+			BigDecimal iqty = Optional.ofNullable(subcontractsaleorderd.getBigDecimal("iqty" + i)).orElse(BigDecimal.ZERO);
+			if (iqty.doubleValue() > 0) {
+				SubcontractsaleorderdQty subcontractsaleorderdQty = new SubcontractsaleorderdQty();
+				subcontractsaleorderdQty.setISubcontractSaleOrderDid(subcontractsaleorderd.getIAutoId());
+				subcontractsaleorderdQty.setIYear(subcontractsaleorderm.getIYear());
+				subcontractsaleorderdQty.setIMonth(subcontractsaleorderm.getIMonth());
+				subcontractsaleorderdQty.setIDate(i);
+				subcontractsaleorderdQty.setIRowNo(i * 10);
+				subcontractsaleorderdQty.setIQty(iqty);
+				subcontractsaleorderdQties.add(subcontractsaleorderdQty);
+			}
+		}
+
+		return batchSave(subcontractsaleorderdQties).length > 0;
+	}
+
+	public Boolean batchDeleteByManualOrderDIds(String subcontractsaleorderdIds) {
+		return delete(deleteSql().in("iSubcontractSaleOrderDid", subcontractsaleorderdIds)) > 0;
+	}
+
+	public List<SubcontractsaleorderdQty> findBysubcontractsaleorderdId(Long subcontractsaleorderdId) {
+		return find(selectSql().eq("iSubcontractSaleOrderDid", subcontractsaleorderdId));
+	}
 }

@@ -131,6 +131,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_ADD)
     public void add() {
         render("add.html");
     }
@@ -145,6 +146,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_EDIT)
     public void edit() {
         SysSaledeliver sysSaledeliver = service.findById(getLong(0));
         if (sysSaledeliver == null) {
@@ -166,6 +168,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
     }
@@ -173,6 +176,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -199,6 +203,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /***
      * 勾选导出
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_EXPORT)
     public void downloadChecked(){
         Kv kv = getKv();
         String ids = kv.getStr("ids");

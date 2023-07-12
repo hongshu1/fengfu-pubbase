@@ -809,28 +809,33 @@
                                 for (let f = 0; f < Num; f++) {
                                     useArray.push(`R[-5]C[${f+1}]`);
                                 }
-                                // isWorkArray.push(parms['scheduplanmonth'][i].childList[j].day[k].iswork);
-                                // console.log(isWorkArray);
                                 //嵌入计划在库公式
                                 sheet.setFormula(shiyongRow+5-1,jihuaCol++,`=SUM(RC[-1],R[-3]C,R[-2]C,R[-1]C)-R[-4]C`);
-                                //判断当天是否为工作日
-                                if(parms['scheduplanmonth'][i].childList[j].day[k].iswork){
-                                    //嵌入在库天数公式
-                                    sheet.setFormula(AS,Z+k,`=IF(OR(RC[-${k+1}]=0,SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})=0),0,R[-1]C/(SUM(${useArray[0]}:${useArray.length>1?useArray[useArray.length-1]:useArray[0]})/RC[-${k+1}]))`)
-                                }else{
                                     let row = AS-5; // 初始行值
                                     let planmonthCol = k+Z;
-                                    let col = planmonthCol;
                                     var isWork = parms['scheduplanmonth'][i].childList[j].day;
-                                    // console.log(++col)
-                                    findColumns(row,col,Num,isWork);
-                                    // console.log(parms.colArr);
-                                    // console.log(`=SUM(R${AS-4}C${parms['colArr'][0]+1}:R${AS-4}C${parms['colArr'][1]+1})`)
-                                    // sheet.setFormula(AS,parms.planmonthCol,`=SUM(R${AS-4}C${parms.colArr[0]+1}:R${AS-4}C${parms.colArr[1]+1})/R${AS+1}C10`);
-                                    if(parms['scheduplanmonth'][i].childList[j].day.at(-1)||parms['scheduplanmonth'][i].childList[j].day.at(-2)){
-                                        // console.log('at')
-                                    }
-                                }
+                                    var col=11;
+                                    var array=[];
+                                    // console.log(sheet.getValue(row,20))
+                                    // console.log(planmonthCol-10,'-----------')//max:29
+                                    // if(planmonthCol-10<=parms['scheduplanmonth'][i].childList[j].day.length-Num-1){
+                                    //     // debugger
+                                    //     for(var f=col;;f++){
+                                    //         // console.log(f,isWork[f-10-1],'f')
+                                    //         if(isWork[f-10].iswork==false||sheet.getValue(row,f)==0) continue;
+                                    //         if(array.length!=Num){
+                                    //             array.push(f);
+                                    //         }else{
+                                    //             break;
+                                    //         }
+                                    //     }
+                                    // }
+                                // console.log(Z+k)
+                                // sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${array[0]+1}:R${AS-4}C${array[1]+1})/R${AS+1}C10`);
+                                // if(parms['scheduplanmonth'][i].childList[j].day.at(-1)||parms['scheduplanmonth'][i].childList[j].day.at(-2)){
+                                // console.log('at')
+                                // }
+                                // }
                                 //控制小数位为1位
                                 sheet.setFormatter(AS, shiyongCol+k,Number.isInteger(parseFloat(parms['scheduplanmonth'][i].childList[j].day[k].tianshu))?"0.00":"0.00");
                                 //
@@ -864,34 +869,13 @@
                         }
                     }
                 }else{
-                    LayerMsgBox.error(respons.msg,10000);
+                    LayerMsgBox.error('暂无数据',10000);
                 }
                 spreadResume();// 恢复绘制
             }, error: function () {
                 console.log('error')
             }
         })
-    }
-    function findColumns(row, col, Num, isWork) {
-        // console.log(col)
-        setTimeout(()=>{
-            console.log(isWork[col-10])
-            // for (let i = 0; i < Num; i++) {
-            //     let value = sheet.getValue(row, col+1);
-            //     if(value){
-            //         if(!isWork[col-10].iswork){
-            //             if(value>0){
-            //                 parms.colArr.push(col)
-            //             }else{
-            //                 ++col;
-            //                 findColumns(row, col, Num, isWork)
-            //             }
-            //         }
-            //     }
-            // }
-            // console.log(value);
-        },0)
-        //
     }
     // 订阅 valueChanged 事件
     sheet.bind(GC.Spread.Sheets.Events.ValueChanged, function (e, info) {
@@ -1030,16 +1014,16 @@
             searchEndTime,
             searchLevel
         }
-        var json = sheet.toJSON();//储存表单数据
-        sheet.fromJSON(json);//清空表单数据
+        // var json = sheet.toJSON();//储存表单数据
+        // sheet.fromJSON(json);//清空表单数据
         sheet.reset();//重置表单
         //从新赋值到原始渲染位置
         parms.planListRowIndex=4;
         parms.dayRow=10;
         parms.weekRow=10;
-        initData(searchLevel);
-        initDate(searchData);
         loadInit();
+        initDate(searchData);
+        initData(searchLevel);
     }
     function reset() {
         document.getElementById('cworkname').value = '';
@@ -1048,7 +1032,7 @@
         document.getElementById('cinvname1').value = '';
         document.getElementById('search_start-time').value = '';
         document.getElementById('search_end-time').value = '';
-        document.getElementById('search_level').value = '';
+        document.getElementById('search_level').value = '1';
     }
     //排产确定事件
     function savePopup(){
@@ -1065,17 +1049,17 @@
                 let {msg,state} = res.data;
                 state=='ok'?LayerMsgBox.success(msg):LayerMsgBox.error(msg)
                 closePopup();//隐藏弹出层
-                var json = sheet.toJSON();//储存表单数据
-                sheet.fromJSON(json);//清空表单数据
+                // var json = sheet.toJSON();//储存表单数据
+                // sheet.fromJSON(json);//清空表单数据
                 sheet.reset();//重置表单
                 //从新赋值到原始渲染位置
                 parms.planListRowIndex=4;
                 parms.dayRow=10;
                 parms.weekRow=10;
-                initData(level);
                 parms.level=level;
-                initDate();
                 loadInit();
+                initDate();
+                initData(level);
             },error: function(error) {
                 console.log(error);
             }
