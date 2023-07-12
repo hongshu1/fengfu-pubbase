@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseInventoryRoutingConfig<M extends BaseInventoryRoutingConfig<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键*/
     public static final String IAUTOID = "iAutoId";
     /**存货工艺档案ID*/
@@ -23,8 +23,8 @@ public abstract class BaseInventoryRoutingConfig<M extends BaseInventoryRoutingC
     public static final String COPERATIONNAME = "cOperationName";
     /**工序类型: 1. 串序 2. 并序*/
     public static final String ITYPE = "iType";
-    /**半成品/成品ID*/
-    public static final String IRSINVENTORYID = "iRsInventoryId";
+    /**半成品/成品名称*/
+    public static final String CRSINVENTORYNAME = "cRsInventoryName";
     /**生产方式(字典值) 内作/外作*/
     public static final String CPRODUCTSN = "cProductSn";
     /**生产工艺： 1. 冲压 2. 弯管 3. 焊接*/
@@ -47,10 +47,6 @@ public abstract class BaseInventoryRoutingConfig<M extends BaseInventoryRoutingC
     public static final String DCREATETIME = "dCreateTime";
     /**是否启用*/
     public static final String ISENABLED = "isEnabled";
-    /**上级ID*/
-    public static final String IPID = "iPid";
-    /**上级半成品名称*/
-    public static final String CPARENTINVNAME = "cParentInvName";
 	/**
 	 * 主键
 	 */
@@ -154,20 +150,20 @@ public abstract class BaseInventoryRoutingConfig<M extends BaseInventoryRoutingC
 	}
 
 	/**
-	 * 半成品/成品ID
+	 * 半成品/成品名称
 	 */
-	public M setIRsInventoryId(java.lang.Long iRsInventoryId) {
-		set("iRsInventoryId", iRsInventoryId);
+	public M setCRsInventoryName(java.lang.String cRsInventoryName) {
+		set("cRsInventoryName", cRsInventoryName);
 		return (M)this;
 	}
 
 	/**
-	 * 半成品/成品ID
+	 * 半成品/成品名称
 	 */
-	@JBoltField(name="irsinventoryid" ,columnName="iRsInventoryId",type="Long", remark="半成品/成品ID", required=false, maxLength=19, fixed=0, order=7)
-	@JSONField(name = "irsinventoryid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIRsInventoryId() {
-		return getLong("iRsInventoryId");
+	@JBoltField(name="crsinventoryname" ,columnName="cRsInventoryName",type="String", remark="半成品/成品名称", required=false, maxLength=200, fixed=0, order=7)
+	@JSONField(name = "crsinventoryname")
+	public java.lang.String getCRsInventoryName() {
+		return getStr("cRsInventoryName");
 	}
 
 	/**
@@ -355,40 +351,6 @@ public abstract class BaseInventoryRoutingConfig<M extends BaseInventoryRoutingC
 	@JSONField(name = "isenabled")
 	public java.lang.Boolean getIsEnabled() {
 		return getBoolean("isEnabled");
-	}
-
-	/**
-	 * 上级ID
-	 */
-	public M setIPid(java.lang.Long iPid) {
-		set("iPid", iPid);
-		return (M)this;
-	}
-
-	/**
-	 * 上级ID
-	 */
-	@JBoltField(name="ipid" ,columnName="iPid",type="Long", remark="上级ID", required=false, maxLength=19, fixed=0, order=19)
-	@JSONField(name = "ipid", serializeUsing = ToStringSerializer.class)
-	public java.lang.Long getIPid() {
-		return getLong("iPid");
-	}
-
-	/**
-	 * 上级半成品名称
-	 */
-	public M setCParentInvName(java.lang.String cParentInvName) {
-		set("cParentInvName", cParentInvName);
-		return (M)this;
-	}
-
-	/**
-	 * 上级半成品名称
-	 */
-	@JBoltField(name="cparentinvname" ,columnName="cParentInvName",type="String", remark="上级半成品名称", required=false, maxLength=200, fixed=0, order=20)
-	@JSONField(name = "cparentinvname")
-	public java.lang.String getCParentInvName() {
-		return getStr("cParentInvName");
 	}
 
 }

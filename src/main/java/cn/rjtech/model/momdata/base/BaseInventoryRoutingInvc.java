@@ -1,7 +1,6 @@
 package cn.rjtech.model.momdata.base;
-
-import cn.jbolt.core.gen.JBoltField;
 import cn.jbolt.core.model.base.JBoltBaseModel;
+import cn.jbolt.core.gen.JBoltField;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 
@@ -11,11 +10,12 @@ import com.alibaba.fastjson.serializer.ToStringSerializer;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseInventoryRoutingInvc<M extends BaseInventoryRoutingInvc<M>> extends JBoltBaseModel<M>{
+    public static final String DATASOURCE_CONFIG_NAME = "momdata";
     /**主键*/
     public static final String IAUTOID = "iAutoId";
     /**料品工艺档案配置ID*/
     public static final String IINVENTORYROUTINGCONFIGID = "iInventoryRoutingConfigId";
-    /**料品档案ID*/
+    /**存货ID*/
     public static final String IINVENTORYID = "iInventoryId";
     /**基本用量*/
     public static final String IUSAGEUOM = "iUsageUOM";
@@ -27,6 +27,10 @@ public abstract class BaseInventoryRoutingInvc<M extends BaseInventoryRoutingInv
     public static final String CCREATENAME = "cCreateName";
     /**创建时间*/
     public static final String DCREATETIME = "dCreateTime";
+    /**存货名称（虚拟件）*/
+    public static final String CINVNAME = "cInvName";
+    /**是否虚拟件*/
+    public static final String ISVIRTUAL = "isVirtual";
 	/**
 	 * 主键
 	 */
@@ -62,7 +66,7 @@ public abstract class BaseInventoryRoutingInvc<M extends BaseInventoryRoutingInv
 	}
 
 	/**
-	 * 料品档案ID
+	 * 存货ID
 	 */
 	public M setIInventoryId(java.lang.Long iInventoryId) {
 		set("iInventoryId", iInventoryId);
@@ -70,9 +74,9 @@ public abstract class BaseInventoryRoutingInvc<M extends BaseInventoryRoutingInv
 	}
 
 	/**
-	 * 料品档案ID
+	 * 存货ID
 	 */
-	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="料品档案ID", required=true, maxLength=19, fixed=0, order=3)
+	@JBoltField(name="iinventoryid" ,columnName="iInventoryId",type="Long", remark="存货ID", required=false, maxLength=19, fixed=0, order=3)
 	@JSONField(name = "iinventoryid", serializeUsing = ToStringSerializer.class)
 	public java.lang.Long getIInventoryId() {
 		return getLong("iInventoryId");
@@ -161,6 +165,40 @@ public abstract class BaseInventoryRoutingInvc<M extends BaseInventoryRoutingInv
 	@JSONField(name = "dcreatetime")
 	public java.util.Date getDCreateTime() {
 		return getDate("dCreateTime");
+	}
+
+	/**
+	 * 存货名称（虚拟件）
+	 */
+	public M setCInvName(java.lang.String cInvName) {
+		set("cInvName", cInvName);
+		return (M)this;
+	}
+
+	/**
+	 * 存货名称（虚拟件）
+	 */
+	@JBoltField(name="cinvname" ,columnName="cInvName",type="String", remark="存货名称（虚拟件）", required=false, maxLength=200, fixed=0, order=9)
+	@JSONField(name = "cinvname")
+	public java.lang.String getCInvName() {
+		return getStr("cInvName");
+	}
+
+	/**
+	 * 是否虚拟件
+	 */
+	public M setIsVirtual(java.lang.Boolean isVirtual) {
+		set("isVirtual", isVirtual);
+		return (M)this;
+	}
+
+	/**
+	 * 是否虚拟件
+	 */
+	@JBoltField(name="isvirtual" ,columnName="isVirtual",type="Boolean", remark="是否虚拟件", required=true, maxLength=1, fixed=0, order=10)
+	@JSONField(name = "isvirtual")
+	public java.lang.Boolean getIsVirtual() {
+		return getBoolean("isVirtual");
 	}
 
 }

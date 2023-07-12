@@ -66,14 +66,12 @@ SELECT
     b.name as itypename,
     c.name as cproductsnname,
     d.name as cproducttechsnname,
-    i.cInvName1 rsinventoryname,
     ri.invcs,rs.drawings,re.equipments
 FROM
     Bd_InventoryRoutingConfig a
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary b ON a.iType = b.sn AND b.type_key = 'process_type'
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary c ON a.cProductSn = c.sn AND c.type_key = 'cproductsn_type'
         LEFT JOIN #(getBaseDbName()).dbo.jb_dictionary d ON a.cProductTechSn = d.sn AND d.type_key = 'product_tech'
-        left join Bd_Inventory i on a.irsinventoryid = i.iAutoId
         left join (SELECT COUNT(iInventoryRoutingConfigId) invcs ,iInventoryRoutingConfigId configid FROM Bd_InventoryRoutingInvc GROUP BY iInventoryRoutingConfigId) ri on a.iAutoId = ri.configid
         left join (SELECT COUNT(iInventoryRoutingConfigId) drawings ,iInventoryRoutingConfigId configid FROM Bd_InventoryRoutingSop GROUP BY iInventoryRoutingConfigId) rs on a.iAutoId = rs.configid
         left join (SELECT COUNT(iInventoryRoutingConfigId) equipments ,iInventoryRoutingConfigId configid FROM Bd_InventoryRoutingEquipment GROUP BY iInventoryRoutingConfigId) re on a.iAutoId = re.configid
