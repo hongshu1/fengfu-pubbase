@@ -1,5 +1,6 @@
 package cn.rjtech.admin.otheroutreturnlist;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
@@ -16,7 +17,6 @@ import cn.rjtech.model.momdata.OtherOutDetail;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -328,7 +328,7 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 
 	//推送u8数据接口
 	public Ret pushU8(OtherOut otherout, List<OtherOutDetail> otheroutdetail) {
-		if(!CollectionUtils.isNotEmpty(otheroutdetail)){
+		if(CollUtil.isEmpty(otheroutdetail)){
 			return fail("数据不能为空");
 		}
 

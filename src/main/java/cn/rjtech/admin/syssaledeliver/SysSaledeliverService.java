@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syssaledeliver;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
@@ -16,11 +17,9 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysSaledeliver;
 import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -224,7 +223,7 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
 
     //推送u8数据接口
     public Ret pushU8(SysSaledeliver syssaledeliver, List<SysSaledeliverdetail> syssaledeliverdetail) {
-        if(!CollectionUtils.isNotEmpty(syssaledeliverdetail)){
+        if(CollUtil.isEmpty(syssaledeliverdetail)){
             return fail("数据不能为空");
         }
 
@@ -246,7 +245,7 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         preallocate.set("tag","ProductionIn");
         preallocate.set("type","ProductionIn");
 
-        data.put("PreAllocate",preallocate);
+        data.set("PreAllocate",preallocate);
 
         ArrayList<Object> maindata = new ArrayList<>();
         syssaledeliverdetail.stream().forEach(s -> {

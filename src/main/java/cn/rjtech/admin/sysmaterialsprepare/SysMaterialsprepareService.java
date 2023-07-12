@@ -22,18 +22,18 @@ import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
 import cn.rjtech.admin.sysmaterialspreparedetail.SysMaterialspreparedetailService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.MoDoc;
+import cn.rjtech.model.momdata.Person;
+import cn.rjtech.model.momdata.SysMaterialsprepare;
+import cn.rjtech.model.momdata.SysMaterialspreparedetail;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.DbTemplate;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -666,8 +666,8 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
     }
 
     public Ret pushU8(SysMaterialsprepare sysMaterialsprepare, List<SysMaterialspreparedetail> sysMaterialspreparedetails) {
-        if (!CollectionUtils.isNotEmpty(sysMaterialspreparedetails)) {
-            return Ret.ok().msg("数据不能为空");
+        if (CollUtil.isEmpty(sysMaterialspreparedetails)) {
+            return fail("数据不能为空");
         }
 
         User user = JBoltUserKit.getUser();
@@ -732,7 +732,7 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("201".equals(jsonObject.getString("code"))) {
-                    return Ret.ok().setOk().data(jsonObject);
+                    return successWithData(jsonObject);
                 }
             }
         } catch (Exception e) {
@@ -746,9 +746,6 @@ public class SysMaterialsprepareService extends BaseService<SysMaterialsprepare>
         String dept = "001";
         User user = JBoltUserKit.getUser();
         Person person = personservice.findFirstByUserId(user.getId());
-        if (null != person && "".equals(person)) {
-            dept = person.getCOrgCode();
-        }
         return dept;
     }
 

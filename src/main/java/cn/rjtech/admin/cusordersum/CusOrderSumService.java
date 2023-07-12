@@ -1,5 +1,6 @@
 package cn.rjtech.admin.cusordersum;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
@@ -12,7 +13,6 @@ import cn.rjtech.admin.annualorderdqty.AnnualorderdQtyService;
 import cn.rjtech.admin.annualorderm.AnnualOrderMService;
 import cn.rjtech.admin.customerworkdays.CustomerWorkDaysService;
 import cn.rjtech.admin.monthorderd.MonthorderdService;
-import cn.rjtech.admin.scheduproductplan.CollectionUtils;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -485,7 +485,7 @@ public class CusOrderSumService extends BaseService<CusOrderSum> {
 
         tx(() -> {
             delete("DELETE FROM Co_CusOrderSum WHERE iYear >= ? ",curYear);
-            List<List<CusOrderSum>> groupCusOrderSumList = CollectionUtils.partition(cusOrderSumList,300);
+            List<List<CusOrderSum>> groupCusOrderSumList = CollUtil.split(cusOrderSumList,300);
             CountDownLatch countDownLatch = new CountDownLatch(groupCusOrderSumList.size());
             ExecutorService executorService = Executors.newFixedThreadPool(groupCusOrderSumList.size());
             for(List<CusOrderSum> cusOrderSums :groupCusOrderSumList){

@@ -29,7 +29,6 @@ import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.util.xml.XmlUtil;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -289,7 +288,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     public String insertSysOtherIn(SysOtherindetail sysOtherindetail,Record record,HashMap<String, String> invcodemap,HashMap<String, String> vencodemap,SysOtherin sysOtherin){
         //空的是走 存货编码
         if(Objects.isNull(sysOtherindetail.getBarcode())){
-            if(CollectionUtils.isNotEmpty(invcodemap)){
+            if(CollUtil.isNotEmpty(invcodemap)){
                 for (Map.Entry<String, String> entry : vencodemap.entrySet()) {
                     return entry.getValue();
                 }
@@ -315,7 +314,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             return sysOtherin.getAutoID();
         }else {
             //走条码，按照供应商分类
-            if(CollectionUtils.isNotEmpty(vencodemap)){
+            if(CollUtil.isNotEmpty(vencodemap)){
                 for (Map.Entry<String, String> entry : vencodemap.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
@@ -351,7 +350,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
 
     //推送u8数据接口
     public String pushU8(SysOtherin sysotherin,List<SysOtherindetail> sysotherindetail) {
-        if(!CollectionUtils.isNotEmpty(sysotherindetail)){
+        if(CollUtil.isEmpty(sysotherindetail)){
             return "数据不能为空";
         }
 
