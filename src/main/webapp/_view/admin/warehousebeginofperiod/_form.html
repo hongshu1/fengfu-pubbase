@@ -27,9 +27,9 @@
                 </div>
               </div>
             </div>
-              <button onclick="submitAllByStock()" class="btn btn-outline-secondary">
+              <!--<button onclick="submitAllByStock()" class="btn btn-outline-secondary">
                   保存
-              </button>
+              </button>-->
             <button onclick="closeHandler()" class="btn btn-outline-secondary">
                 关闭
             </button>
@@ -121,11 +121,11 @@
                          data-text-attr="cinvcode"
                          data-column-attr="cinvcode"/>
                   <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" data-dialogbtn
-                              data-link-para-ele="#cinvcode${data.index}"
+                      <button class="btn btn-outline-secondary" data-dialogbtn data-link-para-ele="#cinvcode${data.index}"
                               data-area="1280,600" data-title="选择数据（单选）"
                               data-url="admin/warehousebeginofperiod/inventoryDialogIndex?index=${data.index}&type=0">
-                        <i class="fa fa-search"></i></button>
+                        <i class="fa fa-search"></i>
+                    </button>
                   </div>
               </div>
       </td>
@@ -317,7 +317,6 @@
       printnum = 1;
     }
     var autoprint = $('input[name="autoprint"]').is(':checked');
-    //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
     var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
     if (!allDatas || allDatas.length == 0) {
       LayerMsgBox.alert("表格数据不能为空", 2);
@@ -596,13 +595,13 @@
   /*
   * 保存
   * */
-  function submitAllByStock(){
+  /*function submitAllByStock(){
       var printnum = $('#printnum').val();
       if (printnum == null || printnum == undefined || printnum == '') {
           printnum = 1;
       }
       var autoprint = $('input[name="autoprint"]').is(':checked');
-      //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*/
+      //jboltTableSubmit("#warehousebeginform_TableId_#(pageId)");*!/
       var allDatas = getJboltTableAllDatas("#warehousebeginform_TableId_#(pageId)");
       if (!allDatas || allDatas.length == 0) {
           LayerMsgBox.alert("表格数据不能为空", 2);
@@ -655,11 +654,10 @@
               LayerMsgBox.alert(retdata.msg, 2);
           }
       });
-  }
+  }*/
 
   function uploadHandler(uploader, type, fileInput, res) {
-      jboltTableClear("#warehousebeginform_TableId_#(pageId)");
-
+      //jboltTableClear("#warehousebeginform_TableId_#(pageId)");
       var data = res.data;
       console.log(data)
       if (!data || data.length === 0) {
@@ -713,7 +711,8 @@
               createdate:createdate,
               barcodedate:barcodedate,
               reportfilename:reportfilename,
-              careacode:row.careacode
+              careacode:row.careacode,
+              cvencode:row.cvencode
           };
           list.push(obj);
       });
@@ -724,7 +723,7 @@
 
       var index = LayerMsgBox.loading('正在匹配信息...', 10000);
 
-      Ajax.post('admin/warehousebeginofperiod/getImportData', para, function (res) {
+      Ajax.post('admin/warehousebeginofperiod/getStockImportData', para, function (res) {
 
           LayerMsgBox.close(index);
 
@@ -745,17 +744,6 @@
           LayerMsgBox.close(index);
       });
   }
-
-  /*function uploadHandler(uploader,type,fileInput,res) {
-      console.log(res)
-      if (res.state == "ok") {
-          LayerMsgBox.success("导入成功", 2000, function () {
-              jboltTableInsertRow("warehousebeginform_TableId_#(pageId)", res.data);
-          })
-      } else {
-          LayerMsgBox.error(res.msg);
-      }
-  }*/
 
 </script>
 <!--#include("/_view/_admin/common/_formjs.html",formId="warehouseAreaForm")-->

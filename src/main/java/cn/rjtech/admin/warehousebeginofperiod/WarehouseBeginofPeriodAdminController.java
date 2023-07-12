@@ -164,24 +164,21 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
     /*
      * 获取期初库存导入的数据
      * */
-    public void getImportData(@Para(value = "list") String list) {
+    public void getStockImportData(@Para(value = "list") String list) {
         ValidationUtils.notBlank(list, "导入数据不能为空");
 
-        renderJsonData(service.getImportData(list));
+        renderJsonData(service.getStockImportData(list));
     }
 
     /*
-     * 期初条码数据导入
+     * 获取期初条码导入的数据
      * */
-    public void importBarcodeExcel() {
-        String uploadPath = JBoltUploadFolder.todayFolder(JBoltUploadFolder.DEMO_JBOLTTABLE_EXCEL);
-        UploadFile file = getFile("file", uploadPath);
-        if (notExcel(file)) {
-            renderJsonFail("请上传excel文件");
-            return;
-        }
-        renderJson(service.importBarcodeExcel(file.getFile()));
+    public void getBarcodeImportData(@Para(value = "list") String list){
+        ValidationUtils.notBlank(list, "导入数据不能为空");
+
+        renderJsonData(service.getBarcodeImportData(list));
     }
+
 
     /**
      * 打印条码明细
@@ -192,14 +189,6 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
 
     public void addPrintData() {
         renderJsonData(service.addPrintData(getKv()));
-    }
-
-    /**
-     * 根据仓库编码查询库区编码
-     */
-    @UnCheck
-    public void findAreaByWhcode() {
-        renderJsonData(service.findAreaByWhcode());
     }
 
     public void inventoryDialogIndex(@Para(value = "index") String index, @Para(value = "type") String type) {
@@ -270,5 +259,13 @@ public class WarehouseBeginofPeriodAdminController extends BaseAdminController {
 
     public void wareHouseOptions() {
         renderJsonData(service.wareHouseOptions(getKv()));
+    }
+
+    /**
+     * 根据仓库编码查询库区编码
+     */
+    @UnCheck
+    public void findAreaByWhcode() {
+        renderJsonData(service.findAreaByWhcode());
     }
 }
