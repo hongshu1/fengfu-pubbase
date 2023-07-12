@@ -18,6 +18,7 @@ import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.model.momdata.WarehouseArea;
 import cn.rjtech.model.momdata.WarehousePosition;
 import cn.rjtech.model.momdata.WarehouseShelves;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -427,4 +428,9 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
     return dbTemplate("warehouseposition.printwarehouseposition", kv).find();
   }
 
+  public WarehousePosition getWarehousePositionCode() {
+    WarehousePosition warehousePosition = new WarehousePosition();
+    warehousePosition.setCpositioncode(BillNoUtils.genCode(getOrgCode(), table()));
+    return warehousePosition;
+  }
 }

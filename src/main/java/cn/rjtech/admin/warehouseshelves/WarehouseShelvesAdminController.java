@@ -63,6 +63,7 @@ public class WarehouseShelvesAdminController extends JBoltBaseController {
      */
     @CheckPermission(PermissionKey.WAREHOUSE_SHELVES_ADD)
     public void add() {
+        set("warehouseshelves", service.getWarehouseShelvesCode());
         render("add.html");
     }
 

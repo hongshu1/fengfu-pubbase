@@ -15,6 +15,7 @@ import cn.rjtech.admin.warehousearea.WarehouseAreaService;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.model.momdata.WarehouseArea;
 import cn.rjtech.model.momdata.WarehouseShelves;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -384,4 +385,9 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
     return dbTemplate("warehouseshelves.selectPrint", kv).find();
   }
 
+  public WarehouseShelves getWarehouseShelvesCode() {
+    WarehouseShelves warehouseShelves = new WarehouseShelves();
+    warehouseShelves.setCshelvescode(BillNoUtils.genCode(getOrgCode(), table()));
+    return warehouseShelves;
+  }
 }
