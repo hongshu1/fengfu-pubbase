@@ -410,7 +410,8 @@
                         $("#barcode").val('');
                         Ajax.post("admin/formConversionList/getBarCodeData",
                             {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
-                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty},
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty,
+                                "whcode":trJsonData.whcode, "whname":trJsonData.whname, "poscode": trJsonData.poscode , "posname": trJsonData.posname  },
                             function(rres) {
                                 console.log('rres', rres)
                                 if (rres.state==='ok'){
@@ -710,7 +711,8 @@
                         , {column: "ibeforeinventoryid", use: "ibeforeinventoryid"}],
                     handler:function(table,td,text,value,trJsonData){
                         Ajax.post("admin/formConversionList/getBarCodeData", {"sourcebillno": trJsonData.sourcebillno,"vencode":trJsonData.vencode,
-                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty},
+                                "venname":trJsonData.venname,"iafterinventoryid":trJsonData.iafterinventoryid,"ibeforeinventoryid":trJsonData.ibeforeinventoryid,"qty":trJsonData.qty,
+                                "whcode":trJsonData.whcode, "whname":trJsonData.whname, "poscode": trJsonData.poscode , "posname": trJsonData.posname  },
                             function(res) {
                                 console.log('res', res)
                                 if (res.state==='ok'){
