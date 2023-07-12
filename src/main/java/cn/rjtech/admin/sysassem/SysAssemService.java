@@ -653,6 +653,14 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         firstRecord.set("ibeforeinventoryid",kv.get("ibeforeinventoryid"));
         firstRecord.set("iafterinventoryid",kv.get("iafterinventoryid"));
         firstRecord.set("qty",kv.get("qty"));
+        //如果没有设置默认仓库，则获使用转换前的仓库
+        if(Objects.isNull(firstRecord.getStr("whcode"))){
+            firstRecord.set("whcode",kv.get("whcode"));
+            firstRecord.set("whname",kv.get("whname"));
+            firstRecord.set("poscode",kv.get("poscode"));
+            firstRecord.set("posname",kv.get("posname"));
+        }
+
         return firstRecord;
     }
 
@@ -794,9 +802,12 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         SysAssembarcode first7 = sysassembarcodeservice.findFirst("select * from T_Sys_AssemBarcode where MasID = ? and isDeleted = '0'", detail.getAutoID());
         //获取转换后的数量
         BigDecimal sourceQty = first7.getQty();
+        BigDecimal pkgQty = sourceQty;
         //根据存货编码获取包装数量
         Inventory first8 = inventoryService.findFirst("select * from Bd_Inventory where cInvCode = ?", first7.getInvCode());
-        BigDecimal pkgQty = new BigDecimal(first8.getIPkgQty());
+        if(Objects.nonNull(first8.getIPkgQty())){
+            pkgQty = new BigDecimal(first8.getIPkgQty());
+        }
 
         //保存当前包装数量
         detail.setIPkgQty(pkgQty.intValue());
