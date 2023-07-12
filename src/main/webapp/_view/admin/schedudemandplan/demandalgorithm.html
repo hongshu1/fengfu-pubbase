@@ -716,12 +716,12 @@
                         let jihuaCol = 10;
                         for (var j = 0; j < parms['scheduplanmonth'].data[i].day.length; j++) {
                             if(i==0){
-                                sheet.setValue(shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
+                                sheet.setValue(shiyongRow,shiyongCol+j,parseFloat(parms['scheduplanmonth'].data[i].day[j].xuqiu));
                                 //控制小数位为1位
                                 sheet.setFormatter(shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'].data[i].day[j].xuqiu))?"0.00":"0.00");
-                                sheet.setValue(shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
-                                sheet.setValue(shiyongRow+2,shiyongCol-1,parms['scheduplanmonth'].data[i].qiChuZaiKu);
-                                sheet.setValue(shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
+                                sheet.setValue(shiyongRow+1,shiyongCol+j,parseFloat(parms['scheduplanmonth'].data[i].day[j].jihua));
+                                sheet.setValue(shiyongRow+2,shiyongCol-1,parseFloat(parms['scheduplanmonth'].data[i].qiChuZaiKu));
+                                sheet.setValue(shiyongRow+2,shiyongCol+j,parseFloat(parms['scheduplanmonth'].data[i].day[j].zaiku));
                                 //
                                 let col = 10;//公式嵌入起始列下标
                                 let Num = sheet.getValue(6,9);//初次进入获取前一天的计划在库
@@ -736,9 +736,9 @@
                                 sheet.setValue(3*i+shiyongRow,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].xuqiu);
                                 //控制小数位为1位
                                 sheet.setFormatter(3*i+shiyongRow, shiyongCol+j,Number.isInteger(parseFloat(parms['scheduplanmonth'].data[i].day[j].xuqiu))?"0.00":"0.00");
-                                sheet.setValue(3*i+shiyongRow+1,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].jihua);
-                                sheet.setValue(3*i+shiyongRow+2,shiyongCol-1,parms['scheduplanmonth'].data[i].qiChuZaiKu);
-                                sheet.setValue(3*i+shiyongRow+2,shiyongCol+j,parms['scheduplanmonth'].data[i].day[j].zaiku);
+                                sheet.setValue(3*i+shiyongRow+1,shiyongCol+j,parseFloat(parms['scheduplanmonth'].data[i].day[j].jihua));
+                                sheet.setValue(3*i+shiyongRow+2,shiyongCol-1,parseFloat(parms['scheduplanmonth'].data[i].qiChuZaiKu));
+                                sheet.setValue(3*i+shiyongRow+2,shiyongCol+j,parseFloat(parms['scheduplanmonth'].data[i].day[j].zaiku));
                                 //
                                 let Num = sheet.getValue(3*i+6,9);//获取前一天的计划在库
                                 let daoHuoShiJi = parms['scheduplanmonth'].data[i].day[j].shiji;//到货实绩
