@@ -818,20 +818,20 @@
                                     var array=[];
                                     // console.log(sheet.getValue(row,20))
                                     // console.log(planmonthCol-10,'-----------')//max:29
-                                    if(planmonthCol-10<=parms['scheduplanmonth'][i].childList[j].day.length-Num-1){
-                                        // debugger
-                                        for(var f=col;;f++){
-                                            // console.log(f,isWork[f-10-1],'f')
-                                            if(isWork[f-10].iswork==false||sheet.getValue(row,f)==0) continue;
-                                            if(array.length!=Num){
-                                                array.push(f);
-                                            }else{
-                                                break;
-                                            }
-                                        }
-                                    }
-                                console.log(Z+k)
-                                sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${array[0]+1}:R${AS-4}C${array[1]+1})/R${AS+1}C10`);
+                                    // if(planmonthCol-10<=parms['scheduplanmonth'][i].childList[j].day.length-Num-1){
+                                    //     // debugger
+                                    //     for(var f=col;;f++){
+                                    //         // console.log(f,isWork[f-10-1],'f')
+                                    //         if(isWork[f-10].iswork==false||sheet.getValue(row,f)==0) continue;
+                                    //         if(array.length!=Num){
+                                    //             array.push(f);
+                                    //         }else{
+                                    //             break;
+                                    //         }
+                                    //     }
+                                    // }
+                                // console.log(Z+k)
+                                // sheet.setFormula(AS,Z+k,`=SUM(R${AS-4}C${array[0]+1}:R${AS-4}C${array[1]+1})/R${AS+1}C10`);
                                 // if(parms['scheduplanmonth'][i].childList[j].day.at(-1)||parms['scheduplanmonth'][i].childList[j].day.at(-2)){
                                 // console.log('at')
                                 // }
