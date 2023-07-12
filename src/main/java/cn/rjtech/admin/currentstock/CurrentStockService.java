@@ -13,15 +13,12 @@ import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltDateUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.admin.form.FormService;
-import cn.rjtech.admin.otherdeliverylist.OtherOutDeliveryService;
 import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.stockcheckvouchbarcode.StockCheckVouchBarcodeService;
 import cn.rjtech.admin.stockcheckvouchdetail.StockCheckVouchDetailService;
 import cn.rjtech.admin.stockchekvouch.StockChekVouchService;
-import cn.rjtech.admin.sysotherin.SysOtherinService;
 import cn.rjtech.admin.sysotherin.SysOtherindetailService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
@@ -70,29 +67,14 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
     @Inject
     private StockCheckVouchBarcodeService stockCheckVouchBarcodeService;//T_Sys_StockCheckVouchBarcode(库存盘点-条码明细)
     @Inject
-    private SysOtherinService             sysOtherinService;//其它入库单
-    @Inject
     private SysOtherindetailService       sysotherindetailservice;//其它入库单-明细表
     @Inject
-    private OtherOutDeliveryService       otherOutDeliveryService;//其它出库单
-    @Inject
     private OtherOutDetailService         otherOutDetailService;//其它出库单-明细表
-    @Inject
-    private FormService formService;
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
-
-
-
-
 
 	public Page<Record> datas(Integer pageNumber, Integer pageSize, Kv kv) {
 		kv.set("organizecode",getOrgCode());
-		Page<Record> paginate = dbTemplate("currentstock.datas", kv).paginate(pageNumber, pageSize);
-		return paginate;
+        return dbTemplate("currentstock.datas", kv).paginate(pageNumber, pageSize);
 	}
-
-
 
     /**
      * 盘点表主表 数据明细
@@ -108,8 +90,6 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         return dbTemplate("currentstock.CurrentStockByDatas", kv).paginate(pageNumber, pageSize);
     }
 
-
-
 	/**
 	 * 盘点条码 明细
 	 */
@@ -124,67 +104,60 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 	 */
 	public Record barcode(Kv kv) {
 ////		先查询条码是否已添加
-
         //多个库区处理
         String Str = kv.getStr("poscodes");
         kv.setIfNotNull("poscode",pos(Str));
 		Record first = dbTemplate("currentstock.barcodeDatas", kv).findFirst();
-		if(null == first){
-			ValidationUtils.isTrue( false,"条码为：" + kv.getStr("barcode") + "该现品票没有库存！！！");
-		}
+        ValidationUtils.notNull(first, "条码为：" + kv.getStr("barcode") + "该现品票没有库存！！！");
+        
 		return first;
 	}
 
     /**
      * 多个库区处理 通用方法
      * */
-	public String pos(String Str){
-        if (Str != null) {
-            String[] split = Str.split(",");
-            String poscode = "";
+	public String pos(String str){
+        if (str != null) {
+            String[] split = str.split(",");
+            StringBuilder poscode = new StringBuilder();
             for (String id : split) {
-                poscode += "'" + id + "',";
+                poscode.append("'").append(id).append("',");
             }
-            poscode = poscode.substring(0, poscode.length() - 1);
-            return poscode;
+            poscode = new StringBuilder(poscode.substring(0, poscode.length() - 1));
+            return poscode.toString();
         }
-        return Str;
+        return null;
     }
 
     /**
      * 盘点单物料详情列表 数据明细
      * */
 	public List<Record> StockCheckVouchDetailDatas(Kv kv) {
-		kv.set("orgcode",getOrgCode());
+        kv.set("orgcode", getOrgCode());
         Record Detail = dbTemplate("currentstock.Detail", kv).findFirst();
         //多个库区处理
-		String posCodes = kv.getStr("poscodes");
-        kv.setIfNotNull("poscode",pos(posCodes));
-        if (isNull( Detail.get("masid"))){
+        String posCodes = kv.getStr("poscodes");
+        kv.setIfNotNull("poscode", pos(posCodes));
+        if (isNull(Detail.get("masid"))) {
             return warehouseData(kv);
-        }else {
+        } else {
             return invTotalDatas(kv);
         }
-
 	}
 
-
-
-
-	/**
-	 * 盘点单物料清单列表
-	 * */
+    /**
+     * 盘点单物料清单列表
+     */
 	public List<Record> invTotalDatas(Kv kv) {
         return dbTemplate("currentstock.paginateAdminDatas", kv).find();
 	}
 
-	/**
-	 * 盘点单物料清单列表
-	 * */
+    /**
+     * 盘点单物料清单列表
+     */
 	public List<Record> warehouseData(Kv kv) {
         return dbTemplate("currentstock.WarehouseData", kv).find();
 	}
-
 
     /**
      * 盘点单物料清单列表
@@ -192,8 +165,8 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
     public Page<Record> barcodeDatas(Integer pageNumber, Integer pageSize, Kv kv) {
         //是app 还是查询全部
         String isapp2 = kv.getStr("isapp2");
-        Page<Record> page = null;
-        if (isapp2.equals("1")) {
+        Page<Record> page;
+        if ("1".equals(isapp2)) {
             page = barcodeDatas_APP(pageNumber, pageSize, kv);
         } else {
             //查询全部
@@ -262,7 +235,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
                 ValidationUtils.error( "Excel文档中第" + k + "行格式错误！！");
             }
             String iQty = first.getStr("iQty");
-            if (qty.compareTo(iQty) == 1){
+            if (qty.compareTo(iQty) > 0){
                 ValidationUtils.error( "Excel文档中第" + k + "超出现品票数量！！");
             }
             Date now=new Date();
@@ -293,46 +266,41 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 
     /**
      * 设置参数
-     * @param stockCheckVouchBarcodeModel
-     * @return
      */
-    private StockCheckVouchBarcode setStockCheckVouchBarcode(StockCheckVouchBarcode stockCheckVouchBarcodeModel,Long autoid){
-        stockCheckVouchBarcodeModel.setMasID(autoid);
-        stockCheckVouchBarcodeModel.setAutoID(JBoltSnowflakeKit.me.nextId());
-        stockCheckVouchBarcodeModel.setIsDeleted(false);
-        Long userId = JBoltUserKit.getUserId();
-
-        stockCheckVouchBarcodeModel.setIcreateby(userId);
-        stockCheckVouchBarcodeModel.setIupdateby(userId);
-        String userName = JBoltUserKit.getUserName();
-        stockCheckVouchBarcodeModel.setCcreatename(userName);
-        stockCheckVouchBarcodeModel.setCupdatename(userName);
-        Date date = new Date();
-        stockCheckVouchBarcodeModel.setDcreatetime(date);
-        stockCheckVouchBarcodeModel.setDupdatetime(date);
-        return stockCheckVouchBarcodeModel;
+    private void setStockCheckVouchBarcode(Record stockCheckVouchBarcodeModel, Long autoid, long userId, String userName, Date now){
+        stockCheckVouchBarcodeModel.set("masId", autoid);
+        stockCheckVouchBarcodeModel.set("AutoID", JBoltSnowflakeKit.me.nextId());
+        stockCheckVouchBarcodeModel.set("isdeleted", ZERO_STR);
+        
+        stockCheckVouchBarcodeModel.set("icreateby", userId);
+        stockCheckVouchBarcodeModel.set("Iupdateby", userId);
+        stockCheckVouchBarcodeModel.set("Ccreatename", userName);
+        stockCheckVouchBarcodeModel.set("Cupdatename", userName);
+        stockCheckVouchBarcodeModel.set("Dcreatetime", now);
+        stockCheckVouchBarcodeModel.set("Dupdatetime", now);
     }
-
 
     /**
      * 读取excel文件
-     * @param file
-     * @return
      */
-    public Ret importExcel(File file, String cformatName,Long autoid,String whcode,String poscodes) {
-        StringBuilder errorMsg=new StringBuilder();
+    public Ret importExcel(File file, Long autoid, String whcode, String poscodes) {
         //使用字段配置维护
-        Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
-//		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
-        String docInfoRelaStrings= JSON.toJSONString(importData);
-        List<StockCheckVouchBarcode> stockCheckVouchBarcodes = JSON.parseArray(docInfoRelaStrings, StockCheckVouchBarcode.class);
+        List<Record> importData =  CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(importData, "导入数据不能为空");
+
+        long userId = JBoltUserKit.getUserId();
+        String userName = JBoltUserKit.getUserName();
+        Date now = new Date();
+        
         //遍历导入的数据
         int k = 2;
-        for (StockCheckVouchBarcode record : stockCheckVouchBarcodes) {
+        for (Record record : importData) {
             String barcode = record.getStr("Barcode");
             String invCode = record.getStr("InvCode");
             BigDecimal qty = record.getBigDecimal("Qty");
+            
             k++;
+            
             if (StrUtil.isBlank(barcode)) {
                 return fail("Excel文档中第" + k + "行,数据现品票不能为空");
             }
@@ -342,34 +310,29 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 //            if (StrUtil.isBlank((CharSequence) qty)) {
 //                return fail("Excel文档中第" + k + "行,数量不能为空");
 //            }
+            
             Kv kv = new Kv();
-            kv.setIfNotNull("whcode",whcode);//仓库
-            kv.setIfNotNull("poscode",poscodes);//库区
-            kv.setIfNotNull("invcode",invCode);
-            kv.setIfNotNull("barcode",barcode);
-            Record first = dbTemplate("currentstock.barcodeDatas",kv).findFirst();
-            System.out.println("first===="+ first);
+            kv.setIfNotNull("whcode", whcode);//仓库
+            kv.setIfNotNull("poscode", poscodes);//库区
+            kv.setIfNotNull("invcode", invCode);
+            kv.setIfNotNull("barcode", barcode);
+            
+            Record first = dbTemplate("currentstock.barcodeDatas", kv).findFirst();
+            System.out.println("first====" + first);
             if (isNull(first)) {
-                ValidationUtils.error( "Excel文档中第" + k + "行,格式错误！！");
+                ValidationUtils.error("Excel文档中第" + k + "行,格式错误！！");
             }
             BigDecimal iQty = first.getBigDecimal("iQty");
-            if (qty.compareTo(iQty) == 1){
-                ValidationUtils.error( "Excel文档中第" + k + "行,超出现品票数量！！");
+            if (qty.compareTo(iQty) > 0) {
+                ValidationUtils.error("Excel文档中第" + k + "行,超出现品票数量！！");
             }
+
+            setStockCheckVouchBarcode(record, autoid, userId, userName, now);
         }
-        if(notOk(stockCheckVouchBarcodes)) {
-            if(errorMsg.length()>0) {
-                return fail(errorMsg.toString());
-            }else {
-                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-            }
-        }
-        for (StockCheckVouchBarcode stockCheckVouchBarcode : stockCheckVouchBarcodes) {
-            setStockCheckVouchBarcode(stockCheckVouchBarcode,autoid);
-        }
-        //执行批量操作
+        
+        // 执行批量操作
         boolean success=tx(() -> {
-            stockCheckVouchBarcodeService.batchSave(stockCheckVouchBarcodes);
+            stockCheckVouchBarcodeService.batchSaveRecords(importData);
             return true;
         });
 
@@ -419,9 +382,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         } else {
             return null;
         }
-
     }
-
 
     /**
      * 盘点单物料清单列表
@@ -444,21 +405,20 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 
             for (Record record : list) {
                 String source = record.getStr("source");
-                if (source.equals("app")) {
+                if ("app".equals(source)) {
                     //数量
                     BigDecimal qty = record.getBigDecimal("qty");
                     //实盘数量=数量+调整数量
                     BigDecimal realqty = record.getBigDecimal("realqty");
                     //调整数量=实盘数量-数量
                     BigDecimal adjustqty = record.getBigDecimal("adjustqty");
-                    BigDecimal adjustqty2 = BigDecimal.ZERO;
+                    BigDecimal adjustqty2;
 
                     if (adjustqty != null) {
                         //如果调整数量为空则
                         record.set("realqty2", qty.add(adjustqty));
                         adjustqty2 = adjustqty;
                     } else {
-
                         adjustqty2 = realqty.subtract(qty);
                         record.set("realqty2", realqty);
                     }
@@ -473,14 +433,13 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
                         BigDecimal realqty = record.getBigDecimal("realqty");
                         //调整数量=实盘数量-数量
                         BigDecimal adjustqty = record.getBigDecimal("adjustqty");
-                        BigDecimal adjustqty2 = BigDecimal.ZERO;
+                        BigDecimal adjustqty2;
 
                         if (adjustqty != null) {
                             //如果调整数量为空则
                             record.set("realqty2", qty.add(adjustqty));
                             adjustqty2 = adjustqty;
                         } else {
-
                             adjustqty2 = realqty.subtract(qty);
                             record.set("realqty2", realqty);
                         }
@@ -493,9 +452,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         } else {
             return null;
         }
-
     }
-
 
     /**
      * 仓库
@@ -530,7 +487,6 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
     public List<Record> autocompleteUser(Kv kv) {
         return dbTemplate("currentstock.autocompleteUser", kv).find();
     }
-
 
     public Ret SaveStockchekvouch(Kv kv) {
         //主表
@@ -588,8 +544,6 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 
     /**
      * 更新
-     * @param stockchekvouch
-     * @return
      */
     public Ret update(StockCheckVouch stockchekvouch) {
         if(stockchekvouch==null || notOk(stockchekvouch.getAutoId())) {
@@ -609,8 +563,6 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
 
     /**
      * 删除 指定多个ID
-     * @param ids
-     * @return
      */
     public Ret deleteByBatchIds(String ids) {
         tx(() -> {
@@ -628,12 +580,8 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
      */
     public List<Record> download(Kv kv, String sqlTemplate) {
         kv.setIfNotNull("OrganizeCode",getOrgCode());
-        List<Record> list = dbTemplate(sqlTemplate, kv).find();
-        return list;
+        return dbTemplate(sqlTemplate, kv).find();
     }
-
-
-
 
     public Ret saveSubmit(Kv kv) {
         String datas = kv.getStr("datas");
@@ -641,17 +589,13 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         List<Kv> datasList = JSON.parseArray(datas, Kv.class);
         List<Kv> barcodeList = JSON.parseArray(barcode, Kv.class);
         return SUCCESS;
-
     }
 
     public Ret saveTableSubmit(JBoltTableMulti jBoltTable) {
-
-
         // 盘点明细
         JBoltTable StockCheckVouchDetail = jBoltTable.getJBoltTable("table1");
         // 盘点条码
         JBoltTable StockCheckVouchBarcode = jBoltTable.getJBoltTable("table2");
-
 
         if (StockCheckVouchDetail.paramsIsNotBlank()) {
             System.out.println(StockCheckVouchDetail.getParams().toJSONString());
@@ -663,13 +607,10 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
         Date nowDate = new Date();
         String OrgCode =getOrgCode();
 
-
-
         System.out.println("saveTable===>" + StockCheckVouchDetail.getSave());
         System.out.println("updateTable===>" + StockCheckVouchDetail.getUpdate());
         System.out.println("deleteTable===>" + StockCheckVouchDetail.getDelete());
         System.out.println("form===>" + StockCheckVouchDetail.getForm());
-
 
         //  检查填写是否有误
         List<Record> detailSaveRecordList = StockCheckVouchDetail.getSaveRecordList();
@@ -714,7 +655,6 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
                 if (stockCheckVouch.getAutoId() == null && !StockCheckVouchDetail.saveIsNotBlank() && !StockCheckVouchDetail.updateIsNotBlank() && !StockCheckVouchDetail.deleteIsNotBlank()) {
                     ValidationUtils.error( "请先添加行数据！");
                 }
-
 
                 if (stockCheckVouch.getAutoId() == null) {
 //					保存
@@ -846,7 +786,7 @@ public class CurrentStockService extends BaseService<StockCheckVouch> implements
             stockcheckvouch.setCcreatename(JBoltUserKit.getUserName());
             stockcheckvouch.setIcreateby(JBoltUserKit.getUserId());
             stockcheckvouch.setDcreatetime(now);
-            String orgCode = getOrgCode() + "";
+            String orgCode = getOrgCode();
             //组织编码
             stockcheckvouch.setOrganizeCode(orgCode);
             String code = BillNoUtils.genCurrentNo();

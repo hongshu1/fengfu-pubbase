@@ -16,9 +16,9 @@ import cn.jbolt.core.poi.excel.JBoltExcelMerge;
 import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.vendoraddr.VendorAddrService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Vendor;
 import cn.rjtech.model.momdata.VendorAddr;
@@ -64,8 +64,6 @@ public class VendorClassService extends BaseService<VendorClass> {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
     @Inject
     private VendorAddrService        vendorAddrService;
 
@@ -275,59 +273,49 @@ public class VendorClassService extends BaseService<VendorClass> {
      * 供应商分类excel导入数据库
      */
     public Ret importExcelData(File file) {
-        StringBuilder errorMsg = new StringBuilder();
-
         // 使用字段配置维护
-        List<Record> vendorClasses = cusFieldsMappingdService.getImportRecordsByTableName(file, table());
-
-        if (notOk(vendorClasses)) {
-            if (errorMsg.length() > 0) {
-                return fail(errorMsg.toString());
-            } else {
-                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-            }
-        }
+        List<Record> vendorClasses = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(vendorClasses, "导入数据不能为空");
 
         // 读取数据没有问题后判断必填字段
-        if (vendorClasses.size() > 0) {
-            Date now = new Date();
+        Date now = new Date();
 
-            for (Record row : vendorClasses) {
-                if (notOk(row.getStr("cvccode"))) {
-                    return fail("编码不能为空");
-                }
-                if (notOk(row.getStr("cvcname"))) {
-                    return fail("名称不能为空");
-                }
-                VendorClass vendorClass = findFirst(Okv.by("cvccode", row.get("cvccode")), "iautoid", "asc");
-                ValidationUtils.isTrue(vendorClass == null, row.get("cvccode") + "编码重复");
-
-                String ipidStr = row.getStr("ipid");
-                if (StrUtil.isNotBlank(ipidStr)) {
-                    VendorClass parentVendorClass = findByCVCCode(ipidStr);
-                    ValidationUtils.notNull(parentVendorClass, String.format("父级供应商分类“%s”不存在", ipidStr));
-
-                    row.set("ipid", parentVendorClass.getIAutoId());
-                }else {
-                    row.set("ipid", 0);
-                }
-                row.keep(ArrayUtil.toArray(TableMapping.me().getTable(VendorClass.class).getColumnNameSet(), String.class));
-
-                row.set("iSourceId",row.get("cvccode"));
-                row.set("iautoid", JBoltSnowflakeKit.me.nextId());
-                row.set("dcreatetime", now);
-                row.set("ICreateBy", JBoltUserKit.getUserId());
-                row.set("ccreatename", JBoltUserKit.getUserName());
-                row.set("DUpdateTime", now);
-                row.set("IOrgId", getOrgId());
-                row.set("COrgCode", getOrgCode());
-                row.set("COrgName", getOrgName());
-                row.set("IUpdateBy", JBoltUserKit.getUserId());
-                row.set("CUpdateName", JBoltUserKit.getUserName());
-                row.set("IsDeleted", ZERO_STR);
-                row.set("ISource", SourceEnum.MES.getValue());
-
+        for (Record row : vendorClasses) {
+            if (notOk(row.getStr("cvccode"))) {
+                return fail("编码不能为空");
             }
+            if (notOk(row.getStr("cvcname"))) {
+                return fail("名称不能为空");
+            }
+            VendorClass vendorClass = findFirst(Okv.by("cvccode", row.get("cvccode")), "iautoid", "asc");
+            ValidationUtils.assertNull(vendorClass, row.get("cvccode") + "编码重复");
+
+            String ipidStr = row.getStr("ipid");
+            if (StrUtil.isNotBlank(ipidStr)) {
+                VendorClass parentVendorClass = findByCVCCode(ipidStr);
+                ValidationUtils.notNull(parentVendorClass, String.format("父级供应商分类“%s”不存在", ipidStr));
+
+                row.set("ipid", parentVendorClass.getIAutoId());
+            } else {
+                row.set("ipid", 0);
+            }
+            
+            row.keep(ArrayUtil.toArray(TableMapping.me().getTable(VendorClass.class).getColumnNameSet(), String.class));
+
+            row.set("iSourceId", row.get("cvccode"));
+            row.set("iautoid", JBoltSnowflakeKit.me.nextId());
+            row.set("dcreatetime", now);
+            row.set("ICreateBy", JBoltUserKit.getUserId());
+            row.set("ccreatename", JBoltUserKit.getUserName());
+            row.set("DUpdateTime", now);
+            row.set("IOrgId", getOrgId());
+            row.set("COrgCode", getOrgCode());
+            row.set("COrgName", getOrgName());
+            row.set("IUpdateBy", JBoltUserKit.getUserId());
+            row.set("CUpdateName", JBoltUserKit.getUserName());
+            row.set("IsDeleted", ZERO_STR);
+            row.set("ISource", SourceEnum.MES.getValue());
+
         }
 
         // 执行批量操作

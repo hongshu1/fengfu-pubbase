@@ -1,6 +1,6 @@
 package cn.rjtech.admin.fitemss97;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JsTreeBean;
 import cn.jbolt.core.kit.JBoltUserKit;
@@ -9,8 +9,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Fitemss97;
-import cn.rjtech.model.momdata.Fitemss97class;
-import cn.rjtech.model.momdata.RdStyle;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -105,25 +103,17 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 		return getCommonList( kv,"iAutoId", "asc");
 	}
 
-
-
-
 	public Record selectFitemss97(Kv kv) {
-		Record first = dbTemplate("fitemss97.findsub", Kv.by("iautoid", kv.getStr("iautoid"))).findFirst();
-        if(ObjectUtil.isNull(first)){
-			return dbTemplate("fitem.selectFitem", Kv.by("iautoid", kv.getStr("iautoid"))).findFirst();
-		}else{
-			return first;
-		}
-
+        Record first = dbTemplate("fitemss97.findsub", Kv.by("iautoid", kv.getStr("iautoid"))).findFirst();
+        if (ObjUtil.isNull(first)) {
+            return dbTemplate("fitem.selectFitem", Kv.by("iautoid", kv.getStr("iautoid"))).findFirst();
+        } else {
+            return first;
+        }
 	}
-
-
 
 	/**
 	 * 保存
-	 * @param fitemss97
-	 * @return
 	 */
 	public Ret save(Fitemss97 fitemss97) {
 		if(fitemss97==null || isOk(fitemss97.getIAutoId())) {
@@ -152,8 +142,6 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 
 	/**
 	 * 更新
-	 * @param fitemss97
-	 * @return
 	 */
 	public Ret update(Fitemss97 fitemss97) {
 		if(fitemss97==null || notOk(fitemss97.getIAutoId())) {
@@ -177,8 +165,6 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 
 	/**
 	 * 删除 指定多个ID
-	 * @param ids
-	 * @return
 	 */
 	public Ret deleteByBatchIds(String ids) {
 		return deleteByIds(ids,true);
@@ -186,8 +172,6 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 
 	/**
 	 * 删除
-	 * @param id
-	 * @return
 	 */
 	public Ret delete(Long id) {
 		return updateColumn(id, "isdeleted", true);
@@ -197,7 +181,6 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 	 * 删除数据后执行的回调
 	 * @param fitemss97 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(Fitemss97 fitemss97, Kv kv) {
@@ -209,7 +192,6 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 	 * 检测是否可以删除
 	 * @param fitemss97 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanDelete(Fitemss97 fitemss97, Kv kv) {
@@ -219,7 +201,6 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 
 	/**
 	 * 设置返回二开业务所属的关键systemLog的targetType 
-	 * @return
 	 */
 	@Override
 	protected int systemLogTargetType() {
@@ -250,7 +231,6 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 	 * @param fitemss97 要toggle的model
 	 * @param column 操作的哪一列
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkCanToggle(Fitemss97 fitemss97,String column, Kv kv) {
@@ -271,7 +251,6 @@ public class Fitemss97Service extends BaseService<Fitemss97> {
 	 * 检测是否可以删除
 	 * @param fitemss97 model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkInUse(Fitemss97 fitemss97, Kv kv) {

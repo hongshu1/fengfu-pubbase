@@ -11,9 +11,9 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.rcvpland.RcvPlanDService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.cache.FormApprovalCache;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
@@ -26,7 +26,6 @@ import cn.rjtech.model.momdata.RcvPlanM;
 import cn.rjtech.model.momdata.base.BaseRcvPlanD;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
@@ -66,8 +65,6 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
     private RcvPlanDService planDService;
     @Inject
     private InventoryService inventoryservice;
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
 
     /**
      * 后台管理数据查询
@@ -343,43 +340,19 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
 
     /**
      * 读取excel文件
-     * @param file
-     * @return
      */
     public Ret importExcel(File file, String cformatName) {
-        StringBuilder errorMsg=new StringBuilder();
         //使用字段配置维护
-        Object importData =  cusFieldsMappingdService.getImportDatas(file, cformatName).get("data");
-//		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
-        String docInfoRelaStrings= JSON.toJSONString(importData);
-        List<RcvPlanD> rcvPlanDS = JSON.parseArray(docInfoRelaStrings, RcvPlanD.class);
-//        System.out.println("===="+rcvPlanDS);
-        if(notOk(rcvPlanDS)) {
-            if(errorMsg.length()>0) {
-                return fail(errorMsg.toString());
-            }else {
-                return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-            }
-        }
-
-//        List<Record> lines = new ArrayList<>();
-//        for (RcvPlanD rcvPlanD:rcvPlanDS){
-//            String cInvCode = rcvPlanD.getCInvCode();
-//            Record record = new Record();
-//            Inventory inventory = inventoryservice.findFirst("select * from bd_inventory where cInvCode= ? ", cInvCode);
-//            record.set("cinvcode1",inventory.get("cinvcode1"));
-//            record.set("cinvname1",inventory.get("cinvname1"));
-//            lines.add(record);
-//        }
-//        rcvPlanDS.add(lines);
-
+        List<Record> importData = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, cformatName);
+        ValidationUtils.notEmpty(importData, "导入数据不能为空");
+        
         //执行批量操作
         /*boolean success=tx(() -> true);
 
         if(!success) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL);
         }*/
-        return successWithData(rcvPlanDS);
+        return SUCCESS;
     }
 
     /**

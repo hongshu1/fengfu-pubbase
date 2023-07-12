@@ -317,18 +317,18 @@ public class WarehouseService extends BaseService<Warehouse> {
                 ValidationUtils.notNull(data.get("isreservoirarea"), "第" + iseq + "行的【启用库区】不能为空！");
 
                 // 查重
-                ValidationUtils.assertNull(findByWhCode(data.get("cwhcode") + ""), "第" + iseq + "行的【仓库编码】已存在！");
-                ValidationUtils.assertNull(findByWhName(data.get("cwhname") + ""), "第" + iseq + "行的【仓库名称】已存在！");
+                ValidationUtils.assertNull(findByWhCode(data.getStr("cwhcode")), "第" + iseq + "行的【仓库编码】已存在！");
+                ValidationUtils.assertNull(findByWhName(data.getStr("cwhname")), "第" + iseq + "行的【仓库名称】已存在！");
                 
-                Department dept = departmentService.findByCdepName(data.get("cdepcode") + "");
+                Department dept = departmentService.findByCdepName(data.getStr("cdepcode"));
                 ValidationUtils.notNull(dept, "第" + iseq + "行的【所属部门名称】未找到对应的部门档案数据！");
                 
                 if (data.get("imaxstock") != null || data.get("imaxspace") != null) {
-                    if ("否".equals(data.get("isspacecontrolenabled") + "")) {
+                    if ("否".equals(data.getStr("isspacecontrolenabled"))) {
                         ValidationUtils.error("第" + iseq + "行的【是否启用空间掌控】为否时，【最大存储数量】【最大存储空间】必须为空！");
                     }
                 } else {
-                    if ("是".equals(data.get("isspacecontrolenabled") + "")) {
+                    if ("是".equals(data.getStr("isspacecontrolenabled"))) {
                         ValidationUtils.error("第" + iseq + "行的【是否启用空间掌控】为是时，【最大存储数量】【最大存储空间】不能为空！");
                     }
                 }

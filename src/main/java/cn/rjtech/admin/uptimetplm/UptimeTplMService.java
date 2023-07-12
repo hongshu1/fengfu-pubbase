@@ -5,13 +5,13 @@ import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.uptimecategory.UptimeCategoryService;
 import cn.rjtech.admin.uptimeparam.UptimeParamService;
 import cn.rjtech.admin.uptimetplcategory.UptimeTplCategoryService;
 import cn.rjtech.admin.uptimetpltable.UptimeTplTableService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.admin.workshiftm.WorkshiftmService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -22,10 +22,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 稼动时间建模-稼动时间模板主表
@@ -47,8 +45,6 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
     @Inject
     private UptimeTplTableService uptimeTplTableService;
     @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
-    @Inject
     private UptimeCategoryService uptimeCategoryService;
     @Inject
     private UptimeParamService uptimeParamService;
@@ -68,7 +64,6 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
      * @param pageNumber 第几页
      * @param pageSize   每页几条数据
      * @param kv         查询参数
-     * @return
      */
     public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
         return dbTemplate("uptimetplm.getAdminDatas", kv).paginate(pageNumber, pageSize);
@@ -76,9 +71,6 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 
     /**
      * 保存
-     *
-     * @param uptimeTplM
-     * @return
      */
     public Ret save(UptimeTplM uptimeTplM) {
         if (uptimeTplM == null || isOk(uptimeTplM.getIAutoId())) {
@@ -94,9 +86,6 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 
     /**
      * 更新
-     *
-     * @param uptimeTplM
-     * @return
      */
     public Ret update(UptimeTplM uptimeTplM) {
         if (uptimeTplM == null || notOk(uptimeTplM.getIAutoId())) {
@@ -120,7 +109,6 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
      *
      * @param uptimeTplM 要删除的model
      * @param kv         携带额外参数一般用不上
-     * @return
      */
     @Override
     protected String afterDelete(UptimeTplM uptimeTplM, Kv kv) {
@@ -133,7 +121,6 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
      *
      * @param uptimeTplM model
      * @param kv         携带额外参数一般用不上
-     * @return
      */
     @Override
     public String checkInUse(UptimeTplM uptimeTplM, Kv kv) {
@@ -143,9 +130,6 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 
     /**
      * 保存
-     *
-     * @param kv
-     * @return
      */
     public Ret submitAll(Kv kv) {
         tx(() -> {
@@ -218,7 +202,6 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
      * 删除
      *
      * @param iuptimecategoryid 稼动时间模板主键
-     * @return
      */
     public Ret delete(Long iuptimecategoryid) {
         tx(() -> {
@@ -230,67 +213,65 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 
     /**
      * 数据导入
-     *
-     * @param file
-     * @param cformatName
-     * @return
      */
-    public Ret importExcelData(File file, String cformatName) {
-        Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
-        ValidationUtils.isTrue(ret.isOk(), "导入失败");
-        ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-        StringBuilder msg = new StringBuilder();
+    public Ret importExcelData(File file) {
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(datas, "导入数据不能为空");
 
+        StringBuilder msg = new StringBuilder();
+        
+        Date now = new Date();
+        
         tx(() -> {
-            Integer iseq = 1;
+            
+            int iseq = 1;
             // 封装数据
-            for (Map<String, Object> map : datas) {
+            for (Record row : datas) {
                 // 基本信息校验
-                ValidationUtils.notNull(map.get("cworkname"), "产线名称不允许为空");
-                ValidationUtils.notNull(map.get("cworkshiftname"), "班次名称不允许为空");
-                ValidationUtils.notNull(map.get("ibasemins"), "基本稼动时间不允许为空");
-                ValidationUtils.isTrue(NumberUtil.isNumber(map.get("ibasemins").toString()), "基本稼动时间非数字");
-                ValidationUtils.notNull(map.get("istopmins"), "不稼动时间不允许为空");
-                ValidationUtils.isTrue(NumberUtil.isNumber(map.get("istopmins").toString()), "不稼动时间非数字");
-                ValidationUtils.notNull(map.get("iswitchmins"), "机种切换时间不允许为空");
-                ValidationUtils.isTrue(NumberUtil.isNumber(map.get("iswitchmins").toString()), "机种切换时间非数字");
-                if (notNull(map.get("iotmins"))) {
-                    ValidationUtils.isTrue(NumberUtil.isNumber(map.get("iotmins").toString()), "加班时间非数字");
+                ValidationUtils.notNull(row.get("cworkname"), "产线名称不允许为空");
+                ValidationUtils.notNull(row.get("cworkshiftname"), "班次名称不允许为空");
+                ValidationUtils.notNull(row.get("ibasemins"), "基本稼动时间不允许为空");
+                ValidationUtils.isTrue(NumberUtil.isNumber(row.getStr("ibasemins")), "基本稼动时间非数字");
+                ValidationUtils.notNull(row.get("istopmins"), "不稼动时间不允许为空");
+                ValidationUtils.isTrue(NumberUtil.isNumber(row.getStr("istopmins")), "不稼动时间非数字");
+                ValidationUtils.notNull(row.get("iswitchmins"), "机种切换时间不允许为空");
+                ValidationUtils.isTrue(NumberUtil.isNumber(row.getStr("iswitchmins")), "机种切换时间非数字");
+                if (notNull(row.get("iotmins"))) {
+                    ValidationUtils.isTrue(NumberUtil.isNumber(row.getStr("iotmins")), "加班时间非数字");
                 }
-                if (notNull(map.get("iworkmins"))) {
-                    ValidationUtils.isTrue(NumberUtil.isNumber(map.get("iworkmins").toString()), "工作时间非数字");
+                if (notNull(row.get("iworkmins"))) {
+                    ValidationUtils.isTrue(NumberUtil.isNumber(row.getStr("iworkmins")), "工作时间非数字");
                 }
-                ValidationUtils.notBlank(map.get("cuptimecategoryname").toString(), "分类名称不允许为空");
-                ValidationUtils.notBlank(map.get("cuptimeparamname").toString(), "参数名称不允许为空");
-                ValidationUtils.notNull(map.get("imins"), "设定值不允许为空");
-                ValidationUtils.notNull(NumberUtil.isNumber(map.get("imins").toString()), "设定值非数字");
+                ValidationUtils.notBlank(row.getStr("cuptimecategoryname"), "分类名称不允许为空");
+                ValidationUtils.notBlank(row.getStr("cuptimeparamname"), "参数名称不允许为空");
+                ValidationUtils.notNull(row.getStr("imins"), "设定值不允许为空");
+                ValidationUtils.notNull(NumberUtil.isNumber(row.getStr("imins")), "设定值非数字");
 
                 // 获取产线信息
-                String cworkname = map.get("cworkname").toString();
+                String cworkname = row.getStr("cworkname");
                 Workregionm workregionm = workregionmService.findFirstByWorkName(cworkname);
                 if (notOk(workregionm)) {
-                    msg.append(cworkname + "产线名称不存在,");
+                    msg.append(cworkname).append("产线名称不存在,");
                     continue;
                 }
 
                 // 获取班次信息
-                String cworkshiftname = map.get("cworkshiftname").toString();
+                String cworkshiftname = row.get("cworkshiftname").toString();
                 Workshiftm workshiftm = workshiftmService.findByName(cworkshiftname);
                 if (notOk(workshiftm)) {
-                    msg.append(cworkshiftname + "班次名称不存在,");
+                    msg.append(cworkshiftname).append("班次名称不存在,");
                     continue;
                 }
 
                 // 同一个产线班次只允许保存一次
                 UptimeTplM up = findByWorkRegionMidAndWorkShiftMid(workregionm.getIAutoId(), workshiftm.getIautoid());
                 if (isOk(up)) {
-                    msg.append("产线名称:" + cworkname + "班次名称:" + cworkshiftname + "已存在模板");
+                    msg.append("产线名称:").append(cworkname).append("班次名称:").append(cworkshiftname).append("已存在模板");
                     continue;
                 }
 
-
-                Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(map.get("cuptimecategoryname").toString());
-                Long iUptimeParamId = uptimeParamService.getOrAddUptimeParamByName(iUptimeCategoryId, map.get("cuptimeparamname").toString());
+                Long iUptimeCategoryId = uptimeCategoryService.getOrAddUptimeCategoryByName(row.getStr("cuptimecategoryname"));
+                Long iUptimeParamId = uptimeParamService.getOrAddUptimeParamByName(iUptimeCategoryId, row.getStr("cuptimeparamname"));
 
                 // 保存稼动时间模板数据
                 UptimeTplM uptimeTplM = new UptimeTplM();
@@ -299,16 +280,16 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
                 uptimeTplM.setCOrgName(getOrgName());
                 uptimeTplM.setIWorkRegionMid(workregionm.getIAutoId());
                 uptimeTplM.setIWorkShiftMid(workshiftm.getIautoid());
-                uptimeTplM.setIBaseMins(Integer.valueOf(map.get("ibasemins").toString()));
-                uptimeTplM.setIStopMins(Integer.valueOf(map.get("istopmins").toString()));
-                uptimeTplM.setISwitchMins(Integer.valueOf(map.get("iswitchmins").toString()));
-                uptimeTplM.setIOtMins(Integer.valueOf(map.get("iotmins").toString()));
-                uptimeTplM.setIWorkMins(Integer.valueOf(map.get("iworkmins").toString()));
+                uptimeTplM.setIBaseMins(row.getInt("ibasemins"));
+                uptimeTplM.setIStopMins(row.getInt("istopmins"));
+                uptimeTplM.setISwitchMins(row.getInt("iswitchmins"));
+                uptimeTplM.setIOtMins(row.getInt("iotmins"));
+                uptimeTplM.setIWorkMins(row.getInt("iworkmins"));
                 uptimeTplM.setCCreateName(JBoltUserKit.getUserName());
-                uptimeTplM.setDCreateTime(new Date());
+                uptimeTplM.setDCreateTime(now);
                 uptimeTplM.setICreateBy(JBoltUserKit.getUserId());
                 uptimeTplM.setCUpdateName(JBoltUserKit.getUserName());
-                uptimeTplM.setDUpdateTime(new Date());
+                uptimeTplM.setDUpdateTime(now);
                 uptimeTplM.setIUpdateBy(JBoltUserKit.getUserId());
                 uptimeTplM.setIsDeleted(false);
                 uptimeTplM.setIsEnabled(true);
@@ -327,7 +308,7 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
                 uptimeTplTable.setIUptimeCategoryId(iUptimeCategoryId);
                 uptimeTplTable.setIUptimeParamId(iUptimeParamId);
                 uptimeTplTable.setISeq(iseq);
-                uptimeTplTable.setIMins(Integer.valueOf(map.get("imins").toString()));
+                uptimeTplTable.setIMins(Integer.valueOf(row.get("imins").toString()));
                 ValidationUtils.isTrue(uptimeTplTable.save(), "保存失败");
 
                 iseq++;
@@ -342,12 +323,9 @@ public class UptimeTplMService extends BaseService<UptimeTplM> {
 
     /**
      * 根据产线主键和班次主键查询数据
-     *
-     * @param iWorkRegionMid
-     * @param iWorkShiftMid
-     * @return
      */
     public UptimeTplM findByWorkRegionMidAndWorkShiftMid(Long iWorkRegionMid, Long iWorkShiftMid) {
         return findFirst(selectSql().eq("iWorkRegionMid", iWorkRegionMid).eq("iWorkShiftMid", iWorkShiftMid));
     }
+    
 }

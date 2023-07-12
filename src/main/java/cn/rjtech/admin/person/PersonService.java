@@ -16,13 +16,12 @@ import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.core.util.JBoltDateUtil;
-import cn.jbolt.core.util.JBoltStringUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
@@ -30,7 +29,6 @@ import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.PersonEquipment;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
-import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -67,8 +65,6 @@ public class PersonService extends BaseService<Person> {
     private DictionaryService dictionaryService;
     @Inject
     private PersonEquipmentService personEquipmentService;
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingdService;
 
     @Override
     protected Person dao() {
@@ -320,12 +316,14 @@ public class PersonService extends BaseService<Person> {
      */
     public Ret importExcelDatas(List<UploadFile> fileList, Kv para) {
         int startRow = 2;
+
+        Date now = new Date();
+        
         for (UploadFile uploadFile : fileList) {
             StringBuilder errorMsg = new StringBuilder();
-            //使用字段配置维护
-            Object modelss = cusFieldsMappingdService.getImportDatas(uploadFile.getFile(), "人员档案").get("data");
-            String docInfoRelaStrings = JSON.toJSONString(modelss);
-            List<Person> rows = JSON.parseArray(docInfoRelaStrings, Person.class);
+            
+            // 使用字段配置维护
+            List<Record> rows = CusFieldsMappingdCache.ME.getImportRecordsByTableName(uploadFile.getFile(), table());
 
             if (notOk(rows)) {
                 if (errorMsg.length() > 0) {
@@ -334,30 +332,40 @@ public class PersonService extends BaseService<Person> {
                     return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
                 }
             }
-            //数据权限校验
-            List<String> cdeptnumList = new ArrayList<String>();
-            for (Person person : rows) {
-            	String cdeptnum = departmentService.getCdepCodeByName(person.getCdeptNum());
-            	if(JBoltStringUtil.isBlank(cdeptnum)) continue;
-            	else cdeptnumList.add(cdeptnum);
+            
+            // 数据权限校验
+            List<String> cdeptnumList = new ArrayList<>();
+            for (Record person : rows) {
+            	String cdeptnum = departmentService.getCdepCodeByName(person.getStr("cPsn_Num"));
+                if (StrUtil.isBlank(cdeptnum)) {
+                    continue;
+                } else {
+                    cdeptnumList.add(cdeptnum);
+                }
 			}
-            if(CollUtil.isNotEmpty(cdeptnumList)) {
-            	for (String cdeptnum : cdeptnumList) {
-            		DataPermissionKit.validateAccess(cdeptnum);
-				}
+
+            if (CollUtil.isNotEmpty(cdeptnumList)) {
+                for (String cdeptnum : cdeptnumList) {
+                    DataPermissionKit.validateAccess(cdeptnum);
+                }
             }
+            
             //校验数据的有效性
             constructPersonModelCheckDatasEffectiveColumnByExcelDatas(rows, errorMsg, startRow);
             ValidationUtils.isTrue(errorMsg.length() == 0, errorMsg.toString());
+            
             //构造model
             List<Person> personList = new ArrayList<>();
-            List<PersonEquipment> PersonEquipmentList = new ArrayList<>();
-            constructPersonModelByExcelDatas(rows, personList, PersonEquipmentList);
+            
+            List<PersonEquipment> personEquipmentList = new ArrayList<>();
+            constructPersonModelByExcelDatas(rows, personList, personEquipmentList, now);
+            
             tx(() -> {
                 batchSave(personList);
-                personEquipmentService.batchSave(PersonEquipmentList);
+                personEquipmentService.batchSave(personEquipmentList);
                 return true;
             });
+            
             return SUCCESS;
         }
         return null;
@@ -366,21 +374,25 @@ public class PersonService extends BaseService<Person> {
     /**
      * 导入功能-校验每行数据的有效性：非空 ，数字等
      */
-    public void constructPersonModelCheckDatasEffectiveColumnByExcelDatas(List<Person> excelRecordList, StringBuilder errorMsg, int startRow) {
+    public void constructPersonModelCheckDatasEffectiveColumnByExcelDatas(List<Record> excelRecordList, StringBuilder errorMsg, int startRow) {
         if (CollUtil.isEmpty(excelRecordList)) {
             return;
         }
-        for (Person excelRecord : excelRecordList) {
+
+        for (Record excelRecord : excelRecordList) {
             String cpsnNum = excelRecord.getStr("cpsn_num");
             String cpsnName = excelRecord.getStr("cpsn_name");
-            if (JBoltStringUtil.isBlank(cpsnNum)) {
+            
+            if (StrUtil.isBlank(cpsnNum)) {
                 errorMsg.append("第").append(startRow).append("行,[人员编码]为空,请检查!<br/>");
-            }else if(isExistsByPersonCode(cpsnNum)){
-            	errorMsg.append("第").append(startRow).append("行,[人员编码]为已存在,请检查!<br/>");
+            } else if (isExistsByPersonCode(cpsnNum)) {
+                errorMsg.append("第").append(startRow).append("行,[人员编码]为已存在,请检查!<br/>");
             }
-            if (JBoltStringUtil.isBlank(cpsnName)) {
+            
+            if (StrUtil.isBlank(cpsnName)) {
                 errorMsg.append("第").append(startRow).append("行,[姓名]为空,请检查!<br/>");
             }
+            
             try {
                 excelRecord.getDate("dhiredate");
             } catch (Exception e) {
@@ -397,32 +409,37 @@ public class PersonService extends BaseService<Person> {
     /**
      * 导入功能-构造model
      */
-    public void constructPersonModelByExcelDatas(List<Person> excelRecordList, List<Person> personList, List<PersonEquipment> personEquipmentList) {
+    public void constructPersonModelByExcelDatas(List<Record> excelRecordList, List<Person> personList, List<PersonEquipment> personEquipmentList, Date now) {
         if (CollUtil.isEmpty(excelRecordList)) {
             return;
         }
-        for (Person excelRecord : excelRecordList) {
+        
+        for (Record excelRecord : excelRecordList) {
             Person person = new Person();
+            
             person.setIAutoId(JBoltSnowflakeKit.me.nextId());
             person.setCpsnNum(excelRecord.getStr("cpsn_num"));
             person.setCpsnName(excelRecord.getStr("cpsn_name"));
             person.setVIDNo(excelRecord.getStr("vidno"));
-            //借用字段名
+            
+            // 借用字段名
             String isexStr = excelRecord.getStr("natruetype");
-            Integer isex = JBoltStringUtil.isBlank(isexStr) ? null : ("男".equals(isexStr) ? 1 : 2);
+            Integer isex = StrUtil.isBlank(isexStr) ? null : ("男".equals(isexStr) ? 1 : 2);
+            
             person.setISex(isex);
-            //获取封装的事业类型的字典
+            
+            // 获取封装的事业类型的字典
             Record rpersontypeDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.rPersonType.name());
             String rpersontype = excelRecord.getStr("rpersontype");
-            rpersontype = JBoltStringUtil.isNotBlank(rpersontype) ? rpersontypeDictionaryRecord.getStr(rpersontype) : rpersontype;
+            rpersontype = StrUtil.isNotBlank(rpersontype) ? rpersontypeDictionaryRecord.getStr(rpersontype) : rpersontype;
             person.setRPersonType(rpersontype);
             person.setCPsnMobilePhone(excelRecord.getStr("cpsnmobilephone"));
             person.setJobNumber(excelRecord.getStr("jobnumber"));
             person.setCEcardNo(excelRecord.getStr("cecardno"));
-            person.setCdeptNum(departmentService.getCdepCodeByName(excelRecord.getCdeptNum()));
+            person.setCdeptNum(departmentService.getCdepCodeByName(excelRecord.getStr("cDept_num")));
             Record remploystateDictionaryRecord = dictionaryService.convertEnumByTypeKey(DictionaryTypeKey.job_type.name());
             String remploystate = excelRecord.getStr("remploystate");
-            remploystate = JBoltStringUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
+            remploystate = StrUtil.isNotBlank(remploystate) ? remploystateDictionaryRecord.getStr(remploystate) : remploystate;
             person.setREmployState(remploystate);
             person.setDHireDate(excelRecord.getDate("dhiredate"));
             String cWorkClassCode = excelRecord.getStr("iworkclassid");
@@ -432,14 +449,13 @@ public class PersonService extends BaseService<Person> {
             }
             person.setDBirthDate(excelRecord.getStr("dbirthdate"));
             person.setCPsnEmail(excelRecord.getStr("cpsnemail"));
-            String isenabled = JBoltStringUtil.isBlank(excelRecord.getStr("isenabled")) ? "1" : excelRecord.getStr("isenabled");
+            String isenabled = StrUtil.isBlank(excelRecord.getStr("isenabled")) ? "1" : excelRecord.getStr("isenabled");
             person.setIsEnabled(Objects.equals(isenabled, "1"));
             person.setCMemo(excelRecord.getStr("cmemo"));
             person.setIOrgId(getOrgId());
             person.setCOrgCode(getOrgCode());
             person.setCOrgName(getOrgName());
             User loginUser = JBoltUserKit.getUser();
-            Date now = new Date();
             person.setICreateBy(loginUser.getId());
             person.setCCreateName(loginUser.getName());
             person.setDCreateTime(now);
@@ -447,10 +463,12 @@ public class PersonService extends BaseService<Person> {
             person.setDUpdateTime(now);
             person.setCUpdateName(loginUser.getName());
             person.setISource(SourceEnum.MES.getValue());
+            
             personList.add(person);
+            
             //借用字段
             String cequipmentcodes = excelRecord.getStr("cregion");
-            if (JBoltStringUtil.isBlank(cequipmentcodes)) {
+            if (StrUtil.isBlank(cequipmentcodes)) {
                 return;
             }
             for (String cequipmentcode : cequipmentcodes.split(",")) {

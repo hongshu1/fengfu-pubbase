@@ -323,6 +323,6 @@ public class CurrentStockController extends BaseAdminController {
 		String cformatName = list.get(0);
 		String extension = list.get(1);
 		ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-		renderJson(service.importExcel(file, cformatName,autoid,whcode,poscodes));
+		renderJson(service.importExcel(file, autoid,whcode,poscodes));
 	}
 }

@@ -3,7 +3,6 @@ package cn.rjtech.admin.inventoryspotcheckform;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.dictionary.DictionaryService;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.permission.CheckPermission;
@@ -14,7 +13,6 @@ import cn.jbolt.core.render.JBoltByteFileType;
 import cn.rjtech.admin.equipmentmodel.EquipmentModelService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryspotcheckformOperation.InventoryspotcheckformOperationService;
-import cn.rjtech.admin.operation.OperationService;
 import cn.rjtech.admin.spotcheckform.SpotCheckFormService;
 import cn.rjtech.base.controller.BaseAdminController;
 import cn.rjtech.model.momdata.*;
@@ -206,7 +204,6 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
     /**
      * 数据导入
      */
-    @SuppressWarnings("unchecked")
     @CheckPermission(PermissionKey.INVENTORYSPOTCHECKFORM_IMPORT)
     public void importExcelData() {
         UploadFile uploadFile = getFile("file");
@@ -215,14 +212,9 @@ public class InventorySpotCheckFormAdminController extends BaseAdminController {
         File file = uploadFile.getFile();
 
         List<String> list = StrUtil.split(uploadFile.getOriginalFileName(), StrUtil.DOT);
-
-        // 截取最后一个“.”之前的文件名，作为导入格式名
-        String cformatName = list.get(0);
-
-        String extension = list.get(1);
-
-        ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-        renderJson(service.importExcelData(file, cformatName));
+        ValidationUtils.equals(list.get(1), JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
+        
+        renderJson(service.importExcelData(file));
     }
 
 }
