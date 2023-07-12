@@ -21,7 +21,6 @@ import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -321,7 +320,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
 
     //推送u8数据接口,返回 null 表示成功
     public String pushU8(SysProductin sysproductin, List<SysProductindetail> sysproductindetail) {
-        if(!CollectionUtils.isNotEmpty(sysproductindetail)){
+        if(CollUtil.isEmpty(sysproductindetail)){
             return "从表数据不能为空";
         }
 
@@ -343,7 +342,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
         preallocate.set("tag","ProductionIn");
         preallocate.set("type","ProductionIn");
 
-        data.put("PreAllocate",preallocate);
+        data.set("PreAllocate",preallocate);
 
         ArrayList<Object> maindata = new ArrayList<>();
         sysproductindetail.forEach(s -> {

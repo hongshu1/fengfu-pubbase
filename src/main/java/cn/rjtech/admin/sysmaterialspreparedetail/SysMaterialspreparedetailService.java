@@ -2,13 +2,15 @@ package cn.rjtech.admin.sysmaterialspreparedetail;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.modoc.MoDocService;
@@ -22,24 +24,12 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -287,8 +277,8 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
 
     public Ret pushU8(SysMaterialsprepare sysMaterialsprepare, List<SysMaterialspreparedetail> sysMaterialspreparedetails) {
-        if (!CollectionUtils.isNotEmpty(sysMaterialspreparedetails)) {
-            return Ret.ok().msg("数据不能为空");
+        if (CollUtil.isEmpty(sysMaterialspreparedetails)) {
+            return fail("数据不能为空");
         }
 
         User user = JBoltUserKit.getUser();
@@ -428,7 +418,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 //				sysMaterialspreparedetail.setInvCode(record.getStr("cInvCode")==null?"":record.getStr("cInvCode"));
                 sysMaterialspreparedetail.setNum(new BigDecimal(split1[1]).add(sysMaterialspreparedetail.getNum()));
 //				sysMaterialspreparedetail.setQty(new BigDecimal(split1[1]));
-//				sysMaterialspreparedetail.setPackRate(record.getBigDecimal("PackRate")==null?new BigDecimal(0):record.getBigDecimal("PackRate"));
+//				sysMaterialspreparedetail.setPackRate(record.getBigDecimal("PackRate")==null?BigDecimal.ZERO:record.getBigDecimal("PackRate"));
 //            sysMaterialspreparedetail.setSourceBillType();
 //            sysMaterialspreparedetail.setSourceBillNo()
 //            sysMaterialspreparedetail.setSourceBillNoRow()

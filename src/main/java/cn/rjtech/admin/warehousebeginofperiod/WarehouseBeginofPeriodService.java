@@ -93,7 +93,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
             BigDecimal generatedstockqty = records.stream().map(e -> e.getBigDecimal("qty")).reduce(BigDecimal.ZERO, BigDecimal::add);
             BigDecimal qty = record.getBigDecimal("qty");
             if (null == generatedstockqty) {
-                generatedstockqty = new BigDecimal(0);
+                generatedstockqty = BigDecimal.ZERO;
             }
             //record.set("ungeneratedstockqty", qty.subtract(generatedstockqty));//未生成条码库存数量
             record.set("generatedstockqty", generatedstockqty);//已生成条码库存数量
@@ -109,10 +109,10 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
 
     public static List<Record> removeDuplicate(List<Record> list) {
         ArrayList<Record> listTemp = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
+        for (Record record : list) {
             List<String> masid = listTemp.stream().map(e -> e.getStr("masid")).collect(Collectors.toList());
-            if (!masid.contains(list.get(i).getStr("masid"))) {
-                listTemp.add(list.get(i));
+            if (!masid.contains(record.getStr("masid"))) {
+                listTemp.add(record);
             }
         }
         return listTemp;
@@ -338,7 +338,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         //generatedStockQty ÷ ipkgqty
         BigDecimal divide = generatedStockQty.divide(ipkgqty, 0, BigDecimal.ROUND_UP);
         BigDecimal remainder = generatedStockQty.remainder(ipkgqty).setScale(6, BigDecimal.ROUND_HALF_UP);
-        BigDecimal lastScale = remainder.compareTo(new BigDecimal("0")) == 0 ? ipkgqty : remainder;//余数，最后一张条码要打印的数量
+        BigDecimal lastScale = remainder.compareTo(BigDecimal.ZERO) == 0 ? ipkgqty : remainder;//余数，最后一张条码要打印的数量
 
         //3、生成条码，并保存参数
         int parseInt = Integer.parseInt(divide.toString());//要生成几次条码

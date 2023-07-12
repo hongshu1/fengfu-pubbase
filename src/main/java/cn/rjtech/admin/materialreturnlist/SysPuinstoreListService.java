@@ -272,7 +272,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 							BigDecimal qty = record.getBigDecimal("qty");
 							//当前单行数量
 							BigDecimal iqty = record.getBigDecimal("iqty");
-							BigDecimal a=new BigDecimal(2);
+							BigDecimal a= BigDecimal.valueOf(2);
 							double cha = qty.subtract(iqty).doubleValue();
 							double value = iqty.multiply(a).doubleValue();
 							//物料退货判断
@@ -285,7 +285,7 @@ public class SysPuinstoreListService extends BaseService<SysPuinstore> implement
 							//当前单行数量
 							BigDecimal qtys = record.getBigDecimal("qtys");
 							//判断条件
-							BigDecimal a=new BigDecimal(2);
+							BigDecimal a= BigDecimal.valueOf(2);
 							double cha = qty.subtract(qtys).doubleValue();
 							double value = qtys.multiply(a).doubleValue();
 							//整单退货判断

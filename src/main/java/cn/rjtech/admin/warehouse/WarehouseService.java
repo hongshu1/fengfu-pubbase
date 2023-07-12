@@ -19,6 +19,7 @@ import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.model.momdata.Warehouse;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -264,10 +265,10 @@ public class WarehouseService extends BaseService<Warehouse> {
       }
       String[] split = ids.split(",");
       for (String id : split) {
-        Warehouse warehouse = findById(ids);
+        Warehouse warehouse = findById(id);
         if (warehouse.getISource() != null) {
           if (warehouse.getISource() == 2) {
-            ValidationUtils.error("【"+warehouse.getCWhName() + "】来源U8，无法删除");
+            ValidationUtils.error("【" + warehouse.getCWhName() + "】来源U8，无法删除");
           }
         }
         warehouse.setIsDeleted(true);
@@ -415,5 +416,11 @@ public class WarehouseService extends BaseService<Warehouse> {
   public List<Warehouse> findByIds(List<Long> ids) {
     Sql sql = selectSql().in(Warehouse.IAUTOID, ids);
     return find(sql);
+  }
+
+  public Warehouse getWarehouseCode() {
+    Warehouse warehouse = new Warehouse();
+    warehouse.setCWhCode(BillNoUtils.genCode(getOrgCode(), table()));
+    return warehouse;
   }
 }

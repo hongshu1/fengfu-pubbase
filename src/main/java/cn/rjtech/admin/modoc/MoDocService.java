@@ -7,7 +7,6 @@ import cn.hutool.http.HttpUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.model.User;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
@@ -26,24 +25,18 @@ import cn.rjtech.admin.moroutingconfig.MoMoroutingconfigService;
 import cn.rjtech.admin.moroutingconfigequipment.MoMoroutingequipmentService;
 import cn.rjtech.admin.moroutingconfigperson.MoMoroutingconfigPersonService;
 import cn.rjtech.admin.moworkshiftd.MoWorkShiftDService;
-import cn.rjtech.admin.moworkshiftm.MoWorkShiftMService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.admin.workregionm.WorkregionmService;
 import cn.rjtech.base.exception.ParameterException;
 import cn.rjtech.entity.vo.instockqcformm.MoDocFormVo;
-import cn.rjtech.enums.MonthOrderStatusEnum;
-import cn.rjtech.enums.WeekOrderStatusEnum;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.service.func.mom.MomDataFuncService;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.rjtech.wms.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.github.javaparser.utils.Log;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -55,9 +48,6 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-
-import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 工单管理 Service
@@ -67,6 +57,7 @@ import static cn.hutool.core.text.StrPool.COMMA;
  * @date: 2023-04-26 16:15
  */
 public class MoDocService extends BaseService<MoDoc> implements IApprovalService {
+    
   @Inject
   private InventoryRoutingService inventoryRoutingService;
   @Inject
@@ -75,7 +66,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
   private InventoryRoutingEquipmentService inventoryRoutingEquipmentService;
   @Inject
   private InventoryRoutingInvcService inventoryRoutingInvcService;
-
   @Inject
   private MoMoroutingService moMoroutingService;
   @Inject
@@ -86,29 +76,18 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
   private MoMoroutingequipmentService moroutingequipmentService; //工单设备
   @Inject
   private MoMoroutinginvcService moMoroutinginvcService; //工单物料
-
   @Inject
   private MomDataFuncService momDataFuncService;
   @Inject
   private PersonService personService;//人员
   @Inject
   private InventoryRoutingSopService inventoryRoutingSopService; //物料-作业指导书
-
   @Inject
   private MoMoroutingsopService moMoroutingsopService;//工单作业指导书
-
   @Inject
   private InventoryService inventoryService; //存货档案
-
-  @Inject
-  private WorkregionmService workregionmService; //产线
-
   @Inject
   private MoWorkShiftDService moWorkShiftDService; //指定日期班次人员信息明细
-
-  @Inject
-  private MoWorkShiftMService moWorkShiftMService; //指定日期班次人员信息主表
-
 
   private final MoDoc dao = new MoDoc().dao();
 
@@ -119,11 +98,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 后台管理分页查询
-   *
-   * @param pageNumber
-   * @param pageSize
-   * @param keywords
-   * @return
    */
   public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv keywords) {
     return dbTemplate("modoc.getPage", keywords).paginate(pageNumber, pageSize);
@@ -131,9 +105,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 查询生产任务
-   *
-   * @param
-   * @return
    */
   public HashMap<String, String> getJob(Long id) {
     List<Record> records = dbTemplate("modoc.getJob", new Kv().set("id", id)).find();
@@ -142,7 +113,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
       String jobCode = record.getStr("cMoJobSn");
       String planQty = record.getInt("iPlanQty").toString();
       String realQty = record.getInt("iRealQty").toString();
-      String status = record.getStr("iStatus").equals("1") ? "未完成" : "已完成";
+      String status = "1".equals(record.getStr("iStatus")) ? "未完成" : "已完成";
       String updateTime = record.getTimestamp("dUpdateTime").toString();
       map.put("paln" + jobCode, planQty);
       map.put("actual" + jobCode, realQty);
@@ -240,12 +211,12 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
         if (configperson != null) {
           String[] arr = configperson.split(",");
-          for (int i = 0; i < arr.length; i++) {
-            MoMoroutingconfigPerson mp = new MoMoroutingconfigPerson();
-            mp.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
-            mp.setIPersonId(Long.parseLong(arr[i]));
-            moMoroutingconfigPersonService.save(mp);
-          }
+            for (String s : arr) {
+                MoMoroutingconfigPerson mp = new MoMoroutingconfigPerson();
+                mp.setIMoRoutingConfigId(moMoroutingconfig.getIAutoId());
+                mp.setIPersonId(Long.parseLong(s));
+                moMoroutingconfigPersonService.save(mp);
+            }
         }
         //设备
         List<InventoryRoutingEquipment> iInventoryEquipments = inventoryRoutingEquipmentService
@@ -280,8 +251,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 保存
-   * @param
-   * @return
    */
   public Ret addDoc(JBoltTable jBoltTable, String rowid) {
     MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
@@ -470,7 +439,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
   public Ret saveDoc(JBoltTable jBoltTable, String rowid) {
     MoDoc moDoc = jBoltTable.getFormModel(MoDoc.class, "moDoc");
     if (moDoc == null) {
-      System.out.print("dddddddddds");
       return fail(JBoltMsg.PARAM_ERROR);
     }
     /// checkDoc(moDoc);
@@ -787,9 +755,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 更新
-   *
-   * @param moDoc
-   * @return
    */
   public Ret update(MoDoc moDoc) {
     if (moDoc == null || notOk(moDoc.getIAutoId())) {
@@ -807,9 +772,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 删除 指定多个ID
-   *
-   * @param ids
-   * @return
    */
   public Ret deleteByBatchIds(String ids) {
     return deleteByIds(ids, true);
@@ -817,9 +779,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 删除
-   *
-   * @param id
-   * @return
    */
   public Ret delete(Long id) {
     return deleteById(id, true);
@@ -830,7 +789,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
    *
    * @param moDoc 要删除的model
    * @param kv    携带额外参数一般用不上
-   * @return
    */
   @Override
   protected String afterDelete(MoDoc moDoc, Kv kv) {
@@ -843,7 +801,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
    *
    * @param moDoc 要删除的model
    * @param kv    携带额外参数一般用不上
-   * @return
    */
   @Override
   public String checkCanDelete(MoDoc moDoc, Kv kv) {
@@ -853,8 +810,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 设置返回二开业务所属的关键systemLog的targetType
-   *
-   * @return
    */
   @Override
   protected int systemLogTargetType() {
@@ -866,7 +821,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
    *
    * @param iworkregionmid 产线id
    * @param cpsnnum        人员编码
-   * @return
    */
   public List<Record> getMoworkshiftdByUserAnRegionid(Long iworkregionmid, String cpsnnum) {
     return dbTemplate("modoc.getMoworkshiftdByUserAnRegionid", Kv.by("iworkregionmid", iworkregionmid).set("cpsnnum", cpsnnum)).find();
@@ -877,7 +831,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
    *
    * @param iworkregionmid 产线id
    * @param cpsnnum        人员编码
-   * @return
    */
   public List<Record> getMoroutingconfigpersonByUserAnRegionid(Long iworkregionmid, String cpsnnum) {
     return dbTemplate("modoc.getMoroutingconfigpersonByUserAnRegionid", Kv.by("iworkregionmid", iworkregionmid).set("cpsnnum", cpsnnum)).find();
@@ -1004,8 +957,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
   }
     /**
      * 获取工单对应产线关联所属仓库信息
-     *
-     * @param imdcocid
      */
     @UnCheck
     public void getModocWarehouse(Long imdcocid) {
@@ -1019,7 +970,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
   //推送u8数据接口
   public Ret pushU8(MoDoc moDoc) {
 
-    List<PushU8ReqVo> rows = new ArrayList();
+    List<PushU8ReqVo> rows = new ArrayList<>();
     PushU8ReqVo pushU8ReqVo = new PushU8ReqVo();
     pushU8ReqVo.setDocno(moDoc.getCMoDocNo());
     pushU8ReqVo.setDdate(DateUtils.formatDate(moDoc.getDCreateTime(), "yyyy-MM-dd"));
@@ -1031,7 +982,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
       pushU8ReqVo.setcInvStd(inventory.getCInvStd());
     }
     if (moDoc.getICompQty() != null) {
-      pushU8ReqVo.setIquantity(Integer.valueOf(moDoc.getICompQty().intValue()));
+      pushU8ReqVo.setIquantity(moDoc.getICompQty().intValue());
     }
     if (isOk(moDoc.getDPlanDate())) {
       pushU8ReqVo.setDStartDate(DateUtils.formatDate(moDoc.getDCreateTime(), "yyyy-MM-dd"));
@@ -1040,7 +991,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
     pushU8ReqVo.setIrowno("1");
     pushU8ReqVo.setcBatch("");
     rows.add(pushU8ReqVo);
-    Map map = new HashMap();
+    Map<String, Object> map = new HashMap<>();
     map.put("data", rows);
 
 
@@ -1055,7 +1006,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
       if (isOk(post)) {
         if ("201".equals(jsonObject.getString("code"))) {
           System.out.println(jsonObject);
-          return Ret.ok("提交成功");
+          return success("提交成功");
         }
       }
     } catch (Exception e) {
@@ -1064,20 +1015,8 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
     return fail("上传u8失败");
   }
 
-  //通过当前登录人名称获取部门id
-  public String getdeptid() {
-    String dept = "001";
-    User user = JBoltUserKit.getUser();
-    Person person = personService.findFirstByUserId(user.getId());
-    if (null != person && "".equals(person)) {
-      dept = person.getCOrgCode();
-    }
-    return dept;
-  }
-
   public List<Record> getMoJobData(Long imdcocid) {
-    List<Record> records = dbTemplate("modoc.findMoJobByImodocId", new Kv().set("imdcocid", imdcocid)).find();
-    return records;
+      return dbTemplate("modoc.findMoJobByImodocId", new Kv().set("imdcocid", imdcocid)).find();
   }
 
   public Page<Record> getInventoryList(int pageNumber, int pageSize, Kv keywords) {
@@ -1091,8 +1030,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
   public Page<Record> getPersonByEquipment(int pageNumber, int pageSize, Kv keywords) {
     if (keywords.get("configpersonids") != null) {
       String configpersonids = keywords.getStr("configpersonids");
-      Page<Record> persons = dbTemplate("modoc.getPersonsByIds", Kv.by("configpersonids", configpersonids)).paginate(pageNumber, pageSize);
-      return persons;
+        return dbTemplate("modoc.getPersonsByIds", Kv.by("configpersonids", configpersonids)).paginate(pageNumber, pageSize);
     }
 
     List<Record> records = dbTemplate("modoc.getEquipments", Kv.by("iEquipmentIds", keywords.getLong("configid"))).find();
@@ -1111,11 +1049,10 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
       equipmentIds = equipmentIds.substring(0, equipmentIds.length() - 1);
     }
     keywords.set("iEquipmentIds", equipmentIds);
-    if (equipmentIds.equals("")) {
+    if ("".equals(equipmentIds)) {
       return null;
     }
-    Page<Record> iEquipmentIds = dbTemplate("modoc.getPersonByEquipment", keywords).paginate(pageNumber, pageSize);
-    return iEquipmentIds;
+      return dbTemplate("modoc.getPersonByEquipment", keywords).paginate(pageNumber, pageSize);
   }
 
   public Record getmoDocupdata(Long iautoid) {
@@ -1123,30 +1060,26 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
   }
 
   public List<Record> getMoDocbyIinventoryRoutingId(Long iMoDocId) {
-    List<Record> datalists = dbTemplate("modoc.getMoDocbyIinventoryRoutingId", Kv.by("iMoDocId", iMoDocId)).find();
-    return datalists;
+      return dbTemplate("modoc.getMoDocbyIinventoryRoutingId", Kv.by("iMoDocId", iMoDocId)).find();
   }
 
   public List<Record> getMoDocinv(Kv kv) {
-    List<Record> datalists = dbTemplate("modoc.getMoDocinv", Kv.by("iautoid", kv.getLong("configid"))).find();
-    return datalists;
+      return dbTemplate("modoc.getMoDocinv", Kv.by("iautoid", kv.getLong("configid"))).find();
   }
 
   public List<Record> getMoDocEquipment(Kv kv) {
-    List<Record> datalists = dbTemplate("modoc.getMoDocEquipment", Kv.by("iautoid", kv.getLong("configid"))).find();
-    return datalists;
+      return dbTemplate("modoc.getMoDocEquipment", Kv.by("iautoid", kv.getLong("configid"))).find();
   }
 
   public List<Record> moDocInventoryRouting(Kv kv) {
-    List<Record> datalists = dbTemplate("modoc.moDocInventoryRouting", Kv.by("iautoid", kv.getLong("configid"))).find();
-    return datalists;
+      return dbTemplate("modoc.moDocInventoryRouting", Kv.by("iautoid", kv.getLong("configid"))).find();
   }
 
   public String findByisScanned(Long imodocid) {
     Record jobN = dbTemplate("momaterialsscansum.getByBarcodeF", Kv.by("imodocid", imodocid)).findFirst();
     Record jobY = dbTemplate("momaterialsscansum.getByBarcodeN", Kv.by("imodocid", imodocid)).findFirst();
     String isScanned = "";
-    if (jobN.getInt("iplanqty") == jobY.getInt("irealqty") && jobN.getInt("iplanqty") != 0 &&  jobY.getInt("irealqty")!=0) {
+    if (Objects.equals(jobN.getInt("iplanqty"), jobY.getInt("irealqty")) && jobN.getInt("iplanqty") != 0 &&  jobY.getInt("irealqty")!=0) {
       isScanned = "已齐料";
     } else {
       isScanned = "未齐料";
@@ -1157,9 +1090,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 编辑计划保存
-   *
-   * @param records
-   * @return
    */
   public Ret savePlan(List<Record> records) {
     tx(() -> {
@@ -1184,14 +1114,11 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 编辑人员保存
-   *
-   * @param records
-   * @return
    */
   public Ret savePersonnel(List<Record> records) {
     tx(() -> {
       records.forEach(record -> {
-        if (record.getStr("type").equals("0")) {
+        if ("0".equals(record.getStr("type"))) {
           Date date = DateUtil.parse(record.getStr("data"));
           //获取工单工艺配置ID
           String routingconfigid = dbTemplate("modocbatch.getMoroutingconfigId", Kv.by("imotaskid", record.getStr("taskid")).set("iyear", DateUtil.year(date)).
@@ -1219,8 +1146,8 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
           MoDoc moDoc = findById(iautoid);
           moDoc.setIDutyPersonId(Long.parseLong(String.valueOf(records1.get(0))));
           moDoc.update();
-        } else if (record.getStr("type").equals("3") || record.getStr("type").equals("4") || record.getStr("type").equals("5")) {
-          Integer itype = 0;
+        } else if ("3".equals(record.getStr("type")) || "4".equals(record.getStr("type")) || "5".equals(record.getStr("type"))) {
+          int itype;
           String type = record.getStr("type");
           switch (type) {
             case "3":
@@ -1250,13 +1177,13 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
               }
             });
             MoWorkShiftD shiftD = new MoWorkShiftD();
-            if (diautoid.get() != null && !diautoid.get().equals("")) {
+            if (diautoid.get() != null && !"".equals(diautoid.get())) {
               moWorkShiftDService.finByid(Long.parseLong(diautoid.get()));
             }
             shiftD.setIType(itype);
             shiftD.setIMoWorkShiftMid(Long.parseLong(records2.get(0).getStr("miautoid")));
             shiftD.setIPersonId(Long.parseLong(String.valueOf(records1.get(0))));
-            if (diautoid.get() != null && !diautoid.get().equals("")) {
+            if (diautoid.get() != null && !"".equals(diautoid.get())) {
               shiftD.update();
             } else {
               shiftD.save();
@@ -1286,8 +1213,6 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
 
   /**
    * 根据ID获取作业人员信息
-   * @param iAutoId
-   * @return
    */
   public String getPsnNameById(Long iAutoId) {
     ValidationUtils.notNull(iAutoId, "制造工单主键不允许为空");
@@ -1359,7 +1284,7 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
         String result = HttpUtil.post("http://120.24.44.82:8099/api/cwapi/AddMoToERP?dbname=U8Context", params.toString());
         JSONObject jsonObject2 = JSONObject.parseObject(result);
         String remark=jsonObject2.getString("remark");
-        if(!jsonObject2.getString("status").equals("S")){
+        if(!"S".equals(jsonObject2.getString("status"))){
           ValidationUtils.error(remark);
         }
         return true;
@@ -1495,11 +1420,11 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
       List<Record> records = dbTemplate("modoc.getConfigPersonById",Kv.by("id",record.getIautoid())).find();
       if(records.size()==0 && configperson != null){
           String[] arr = configperson.split(",");
-          for (int i = 0; i < arr.length; i++) {
-            MoMoroutingconfigPerson mp =new MoMoroutingconfigPerson();
-            mp.setIMoRoutingConfigId(Long.parseLong(record.getIautoid()));
-            mp.setIPersonId(Long.parseLong(arr[i]));
-            moMoroutingconfigPersonService.save(mp);
+          for (String s : arr) {
+              MoMoroutingconfigPerson mp = new MoMoroutingconfigPerson();
+              mp.setIMoRoutingConfigId(Long.parseLong(record.getIautoid()));
+              mp.setIPersonId(Long.parseLong(s));
+              moMoroutingconfigPersonService.save(mp);
           }
       }
       if(records.size()!=0 && configperson != null){
@@ -1507,11 +1432,11 @@ public class MoDocService extends BaseService<MoDoc> implements IApprovalService
           for (Record record1 : records) {
             moMoroutingconfigPersonService.deleteById(record1.getLong("iautoid"));
           }
-          for (int i = 0; i < arr2.length; i++) {
-            MoMoroutingconfigPerson mp =new MoMoroutingconfigPerson();
-            mp.setIMoRoutingConfigId(Long.parseLong(record.getIautoid()));
-            mp.setIPersonId(Long.parseLong(arr2[i]));
-            moMoroutingconfigPersonService.save(mp);
+          for (String s : arr2) {
+              MoMoroutingconfigPerson mp = new MoMoroutingconfigPerson();
+              mp.setIMoRoutingConfigId(Long.parseLong(record.getIautoid()));
+              mp.setIPersonId(Long.parseLong(s));
+              moMoroutingconfigPersonService.save(mp);
           }
       }
     }

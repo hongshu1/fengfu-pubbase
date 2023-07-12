@@ -646,8 +646,8 @@ public class InventoryService extends BaseService<Inventory> {
             record.set(InventoryRoutingConfig.ISADD, isAdd);
             record.set(InventoryRoutingConfig.IAUTOID, routingConfigId);
             // 半成品
-            String iRsInventoryIdStr = record.getStr(InventoryRoutingConfig.IRSINVENTORYID);
-
+//            String iRsInventoryIdStr = record.getStr(InventoryRoutingConfig.IRSINVENTORYID);
+            String iRsInventoryIdStr = null;
             // 工序名称
             String cOperationName = getCOperationName(record.getStr(InventoryRoutingConfig.COPERATIONNAME));
 
@@ -796,8 +796,8 @@ public class InventoryService extends BaseService<Inventory> {
         Integer thisType = record.getInt(InventoryRoutingConfig.ITYPE);
 
         Record perConfig = seqMap.get(perSeq);
-        String iRsInventoryId = perConfig.getStr(InventoryRoutingConfig.IRSINVENTORYID);
-
+//        String iRsInventoryId = perConfig.getStr(InventoryRoutingConfig.IRSINVENTORYID);
+        String iRsInventoryId = null;
         String cOperationName = getCOperationName(perConfig.getStr(InventoryRoutingConfig.COPERATIONNAME));
 
         String partName = "【虚拟件-" + cOperationName + "】";
@@ -866,13 +866,13 @@ public class InventoryService extends BaseService<Inventory> {
         if (count > 0 && bunchSequenceValue == operationTypeEnum.getValue()) {
             return;
         }
-        String iRsInventoryIdStr = routingConfigRecord.getStr(InventoryRoutingConfig.IRSINVENTORYID);
-        if (StrUtil.isBlank(iRsInventoryIdStr)) {
-            return;
-        }
-        // 半成品，虚拟件跳过
-        Long iRsInventoryId = routingConfigRecord.getLong(InventoryRoutingConfig.IRSINVENTORYID);
-        checkRouting(masterInvId, rsInventoryId, iRsInventoryId, prefixErrorMsg, itemList);
+//        String iRsInventoryIdStr = routingConfigRecord.getStr(InventoryRoutingConfig.IRSINVENTORYID);
+//        if (StrUtil.isBlank(iRsInventoryIdStr)) {
+//            return;
+//        }
+//        // 半成品，虚拟件跳过
+//        Long iRsInventoryId = routingConfigRecord.getLong(InventoryRoutingConfig.IRSINVENTORYID);
+        checkRouting(masterInvId, rsInventoryId, null, prefixErrorMsg, itemList);
     }
 
     private void checkRouting(Long masterInvId, Long rsInventoryId, Long iRsInventoryId, String prefixErrorMsg, List<JSONObject> itemList) {

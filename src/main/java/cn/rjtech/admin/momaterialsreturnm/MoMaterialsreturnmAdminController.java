@@ -56,6 +56,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.MOMATERIALSRETURNM_EDIT)
     public void edit() {
         MoMaterialsreturnm moMaterialsreturnm = service.findById(getLong(0));
         if (moMaterialsreturnm == null) {
@@ -77,6 +78,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     /**
      * 更新
      */
+    @CheckPermission(PermissionKey.MOMATERIALSRETURNM_EDIT)
     public void update() {
         renderJson(service.update(getModel(MoMaterialsreturnm.class, "moMaterialsreturnm")));
     }
@@ -84,6 +86,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.MOMATERIALSRETURNM_DEL)
     public void deleteByIds() {
         renderJson(service.deleteByBatchIds(get("ids")));
     }
@@ -91,6 +94,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.MOMATERIALSRETURNM_DEL)
     public void delete() {
         renderJson(service.delete(getLong(0)));
     }
@@ -105,6 +109,7 @@ public class MoMaterialsreturnmAdminController extends BaseAdminController {
     /**
      * 新增退料
      */
+    @CheckPermission(PermissionKey.MOMATERIALSRETURNM_ADD)
     public void addMoMaterialsreturn(@Para(value = "imodocid") Long imodocid) {
         ValidationUtils.validateId(imodocid, "生产工单ID");
 

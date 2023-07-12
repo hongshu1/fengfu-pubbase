@@ -498,10 +498,13 @@ SELECT config_value FROM #(getBaseDbName()).dbo.jb_global_config WHERE config_ke
 
 #sql("getApsWeekscheduleList")
 ###获取月周排产历史纪录
-SELECT *
+SELECT iAutoId,iOrgId,cOrgCode,cOrgName,iLevel,isLocked,iCreateBy,cCreateName,dCreateTime,iUpdateBy,cUpdateName,dUpdateTime,IsDeleted,
+       CONVERT(VARCHAR(10),dScheduleBeginTime,120) AS dScheduleBeginTime,
+       CONVERT(VARCHAR(10),dScheduleEndTime,120) AS dScheduleEndTime,
+       CONVERT(VARCHAR(10),dLockEndTime,120) AS dLockEndTime
 FROM Aps_WeekSchedule
 WHERE IsDeleted = 0
-ORDER BY dScheduleEndTime DESC,iLevel ASC
+ORDER BY iLevel ASC
 #end
 
 

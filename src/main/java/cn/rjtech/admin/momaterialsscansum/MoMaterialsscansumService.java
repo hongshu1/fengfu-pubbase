@@ -169,10 +169,10 @@ public class MoMaterialsscansumService extends BaseService<MoMaterialsscansum> {
 					moMaterialsscansum.setIInventoryId(record.getLong("iinventoryid"));
 					moMaterialsscansum.setIMoDocId(record.get("imdocid"));
 					moMaterialsscansum.setIPlanQty(record.getBigDecimal("qty"));//计划数 iScannedQty
-					moMaterialsscansum.setIScannedQty(new BigDecimal(1));
+					moMaterialsscansum.setIScannedQty(BigDecimal.ONE);
 					moMaterialsscansum.save();
 				}else{
-					moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
+					moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(BigDecimal.ONE));
 					moMaterialsscansum.update();
 				}
 			}
@@ -203,10 +203,10 @@ public class MoMaterialsscansumService extends BaseService<MoMaterialsscansum> {
 					moMaterialsscansum.setIInventoryId(record.getLong("iinventoryid"));
 					moMaterialsscansum.setIMoDocId(record.get("imdocid"));
 					moMaterialsscansum.setIPlanQty(record.getBigDecimal("qty"));//计划数 iScannedQty
-					moMaterialsscansum.setIScannedQty(new BigDecimal(1));
+					moMaterialsscansum.setIScannedQty(BigDecimal.ONE);
 					moMaterialsscansum.save();
 				}else{
-					moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(new BigDecimal(1)));
+					moMaterialsscansum.setIScannedQty(moMaterialsscansum.getIScannedQty().add(BigDecimal.ONE));
 					moMaterialsscansum.update();
 				}
 			}

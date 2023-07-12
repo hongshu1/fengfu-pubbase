@@ -70,39 +70,39 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
     }
 
     @Inject
-    private MomDataFuncService momDataFuncService;
-    @Inject
-    private ApsWeekscheduleService apsWeekscheduleService;
-    @Inject
-    private ApsWeekscheduledetailsService apsWeekscheduledetailsService;
-    @Inject
-    private ApsWeekscheduledQtyService apsWeekscheduledQtyService;
+    private MoDocService moDocService;
     @Inject
     private MoMotaskService motaskService;
     @Inject
-    private MoDocService moDocService;
-    @Inject
-    private InventoryRoutingConfigService inventoryRoutingConfigService;
-    @Inject
-    private InventoryroutingconfigOperationService inventoryroutingconfigOperationService;
-    @Inject
-    private InventoryRoutingEquipmentService inventoryRoutingEquipmentService;
-    @Inject
-    private InventoryRoutingInvcService inventoryRoutingInvcService;
-    @Inject
-    private InventoryRoutingSopService inventoryRoutingSopService;
+    private MomDataFuncService momDataFuncService;
     @Inject
     private MoMoroutingService moMoroutingService;
     @Inject
-    private MoMoroutingconfigService moMoroutingconfigService;
-    @Inject
-    private MoMoroutingconfigOperationService moMoroutingconfigOperationService;
-    @Inject
-    private MoMoroutingequipmentService moMoroutingequipmentService;
+    private MoMoroutingsopService moMoroutingsopService;
     @Inject
     private MoMoroutinginvcService moMoroutinginvcService;
     @Inject
-    private MoMoroutingsopService moMoroutingsopService;
+    private ApsWeekscheduleService apsWeekscheduleService;
+    @Inject
+    private MoMoroutingconfigService moMoroutingconfigService;
+    @Inject
+    private InventoryRoutingSopService inventoryRoutingSopService;
+    @Inject
+    private ApsWeekscheduledQtyService apsWeekscheduledQtyService;
+    @Inject
+    private InventoryRoutingInvcService inventoryRoutingInvcService;
+    @Inject
+    private MoMoroutingequipmentService moMoroutingequipmentService;
+    @Inject
+    private InventoryRoutingConfigService inventoryRoutingConfigService;
+    @Inject
+    private ApsWeekscheduledetailsService apsWeekscheduledetailsService;
+    @Inject
+    private InventoryRoutingEquipmentService inventoryRoutingEquipmentService;
+    @Inject
+    private MoMoroutingconfigOperationService moMoroutingconfigOperationService;
+    @Inject
+    private InventoryroutingconfigOperationService inventoryroutingconfigOperationService;
 
     /**
      * 后台管理分页查询
@@ -458,10 +458,10 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
         calendarType = calendarType != null ? calendarType : "1";
         //1S 2S上班小时数
         BigDecimal workTime = getConfigValueBig(Kv.by("configkey", "aps_workTime"));
-        workTime = workTime != null ? workTime : new BigDecimal(8);
+        workTime = workTime != null ? workTime : BigDecimal.valueOf(8);
         //加班小时数
         BigDecimal overTime = getConfigValueBig(Kv.by("configkey", "aps_workOvertime"));
-        overTime = overTime != null ? overTime : new BigDecimal(3);
+        overTime = overTime != null ? overTime : BigDecimal.valueOf(3);
 
 
         //TODO:根据层级查询本次排产物料集信息
@@ -1357,7 +1357,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
             }
             apsWeekscheduledetailsService.batchSave(detailsList);
             if (detailsQtyList.size() > 0) {
-                List<List<ApsWeekscheduledQty>> groupList = CollectionUtils.partition(detailsQtyList, 300);
+                List<List<ApsWeekscheduledQty>> groupList = CollUtil.split(detailsQtyList, 300);
                 CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
                 ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
                 for (List<ApsWeekscheduledQty> dataList : groupList) {
@@ -2303,7 +2303,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         moMoroutingconfig.setCMergedSeq(invRoutingConfig.getCMergedSeq());
                         moMoroutingconfig.setCOperationName(invRoutingConfig.getCOperationName());
                         moMoroutingconfig.setIType(invRoutingConfig.getIType());
-                        moMoroutingconfig.setIRsInventoryId(invRoutingConfig.getIRsInventoryId());
+//                        moMoroutingconfig.setIRsInventoryId(invRoutingConfig.getIRsInventoryId());
                         moMoroutingconfig.setCProductSn(invRoutingConfig.getCProductSn());
                         moMoroutingconfig.setCProductTechSn(invRoutingConfig.getCProductTechSn());
                         moMoroutingconfig.setIMergedNum(invRoutingConfig.getIMergedNum());

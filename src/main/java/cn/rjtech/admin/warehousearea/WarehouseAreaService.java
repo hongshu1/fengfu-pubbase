@@ -17,6 +17,7 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.model.momdata.WarehouseArea;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -166,9 +167,21 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
         ValidationUtils.error("数据已被货架档案引用，无法删除！");
       }
 
+      String[] split = ids.split(",");
+      for (String id : split) {
+        WarehouseArea warehouseArea = findById(id);
+        if (warehouseArea.getIsource() != null) {
+          if (warehouseArea.getIsource() == 2) {
+            ValidationUtils.error("【"+warehouseArea.getCareaname() + "】来源U8，无法删除");
+          }
+        }
+        warehouseArea.setIsdeleted(true);
+        warehouseArea.update();
+      }
+
       //料品档案主表
       //deleteByIds(ids,true);
-      update("UPDATE Bd_Warehouse_Area SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
+//      update("UPDATE Bd_Warehouse_Area SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
       return true;
     });
     return SUCCESS;
@@ -351,5 +364,11 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 
     ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
     return SUCCESS;
+  }
+
+  public WarehouseArea getWarehouseAreaCode() {
+    WarehouseArea warehouseArea = new WarehouseArea();
+    warehouseArea.setCareacode(BillNoUtils.genCode(getOrgCode(), table()));
+    return warehouseArea;
   }
 }

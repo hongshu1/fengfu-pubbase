@@ -18,6 +18,7 @@ import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.model.momdata.WarehouseArea;
 import cn.rjtech.model.momdata.WarehousePosition;
 import cn.rjtech.model.momdata.WarehouseShelves;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -169,12 +170,20 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
    */
   public Ret deleteByBatchIds(String ids) {
     tx(() -> {
-      String[] idarry = ids.split(",");
-
-
+      String[] split = ids.split(",");
+      for (String id : split) {
+        WarehousePosition warehousePosition = findById(id);
+        if (warehousePosition.getIsource() != null) {
+          if (warehousePosition.getIsource() == 2) {
+            ValidationUtils.error("【" + warehousePosition.getCpositionname() + "】来源U8，无法删除");
+          }
+        }
+        warehousePosition.setIsdeleted(true);
+        warehousePosition.update();
+      }
       //料品档案主表
       //deleteByIds(ids,true);
-      update("UPDATE Bd_Warehouse_Position SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
+//      update("UPDATE Bd_Warehouse_Position SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
       return true;
     });
     return SUCCESS;
@@ -419,4 +428,9 @@ public class WarehousePositionService extends BaseService<WarehousePosition> {
     return dbTemplate("warehouseposition.printwarehouseposition", kv).find();
   }
 
+  public WarehousePosition getWarehousePositionCode() {
+    WarehousePosition warehousePosition = new WarehousePosition();
+    warehousePosition.setCpositioncode(BillNoUtils.genCode(getOrgCode(), table()));
+    return warehousePosition;
+  }
 }
