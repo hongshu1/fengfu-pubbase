@@ -4,6 +4,7 @@ import cn.jbolt._admin.permission.PermissionKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.permission.CheckPermission;
 import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
+import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.core.poi.excel.JBoltExcel;
 import cn.jbolt.core.poi.excel.JBoltExcelHeader;
@@ -87,6 +88,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.MATERIALSPREPARE_ADD)
     public void add() {
         render("add.html");
     }
@@ -101,6 +103,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.MATERIALSPREPARE_EDIT)
     public void edit() {
         SysMaterialsprepare sysMaterialsprepare = service.findById(getLong(0));
         if (sysMaterialsprepare == null) {
@@ -121,6 +124,7 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.MATERIALSPREPARE_DELETE_ALL)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
     }
@@ -128,11 +132,12 @@ public class SysMaterialsprepareAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.MATERIALSPREPARE_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
 
-
+    @UnCheck
     public void datas() {
         renderJsonData(service.getAdminDatas(getPageNumber(), getPageSize(), getKv()));
     }
