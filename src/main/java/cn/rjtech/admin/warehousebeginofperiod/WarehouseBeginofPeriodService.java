@@ -6,9 +6,11 @@ import cn.jbolt.common.model.HiprintTpl;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.db.sql.Sql;
+import cn.jbolt.core.kit.JBoltModelKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.para.JBoltPara;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.core.ui.jbolttable.JBoltTable;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.barcodedetail.BarcodedetailService;
 import cn.rjtech.admin.barcodemaster.BarcodemasterService;
@@ -16,6 +18,7 @@ import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.scanlog.ScanLogService;
 import cn.rjtech.admin.stockbarcodeposition.StockBarcodePositionService;
+import cn.rjtech.admin.uom.UomService;
 import cn.rjtech.admin.vendor.VendorService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
@@ -79,6 +82,10 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     private InventoryService inventoryService;
     @Inject
     private HiprintTplService hiprintTplService;
+    @Inject
+    private CusFieldsMappingDService cusFieldsMappingdService;
+    @Inject
+    private UomService uomService;
 
     /**
      * 数据源
@@ -226,7 +233,6 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         List<StockBarcodePosition> positions = new ArrayList<>();
         boolean result = tx(() -> {
             for (Kv kv : kvList) {
-                commonSaveStock(kv, now, list, "期初库存");
                 commonSubmitMethods(kv, now, list, "期初库存", barcodeDetails, positions);
             }
             //最终将期初库存保存在条码表和条码库存表
@@ -249,7 +255,6 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         List<StockBarcodePosition> positions = new ArrayList<>();
         boolean result = tx(() -> {
             for (Kv kv : kvList) {
-                commonSaveStock(kv, now, list, "期初条码");
                 commonSubmitMethods(kv, now, list, "期初条码", barcodeDetails, positions);
             }
             //最终将期初库存保存在条码表和条码库存表
@@ -263,8 +268,7 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
     /*
      * 公共保存方法
      * */
-    public void commonSubmitMethods(Kv kv, Date now, List<String> list, String sourceBillType,
-                                    List<Barcodedetail> barcodeDetails, List<StockBarcodePosition> positions) {
+    public void commonSubmitMethods(Kv kv, Date now, List<String> list, String sourceBillType, List<Barcodedetail> barcodeDetails, List<StockBarcodePosition> positions) {
         //1、T_Sys_BarcodeMaster--条码表
         kv.set("LockSource", sourceBillType);
         Long masid = null;
@@ -306,75 +310,70 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         Date now = new Date();
         List<String> list = new ArrayList<>();
         boolean result = tx(() -> {
+            ArrayList<Barcodedetail> barcodedetails = new ArrayList<>();
+            ArrayList<StockBarcodePosition> positions = new ArrayList<>();
+            ArrayList<Barcodemaster> barcodemasters = new ArrayList<>();
             for (Kv kv : kvList) {
-                commonSaveStock(kv, now, list, "期初库存");
+                kv.set("locksource", "期初库存");
+                Long masid = null;
+                List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
+                if (positionByKvs.isEmpty()) {
+                    Barcodemaster barcodemaster = new Barcodemaster();
+                    barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
+                    barcodemasters.add(barcodemaster);
+                    masid = barcodemaster.getAutoid();
+                } else {
+                    masid = positionByKvs.get(0).getLong("locksource");
+                }
+
+                //2、生成条码库存数量
+                BigDecimal generatedStockQty = kv.getBigDecimal("generatedstockqty");
+                //包装数量
+                BigDecimal ipkgqty = kv.getBigDecimal("ipkgqty");
+                //generatedStockQty ÷ ipkgqty
+                BigDecimal divide = generatedStockQty.divide(ipkgqty, 0, BigDecimal.ROUND_UP);
+                BigDecimal remainder = generatedStockQty.remainder(ipkgqty).setScale(6, BigDecimal.ROUND_HALF_UP);
+                BigDecimal lastScale = remainder.compareTo(BigDecimal.ZERO) == 0 ? ipkgqty : remainder;//余数，最后一张条码要打印的数量
+
+                //3、生成条码，并保存参数
+                int parseInt = Integer.parseInt(divide.toString());//要生成几次条码
+                for (int i = 0; i < parseInt; i++) {
+                    // 生成条码
+                    String barcode = BillNoUtils.getcDocNo(getOrgId(), "QC", 5);//todo 生成条码的功能未完成，待改
+                    kv.set("barcode", barcode);
+                    int j = i;
+                    if ((j + 1) == parseInt) {
+                        kv.set("qty", lastScale);
+                    } else {
+                        kv.set("qty", ipkgqty);
+                    }
+
+                    //2、T_Sys_BarcodeDetail--条码明细表
+                    Barcodedetail barcodedetail = new Barcodedetail();
+                    barcodedetail.setQty(kv.getBigDecimal("qty"));//每张条码分配的数量
+                    barcodedetailService.saveBarcodedetailModel(barcodedetail, masid, now, kv, "期初库存");
+                    barcodedetails.add(barcodedetail);
+                    list.add(barcodedetail.getAutoid().toString());
+
+                    //3、T_Sys_StockBarcodePosition--条码库存表
+                    StockBarcodePosition position = new StockBarcodePosition();
+                    position.setQty(kv.getBigDecimal("qty")); //每张条码需要打印的数量
+                    barcodePositionService.saveBarcodePositionModel(position, kv, now, "新增期初库存", barcodedetail.getAutoid());
+                    positions.add(position);
+
+                    //4、write log
+                    ScanLog scanLog = new ScanLog();
+                    writeLog(barcodedetail, now, scanLog);
+                }
             }
+            //主表
+            ValidationUtils.isTrue(batchSave(barcodemasters).length>0,"生成失败");
+            //5、最终将期初库存保存在条码表和条码库存表
+            barcodedetailService.batchSave(barcodedetails);
+            barcodePositionService.batchSave(positions);
             return true;
         });
         return successWithData(Kv.by("ids", list));
-    }
-
-    public boolean commonSaveStock(Kv kv, Date now, List<String> list, String sourcebilltype) {
-        ArrayList<Barcodedetail> barcodedetails = new ArrayList<>();
-        ArrayList<StockBarcodePosition> positions = new ArrayList<>();
-
-        //1、T_Sys_BarcodeMaster--条码表
-        kv.set("locksource", sourcebilltype);
-        Long masid = null;
-        List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
-        if (positionByKvs.isEmpty()) {
-            Barcodemaster barcodemaster = new Barcodemaster();
-            barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
-            ValidationUtils.isTrue(barcodemaster.save(), "保存失败！");
-            masid = barcodemaster.getAutoid();
-        } else {
-            masid = positionByKvs.get(0).getLong("locksource");
-        }
-
-        //2、生成条码库存数量
-        BigDecimal generatedStockQty = kv.getBigDecimal("generatedstockqty");
-        //包装数量
-        BigDecimal ipkgqty = kv.getBigDecimal("ipkgqty");
-        //generatedStockQty ÷ ipkgqty
-        BigDecimal divide = generatedStockQty.divide(ipkgqty, 0, BigDecimal.ROUND_UP);
-        BigDecimal remainder = generatedStockQty.remainder(ipkgqty).setScale(6, BigDecimal.ROUND_HALF_UP);
-        BigDecimal lastScale = remainder.compareTo(BigDecimal.ZERO) == 0 ? ipkgqty : remainder;//余数，最后一张条码要打印的数量
-
-        //3、生成条码，并保存参数
-        int parseInt = Integer.parseInt(divide.toString());//要生成几次条码
-        for (int i = 0; i < parseInt; i++) {
-            // 生成条码
-            String barcode = BillNoUtils.getcDocNo(getOrgId(), "QC", 5);//todo 生成条码的功能未完成，待改
-            kv.set("barcode", barcode);
-            int j = i;
-            if ((j + 1) == parseInt) {
-                kv.set("qty", lastScale);
-            } else {
-                kv.set("qty", ipkgqty);
-            }
-
-            //2、T_Sys_BarcodeDetail--条码明细表
-            Barcodedetail barcodedetail = new Barcodedetail();
-            barcodedetail.setQty(kv.getBigDecimal("qty"));//每张条码分配的数量
-            barcodedetailService.saveBarcodedetailModel(barcodedetail, masid, now, kv, sourcebilltype);
-            barcodedetails.add(barcodedetail);
-            list.add(barcodedetail.getAutoid().toString());
-
-            //3、T_Sys_StockBarcodePosition--条码库存表
-            StockBarcodePosition position = new StockBarcodePosition();
-            position.setQty(kv.getBigDecimal("qty")); //每张条码需要打印的数量
-            barcodePositionService.saveBarcodePositionModel(position, kv, now, "新增期初库存", barcodedetail.getAutoid());
-            positions.add(position);
-
-            //4、write log
-            ScanLog scanLog = new ScanLog();
-            writeLog(barcodedetail, now, scanLog);
-        }
-        //5、最终将期初库存保存在条码表和条码库存表
-        barcodedetailService.batchSave(barcodedetails);
-        barcodePositionService.batchSave(positions);
-
-        return true;
     }
 
     /*
@@ -391,55 +390,52 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         List<String> list = new ArrayList<>();
         Date now = new Date();
         boolean result = tx(() -> {
-            boolean save = commonSaveBarcode(kvList, now, printnum, list, "期初条码");
-            return save;
+            ArrayList<Barcodedetail> barcodedetails = new ArrayList<>();
+            ArrayList<StockBarcodePosition> positions = new ArrayList<>();
+            ArrayList<Barcodemaster> barcodemasters = new ArrayList<>();
+
+            for (Kv kv : kvList) {
+                //用OrganizeCode、invcode、VenCode、WhCode、PosCode查询以前是否生成过库存条码，有的话条码表的主键用同一个
+                kv.set("locksource", "期初条码");
+                List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
+
+                Long masid = null;
+                if (positionByKvs.isEmpty()) {
+                    //1、T_Sys_BarcodeMaster--条码表
+                    Barcodemaster barcodemaster = new Barcodemaster();
+                    barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
+                    barcodemasters.add(barcodemaster);
+
+                    masid = barcodemaster.getAutoid();
+                } else {
+                    masid = positionByKvs.get(0).getLong("locksource");
+                }
+
+                //2、T_Sys_BarcodeDetail--条码明细表
+                Barcodedetail barcodedetail = new Barcodedetail();
+                barcodedetail.setQty(kv.getBigDecimal("generatedstockqty"));//每张条码分配的数量
+                barcodedetailService.saveBarcodedetailModel(barcodedetail, masid, now, kv, "期初条码");
+                barcodedetails.add(barcodedetail);
+                list.add(String.valueOf(barcodedetail.getAutoid()));
+
+                //3、T_Sys_StockBarcodePosition--条码库存表s
+                StockBarcodePosition position = new StockBarcodePosition();
+                position.setQty(kv.getBigDecimal("generatedstockqty")); //每张条码需要打印的数量
+                barcodePositionService.saveBarcodePositionModel(position, kv, now, "期初条码", barcodedetail.getAutoid());
+                positions.add(position);
+
+                //4、记录日志
+                ScanLog scanLog = new ScanLog();
+                writeLog(barcodedetail, now, scanLog);
+            }
+            //主表
+            ValidationUtils.isTrue(batchSave(barcodemasters).length>0,"生成期初条码失败");
+            //5、最终将期初库存保存在条码表和条码库存表
+            barcodedetailService.batchSave(barcodedetails);
+            barcodePositionService.batchSave(positions);
+            return true;
         });
         return successWithData(Kv.by("ids", list));
-    }
-
-    public boolean commonSaveBarcode(List<Kv> kvList, Date now, int printnum, List<String> list, String sourcebilltype) {
-        ArrayList<Barcodedetail> barcodedetails = new ArrayList<>();
-        ArrayList<StockBarcodePosition> positions = new ArrayList<>();
-        for (Kv kv : kvList) {
-            //用OrganizeCode、invcode、VenCode、WhCode、PosCode查询以前是否生成过库存条码，有的话条码表的主键用同一个
-            kv.set("locksource", "新增期初条码");
-            List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
-
-            Long masid = null;
-            if (positionByKvs.isEmpty()) {
-                //1、T_Sys_BarcodeMaster--条码表
-                Barcodemaster barcodemaster = new Barcodemaster();
-                barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
-                Ret masterRet = barcodemasterService.save(barcodemaster);
-                ValidationUtils.isTrue(masterRet.isFail(), "保存失败");
-
-                masid = barcodemaster.getAutoid();
-            } else {
-                masid = positionByKvs.get(0).getLong("locksource");
-            }
-
-            //2、T_Sys_BarcodeDetail--条码明细表
-            Barcodedetail barcodedetail = new Barcodedetail();
-            barcodedetail.setQty(kv.getBigDecimal("generatedstockqty"));//每张条码分配的数量
-            barcodedetailService.saveBarcodedetailModel(barcodedetail, masid, now, kv, sourcebilltype);
-            barcodedetails.add(barcodedetail);
-            list.add(String.valueOf(barcodedetail.getAutoid()));
-
-            //3、T_Sys_StockBarcodePosition--条码库存表s
-            StockBarcodePosition position = new StockBarcodePosition();
-            position.setQty(kv.getBigDecimal("generatedstockqty")); //每张条码需要打印的数量
-            barcodePositionService.saveBarcodePositionModel(position, kv, now, "新增期初条码", barcodedetail.getAutoid());
-            positions.add(position);
-
-            //4、记录日志
-            ScanLog scanLog = new ScanLog();
-            writeLog(barcodedetail, now, scanLog);
-        }
-        //5、保存条码表和明细表数据
-        barcodedetailService.batchSave(barcodedetails);
-        barcodePositionService.batchSave(positions);
-
-        return true;
     }
 
     /*
@@ -461,216 +457,59 @@ public class WarehouseBeginofPeriodService extends BaseService<Barcodemaster> {
         return null;
     }
 
-    /**
-     * 导入期初库存数据
-     */
-    public Ret importStockExcel(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
-        if (notOk(records)) {
-            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-        }
-        Date now = new Date();
-        for (Record record : records) {
-            //1、get值
-            String qty = trimMethods(record.getStr("qty"));//生成条码库存数量
-            String reportfilename = trimMethods(record.getStr("reportfilename"));//打印模板标签
-
-            //2、给kv赋值
-            Kv kv = new Kv();
-            setKvByRecord(kv, record);
-
-            //3、根据名称获取对应的数据
-            Inventory inventory = inventoryService.findBycInvCode(kv.getStr("cinvcode"));
-            List<Warehouse> warehouseList = warehouseService.findListByWhName(kv.getStr("cwhname"));
-            List<WarehouseArea> warehouseAreaList = warehouseAreaService.findAreaListByWhName(kv.getStr("careaname"));
-            Vendor vendor = vendorService.findByName(kv.getStr("cvenname"));
-            List<HiprintTpl> hiprintTpls = hiprintTplService.findHiprintTplByName(reportfilename);
-
-            //4、判空
-            Ret ret = checkImportIsBlank(kv, qty, reportfilename, inventory, warehouseList, warehouseAreaList, vendor, hiprintTpls);
-            if (ret.isFail()) {
-                return ret;
-            }
-
-            String cwhcode = "NULL";
-            if (!warehouseList.isEmpty()) {
-                cwhcode = warehouseList.get(0).getCWhCode();
-            }
-            String careacode = "NULL";
-            if (!warehouseAreaList.isEmpty()) {
-                careacode = warehouseAreaList.get(0).getCareacode();
-            }
-            String cvencode = "NULL";
-            if (vendor != null) {
-                cvencode = vendor.getCVenCode();
-            }
-            String filename = "NULL";
-            if (!hiprintTpls.isEmpty()) {
-                filename = hiprintTpls.get(0).getSn();
-            }
-
-            kv.set("cvencode", cvencode);
-            kv.set("cwhcode", cwhcode);
-            kv.set("careacode", careacode);
-            kv.set("poscode", careacode);
-            kv.set("locksource", "新增期初库存");
-            kv.set("vencode", cvencode);
-            kv.set("ipkgqty", inventory.getIPkgQty());
-            kv.set("generatedstockqty", qty);
-            kv.set("reportfilename", filename);
-
-            //5、保存
-            List<String> list = new ArrayList<>();
-            boolean tx = tx(() -> {
-                Long masid = null;
-                List<Record> positionByKvs = barcodePositionService.findBarcodePositionByKvs(kv);
-                if (positionByKvs.isEmpty()) {
-                    Barcodemaster barcodemaster = new Barcodemaster();
-                    barcodemasterService.saveBarcodemasterModel(barcodemaster, now);
-                    Ret masterRet = barcodemasterService.save(barcodemaster);
-                    if (masterRet.isFail()) {
-                        return false;
-                    }
-                    masid = barcodemaster.getAutoid();
-                } else {
-                    masid = positionByKvs.get(0).getLong("locksource");
-                }
-                return commonSaveStock(kv, now, list, "期初库存");
-            });
-            ValidationUtils.isTrue(tx, "导入失败");
-        }
-        return SUCCESS;
+    /*
+     * 获取期初库存导入的数据
+     * */
+    public List<Record> getStockImportData(String list) {
+        List<Record> fromRecords = JBoltModelKit.getFromRecords(list);
+        commonGetImportData(fromRecords);
+        return fromRecords;
     }
 
     /*
-     * 导入期初条码数据
+     * 获取期初条码导入的数据
      * */
-    public Ret importBarcodeExcel(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
-        if (notOk(records)) {
-            return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-        }
-        Date now = new Date();
-        ArrayList<Kv> kvList = new ArrayList<>();
-        for (Record record : records) {
-            //1、get值
-            String qty = trimMethods(record.getStr("qty"));//生成条码库存数量
-            String barcode = trimMethods(record.getStr("barcode"));//条码号
-            String reportfilename = trimMethods(record.getStr("reportFileName"));//打印模板标签
-            ValidationUtils.isTrue(StrUtil.isNotBlank(barcode), barcode + "：条码号不能为空");
-            //2、给kv赋值
-            Kv kv = new Kv();
-            setKvByRecord(kv, record);
-
-            //3、根据名称获取对应的数据
-            Inventory inventory = inventoryService.findBycInvCode(kv.getStr("cinvcode"));
-            List<Warehouse> warehouseList = warehouseService.findListByWhName(kv.getStr("cwhname"));
-            List<WarehouseArea> warehouseAreaList = warehouseAreaService.findAreaListByWhName(kv.getStr("careaname"));
-            Vendor vendor = vendorService.findByName(kv.getStr("cvenname"));
-            List<HiprintTpl> hiprintTpls = hiprintTplService.findHiprintTplByName(reportfilename);
-
-            //4、判空
-            Ret ret = checkImportIsBlank(kv, qty, reportfilename, inventory, warehouseList, warehouseAreaList, vendor, hiprintTpls);
-            if (ret.isFail()) {
-                return ret;
-            }
-
-            String cwhcode = "NULL";
-            if (!warehouseList.isEmpty()) {
-                cwhcode = warehouseList.get(0).getCWhCode();
-            }
-            String careacode = "NULL";
-            if (!warehouseAreaList.isEmpty()) {
-                careacode = warehouseAreaList.get(0).getCareacode();
-            }
-            String cvencode = "NULL";
-            if (vendor != null) {
-                cvencode = vendor.getCVenCode();
-            }
-            String filename = "NULL";
-            if (!hiprintTpls.isEmpty()) {
-                filename = hiprintTpls.get(0).getSn();
-            }
-
-            kv.set("cvencode", cvencode);
-            kv.set("barcode", barcode);
-            kv.set("cwhcode", cwhcode);
-            kv.set("careacode", careacode);
-            kv.set("qty", qty);
-            kv.set("poscode", careacode);
-            kv.set("locksource", "新增期初库存");
-            kv.set("vencode", cvencode);
-            kv.set("generatedstockqty", qty);
-            kv.set("reportfilename", filename);
-            //
-            kvList.add(kv);
-        }
-        String barcode = checkByBarcode(kvList);
-        ValidationUtils.isTrue(StrUtil.isBlank(barcode), barcode + "：库存中已经存在，不能重复");
-
-        //5、保存
-        boolean tx = tx(() -> {
-            List<String> list = new ArrayList<>();
-            boolean save = commonSaveBarcode(kvList, now, 1, list, "期初条码");
-            return save;
-        });
-
-        return ret(tx);
+    public List<Record> getBarcodeImportData(String list) {
+        List<Record> fromRecords = JBoltModelKit.getFromRecords(list);
+        commonGetImportData(fromRecords);
+        return fromRecords;
     }
 
     /*
-     * 给kv赋值
+     * 公共获取导入的方法
      * */
-    public Kv setKvByRecord(Kv kv, Record record) {
-        String cInvCode = trimMethods(record.getStr("cInvCode"));//存货编码
-        kv.set("invcode", cInvCode);
-        kv.set("cinvcode", cInvCode);
-        kv.set("cwhname", trimMethods(record.getStr("cWhName")));//仓库名称
-        kv.set("batch", trimMethods(record.getStr("batch")));//批次
-        kv.set("careaname", trimMethods(record.getStr("cAreaName")));//库区名称
-        kv.set("createDate", trimMethods(record.getStr("createDate")));//生产日期
-        kv.set("cvenname", trimMethods(record.getStr("cVenName")));//供应商名称
+    public void commonGetImportData(List<Record> fromRecords) {
+        for (Record record : fromRecords) {
+            Warehouse warehouse = warehouseService.findByCwhcode(record.getStr("cwhcode"));
+            ValidationUtils.notNull(warehouse, record.getStr("cwhcode") + " 仓库编码不存在");
+            Inventory inventory = inventoryService.findBycInvCode(record.getStr("cinvcode"));
+            ValidationUtils.notNull(inventory, record.getStr("cinvcode") + " 存货编码不存在");
+            Uom uom = uomService.findById(inventory.getIInventoryUomId1());
+            List<HiprintTpl> hiprintTpls = hiprintTplService.findHiprintTplByName(record.getStr("reportfilename"));
+            ValidationUtils.notEmpty(hiprintTpls, record.getStr("reportfilename") + " 标签打印模板不存在");
 
-        return kv;
-    }
-
-    /*
-     * 去空格
-     * */
-    public String trimMethods(String str) {
-        if (StrUtil.isNotBlank(str)) {
-            return str.trim();
+            if (StrUtil.isNotBlank(record.getStr("careacode"))) {
+                WarehouseArea warehouseArea = warehouseAreaService.findByWhAreaCode(record.getStr("careacode"));
+                ValidationUtils.notNull(warehouseArea, record.getStr("careacode") + " 库区编码不存在");
+                record.set("careacode", record.getStr("careacode"));
+                record.set("careaname", warehouseArea.getCareaname());
+            }
+            if (StrUtil.isNotBlank(record.getStr("cvencode"))) {
+                Vendor vendor = vendorService.findByCode(record.getStr("cvencode"));
+                ValidationUtils.notNull(vendor, record.getStr("cvencode") + " 供应商编码不存在");
+                record.set("cvencode", record.getStr("cvencode"));
+                record.set("cvenname", vendor.getCVenName());
+            }
+            record.set("generatedstockqty", record.getStr("qty"));
+            record.set("cwhname", warehouse.getCWhName());
+            record.set("cinvname", inventory.getCInvName());
+            record.set("cinvcode1", inventory.getCInvCode1());
+            record.set("cinvname1", inventory.getCInvName1());
+            record.set("cinvstd", inventory.getCInvStd());
+            record.set("ipkgqty", inventory.getIPkgQty());
+            record.set("cuomname", uom != null ? uom.getCUomName() : null);//库存主计量单位
+            record.set("reportfilename", hiprintTpls.get(0).getSn());
         }
-        return str;
-    }
-
-    /*
-     * 检查导入字段是否为空
-     * */
-    public Ret checkImportIsBlank(Kv kv, String qty, String reportfilename, Inventory inventory, List<Warehouse> warehouseList, List<WarehouseArea> warehouseAreaList, Vendor vendor, List<HiprintTpl> hiprintTpls) {
-        //仓库名称
-        ValidationUtils.notBlank(kv.getStr("cwhname"), "仓库名称不能为空");
-        ValidationUtils.notBlank(kv.getStr("cinvcode"), "存货编码不能为空");
-        //条码库存数量
-        ValidationUtils.notBlank(qty, "生成条码库存数量不能为空");
-        //批次号
-        ValidationUtils.notBlank(kv.getStr("batch"), "批次号不能为空");
-        //打印模板标签
-        ValidationUtils.notBlank(kv.getStr("reportfilename"), "打印模板标签不能为空");
-        ValidationUtils.notNull(inventory, kv.getStr("cinvcode") + ": 存货编码不存在，请添加存货后再次导入");
-        //仓库名称
-        ValidationUtils.notEmpty(warehouseList, kv.getStr("cwhname") + ": 仓库名称不存在，请添加仓库后再次导入");
-        ValidationUtils.isTrue(!(warehouseList.size() > 1), kv.getStr("cwhname") + ": 仓库名重复，请修改名称后再次导入");
-        //库区名
-        ValidationUtils.notEmpty(warehouseAreaList, kv.getStr("careaname") + ": 库区名不存在，请添加库区后再次导入");
-        ValidationUtils.isTrue(!(warehouseAreaList.size() > 1), kv.getStr("careaname") + ": 库区名重复，请修改名称后再次导入");
-        //供应商名
-        ValidationUtils.notNull(vendor, kv.getStr("cvenname") + ":供应商名不存在，请添加供应商后再次导入");
-        //打印模板标签
-        ValidationUtils.notEmpty(hiprintTpls, reportfilename + ": 打印模板标签不存在，请添加打印模板后再次导入");
-        ValidationUtils.isTrue(!(hiprintTpls.size() > 1), reportfilename + ": 打印模板标签名重复，无法区分，请修改名称后再次导入");
-
-        return SUCCESS;
     }
 
     /*
