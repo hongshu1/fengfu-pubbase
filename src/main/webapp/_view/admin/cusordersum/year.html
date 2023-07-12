@@ -79,12 +79,10 @@
 
 <div class="jbolt_table_toolbar" id="CusOrderSum_toolbar_#(pageId)">
     <div class="btn-group btn-group-sm" role="group" aria-label="btn-group">
+        <button data-downloadbtn data-form="apsAnnualplanmFormsum_#(pageId)"
+                data-url="admin/scheduproductplanyear/dataExport" class="btn btn-outline-primary" ><i class="fa fa-download"></i> 导出</button>
+
         <div class="btn-group dropdown ">
-            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="exportContainerButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 数据导出</button>
-            <div class="dropdown-menu" aria-labelledby="exportContainerButton">
-                <button class="btn dropdown-item" data-usecheckedids="true" data-downloadbtn data-url="/admin/container/dataExport"><i class="fa fa-download"></i> 导出选中</button>
-                <button class="btn dropdown-item" data-downloadbtn data-url="/admin/container/dataExport" data-form="Container_form_#(pageId)"><i class="fa fa-download"></i> 条件导出</button>
-            </div>
             <button class="btn dropdown-item" onclick="refreshBtnCusSum(this)"><i class="fa fa-refresh"></i> 刷新</button>
         </div>
     </div>

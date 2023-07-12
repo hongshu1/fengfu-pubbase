@@ -1228,7 +1228,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 
 			Map<String,Object> map = new HashMap<>();
 			map.put("seq",seq++);
-			map.put("cVenName",info.getInt("cVenName"));
+			map.put("cVenName",info.getStr("cVenName"));
 			map.put("cInvCode",info.getStr("cInvCode"));
 			map.put("cInvCode1",info.getStr("cInvCode1"));
 			map.put("cInvName1",info.getStr("cInvName1"));

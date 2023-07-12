@@ -475,6 +475,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         headerList.add(JBoltExcelHeader.create("cinvcode1","客户部番"));
         headerList.add(JBoltExcelHeader.create("cinvname1","部品名称"));
 
+        String preYearMonth = "";
         int monthCount = 1;
         for (int i = 0; i < scheduDateList.size(); i++) {
             String date = scheduDateList.get(i);
@@ -483,7 +484,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));
             if (i != 0 && day == 1){
-                headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,yearMonth.concat("合计")));
+                headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,preYearMonth.concat("合计")));
                 headerList.add(JBoltExcelHeader.create("qty"+seq,date));
                 monthCount ++;
                 continue;
@@ -494,6 +495,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                 continue;
             }
             headerList.add(JBoltExcelHeader.create("qty"+seq,date));
+            preYearMonth = yearMonth;
         }
         jBoltExcelSheet.setMerges().setHeaders(1,headerList);
 
@@ -655,6 +657,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
         headerList.add(JBoltExcelHeader.create("cinvname1","部品名称"));
         headerList.add(JBoltExcelHeader.create("colname","项目"));
 
+        String preYearMonth = "";
         int monthCount = 1;
         for (int i = 0; i < scheduDateList.size(); i++) {
             String date = scheduDateList.get(i);
@@ -663,7 +666,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
             int seq = i + 1;
             int day = Integer.parseInt(date.substring(8));
             if (i != 0 && day == 1){
-                headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,yearMonth.concat("合计")));
+                headerList.add(JBoltExcelHeader.create("qtysum"+monthCount,preYearMonth.concat("合计")));
                 headerList.add(JBoltExcelHeader.create("qty"+seq,date));
                 monthCount ++;
                 continue;
@@ -674,6 +677,7 @@ public class ScheduProductPlanMonthController extends BaseAdminController {
                 continue;
             }
             headerList.add(JBoltExcelHeader.create("qty"+seq,date));
+            preYearMonth = yearMonth;
         }
         jBoltExcelSheet.setMerges().setHeaders(1,headerList);
 
