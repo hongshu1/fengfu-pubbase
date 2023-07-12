@@ -14,7 +14,6 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysProductin;
 import cn.rjtech.model.momdata.SysProductindetail;
 import cn.rjtech.service.approval.IApprovalService;
@@ -406,18 +405,6 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
             e.printStackTrace();
         }
         return "上传u8失败";
-    }
-
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid(){
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if(null != person && "".equals(person)){
-            dept = person.getCOrgCode();
-        }
-        return dept;
     }
 
     /**

@@ -280,9 +280,11 @@
         }
 
         var tables = ["itemroutingconfigid", "jbolt_table_workshiftd_split_#(pageId)", "jbolt_table_capacity_#(pageId)"];
-        jboltTableSubmitMulti(tables,"/admin/inventory/submitMulti",function(res){
-            // alert("看到这个消息说明多个表格都提交成功了");
-            refreshPjaxContainer();
+        jboltTableSubmitMulti(tables, "/admin/inventory/submitMulti", function (res) {
+            if (res.state === 'ok') {
+                // alert("看到这个消息说明多个表格都提交成功了");
+                refreshPjaxContainer();
+            }
         });
     }
 

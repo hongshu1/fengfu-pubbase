@@ -13,7 +13,6 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysSaledeliver;
 import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.rjtech.wms.utils.HttpApiUtils;
@@ -220,7 +219,6 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         return null;
     }
 
-
     //推送u8数据接口
     public Ret pushU8(SysSaledeliver syssaledeliver, List<SysSaledeliverdetail> syssaledeliverdetail) {
         if(CollUtil.isEmpty(syssaledeliverdetail)){
@@ -231,14 +229,14 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         JSONObject data = new JSONObject();
 
         data.set("userCode",user.getUsername());
-        data.set("organizeCode",this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token","");
 
         JSONObject preallocate = new JSONObject();
 
 
         preallocate.set("userCode",user.getUsername());
-        preallocate.set("organizeCode",this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson",user.getId());
         preallocate.set("CreatePersonName",user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -251,11 +249,11 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         syssaledeliverdetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("owhcode",s.getWhCode());
-            jsonObject.set("odeptcode",this.getdeptid());
+            jsonObject.set("odeptcode", getOrgCode());
             jsonObject.set("oposcode","");
             jsonObject.set("invcode",s.getInvCode());
             jsonObject.set("userCode",user.getUsername());
-            jsonObject.set("organizeCode",this.getdeptid());
+            jsonObject.set("organizeCode", getOrgCode());
             jsonObject.set("Qty",s.getQty());
             jsonObject.set("cuscode","");
             jsonObject.set("barcode",s.getBarcode());
@@ -298,18 +296,5 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         }
         return fail("上传u8失败");
     }
-
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid(){
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if(null != person && "".equals(person)){
-            dept = person.getCOrgCode();
-        }
-        return dept;
-    }
-
 
 }

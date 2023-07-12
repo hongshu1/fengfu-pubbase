@@ -27,6 +27,7 @@ import cn.rjtech.admin.proposalattachment.ProposalAttachmentService;
 import cn.rjtech.admin.proposald.ProposaldService;
 import cn.rjtech.admin.subjectm.SubjectmService;
 import cn.rjtech.base.controller.BaseAdminController;
+import cn.rjtech.cache.UserCache;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.ProposaldTypeEnum;
@@ -116,9 +117,6 @@ public class ProposalmAdminController extends BaseAdminController {
 
     /**
      * 新增禀议书-参照预算/投资
-     *
-     * @param cdepcode
-     * @param itemidandtypes
      */
     public void addBudgetOrInvestmentPlan(@Para(value = "expensebudgetitemid") String expensebudgetitemid, @Para(value = "investmentplanitemid") String investmentplanitemid) {
         String itemidandtypes = "";
@@ -133,7 +131,7 @@ public class ProposalmAdminController extends BaseAdminController {
         proposalm.setDApplyDate(new Date());
         proposalm.setCDepCode(cdepcode);
         proposalm.setIsSupplemental(false);
-        Record contro = personService.findFirstByCuserid(user.getId());
+        Person contro = personService.findById(UserCache.ME.getPersonId(user.getId(), getOrgId()));
         if (null != contro) {
             proposalm.setCApplyPersonCode(contro.getStr("cpsn_num"));
             proposalm.setCApplyPersonName(user.getName());

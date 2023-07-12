@@ -237,7 +237,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
                 Workregionm workregionm = workregionmService.findById(moDoc.getIWorkRegionMid());
                 if (workregionm != null) {
                     if (isOk(workregionm.getIPersonId())) {
-                        Person person = personService.findFirstByUserId(workregionm.getIPersonId());
+                        Person person = personService.findById(workregionm.getIPersonId());
                         moMoinvbatchRecord.set("workleader", person.getCpsnName());
                     }
                 }
@@ -291,7 +291,7 @@ public class MoMoinvbatchAdminController extends BaseAdminController {
                 Workregionm workregionm = workregionmService.findById(moDoc.getIWorkRegionMid());
                 if (workregionm != null) {
                     if (isOk(workregionm.getIPersonId())) {
-                        Person person = personService.findFirstByUserId(workregionm.getIPersonId());
+                        Person person = personService.findById(workregionm.getIPersonId());
                         set("workleader", person.getCpsnName());
                     }
                 }

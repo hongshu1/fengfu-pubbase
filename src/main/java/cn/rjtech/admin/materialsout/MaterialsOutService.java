@@ -13,7 +13,9 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.materialsoutdetail.MaterialsOutDetailService;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.model.momdata.*;
+import cn.rjtech.model.momdata.MaterialsOut;
+import cn.rjtech.model.momdata.MaterialsOutDetail;
+import cn.rjtech.model.momdata.SysPuinstore;
 import cn.rjtech.service.approval.IApprovalService;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -392,7 +394,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 
 			JSONObject preAllocate = new JSONObject();
 			preAllocate.set("userCode",user.getUsername());
-			preAllocate.set("organizeCode",this.getdeptid());
+			preAllocate.set("organizeCode", getOrgCode());
 			preAllocate.set("CreatePerson",user.getId());
 			preAllocate.set("CreatePersonName",user.getName());
 			preAllocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -431,7 +433,7 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 //            参数装载
 			Map<String, Object> data = new HashMap<>();
 			data.put("userCode",user.getUsername());
-			data.put("organizeCode",this.getdeptid());
+			data.put("organizeCode", getOrgCode());
 			data.put("token","");
 			data.put("PreAllocate", preAllocate);
 			data.put("MainData", mainData);
@@ -492,18 +494,6 @@ public class MaterialsOutService extends BaseService<MaterialsOut> implements IA
 		}
 
 		return SUCCESS;
-	}
-
-
-	//通过当前登录人名称获取部门id
-	public String getdeptid(){
-		String dept = "001";
-		User user = JBoltUserKit.getUser();
-		Person person = personservice.findFirstByUserId(user.getId());
-		if(null != person && "".equals(person)){
-			dept = person.getCOrgCode();
-		}
-		return dept;
 	}
 
 	public void saveMaterialsOutModel(MaterialsOut materials,SysPuinstore puinstore,String sourceBillType,String sourceBillDid){

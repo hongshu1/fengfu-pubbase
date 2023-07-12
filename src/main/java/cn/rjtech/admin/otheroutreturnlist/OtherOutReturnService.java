@@ -14,7 +14,6 @@ import cn.rjtech.admin.otheroutdetail.OtherOutDetailService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.model.momdata.OtherOut;
 import cn.rjtech.model.momdata.OtherOutDetail;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
 import com.alibaba.fastjson.JSON;
@@ -336,14 +335,14 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 		JSONObject data = new JSONObject();
 
 		data.set("userCode",user.getUsername());
-		data.set("organizeCode",this.getCorgcode());
+		data.set("organizeCode", getOrgCode());
 		data.set("token","");
 
 		JSONObject preallocate = new JSONObject();
 
 
 		preallocate.set("userCode",user.getUsername());
-		preallocate.set("organizeCode",this.getCorgcode());
+		preallocate.set("organizeCode", getOrgCode());
 		preallocate.set("CreatePerson",user.getId());
 		preallocate.set("CreatePersonName",user.getName());
 		preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -399,11 +398,6 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 			e.printStackTrace();
 		}
 		return fail("上传u8失败");
-	}
-
-	public String getCorgcode(){
-		Person person = personservice.findFirstByUserId(JBoltUserKit.getUserId());
-		return null == person ? null : person.getCOrgCode();
 	}
 
 }

@@ -19,7 +19,6 @@ import cn.rjtech.admin.vouchtypedic.VouchTypeDicService;
 import cn.rjtech.config.AppConfig;
 import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysOtherin;
 import cn.rjtech.model.momdata.SysOtherindetail;
 import cn.rjtech.model.momdata.VouchTypeDic;
@@ -356,11 +355,11 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
         User user = JBoltUserKit.getUser();
         JSONObject data = new JSONObject();
         data.set("userCode",user.getUsername());
-        data.set("organizeCode",this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token","");
         JSONObject preallocate = new JSONObject();
         preallocate.set("userCode",user.getUsername());
-        preallocate.set("organizeCode",this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson",user.getId());
         preallocate.set("CreatePersonName",user.getName());
         preallocate.set("loginDate",DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -374,7 +373,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             jsonObject.set("iwhcode",s.getPosCode());
             jsonObject.set("barcodeqty","");
             jsonObject.set("defwhcode",sysotherin.getWhcode());
-            jsonObject.set("organizecode",this.getdeptid());
+            jsonObject.set("organizecode", getOrgCode());
             jsonObject.set("invname","");
             jsonObject.set("index","1");
             jsonObject.set("vt_id","");
@@ -461,19 +460,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
     }
     public Record findU8RdRecord01Id(String cCode) {
         return dbTemplate(u8SourceConfigName(), "sysotherin.findU8RdRecord01Id", Kv.by("cCode", cCode)).findFirst();
-    }
-
-
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid(){
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if(null != person && "".equals(person)){
-            dept = person.getCOrgCode();
-        }
-        return dept;
     }
 
     /**

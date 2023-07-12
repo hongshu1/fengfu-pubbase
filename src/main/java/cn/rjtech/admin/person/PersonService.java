@@ -24,7 +24,6 @@ import cn.rjtech.admin.equipment.EquipmentService;
 import cn.rjtech.admin.personequipment.PersonEquipmentService;
 import cn.rjtech.admin.workclass.WorkClassService;
 import cn.rjtech.constants.ErrorMsg;
-import cn.rjtech.enums.IsEnableEnum;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
 import cn.rjtech.model.momdata.Person;
@@ -498,10 +497,6 @@ public class PersonService extends BaseService<Person> {
         return BigDecimal.valueOf(JBoltDateUtil.daysBetween(date, new Date()) / 365d).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public List<Person> list(Kv kv) {
-        return find("SELECT * FROM Bd_Person WHERE iUserId = ?", kv.get("iuserid"));
-    }
-
     /**
      * 根据用户编码获得person数据
      *
@@ -509,20 +504,6 @@ public class PersonService extends BaseService<Person> {
      */
     public Record getpersonByCpsnnum(String cpsnnum) {
         return dbTemplate("person.getpersonByCpsnnum", Kv.by("cpsnnum", cpsnnum)).findFirst();
-    }
-
-    /**
-     * 通过系统用户ID查询人员
-     *
-     * @param userId 系统用户ID
-     * @return 绑定的人员
-     */
-    public Person findFirstByUserId(Long userId) {
-        return findFirst("select * from Bd_Person where iUserId = ? AND isDeleted = ?  ", userId, ZERO_STR);
-    }
-
-    public Record findFirstByCuserid(Long iuserid) {
-        return findFirstRecord(selectSql().eq("iuserid", iuserid).eq("isdeleted", IsEnableEnum.NO.getValue()).eq("isenabled", IsEnableEnum.NO.getValue()));
     }
 
     public List<Record> getAutocompleteListWithDept(String cdepcode, String q, Integer limit) {
