@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syssaledeliver;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
@@ -14,12 +15,10 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.rjtech.admin.syssaledeliverdetail.SysSaledeliverdetailService;
 import cn.rjtech.base.controller.BaseAdminController;
-import cn.rjtech.constants.DataSourceConstants;
 import cn.rjtech.model.momdata.SysSaledeliver;
 import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
@@ -132,6 +131,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 新增
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_ADD)
     public void add() {
         render("add.html");
     }
@@ -146,6 +146,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 编辑
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_EDIT)
     public void edit() {
         SysSaledeliver sysSaledeliver = service.findById(getLong(0));
         if (sysSaledeliver == null) {
@@ -167,6 +168,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 批量删除
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_DELETE)
     public void deleteByIds() {
         renderJson(service.deleteByIds(get("ids")));
     }
@@ -174,6 +176,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /**
      * 删除
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_DELETE)
     public void delete() {
         renderJson(service.deleteById(getLong(0)));
     }
@@ -182,7 +185,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
         Kv kv = new Kv();
         kv.set("ids",get("ids"));
         List<SysSaledeliver> getpushu = service.getpushu(kv);
-        if(!CollectionUtils.isNotEmpty(getpushu)){
+        if(CollUtil.isEmpty(getpushu)){
             return ;
         }
         getpushu.stream().forEach(s -> {
@@ -200,6 +203,7 @@ public class SysSaledeliverAdminController extends BaseAdminController {
     /***
      * 勾选导出
      */
+    @CheckPermission(PermissionKey.SALES_DELIVERY_LIST_EXPORT)
     public void downloadChecked(){
         Kv kv = getKv();
         String ids = kv.getStr("ids");

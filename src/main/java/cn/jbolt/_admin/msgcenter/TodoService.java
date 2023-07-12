@@ -1,15 +1,5 @@
 package cn.jbolt._admin.msgcenter;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
-
 import cn.jbolt.common.model.Todo;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.bean.JBoltDateRange;
@@ -21,7 +11,14 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.AuditStatusEnum;
 import cn.rjtech.enums.TodoStateEnum;
 import cn.rjtech.util.ValidationUtils;
+import com.jfinal.kit.Kv;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 import net.dreamlu.event.EventKit;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 待办事项管理 Service
@@ -294,27 +291,24 @@ public class TodoService extends JBoltBaseService<Todo> {
 		if(notOk(state) || notOk(ids)) {return fail(JBoltMsg.PARAM_ERROR);}
 		Long[] idArray = JBoltArrayUtil.toDisLong(ids, ",");
 		if(notOk(idArray)) {return fail(JBoltMsg.PARAM_ERROR);}
-		boolean success = tx(new IAtom() {
-			@Override
-			public boolean run() throws SQLException {
-				Long userId = JBoltUserKit.getUserId();
-				List<Todo> todos = find(selectSql().eq("user_id", userId).in("id", idArray));
-				if(todos.size()==0) {
-					return true;
-				}
-				for(Todo todo:todos) {
-					todo.setState(state);
-					todo.setUpdateUserId(userId);
-				}
-				try {
-					batchUpdate(todos);
-					return true;
-				} catch (Exception e) {
-					LOG.error("批量更新todo状态失败:"+e.getMessage());
-					throw new RuntimeException("批量更新todo状态失败");
-				}
-			}
-		});
+		boolean success = tx(() -> {
+            Long userId = JBoltUserKit.getUserId();
+            List<Todo> todos = find(selectSql().eq("user_id", userId).in("id", idArray));
+            if(todos.size()==0) {
+                return true;
+            }
+            for(Todo todo:todos) {
+                todo.setState(state);
+                todo.setUpdateUserId(userId);
+            }
+            try {
+                batchUpdate(todos);
+                return true;
+            } catch (Exception e) {
+                LOG.error("批量更新todo状态失败:"+e.getMessage());
+                throw new RuntimeException("批量更新todo状态失败");
+            }
+        });
 		return ret(success);
 	}
 	/**

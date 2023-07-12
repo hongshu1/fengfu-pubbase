@@ -65,21 +65,44 @@
 
                 <label class="col-sm-2 col-form-label">部门：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="text" id="cdepname"  class="form-control border-none"
+<!--                    <input required type="text" id="cdepname"  class="form-control border-none"-->
+<!--                           readonly="readonly" placeholder=""-->
+<!--                           value="#(puinstore.deptcode??)"/>-->
+<!--                    <input required type="hidden" id="deptcode" name="puinstore.deptcode" class="form-control border-none"-->
+<!--                           readonly="readonly" placeholder=""-->
+<!--                           value="#(puinstore.deptcode??)"/>-->
+                    <input required type="hidden"  data-sync-attr="cdepcode" id="deptcode" name="puinstore.deptcode"
+                           class="form-control border-none"
                            readonly="readonly" placeholder=""
                            value="#(puinstore.deptcode??)"/>
-                    <input required type="hidden" id="deptcode" name="puinstore.deptcode" class="form-control border-none"
-                           readonly="readonly" placeholder=""
-                           value="#(puinstore.deptcode??)"/>
+                    <select class="form-control"
+                            name="deptcode"
+                            data-autoload
+                            data-url="admin/department/getTreeTableDatas"
+                            data-select-type="select"
+                            data-select="#(puinstore.deptcode??)"
+                            data-text="==请选择部门=="
+                            data-sync-ele="#deptcode"
+                            data-value-attr="cdepcode"
+                            data-text-attr="cdepname">
+                    </select>
                 </div>
 
                 <label class="col-sm-2 col-form-label">采购类型：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="hidden" id="billtype"  class="form-control border-none"
-                           readonly="readonly" placeholder=""
-                           value="#(puinstore.cptname??)"/>
-                    <input required type="text" id="cptname"  class="form-control border-none"
-                           readonly="readonly" placeholder=""
+                    <input type="text"
+                           data-autocomplete
+                           id="cptname"
+                           data-url="admin/purchaseorderm/findPurchaseType"
+                           data-header="采购类型"
+                           data-column-attr="cptname"
+                           data-text-attr="cptname"
+                           data-value-attr="cptname"
+                           data-sync-ele="#billtype"
+                           data-notnull="true"
+                           autocomplete="off" class="form-control" maxlength="30"
+                           value="#(puinstore.crdname??)"/>
+                    <input type="hidden" data-sync-attr="iautoid" id="billtype" name="puinstore.billtype"
                            value="#(puinstore.billtype??)"/>
                 </div>
             </div>
@@ -101,11 +124,20 @@
 
                 <label class="col-sm-2 col-form-label">入库类别：</label>
                 <div class="col-sm-2 col-form-label">
-                    <input required type="text" id="crdname" class="form-control border-none"
-                           readonly="readonly" placeholder=""
+                    <input type="text"
+                           data-autocomplete
+                           id="crdname"
+                           data-url="admin/productInList/getRdStyle"
+                           data-header="入库编码,入库名称"
+                           data-column-attr="crdcode,crdname"
+                           data-text-attr="crdname"
+                           data-value-attr="crdname"
+                           data-sync-ele="#rdcode"
+                           data-rule="required"
+                           data-notnull="true"
+                           autocomplete="off" class="form-control" maxlength="30"
                            value="#(puinstore.crdname??)"/>
-                    <input required type="hidden" id="rdcode" name="puinstore.rdcode" class="form-control border-none"
-                           readonly="readonly" placeholder=""
+                    <input type="hidden" data-sync-attr="crdcode" id="rdcode" name="puinstore.rdcode"
                            value="#(puinstore.rdcode??)"/>
                 </div>
             </div>
@@ -125,9 +157,11 @@
                            value="#(puinstore.createperson??)"/>
                 </div>
 			</div>
-            <div class="form-group row">
-                <div class="col-11">
-                    <div class="jbolt_page_content">
+            <div class="jbolt_page_content">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
                         <table id="Puinstoreform_TableId_#(pageId)"
                                data-jbolttable
                                data-height="200"
@@ -145,16 +179,16 @@
                             <thead class="fw-normal">
                             <tr >
                                 <th data-width="60" data-column="index">序号</th>
-                                <th data-width="150" data-column="poscode">库区编码</th>
-                                <th data-width="100" data-column="barcode">现品票</th>
-                                <th data-width="100" data-column="cinvcode">存货编码</th>
-                                <th data-width="100" data-column="cinvcode1">存货代码</th>
-                                <th data-width="100" data-column="cinvname">存货名称</th>
-                                <th data-width="100" data-column="cinvstd">规格型号</th>
-                                <th data-width="100" data-column="pingpai">品牌</th>
-                                <th data-width="100" data-column="puunitname">主计量单位</th>
-                                <th data-width="100" data-column="qty">现存数</th>
-                                <th data-width="100" data-column="memo">备注</th>
+                                <th data-width="120" data-column="poscode">库区编码</th>
+                                <th data-width="180" data-column="barcode">现品票</th>
+                                <th data-width="120" data-column="cinvcode">存货编码</th>
+                                <th data-width="120" data-column="cinvcode1">存货代码</th>
+                                <th data-width="120" data-column="cinvname">存货名称</th>
+                                <th data-width="150" data-column="cinvstd">规格型号</th>
+                                <th data-width="120" data-column="pingpai">产地/厂牌</th>
+                                <th data-width="120" data-column="puunitname">主计量单位</th>
+                                <th data-width="120" data-column="qty">数量</th>
+                                <th data-width="150" data-column="memo">备注</th>
                                 <th hidden data-width="100" data-column="qtys"></th>
                                 <th hidden data-width="100" data-column="barcode">现品票</th>
                                 <th hidden data-width="100" data-column="puunitcode"></th>
@@ -170,7 +204,11 @@
                         </table>
                     </div>
                 </div>
+                    </div>
+                </div>
             </div>
+
+
 
 			<div class="form-group row">
 				<label class="col-sm-1 col-form-label">制单人：</label>

@@ -2,13 +2,15 @@ package cn.rjtech.admin.sysmaterialspreparedetail;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
+import cn.jbolt.core.base.JBoltMsg;
+import cn.jbolt.core.db.sql.Sql;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.User;
-import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventoryroutinginvc.InventoryRoutingInvcService;
 import cn.rjtech.admin.modoc.MoDocService;
@@ -22,24 +24,12 @@ import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
-import com.jfinal.plugin.activerecord.Page;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.jbolt.core.service.base.BaseService;
-import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
-import com.jfinal.kit.Ret;
-import cn.jbolt.core.base.JBoltMsg;
-import cn.jbolt.core.db.sql.Sql;
-import cn.jbolt.core.service.base.BaseService;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import org.json.JSONArray;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -287,15 +277,15 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
 
     public Ret pushU8(SysMaterialsprepare sysMaterialsprepare, List<SysMaterialspreparedetail> sysMaterialspreparedetails) {
-        if (!CollectionUtils.isNotEmpty(sysMaterialspreparedetails)) {
-            return Ret.ok().msg("数据不能为空");
+        if (CollUtil.isEmpty(sysMaterialspreparedetails)) {
+            return fail("数据不能为空");
         }
 
         User user = JBoltUserKit.getUser();
         JSONObject data = new JSONObject();
 
         data.set("userCode", user.getUsername());
-        data.set("organizeCode", this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token", "");
 
         JSONObject preallocate = new JSONObject();
@@ -303,7 +293,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 
         preallocate.set("userCode", user.getUsername());
         preallocate.set("password", "123456");
-        preallocate.set("organizeCode", this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson", user.getId());
         preallocate.set("CreatePersonName", user.getUsername());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
@@ -318,7 +308,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
             jsonObject.set("iwhname", "");
             jsonObject.set("invcode", "");
             jsonObject.set("userCode", user.getUsername());
-            jsonObject.set("organizeCode", this.getdeptid());
+            jsonObject.set("organizeCode", getOrgCode());
             jsonObject.set("OWhCode", s.getPosCode());
             jsonObject.set("owhname", "");
             jsonObject.set("barcode", s.getBarcode());
@@ -353,26 +343,14 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("201".equals(jsonObject.getString("code"))) {
-                    return Ret.ok().setOk().data(jsonObject);
+                    return successWithData(jsonObject);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Ret.msg("上传u8失败");
+        return fail("上传u8失败");
     }
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid() {
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if (null != person && "".equals(person)) {
-            dept = person.getCOrgCode();
-        }
-        return dept;
-    }
-
 
     public Ret submitByJBoltTableGo(String map1) {
         String[] split = map1.split(",");
@@ -428,7 +406,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
 //				sysMaterialspreparedetail.setInvCode(record.getStr("cInvCode")==null?"":record.getStr("cInvCode"));
                 sysMaterialspreparedetail.setNum(new BigDecimal(split1[1]).add(sysMaterialspreparedetail.getNum()));
 //				sysMaterialspreparedetail.setQty(new BigDecimal(split1[1]));
-//				sysMaterialspreparedetail.setPackRate(record.getBigDecimal("PackRate")==null?new BigDecimal(0):record.getBigDecimal("PackRate"));
+//				sysMaterialspreparedetail.setPackRate(record.getBigDecimal("PackRate")==null?BigDecimal.ZERO:record.getBigDecimal("PackRate"));
 //            sysMaterialspreparedetail.setSourceBillType();
 //            sysMaterialspreparedetail.setSourceBillNo()
 //            sysMaterialspreparedetail.setSourceBillNoRow()

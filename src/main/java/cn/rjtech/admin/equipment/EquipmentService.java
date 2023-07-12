@@ -1,19 +1,18 @@
 package cn.rjtech.admin.equipment;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.*;
+import cn.jbolt.core.poi.excel.JBoltExcel;
+import cn.jbolt.core.poi.excel.JBoltExcelHeader;
+import cn.jbolt.core.poi.excel.JBoltExcelSheet;
+import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.workregionm.WorkregionmService;
-import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Equipment;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.Workregionm;
 import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
@@ -21,13 +20,14 @@ import cn.rjtech.wms.utils.StringUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 设备管理-设备档案
@@ -43,58 +43,48 @@ public class EquipmentService extends BaseService<Equipment> {
 	}
 
 	@Inject
-	private CusFieldsMappingDService cusFieldsMappingDService;
-	@Inject
 	private WorkregionmService workregionmService;
 	@Override
     protected int systemLogTargetType() {
         return ProjectSystemLogTargetType.NONE.getValue();
     }
 
-	/**
-	 * 后台管理数据查询
-	 * @param pageNumber 第几页
-	 * @param pageSize   每页几条数据
-	 * @return
-	 */
+    /**
+     * 后台管理数据查询
+     *
+     * @param pageNumber 第几页
+     * @param pageSize   每页几条数据
+     */
 	public Page<Record> getAdminDatas(int pageNumber, int pageSize, Kv kv) {
-
 		return dbTemplate("equipment.selectEquipments",kv).paginate(pageNumber,pageSize);
-
 	}
 
 	/**
 	 * 后台管理数据查询
-	 * @return
 	 */
 	public List<Record> getAdminDataNoPage( Kv kv) {
-
 		return dbTemplate("equipment.selectEquipments",kv).find();
-
 	}
 
 	/**
 	 * 后台管理数据查询
 	 * @param pageNumber 第几页
 	 * @param pageSize   每页几条数据
-	 * @return
 	 */
 	public Page<Record> getAdminDataResModels(int pageNumber, int pageSize, Kv kv) {
-
 		return dbTemplate("equipment.selectEquipments",kv).paginate(pageNumber,pageSize);
-
 	}
 
 	/**
 	 * 保存
-	 * @param equipment
-	 * @return
 	 */
 	public Ret save(Equipment equipment) {
 		if(equipment==null || isOk(equipment.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		equipment.setCEquipmentCode(BillNoUtils.genCode(getOrgCode(), table()));
+		if (StrUtil.isBlank(equipment.getCEquipmentCode())) {
+			equipment.setCEquipmentCode(BillNoUtils.genCode(getOrgCode(), table()));
+		}
 		setEquipment(equipment);
 		//if(existsName(equipment.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=equipment.save();
@@ -107,8 +97,6 @@ public class EquipmentService extends BaseService<Equipment> {
 
 	/**
 	 * 设置参数
-	 * @param equipment
-	 * @return
 	 */
 	private Equipment setEquipment(Equipment equipment){
 		equipment.setIsDeleted(false);
@@ -129,8 +117,6 @@ public class EquipmentService extends BaseService<Equipment> {
 
 	/**
 	 * 更新
-	 * @param equipment
-	 * @return
 	 */
 	public Ret update(Equipment equipment) {
 		if(equipment==null || notOk(equipment.getIAutoId())) {
@@ -138,6 +124,9 @@ public class EquipmentService extends BaseService<Equipment> {
 		}
 		//更新时需要判断数据存在
 		Equipment dbEquipment=findById(equipment.getIAutoId());
+		if (StrUtil.isBlank(equipment.getCEquipmentCode())) {
+			equipment.setCEquipmentCode(BillNoUtils.genCode(getOrgCode(), table()));
+		}
 		if(dbEquipment==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(equipment.getName(), equipment.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=equipment.update();
@@ -152,7 +141,6 @@ public class EquipmentService extends BaseService<Equipment> {
 	 * 删除数据后执行的回调
 	 * @param equipment 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(Equipment equipment, Kv kv) {
@@ -164,7 +152,6 @@ public class EquipmentService extends BaseService<Equipment> {
 	 * 检测是否可以删除
 	 * @param equipment model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkInUse(Equipment equipment, Kv kv) {
@@ -174,7 +161,6 @@ public class EquipmentService extends BaseService<Equipment> {
 
 	/**
      * 生成excel导入使用的模板
-     * @return
      */
     public JBoltExcel getImportExcelTpl() {
         return JBoltExcel
@@ -196,8 +182,6 @@ public class EquipmentService extends BaseService<Equipment> {
 
     /**
 	 * 读取excel文件
-	 * @param file
-	 * @return
 	 */
 	public Ret importExcel(File file) {
 		StringBuilder errorMsg=new StringBuilder();
@@ -233,13 +217,10 @@ public class EquipmentService extends BaseService<Equipment> {
 			equipment.setIsEnabled(true);
 		}
 		//执行批量操作
-		boolean success=tx(new IAtom() {
-			@Override
-			public boolean run() throws SQLException {
-				batchSave(equipments);
-				return true;
-			}
-		});
+		boolean success=tx(() -> {
+            batchSave(equipments);
+            return true;
+        });
 
 		if(!success) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);
@@ -249,7 +230,6 @@ public class EquipmentService extends BaseService<Equipment> {
 
     /**
 	 * 生成要导出的Excel
-	 * @return
 	 */
 	public JBoltExcel exportExcel(List<Record> datas) {
 	    return JBoltExcel
@@ -284,7 +264,7 @@ public class EquipmentService extends BaseService<Equipment> {
 	@Override
 	protected String afterToggleBoolean(Equipment equipment, String column, Kv kv) {
 		//addUpdateSystemLog(equipment.getIAutoId(), JBoltUserKit.getUserId(), equipment.getName(),"的字段["+column+"]值:"+equipment.get(column));
-		/**
+		/*
 		switch(column){
 		    case "isNozzleSwitchEnabled":
 		        break;
@@ -298,9 +278,10 @@ public class EquipmentService extends BaseService<Equipment> {
 	public List<Record> selectWorkRegs() {
 		return dbTemplate("equipment.selectWorkRegs").find();
 	}
-	/**
-	 * 根据设备编码查询
-	 */
+
+    /**
+     * 根据设备编码查询
+     */
 	public Equipment findModelByCode(String cequipmentcode) {
 		return findFirst(selectSql().eq("cequipmentcode", cequipmentcode));
 	}
@@ -346,14 +327,14 @@ public class EquipmentService extends BaseService<Equipment> {
 				return fail("数据为空!");
 			}
 		}
-		// 工序新增的记录
-		List<String> errList = new ArrayList<>();
 
 		//List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
 
+        Date now = new Date();
+        
 		// 产线
 		Map<String, Workregionm> workregionmMap = new HashMap<>();
 		for (Record record : records) {
@@ -376,7 +357,6 @@ public class EquipmentService extends BaseService<Equipment> {
 				record.set("cmemo", cmemo);
 			}
 
-
 			String iWorkRegionmId = record.getStr("iWorkRegionmId");
 			Workregionm workregionm = workregionmMap.get(iWorkRegionmId);
 			if (ObjUtil.isNull(workregionm)) {
@@ -385,8 +365,6 @@ public class EquipmentService extends BaseService<Equipment> {
 				record.set("iWorkRegionmId",workregionm.getIAutoId());
 				workregionmMap.put(iWorkRegionmId, workregionm);
 			}
-
-			Date now=new Date();
 
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
 			record.set("iOrgId", getOrgId());
@@ -411,4 +389,5 @@ public class EquipmentService extends BaseService<Equipment> {
 		});
 		return SUCCESS;
 	}
+    
 }

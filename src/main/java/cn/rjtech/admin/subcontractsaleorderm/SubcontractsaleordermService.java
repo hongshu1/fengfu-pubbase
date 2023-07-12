@@ -1,6 +1,5 @@
 package cn.rjtech.admin.subcontractsaleorderm;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,19 +9,20 @@ import cn.jbolt._admin.dictionary.DictionaryTypeKey;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.cache.JBoltDictionaryCache;
 import cn.jbolt.core.cache.JBoltUserCache;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dept;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.model.User;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.customer.CustomerService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.subcontractsaleorderd.SubcontractsaleorderdService;
+import cn.rjtech.admin.subcontractsaleorderdqty.SubcontractsaleorderdQtyService;
 import cn.rjtech.admin.syssaledeliverplan.SysSaledeliverplanService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
 import cn.rjtech.cache.FormApprovalCache;
@@ -47,7 +47,6 @@ import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.TableMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -83,6 +82,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
     private SysSaledeliverplanService sysSaledeliverplanService;
     @Inject
     private SubcontractsaleorderdService subcontractsaleorderdService;
+    @Inject
+    private SubcontractsaleorderdQtyService subcontractsaleorderdQtyService;
     
     @Override
     protected Subcontractsaleorderm dao() {
@@ -101,7 +102,8 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
         // 封装JSON
         JSONArray jsonArray = new JSONArray();
         for (Subcontractsaleorderd subcontractsaleorderd : subcontractsaleorderds) {
-            for (int i = 1; i <= 31; i++) {
+            List<SubcontractsaleorderdQty> subcontractsaleorderdQtyList = subcontractsaleorderdQtyService.findBysubcontractsaleorderdId(subcontractsaleorderd.getIAutoId());
+            for (SubcontractsaleorderdQty subcontractsaleorderdQty : subcontractsaleorderdQtyList) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("DocNo", subcontractsaleorderm.getCOrderNo());
                 jsonObject.put("ccuscode", Optional.ofNullable(customerService.findById(subcontractsaleorderm.getICustomerId())).map(Customer::getCCusCode).orElse(""));
@@ -116,12 +118,13 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
                 Inventory inventory = inventoryService.findById(subcontractsaleorderd.getIInventoryId());
                 jsonObject.put("cInvCode", inventory.getCInvCode());
                 jsonObject.put("cInvName", inventory.getCInvName1());
-                jsonObject.put("iQuantity", subcontractsaleorderd.getInt("iqty" + i));
-                jsonObject.put("irowno", subcontractsaleorderd.getIRowNo());
+                jsonObject.put("iQuantity", subcontractsaleorderdQty.getIQty());
+                jsonObject.put("irowno", subcontractsaleorderdQty.getIRowNo());
                 jsonObject.put("iQuotedPrice", 0);
                 jsonObject.put("KL", 100);
                 jsonObject.put("iNatDisCount", 0);
                 jsonArray.add(jsonObject);
+
             }
         }
         Map<String, Object> data = new HashMap<>();
@@ -341,54 +344,40 @@ public class SubcontractsaleordermService extends BaseService<Subcontractsaleord
 
     //可编辑表格提交-新增数据
     private void saveTableSubmitDatas(JBoltTable jBoltTable, Subcontractsaleorderm subcontractsaleorderm) {
-        List<Record> list = jBoltTable.getSaveRecordList();
-        if (CollUtil.isEmpty(list)) {
-            return;
-        }
-        for (int i = 0; i < list.size(); i++) {
-            Record row = list.get(i);
-            if (i == 0) {
-                // 避免保存不到所有字段的问题
-                Set<String> columnNames = TableMapping.me().getTable(Subcontractsaleorderm.class).getColumnNameSet();
-                for (String columnName : columnNames) {
-                    if (null == row.get(columnName)) {
-                        row.set(columnName, null);
-                    }
-                }
+        List<Subcontractsaleorderd> saveModelList = jBoltTable.getSaveModelList(Subcontractsaleorderd.class);
+        if (ArrayUtil.isNotEmpty(saveModelList)) {
+            Integer rowno = 10;
+            for (Subcontractsaleorderd subcontractsaleorderd : saveModelList) {
+                subcontractsaleorderd.setIsDeleted(false);
+                subcontractsaleorderd.setISubcontractSaleOrderMid(subcontractsaleorderm.getIAutoId());
+                subcontractsaleorderd.setIRowNo(rowno);
+                rowno += 10;
+                ValidationUtils.isTrue(subcontractsaleorderd.save(), "保存存货信息失败");
+                subcontractsaleorderdQtyService.batchSaveByManualOrderD(subcontractsaleorderm, subcontractsaleorderd);
             }
-            row.keep("iautoid", "iinventoryid", "iqty1", "iqty2", "iqty3", "iqty4", "iqty5", "iqty6", "iqty7", "iqty8", "iqty9", "iqty10", "iqty11", "iqty12",
-                    "iqty13", "iqty14", "iqty15", "iqty16", "iqty17", "iqty18", "iqty19", "iqty20", "iqty21", "iqty22", "iqty23", "iqty24", "iqty25",
-                    "iqty26", "iqty27", "iqty28", "iqty29", "iqty30", "iqty31", "isum");
-            row.set("isdeleted", "0");
-            row.set("isubcontractsaleordermid", subcontractsaleorderm.getIAutoId());
-            row.set("iautoid", JBoltSnowflakeKit.me.nextId());
-            row.set("irowno", i* 10);
+
         }
-        subcontractsaleorderdService.batchSaveRecords(list);
     }
 
     //可编辑表格提交-修改数据
     private void updateTableSubmitDatas(JBoltTable jBoltTable, Subcontractsaleorderm subcontractsaleorderm) {
-        List<Record> list = jBoltTable.getUpdateRecordList();
-        if (CollUtil.isEmpty(list)) {
-            return;
+        List<Subcontractsaleorderd> updateBeanList = jBoltTable.getUpdateBeanList(Subcontractsaleorderd.class);
+        if (ArrayUtil.isNotEmpty(updateBeanList)) {
+            subcontractsaleorderdService.batchUpdate(updateBeanList);
+            String subcontractsaleorderdIds = JBoltArrayUtil.join(updateBeanList.stream().map(Subcontractsaleorderd::getIAutoId).collect(Collectors.toList()), ",");
+            subcontractsaleorderdQtyService.batchDeleteByManualOrderDIds(subcontractsaleorderdIds);
+            for (Subcontractsaleorderd subcontractsaleorderd : updateBeanList) {
+                subcontractsaleorderdQtyService.batchSaveByManualOrderD(subcontractsaleorderm, subcontractsaleorderd);
+            }
         }
-        for (Record row : list) {
-            row.keep("iautoid", "iinventoryid", "iqty1", "iqty2", "iqty3", "iqty4", "iqty5", "iqty6", "iqty7", "iqty8", "iqty9", "iqty10", "iqty11", "iqty12",
-                    "iqty13", "iqty14", "iqty15", "iqty16", "iqty17", "iqty18", "iqty19", "iqty20", "iqty21", "iqty22", "iqty23", "iqty24", "iqty25",
-                    "iqty26", "iqty27", "iqty28", "iqty29", "iqty30", "iqty31", "isum");
-        }
-        subcontractsaleorderdService.batchUpdateRecords(list);
     }
 
     //可编辑表格提交-删除数据
     private void deleteTableSubmitDatas(JBoltTable jBoltTable) {
-        Object[] ids = jBoltTable.getDelete();
-        if (ArrayUtil.isEmpty(ids)) {
-            return;
-        }
-        for (Object id : ids) {
-            subcontractsaleorderdService.deleteById(id);
+        Object[] deletes = jBoltTable.getDelete();
+        if (ArrayUtil.isNotEmpty(deletes)) {
+            subcontractsaleorderdService.deleteByIds(deletes);
+            subcontractsaleorderdQtyService.batchDeleteByManualOrderDIds(JBoltArrayUtil.join(deletes, ","));
         }
     }
 

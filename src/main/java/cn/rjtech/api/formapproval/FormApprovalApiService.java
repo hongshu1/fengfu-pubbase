@@ -1,12 +1,25 @@
 package cn.rjtech.api.formapproval;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.api.JBoltApiBaseService;
 import cn.jbolt.core.api.JBoltApiRet;
+import cn.jbolt.core.kit.JBoltUserKit;
+import cn.jbolt.core.para.JBoltPara;
+import cn.jbolt.core.permission.JBoltUserAuthKit;
 import cn.rjtech.admin.formapproval.FormApprovalService;
+import cn.rjtech.cache.AuditFormConfigCache;
+import cn.rjtech.enums.FormAuditConfigTypeEnum;
 import cn.rjtech.model.momdata.Person;
+import cn.rjtech.util.MsgEventUtil;
+import cn.rjtech.util.ValidationUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Record;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +33,8 @@ public class FormApprovalApiService extends JBoltApiBaseService {
 
     @Inject
     private FormApprovalService service;
+    @Inject
+    private FormApprovalService adminService;
 
     /**
      * 判断走审核还是审批
@@ -31,6 +46,63 @@ public class FormApprovalApiService extends JBoltApiBaseService {
         return ret.isOk() ? JBoltApiRet.API_SUCCESS : JBoltApiRet.API_FAIL(ret.getStr("msg"));
     }
 
+    /**
+     * 适配app 提审接口
+     * @return
+     */
+    public JBoltApiRet submitByJson(JBoltPara submitData){
+
+        JSONArray data = submitData.getJSONArray("data");
+
+        LOG.info("DATA={}",data);
+
+        List<String> errMsg = new ArrayList<>();
+
+        if (data != null){
+            for (int i = 0; i < data.size(); i++) {
+                JSONObject jsonObject = data.getJSONObject(i);
+                String formSn = jsonObject.getString("formSn");
+                Long formAutoId = jsonObject.getLong("formAutoId");
+                String primaryKeyName = jsonObject.getString("primaryKeyName");
+                String className = jsonObject.getString("className");
+                String permissionKey = jsonObject.getString("permissionKey");
+
+                ValidationUtils.notBlank(formSn, "缺少表单编码");
+                ValidationUtils.validateId(formAutoId, "单据ID");
+                ValidationUtils.notBlank(primaryKeyName, "单据ID命名");
+                ValidationUtils.notBlank(className, "缺少实现审批通过业务的类名参数");
+                ValidationUtils.notBlank(permissionKey, "缺少permissionKey");
+                ValidationUtils.isTrue(JBoltUserAuthKit.hasPermission(JBoltUserKit.getUserId(), permissionKey), "您缺少单据的提审权限");
+
+                Ret ret = service.submit(formSn, formAutoId, primaryKeyName, className);
+                if (ret.isFail()){
+
+                    // 获取单据信息
+                    Record formData = service.getApprovalForm(formSn, primaryKeyName, formAutoId);
+                    String billno = isOk(formData.getStr("billno"))?formData.getStr("billno"):Long.toString(formAutoId);
+                    errMsg.add("单据："+billno+","+ ret.getStr("msg"));
+                } else {
+
+                    // 审批流处理时，获取审批人推送消息
+                    if (FormAuditConfigTypeEnum.toEnum(AuditFormConfigCache.ME.getAuditWay(formSn)) == FormAuditConfigTypeEnum.FLOW) {
+                        List<Long> list = adminService.getNextApprovalUserIds(formAutoId, 10);
+                        if (CollUtil.isNotEmpty(list)) {
+                            MsgEventUtil.postApprovalMsgEvent(JBoltUserKit.getUserId(), formSn, primaryKeyName, formAutoId, list);
+                        }
+                    }
+                }
+            }
+
+            if (errMsg.size()>0){
+               return JBoltApiRet.API_FAIL(CollUtil.join(errMsg, StrUtil.COMMA));
+            }
+
+        } else {
+            return JBoltApiRet.API_FAIL("没有单据数据");
+        }
+
+        return JBoltApiRet.API_SUCCESS;
+    }
 
     /**
      * 审批通过

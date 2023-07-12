@@ -25,7 +25,6 @@ import cn.jbolt.core.ui.jbolttable.JBoltTableMulti;
 import cn.jbolt.core.util.JBoltRealUrlUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.bomm.BomMService;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorycapacity.InventoryCapacityService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
@@ -38,6 +37,7 @@ import cn.rjtech.admin.inventorystockconfig.InventoryStockConfigService;
 import cn.rjtech.admin.inventoryworkregion.InventoryWorkRegionService;
 import cn.rjtech.admin.invpart.InvPartService;
 import cn.rjtech.admin.uom.UomService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.*;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.util.ValidationUtils;
@@ -53,7 +53,6 @@ import com.jfinal.upload.UploadFile;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static cn.hutool.core.text.StrPool.COMMA;
@@ -83,8 +82,6 @@ public class InventoryService extends BaseService<Inventory> {
     private InventoryMfgInfoService inventoryMfgInfoService;
     @Inject
     private InventoryAdditionService inventoryAdditionService;
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
     @Inject
     private InventoryCapacityService inventoryCapacityService;
     @Inject
@@ -127,10 +124,11 @@ public class InventoryService extends BaseService<Inventory> {
         }
         String iInventoryClassCode = kv.getStr("iInventoryClassCode");
         if (StrUtil.isNotBlank(iInventoryClassCode)) {
-            if (!iInventoryClassCode.contains("["))
+            if (!iInventoryClassCode.contains("[")) {
                 kv.remove("iInventoryClassCode");
-            else
+            } else {
                 kv.set("iInventoryClassCode", iInventoryClassCode.substring(1, iInventoryClassCode.indexOf("]")));
+            }
         }
         return dbTemplate("inventoryclass.inventoryList", kv).paginate(pageNumber, pageSize);
     }
@@ -646,8 +644,8 @@ public class InventoryService extends BaseService<Inventory> {
             record.set(InventoryRoutingConfig.ISADD, isAdd);
             record.set(InventoryRoutingConfig.IAUTOID, routingConfigId);
             // 半成品
-            String iRsInventoryIdStr = record.getStr(InventoryRoutingConfig.IRSINVENTORYID);
-
+//            String iRsInventoryIdStr = record.getStr(InventoryRoutingConfig.IRSINVENTORYID);
+            String iRsInventoryIdStr = null;
             // 工序名称
             String cOperationName = getCOperationName(record.getStr(InventoryRoutingConfig.COPERATIONNAME));
 
@@ -796,8 +794,8 @@ public class InventoryService extends BaseService<Inventory> {
         Integer thisType = record.getInt(InventoryRoutingConfig.ITYPE);
 
         Record perConfig = seqMap.get(perSeq);
-        String iRsInventoryId = perConfig.getStr(InventoryRoutingConfig.IRSINVENTORYID);
-
+//        String iRsInventoryId = perConfig.getStr(InventoryRoutingConfig.IRSINVENTORYID);
+        String iRsInventoryId = null;
         String cOperationName = getCOperationName(perConfig.getStr(InventoryRoutingConfig.COPERATIONNAME));
 
         String partName = "【虚拟件-" + cOperationName + "】";
@@ -866,13 +864,13 @@ public class InventoryService extends BaseService<Inventory> {
         if (count > 0 && bunchSequenceValue == operationTypeEnum.getValue()) {
             return;
         }
-        String iRsInventoryIdStr = routingConfigRecord.getStr(InventoryRoutingConfig.IRSINVENTORYID);
-        if (StrUtil.isBlank(iRsInventoryIdStr)) {
-            return;
-        }
-        // 半成品，虚拟件跳过
-        Long iRsInventoryId = routingConfigRecord.getLong(InventoryRoutingConfig.IRSINVENTORYID);
-        checkRouting(masterInvId, rsInventoryId, iRsInventoryId, prefixErrorMsg, itemList);
+//        String iRsInventoryIdStr = routingConfigRecord.getStr(InventoryRoutingConfig.IRSINVENTORYID);
+//        if (StrUtil.isBlank(iRsInventoryIdStr)) {
+//            return;
+//        }
+//        // 半成品，虚拟件跳过
+//        Long iRsInventoryId = routingConfigRecord.getLong(InventoryRoutingConfig.IRSINVENTORYID);
+        checkRouting(masterInvId, rsInventoryId, null, prefixErrorMsg, itemList);
     }
 
     private void checkRouting(Long masterInvId, Long rsInventoryId, Long iRsInventoryId, String prefixErrorMsg, List<JSONObject> itemList) {
@@ -931,19 +929,16 @@ public class InventoryService extends BaseService<Inventory> {
     public Ret saveForm(Inventory inventory, InventoryAddition inventoryAddition, InventoryPlan inventoryPlan, InventoryMfgInfo inventoryMfgInfo,
                         InventoryStockConfig inventorystockconfig, List<InventoryWorkRegion> inventoryWorkRegions,
                         JBoltTable inventoryRoutingJboltTable, JBoltTable inventoryCapacityJboltTable) {
-        AtomicReference<Ret> res = new AtomicReference<>();
-        res.set(SUCCESS);
         tx(() -> {
             Ret inventoryRet = save(inventory);
             if (inventoryRet.isFail()) {
-                res.set(inventoryRet);
                 return false;
             }
+            
             // 存货档案-附加
             inventoryAddition.setIInventoryId(inventory.getIAutoId());
             Ret additionRet = inventoryAdditionService.save(inventoryAddition);
             if (additionRet.isFail()) {
-                res.set(additionRet);
                 return false;
             }
 
@@ -951,7 +946,6 @@ public class InventoryService extends BaseService<Inventory> {
             inventoryPlan.setIInventoryId(inventory.getIAutoId());
             Ret planRet = inventoryPlanService.save(inventoryPlan);
             if (planRet.isFail()) {
-                res.set(planRet);
                 return false;
             }
 
@@ -959,7 +953,6 @@ public class InventoryService extends BaseService<Inventory> {
             inventoryMfgInfo.setIInventoryId(inventory.getIAutoId());
             Ret mfgInfoRet = inventoryMfgInfoService.save(inventoryMfgInfo);
             if (mfgInfoRet.isFail()) {
-                res.set(mfgInfoRet);
                 return false;
             }
 
@@ -967,7 +960,6 @@ public class InventoryService extends BaseService<Inventory> {
             inventorystockconfig.setIInventoryId(inventory.getIAutoId());
             Ret stockRet = inventoryStockConfigService.save(inventorystockconfig);
             if (stockRet.isFail()) {
-                res.set(stockRet);
                 return false;
             }
 
@@ -978,19 +970,18 @@ public class InventoryService extends BaseService<Inventory> {
                     workRegion.setIsDeleted(false);
                 }
                 int[] ints = inventoryWorkRegionService.batchSave(inventoryWorkRegions);
-                if (ints.length != inventoryWorkRegions.size()) {
-                    res.set(Ret.fail("产线信息异常!"));
-                    return false;
-                }
+                ValidationUtils.isTrue(ints.length == inventoryWorkRegions.size(), "产线信息异常!");
             }
+            
             // 工艺路线操作
             inventoryRoutingOperation(inventory, inventoryRoutingJboltTable);
             // 班次
             operationCapacity(inventory.getIAutoId(), inventoryCapacityJboltTable);
+            
             return true;
         });
 
-        return res.get();
+        return SUCCESS;
     }
 
     public List<Record> options(Kv kv) {
@@ -1210,7 +1201,7 @@ public class InventoryService extends BaseService<Inventory> {
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcelClass(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }

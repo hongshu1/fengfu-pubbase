@@ -11,16 +11,13 @@ import cn.rjtech.admin.bommaster.BomMasterService;
 import cn.rjtech.admin.mrpdemandcomputed.MrpDemandcomputedService;
 import cn.rjtech.admin.mrpdemandforecastd.MrpDemandforecastdService;
 import cn.rjtech.admin.mrpdemandpland.MrpDemandplandService;
-import cn.rjtech.admin.scheduproductplan.CollectionUtils;
 import cn.rjtech.admin.scheduproductplan.ScheduProductPlanMonthService;
 import cn.rjtech.model.momdata.*;
 import cn.rjtech.service.func.mom.MomDataFuncService;
-import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.DateUtils;
 import cn.rjtech.util.Util;
 import cn.rjtech.util.ValidationUtils;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
@@ -53,22 +50,17 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 	private final MrpDemandcomputem dao = new MrpDemandcomputem().dao();
 
 	@Inject
-	private ScheduProductPlanMonthService scheduProductPlanMonthService;
-
-	@Inject
 	private BomMasterService bomMasterService;
-
-	@Inject
-	private MrpDemandcomputedService mrpDemandcomputedService;
-
-	@Inject
+    @Inject
 	private MomDataFuncService momDataFuncService;
-
-	@Inject
+    @Inject
+    private MrpDemandplandService mrpDemandplandService;
+    @Inject
+    private MrpDemandcomputedService mrpDemandcomputedService;
+    @Inject
 	private MrpDemandforecastdService mrpDemandforecastdService;
-
-	@Inject
-	private MrpDemandplandService mrpDemandplandService;
+    @Inject
+    private ScheduProductPlanMonthService scheduProductPlanMonthService;
 
 	@Override
 	protected MrpDemandcomputem dao() {
@@ -723,7 +715,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 					for (String pInv : pInvMap.keySet()){
 						BigDecimal realQty = pInvMap.get(pInv).getBigDecimal("Realqty");
 						//父级需求计划
-						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv);
+						Map<String,BigDecimal> datePQtyAllMap = invPlanDateOutAllMap.get(pInv) != null ? invPlanDateOutAllMap.get(pInv) : new HashMap<>();
 						BigDecimal pQty = datePQtyAllMap.get(date);
 						if (pQty != null){
 							BigDecimal qty = pQty.multiply(realQty);
@@ -1094,7 +1086,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 				demandcomputem.save();
 			}else {
 				MrpDemandcomputem demandcomputem = new MrpDemandcomputem();
-				demandcomputem.setIAutoId(1l);
+				demandcomputem.setIAutoId(1L);
 				demandcomputem.setDEndDate(DateUtils.parseDate(endDate));
 				demandcomputem.setIUpdateBy(JBoltUserKit.getUserId());
 				demandcomputem.setCUpdateName(JBoltUserKit.getUserName());
@@ -1103,7 +1095,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			}
 
 			dbTemplate("schedudemandplan.deleteDemandComputeD",Kv.by("startdate",startDate)).delete();
-			List<List<MrpDemandcomputed>> groupList = CollectionUtils.partition(list,300);
+            List<List<MrpDemandcomputed>> groupList = CollUtil.split(list, 300);
 			CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
 			ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
 			for(List<MrpDemandcomputed> dataList :groupList){
@@ -1353,7 +1345,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			if (forecastdList.size() == 0){
 				return true;
 			}
-			List<List<MrpDemandforecastd>> groupList = CollectionUtils.partition(forecastdList,300);
+			List<List<MrpDemandforecastd>> groupList = CollUtil.split(forecastdList,300);
 			CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
 			ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
 			for(List<MrpDemandforecastd> dataList :groupList){
@@ -1445,7 +1437,7 @@ public class ScheduDemandPlanService extends BaseService<MrpDemandcomputem> {
 			if (forecastdList.size() == 0){
 				return true;
 			}
-			List<List<MrpDemandpland>> groupList = CollectionUtils.partition(forecastdList,300);
+			List<List<MrpDemandpland>> groupList = CollUtil.split(forecastdList,300);
 			CountDownLatch countDownLatch = new CountDownLatch(groupList.size());
 			ExecutorService executorService = Executors.newFixedThreadPool(groupList.size());
 			for(List<MrpDemandpland> dataList :groupList){

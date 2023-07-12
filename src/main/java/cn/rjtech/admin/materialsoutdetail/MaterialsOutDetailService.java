@@ -1,8 +1,5 @@
 package cn.rjtech.admin.materialsoutdetail;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.service.base.BaseService;
@@ -10,10 +7,11 @@ import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.model.momdata.MaterialsOutDetail;
 import cn.rjtech.model.momdata.SysPuinstoredetail;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
+
+import java.util.Date;
 
 /**
  * 出库管理-材料出库单列表 Service
@@ -134,7 +132,7 @@ public class MaterialsOutDetailService extends BaseService<MaterialsOutDetail> {
         materialsOutDetail.setPosCode(puinstoredetail.getPosCode());
         materialsOutDetail.setBarcode(puinstoredetail.getBarCode());
         materialsOutDetail.setInvCode(puinstoredetail.getInvcode());
-        //materialsOutDetail.setNum(new BigDecimal(0));//件数
+        //materialsOutDetail.setNum(BigDecimal.ZERO);//件数
         materialsOutDetail.setQty(puinstoredetail.getQty());
         materialsOutDetail.setTrackType(puinstoredetail.getTrackType());
         //materialsOutDetail.setPackRate();//收容数量

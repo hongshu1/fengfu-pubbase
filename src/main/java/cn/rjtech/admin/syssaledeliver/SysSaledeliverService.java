@@ -1,5 +1,6 @@
 package cn.rjtech.admin.syssaledeliver;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import cn.jbolt.core.base.JBoltMsg;
@@ -12,15 +13,12 @@ import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.util.JBoltCamelCaseUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.person.PersonService;
-import cn.rjtech.model.momdata.Person;
 import cn.rjtech.model.momdata.SysSaledeliver;
 import cn.rjtech.model.momdata.SysSaledeliverdetail;
 import cn.rjtech.wms.utils.HttpApiUtils;
-import cn.smallbun.screw.core.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -221,10 +219,9 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         return null;
     }
 
-
     //推送u8数据接口
     public Ret pushU8(SysSaledeliver syssaledeliver, List<SysSaledeliverdetail> syssaledeliverdetail) {
-        if(!CollectionUtils.isNotEmpty(syssaledeliverdetail)){
+        if(CollUtil.isEmpty(syssaledeliverdetail)){
             return fail("数据不能为空");
         }
 
@@ -232,31 +229,31 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         JSONObject data = new JSONObject();
 
         data.set("userCode",user.getUsername());
-        data.set("organizeCode",this.getdeptid());
+        data.set("organizeCode", getOrgCode());
         data.set("token","");
 
         JSONObject preallocate = new JSONObject();
 
 
         preallocate.set("userCode",user.getUsername());
-        preallocate.set("organizeCode",this.getdeptid());
+        preallocate.set("organizeCode", getOrgCode());
         preallocate.set("CreatePerson",user.getId());
         preallocate.set("CreatePersonName",user.getName());
         preallocate.set("loginDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
         preallocate.set("tag","ProductionIn");
         preallocate.set("type","ProductionIn");
 
-        data.put("PreAllocate",preallocate);
+        data.set("PreAllocate",preallocate);
 
         ArrayList<Object> maindata = new ArrayList<>();
         syssaledeliverdetail.stream().forEach(s -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.set("owhcode",s.getWhCode());
-            jsonObject.set("odeptcode",this.getdeptid());
+            jsonObject.set("odeptcode", getOrgCode());
             jsonObject.set("oposcode","");
             jsonObject.set("invcode",s.getInvCode());
             jsonObject.set("userCode",user.getUsername());
-            jsonObject.set("organizeCode",this.getdeptid());
+            jsonObject.set("organizeCode", getOrgCode());
             jsonObject.set("Qty",s.getQty());
             jsonObject.set("cuscode","");
             jsonObject.set("barcode",s.getBarcode());
@@ -291,7 +288,7 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("200".equals(jsonObject.getString("code"))) {
-                    return Ret.ok("提交成功");
+                    return success("提交成功");
                 }
             }
         }catch (Exception e){
@@ -299,18 +296,5 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
         }
         return fail("上传u8失败");
     }
-
-
-    //通过当前登录人名称获取部门id
-    public String getdeptid(){
-        String dept = "001";
-        User user = JBoltUserKit.getUser();
-        Person person = personservice.findFirstByUserId(user.getId());
-        if(null != person && "".equals(person)){
-            dept = person.getCOrgCode();
-        }
-        return dept;
-    }
-
 
 }

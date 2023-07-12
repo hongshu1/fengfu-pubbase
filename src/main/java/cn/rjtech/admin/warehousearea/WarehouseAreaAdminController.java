@@ -3,7 +3,6 @@ package cn.rjtech.admin.warehousearea;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.jbolt._admin.permission.PermissionKey;
-import cn.jbolt.common.config.JBoltUploadFolder;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.controller.base.JBoltBaseController;
 import cn.jbolt.core.permission.CheckPermission;
@@ -17,7 +16,6 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.Kv;
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
@@ -63,6 +61,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
    */
   @CheckPermission(PermissionKey.WAREHOUSE_AREA_ADD)
   public void add() {
+    set("warehouseArea", service.getWarehouseAreaCode());
     render("add.html");
   }
 
@@ -167,7 +166,7 @@ public class WarehouseAreaAdminController extends JBoltBaseController {
     String extension = list.get(1);
 
     ValidationUtils.equals(extension, JBoltByteFileType.XLSX.suffix, "系统只支持xlsx格式的Excel文件");
-    renderJson(service.importExcelData(file, cformatName));
+    renderJson(service.importExcelData(file));
   }
 
 }

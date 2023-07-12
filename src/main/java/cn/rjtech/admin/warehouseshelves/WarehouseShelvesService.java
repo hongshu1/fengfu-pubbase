@@ -1,20 +1,15 @@
 package cn.rjtech.admin.warehouseshelves;
 
-import cn.hutool.core.util.ArrayUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.rjtech.admin.warehousearea.WarehouseAreaService;
-import cn.rjtech.model.momdata.Warehouse;
-import cn.rjtech.model.momdata.WarehouseArea;
+import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.WarehouseShelves;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -28,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static cn.hutool.core.text.StrPool.COMMA;
 
 /**
  * 货架档案 Service
@@ -168,9 +161,20 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
         ValidationUtils.error("数据已被货架档案引用，无法删除！");
       }
 
+      String[] split = ids.split(",");
+      for (String id : split) {
+        WarehouseShelves warehouseShelves = findById(id);
+        if (warehouseShelves.getIsource() != null) {
+          if (warehouseShelves.getIsource() == 2) {
+            ValidationUtils.error("【" + warehouseShelves.getCshelvesname() + "】来源U8，无法删除");
+          }
+        }
+        warehouseShelves.setIsdeleted(true);
+        warehouseShelves.update();
+      }
       //料品档案主表
       //deleteByIds(ids,true);
-      update("UPDATE Bd_Warehouse_Shelves SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
+//      update("UPDATE Bd_Warehouse_Shelves SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
       return true;
     });
     return SUCCESS;
@@ -318,7 +322,7 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
         //是否删除，是否启用,数据来源
         warehouseShelves.setIsdeleted(false);
         warehouseShelves.setIsenabled(true);
-        warehouseShelves.setIsource(1);
+        warehouseShelves.setIsource(SourceEnum.MES.getValue());
 
         warehouseShelves.setCshelvescode(data.get("cshelvescode") + "");
         warehouseShelves.setCshelvesname(data.get("cshelvesname") + "");
@@ -373,4 +377,9 @@ public class WarehouseShelvesService extends BaseService<WarehouseShelves> {
     return dbTemplate("warehouseshelves.selectPrint", kv).find();
   }
 
+  public WarehouseShelves getWarehouseShelvesCode() {
+    WarehouseShelves warehouseShelves = new WarehouseShelves();
+    warehouseShelves.setCshelvescode(BillNoUtils.genCode(getOrgCode(), table()));
+    return warehouseShelves;
+  }
 }

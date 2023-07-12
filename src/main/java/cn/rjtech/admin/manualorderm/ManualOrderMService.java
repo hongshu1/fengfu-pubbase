@@ -9,12 +9,14 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.model.Dictionary;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.core.ui.jbolttable.JBoltTable;
+import cn.jbolt.core.util.JBoltArrayUtil;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
 import cn.rjtech.admin.cusordersum.CusOrderSumService;
 import cn.rjtech.admin.inventory.InventoryService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
 import cn.rjtech.admin.inventoryqcform.InventoryQcFormService;
 import cn.rjtech.admin.manualorderd.ManualOrderDService;
+import cn.rjtech.admin.manualorderdqty.ManualorderdQtyService;
 import cn.rjtech.admin.saletype.SaleTypeService;
 import cn.rjtech.admin.stockoutqcformm.StockoutQcFormMService;
 import cn.rjtech.admin.weekorderm.WeekOrderMService;
@@ -74,6 +76,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
     private StockoutQcFormMService stockoutQcFormMService;
     @Inject
     private InventoryMfgInfoService inventoryMfgInfoService;
+    @Inject
+    private ManualorderdQtyService manualorderdQtyService;
 
     @Override
     protected ManualOrderM dao() {
@@ -92,7 +96,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
         // 封装JSON
         JSONArray jsonArray = new JSONArray();
         for (ManualOrderD manualOrderD : manualOrderDS) {
-            for (int i = 1; i <= 31; i++) {
+            List<ManualorderdQty> manualorderdQtys = manualorderdQtyService.findByManualOrderDId(manualOrderD.getIAutoId());
+            for (ManualorderdQty manualorderdQty : manualorderdQtys) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("DocNo", manualOrderM.getCOrderNo());
                 jsonObject.put("ccuscode", manualOrderM.getCCusCode());
@@ -106,8 +111,8 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
                 jsonObject.put("iTaxRate", manualOrderM.getITaxRate());
                 jsonObject.put("cInvCode", manualOrderD.getCInvCode());
                 jsonObject.put("cInvName", manualOrderD.getCInvName1());
-                jsonObject.put("iQuantity", manualOrderD.getInt("iqty" + i));
-                jsonObject.put("irowno", manualOrderD.getIRowNo());
+                jsonObject.put("iQuantity", manualorderdQty.getIQty());
+                jsonObject.put("irowno", manualorderdQty.getIRowNo());
                 jsonObject.put("iQuotedPrice", 0);
                 jsonObject.put("KL", 100);
                 jsonObject.put("iNatDisCount", 0);
@@ -249,6 +254,7 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
             } else {
                 update(manualOrderM);
             }
+
             List<ManualOrderD> saveBeanList = jBoltTable.getSaveBeanList(ManualOrderD.class);
             if (saveBeanList != null && saveBeanList.size() > 0) {
                 Integer rowno = 10;
@@ -257,20 +263,27 @@ public class ManualOrderMService extends BaseService<ManualOrderM> implements IA
                     manualOrderD.setIsDeleted(false);
                     manualOrderD.setIRowNo(rowno);
                     rowno += 10;
+                   ValidationUtils.isTrue(manualOrderD.save(),"保存存货信息失败");
+                    manualorderdQtyService.batchSaveByManualOrderD(manualOrderM, manualOrderD);
                 }
-                manualOrderDService.batchSave(saveBeanList);
             }
+
             List<ManualOrderD> updateBeanList = jBoltTable.getUpdateBeanList(ManualOrderD.class);
             if (updateBeanList != null && updateBeanList.size() > 0) {
-                for (ManualOrderD manualOrderD : updateBeanList) {
-                    manualOrderD.setIManualOrderMid(manualOrderM.getIAutoId());
+                manualOrderDService.batchUpdate(updateBeanList);
+                String manualOrderDIds = JBoltArrayUtil.join(updateBeanList.stream().map(ManualOrderD::getIAutoId).collect(Collectors.toList()), ",");
+                manualorderdQtyService.batchDeleteByManualOrderDIds(manualOrderDIds);
+                for (ManualOrderD manualOrderD:updateBeanList) {
+                    manualorderdQtyService.batchSaveByManualOrderD(manualOrderM,manualOrderD);
                 }
-                manualOrderDService.batchUpdate(saveBeanList);
             }
+
             Object[] deletes = jBoltTable.getDelete();
             if (ArrayUtil.isNotEmpty(deletes)) {
                 deleteMultiByIds(deletes);
+                manualorderdQtyService.batchDeleteByManualOrderDIds(JBoltArrayUtil.join(deletes, ","));
             }
+
             return true;
         });
         return successWithData(manualOrderM.keep("iautoid"));

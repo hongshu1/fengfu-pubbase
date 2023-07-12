@@ -11,25 +11,23 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.workclass.WorkClassService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.cache.WorkClassCache;
+import cn.rjtech.constants.ErrorMsg;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Operation;
 import cn.rjtech.model.momdata.Workclass;
 import cn.rjtech.util.ValidationUtils;
-
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.TableMapping;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -55,21 +53,12 @@ public class OperationService extends BaseService<Operation> {
 
     @Inject
     private WorkClassService workClassService;
-//	@Inject
-//	private OperationbadnessService operationbadnessService;
-//	@Inject
-//	private BadnessclassService badnessclassService;
-
-    @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
 
     /**
      * 后台管理分页查询
      */
     public List<Operation> paginateAdminDatas(int pageNumber, int pageSize, String keywords) {
-        return getCommonListByKeywords(keywords, "dUpdateTime", "DESC", "cOperationName,cOperationCode",
-            Okv.by("isEnabled", true).set("isDeleted", false));
-        //return paginateByKeywords("iAutoId","DESC", pageNumber, pageSize, keywords, "cOperationName",Okv.by("isEnabled",true).set("isDeleted",false));
+        return getCommonListByKeywords(keywords, "dUpdateTime", "DESC", "cOperationName,cOperationCode", Okv.by("isEnabled", true).set("isDeleted", false));
     }
 
     public List<Record> findItemOperationDatas(Kv kv) {
@@ -84,18 +73,17 @@ public class OperationService extends BaseService<Operation> {
             return fail(JBoltMsg.PARAM_ERROR);
         }
         operation.setIautoid(JBoltSnowflakeKit.me.nextId());
-        //是否存在编码
-        Operation operation1 = findFirst(Okv.by("cOperationCode", operation.getCoperationcode()).set("isDeleted", 0), "iAutoid",
-            "DESC");
-        ValidationUtils.isTrue(operation1 == null, "已存在编码：" + operation.getCoperationcode());
-        //组数据
-        saveOperationHandle(operation, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(),
-            getOrgName());
+        
+        // 是否存在编码
+        Operation operation1 = findFirst(Okv.by("cOperationCode", operation.getCoperationcode()).set("isDeleted", 0), "iAutoid", "DESC");
+        ValidationUtils.assertNull(operation1, "已存在编码：" + operation.getCoperationcode());
+        // 组数据
+        saveOperationHandle(operation, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(), getOrgName());
         boolean save = operation.save();
         if (!save) {
             return fail(JBoltMsg.FAIL);
         }
-        return ret(save);
+        return SUCCESS;
     }
 
     /**
@@ -105,23 +93,26 @@ public class OperationService extends BaseService<Operation> {
         if (operation == null || notOk(operation.getIautoid())) {
             return fail(JBoltMsg.PARAM_ERROR);
         }
+        
         //更新时需要判断数据存在
         Operation dbOperation = findById(operation.getIautoid());
         if (dbOperation == null) {
             return fail(JBoltMsg.DATA_NOT_EXIST);
         }
 
-        Operation operation1 = findFirst("SELECT * FROM Bd_Operation WHERE cOperationCode =? AND isDeleted = 0 AND iAutoId != ?",
-            operation.getCoperationcode(), operation.getIautoid());
-        ValidationUtils.isTrue(operation1 == null, "已存在编码" + operation.getCoperationcode());
-        operation.setIupdateby(JBoltUserKit.getUserId());
-        operation.setDupdatetime(new Date());
-        operation.setCupdatename(JBoltUserKit.getUserName());
-        boolean result = operation.update();
-        if (!result) {
-            return fail(JBoltMsg.FAIL);
-        }
-        return ret(result);
+        tx(() -> {
+            Operation operation1 = findFirst("SELECT * FROM Bd_Operation WHERE cOperationCode =? AND isDeleted = 0 AND iAutoId != ?", operation.getCoperationcode(), operation.getIautoid());
+            ValidationUtils.assertNull(operation1, "已存在编码" + operation.getCoperationcode());
+
+            operation.setIupdateby(JBoltUserKit.getUserId());
+            operation.setDupdatetime(new Date());
+            operation.setCupdatename(JBoltUserKit.getUserName());
+
+            ValidationUtils.isTrue(operation.update(), ErrorMsg.UPDATE_FAILED);
+            return true;
+        });
+       
+        return SUCCESS;
     }
 
     /**
@@ -228,8 +219,7 @@ public class OperationService extends BaseService<Operation> {
         return null;
     }
 
-    public void saveOperationHandle(Operation operation, Long userId, Date date, String username, Long orgId, String orgCode,
-                                    String orgName) {
+    public void saveOperationHandle(Operation operation, Long userId, Date date, String username, Long orgId, String orgCode, String orgName) {
         operation.setIcreateby(userId);
         operation.setDcreatetime(date);
         operation.setCcreatename(username);
@@ -305,12 +295,9 @@ public class OperationService extends BaseService<Operation> {
             ValidationUtils.isTrue(set.size() == models.size(), JBoltMsg.DATA_IMPORT_FAIL + "存在重复编码数据");
         }
         //执行批量操作
-        boolean success = tx(new IAtom() {
-            @Override
-            public boolean run() throws SQLException {
-                batchSave(models);
-                return true;
-            }
+        boolean success = tx(() -> {
+            batchSave(models);
+            return true;
         });
         if (!success) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL);
@@ -324,8 +311,6 @@ public class OperationService extends BaseService<Operation> {
 
     /**
      * 根据工序名称获取工序数据
-     * @param name
-     * @return
      */
     public Operation getOperationByName(String name){
         return findFirst("SELECT * FROM Bd_Operation WHERE isDeleted = '0' AND cOperationName=?",name);
@@ -388,17 +373,19 @@ public class OperationService extends BaseService<Operation> {
     }
 
     public List<Operation> findByIworkclassId(Long iworkclassId) {
-        return find("select * from Bd_Operation where iWorkClassId=?", iworkclassId);
+        return find("select * from Bd_Operation where iWorkClassId=? and isDeleted = ? ", iworkclassId,false);
     }
 
     /**
      * 从系统导入字段配置，获得导入的数据
      */
     public Ret importExcelClass(File file) {
-        List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+        List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
         if (notOk(records)) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
         }
+
+        Date now = new Date();
 
         for (Record record : records) {
             if (StrUtil.isBlank(record.getStr("cOperationCode"))) {
@@ -407,25 +394,27 @@ public class OperationService extends BaseService<Operation> {
             if (StrUtil.isBlank(record.getStr("cOperationName"))) {
                 return fail("工序名称不能为空");
             }
-            if (StrUtil.isBlank(record.getStr("iWorkClassId"))) {
-                return fail("所属工种名称不能为空");
+            if (StrUtil.isBlank(record.getStr("cWorkClassCode"))) {
+                return fail("所属工种编码不能为空");
             }
-            Workclass workclass = workClassService.findModelByCode(record.getStr("iworkclassid"));
-            ValidationUtils.notNull(workclass, record.getStr("iworkclassid") + "：工种编码不存在");
+            
+            String cWorkClassCode = removeZeros(record.getStr("cWorkClassCode"));
+            Workclass workclass = workClassService.findModelByCode(cWorkClassCode);
+            ValidationUtils.notNull(workclass, cWorkClassCode + "：工种编码不存在");
 
             record.keep(ArrayUtil.toArray(TableMapping.me().getTable(Operation.class).getColumnNameSet(), String.class));
 
-            Date now = new Date();
             record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
             record.set("iOrgId", getOrgId());
             record.set("cOrgCode", getOrgCode());
             record.set("cOrgName", getOrgName());
+            record.set("cOperationCode",removeZeros(record.getStr("cOperationCode")));
             record.set("iSource", SourceEnum.MES.getValue());
             record.set("iCreateBy", JBoltUserKit.getUserId());
             record.set("dCreateTime", now);
             record.set("cCreateName", JBoltUserKit.getUserName());
-            record.set("isEnabled", 1);
-            record.set("isDeleted", 0);
+            record.set("isEnabled", "1");
+            record.set("isDeleted", ZERO_STR);
             record.set("iUpdateBy", JBoltUserKit.getUserId());
             record.set("dUpdateTime", now);
             record.set("cUpdateName", JBoltUserKit.getUserName());
@@ -438,5 +427,15 @@ public class OperationService extends BaseService<Operation> {
             return true;
         });
         return SUCCESS;
+    }
+
+    public static String removeZeros(String num) {
+        if (num.indexOf(".") > 0) {
+            // 去掉多余的0
+            num = num.replaceAll("0+?$", "");
+            // 如果最后一位是. 则去掉
+            num = num.replaceAll("[.]$", "");
+        }
+        return num;
     }
 }

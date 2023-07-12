@@ -12,11 +12,10 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.enums.SourceEnum;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.model.momdata.ContainerClass;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
@@ -27,7 +26,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * 分类管理
  *
@@ -36,10 +34,8 @@ import java.util.List;
  * @date: 2023-03-22 16:16
  */
 public class ContainerClassService extends BaseService<ContainerClass> {
+    
   private final ContainerClass dao = new ContainerClass().dao();
-
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingDService;
 
   @Override
   protected ContainerClass dao() {
@@ -56,7 +52,6 @@ public class ContainerClassService extends BaseService<ContainerClass> {
    *
    * @param pageNumber 第几页
    * @param pageSize   每页几条数据
-   * @return
    */
   public Page<Record> getAdminDatas(int pageNumber, int pageSize) {
     return dbTemplate("containerclass.paginateAdminDatas").paginate(pageNumber, pageSize);
@@ -64,9 +59,6 @@ public class ContainerClassService extends BaseService<ContainerClass> {
 
   /**
    * 保存
-   *
-   * @param containerClass
-   * @return
    */
   public Ret save(ContainerClass containerClass) {
     if (containerClass == null || isOk(containerClass.getIAutoId())) {
@@ -99,9 +91,6 @@ public class ContainerClassService extends BaseService<ContainerClass> {
 
   /**
    * 查找容器类别编码
-   *
-   * @param cContainerClassCode
-   * @return
    */
   public ContainerClass findByConClassCode(String cContainerClassCode) {
     return findFirst(Okv.by("cContainerClassCode", cContainerClassCode).set("isDeleted", false), "iautoid", "asc");
@@ -110,9 +99,6 @@ public class ContainerClassService extends BaseService<ContainerClass> {
 
   /**
    * 更新
-   *
-   * @param containerClass
-   * @return
    */
   public Ret update(ContainerClass containerClass) {
     if (containerClass == null || notOk(containerClass.getIAutoId())) {
@@ -150,7 +136,6 @@ public class ContainerClassService extends BaseService<ContainerClass> {
    *
    * @param containerClass 要删除的model
    * @param kv             携带额外参数一般用不上
-   * @return
    */
   @Override
   protected String afterDelete(ContainerClass containerClass, Kv kv) {
@@ -163,7 +148,6 @@ public class ContainerClassService extends BaseService<ContainerClass> {
    *
    * @param containerClass model
    * @param kv             携带额外参数一般用不上
-   * @return
    */
   @Override
   public String checkInUse(ContainerClass containerClass, Kv kv) {
@@ -188,9 +172,6 @@ public class ContainerClassService extends BaseService<ContainerClass> {
 
   /**
    * 容器分类导入
-   *
-   * @param file
-   * @return
    */
   public Ret importExcelData(File file) {
     StringBuilder errorMsg = new StringBuilder();
@@ -258,9 +239,6 @@ public class ContainerClassService extends BaseService<ContainerClass> {
 
   /**
    * 导出查询
-   *
-   * @param kv
-   * @return
    */
   public List<Record> list(Kv kv) {
     Sql sql = selectSql().le("IsDeleted", 0).desc("dCreateTime");
@@ -272,43 +250,47 @@ public class ContainerClassService extends BaseService<ContainerClass> {
    * 从系统导入字段配置，获得导入的数据
    */
   public Ret importExcelClass(File file) {
-    List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
-    if (notOk(records)) {
-      return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
-    }
-
-
-    for (Record record : records) {
-
-      if (StrUtil.isBlank(record.getStr("cContainerClassCode"))) {
-        return fail("分类编码不能为空");
+      List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+      if (notOk(records)) {
+          return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
       }
-      if (StrUtil.isBlank(record.getStr("cContainerClassName"))) {
-        return fail("分类名称不能为空");
-      }
-
 
       Date now = new Date();
 
-      record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
-      record.set("iOrgId", getOrgId());
-      record.set("cOrgCode", getOrgCode());
-      record.set("cOrgName", getOrgName());
-      record.set("iCreateBy", JBoltUserKit.getUserId());
-      record.set("dCreateTime", now);
-      record.set("cCreateName", JBoltUserKit.getUserName());
-      record.set("isEnabled", 1);
-      record.set("isDeleted", 0);
-      record.set("iUpdateBy", JBoltUserKit.getUserId());
-      record.set("dUpdateTime", now);
-      record.set("cUpdateName", JBoltUserKit.getUserName());
-    }
+      for (Record record : records) {
 
-    // 执行批量操作
-    tx(() -> {
-      batchSaveRecords(records);
-      return true;
-    });
-    return SUCCESS;
+          if (StrUtil.isBlank(record.getStr("cContainerClassCode"))) {
+              return fail("分类编码不能为空");
+          }
+          if (StrUtil.isBlank(record.getStr("cContainerClassName"))) {
+              return fail("分类名称不能为空");
+          }
+
+          record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
+          record.set("iOrgId", getOrgId());
+          record.set("cOrgCode", getOrgCode());
+          record.set("cOrgName", getOrgName());
+          record.set("iCreateBy", JBoltUserKit.getUserId());
+          record.set("dCreateTime", now);
+          record.set("cCreateName", JBoltUserKit.getUserName());
+          record.set("isEnabled", 1);
+          record.set("isDeleted", 0);
+          record.set("iUpdateBy", JBoltUserKit.getUserId());
+          record.set("dUpdateTime", now);
+          record.set("cUpdateName", JBoltUserKit.getUserName());
+      }
+
+      // 执行批量操作
+      tx(() -> {
+          batchSaveRecords(records);
+          return true;
+      });
+      return SUCCESS;
   }
+
+    public ContainerClass getContainerClassCode() {
+        ContainerClass containerClass = new ContainerClass();
+        containerClass.setCContainerClassCode(BillNoUtils.genCode(getOrgCode(), table()));
+        return containerClass;
+    }
 }

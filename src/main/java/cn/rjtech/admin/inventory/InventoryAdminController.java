@@ -10,6 +10,7 @@ import cn.jbolt.core.permission.JBoltAdminAuthInterceptor;
 import cn.jbolt.core.permission.UnCheck;
 import cn.jbolt.core.permission.UnCheckIfSystemAdmin;
 import cn.jbolt.extend.config.ExtendUploadFolder;
+import cn.rjtech.admin.bomm.BomMService;
 import cn.rjtech.admin.bommaster.BomMasterService;
 import cn.rjtech.admin.inventoryaddition.InventoryAdditionService;
 import cn.rjtech.admin.inventorymfginfo.InventoryMfgInfoService;
@@ -61,7 +62,7 @@ public class InventoryAdminController extends BaseAdminController {
 	@Inject
 	private InventoryRoutingService inventoryRoutingService;
 	@Inject
-	private BomMasterService bomMasterService;
+	private BomMService bomMService;
 
    /**
 	* 首页
@@ -403,7 +404,7 @@ public class InventoryAdminController extends BaseAdminController {
 
     @UnCheck
 	public void findBomCompareByBomMasterInvId(){
-		renderJsonData(bomMasterService.findBomCompareByBomMasterInvId(getKv(), getPageNumber(), getPageSize()));
+		renderJsonData(bomMService.findBomCompareByBomMasterInvId(getKv(), getPageNumber(), getPageSize()));
 	}
 
     public void batchFetch(@Para(value = "column") String column,

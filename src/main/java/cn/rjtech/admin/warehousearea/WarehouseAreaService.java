@@ -1,22 +1,16 @@
 package cn.rjtech.admin.warehousearea;
 
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
-import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
-import cn.rjtech.admin.warehouse.WarehouseService;
 import cn.jbolt.core.service.base.BaseService;
+import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
+import cn.rjtech.admin.warehouse.WarehouseService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Warehouse;
 import cn.rjtech.model.momdata.WarehouseArea;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -26,9 +20,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.util.*;
-
-import static cn.hutool.core.text.StrPool.COMMA;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 库区档案 Service
@@ -41,9 +34,6 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 
   private final WarehouseArea dao = new WarehouseArea().dao();
 
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingDService;
-
   @Override
   protected WarehouseArea dao() {
     return dao;
@@ -51,9 +41,6 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
 
   @Inject
   private WarehouseService warehouseService;
-
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingdService;
 
   /**
    * 后台管理分页查询
@@ -166,9 +153,21 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
         ValidationUtils.error("数据已被货架档案引用，无法删除！");
       }
 
+      String[] split = ids.split(",");
+      for (String id : split) {
+        WarehouseArea warehouseArea = findById(id);
+        if (warehouseArea.getIsource() != null) {
+          if (warehouseArea.getIsource() == 2) {
+            ValidationUtils.error("【"+warehouseArea.getCareaname() + "】来源U8，无法删除");
+          }
+        }
+        warehouseArea.setIsdeleted(true);
+        warehouseArea.update();
+      }
+
       //料品档案主表
       //deleteByIds(ids,true);
-      update("UPDATE Bd_Warehouse_Area SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
+//      update("UPDATE Bd_Warehouse_Area SET isDeleted = 1 WHERE iAutoId IN (" + ArrayUtil.join(idarry, COMMA) + ") ");
       return true;
     });
     return SUCCESS;
@@ -280,76 +279,78 @@ public class WarehouseAreaService extends BaseService<WarehouseArea> {
     return dbTemplate("warehousearea.options", kv).find();
   }
 
-  /**
-   * 数据导入
-   *
-   * @param file
-   * @param cformatName
-   * @return
-   */
-  public Ret importExcelData(File file, String cformatName) {
-    Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
-    ValidationUtils.isTrue(ret.isOk(), "导入失败");
-    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-    StringBuilder msg = new StringBuilder();
+    /**
+     * 数据导入
+     */
+    public Ret importExcelData(File file) {
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(datas, "导入数据不能为空");
 
-    tx(() -> {
-      Integer iseq = 1;
-      // 封装数据
-      for (Map<String, Object> data : datas) {
-        // 基本信息校验
-        ValidationUtils.notNull(data.get("careacode"), "第" + iseq + "行的【库区编码】不能为空！");
-        ValidationUtils.notNull(data.get("careaname"), "第" + iseq + "行的【库区名称】不能为空！");
-        ValidationUtils.notNull(data.get("cwhname"), "第" + iseq + "行的【所属仓库名称】不能为空！");
+        Date now = new Date();
 
-        //判断是否存在这个仓库名称
-        Warehouse warehouse = warehouseService.findByWhName(data.get("cwhname") + "");
-        ValidationUtils.notNull(warehouse, "第" + iseq + "行【" + data.get("cwhname") + "】" + JBoltMsg.DATA_NOT_EXIST);
-        ValidationUtils.isTrue(warehouse.getIsEnabled(), "第" + iseq + "行【" + data.get("cwhname") + "】未启用库区选项");
+        tx(() -> {
+            int iseq = 1;
 
+            // 封装数据
+            for (Record data : datas) {
+                // 基本信息校验
+                ValidationUtils.notNull(data.get("careacode"), "第" + iseq + "行的【库区编码】不能为空！");
+                ValidationUtils.notNull(data.get("careaname"), "第" + iseq + "行的【库区名称】不能为空！");
+                ValidationUtils.notNull(data.get("cwhname"), "第" + iseq + "行的【所属仓库名称】不能为空！");
 
-        if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careacode", data.get("careacode")).
-            set("iwarehouseid", warehouse.getIAutoId())).queryInt() > 0) {
-          ValidationUtils.error("第" + iseq + "行的【" + warehouse.getCWhName() + "】下【库区编码】" + data.get("careacode") + "已存在，请修改后保存");
-        }
-        if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careaname", data.get("careaname")).
-            set("iwarehouseid", warehouse.getIAutoId())).queryInt() > 0) {
-          ValidationUtils.error("第" + iseq + "行的【" + warehouse.getCWhName() + "】下【库区名称】" + data.get("careaname") + "已存在，请修改后保存");
-        }
+                //判断是否存在这个仓库名称
+                Warehouse warehouse = warehouseService.findByWhName(data.get("cwhname") + "");
+                ValidationUtils.notNull(warehouse, "第" + iseq + "行【" + data.get("cwhname") + "】" + JBoltMsg.DATA_NOT_EXIST);
+                ValidationUtils.isTrue(warehouse.getIsEnabled(), "第" + iseq + "行【" + data.get("cwhname") + "】未启用库区选项");
+
+                if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careacode", data.get("careacode")).set("iwarehouseid", warehouse.getIAutoId())).queryInt() > 0) {
+                    ValidationUtils.error("第" + iseq + "行的【" + warehouse.getCWhName() + "】下【库区编码】" + data.get("careacode") + "已存在，请修改后保存");
+                }
+                if (dbTemplate("warehousearea.verifyDuplication", Kv.by("careaname", data.get("careaname")).set("iwarehouseid", warehouse.getIAutoId())).queryInt() > 0) {
+                    ValidationUtils.error("第" + iseq + "行的【" + warehouse.getCWhName() + "】下【库区名称】" + data.get("careaname") + "已存在，请修改后保存");
+                }
+
+                WarehouseArea warehouseArea = new WarehouseArea();
+                
+                // 组织数据
+                warehouseArea.setIorgid(getOrgId());
+                warehouseArea.setCorgcode(getOrgCode());
+                warehouseArea.setCorgname(getOrgName());
+
+                // 创建人
+                warehouseArea.setIcreateby(JBoltUserKit.getUserId());
+                warehouseArea.setCcreatename(JBoltUserKit.getUserName());
+                warehouseArea.setDcreatetime(now);
+
+                // 更新人
+                warehouseArea.setIupdateby(JBoltUserKit.getUserId());
+                warehouseArea.setCupdatename(JBoltUserKit.getUserName());
+                warehouseArea.setDupdatetime(now);
+
+                // 是否删除，是否启用,数据来源
+                warehouseArea.setIsdeleted(false);
+                warehouseArea.setIsenabled(true);
+                warehouseArea.setIsource(SourceEnum.MES.getValue());
+
+                warehouseArea.setCareacode(data.getStr("careacode"));
+                warehouseArea.setCareaname(data.getStr("careaname"));
+
+                warehouseArea.setIMaxCapacity(Long.parseLong(data.getStr("imaxcapacity")));
+                warehouseArea.setIwarehouseid(warehouse.getIAutoId());
+                warehouseArea.setCmemo(data.getStr("cmemo"));
+                ValidationUtils.isTrue(warehouseArea.save(), "第" + iseq + "行保存数据失败");
+                iseq++;
+            }
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    public WarehouseArea getWarehouseAreaCode() {
         WarehouseArea warehouseArea = new WarehouseArea();
-        //组织数据
-        warehouseArea.setIorgid(getOrgId());
-        warehouseArea.setCorgcode(getOrgCode());
-        warehouseArea.setCorgname(getOrgName());
-
-        //创建人
-        warehouseArea.setIcreateby(JBoltUserKit.getUserId());
-        warehouseArea.setCcreatename(JBoltUserKit.getUserName());
-        warehouseArea.setDcreatetime(new Date());
-
-        //更新人
-        warehouseArea.setIupdateby(JBoltUserKit.getUserId());
-        warehouseArea.setCupdatename(JBoltUserKit.getUserName());
-        warehouseArea.setDupdatetime(new Date());
-
-        //是否删除，是否启用,数据来源
-        warehouseArea.setIsdeleted(false);
-        warehouseArea.setIsenabled(true);
-        warehouseArea.setIsource(1);
-
-        warehouseArea.setCareacode(data.get("careacode") + "");
-        warehouseArea.setCareaname(data.get("careaname") + "");
-
-        warehouseArea.setIMaxCapacity(Long.parseLong(data.get("imaxcapacity") + ""));
-        warehouseArea.setIwarehouseid(warehouse.getIAutoId());
-        warehouseArea.setCmemo(data.get("cmemo") + "");
-        ValidationUtils.isTrue(warehouseArea.save(), "第" + iseq + "行保存数据失败");
-        iseq++;
-      }
-      return true;
-    });
-
-    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
-    return SUCCESS;
-  }
+        warehouseArea.setCareacode(BillNoUtils.genCode(getOrgCode(), table()));
+        return warehouseArea;
+    }
+    
 }

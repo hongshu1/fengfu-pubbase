@@ -65,11 +65,8 @@ public class ModocApiService extends JBoltApiBaseService {
     return moDocService.getMoroutingsopByInventoryroutingconfigId(inventoryroutingconfigid);
   }
 
-  public JBoltApiRet page(Integer page, Integer pageSize, String cmodocno, String cinvaddcode, String cinvcode1,
-                          String cinvname1,
-                          String cdepname, Long iworkregionmid, Integer status, Date starttime, Date endtime) {
-    return JBoltApiRet.API_SUCCESS_WITH_DATA(moDocService.page(page, pageSize, cmodocno, cinvaddcode,
-        cinvcode1, cinvname1, cdepname, iworkregionmid, status, starttime, endtime));
+  public JBoltApiRet page(Integer page, Integer pageSize, String cmodocno, String cinvaddcode, String cinvcode1, String cinvname1, String cdepname, Long iworkregionmid, Integer status, Date starttime, Date endtime) {
+    return JBoltApiRet.API_SUCCESS_WITH_DATA(moDocService.page(page, pageSize, cmodocno, cinvaddcode, cinvcode1, cinvname1, cdepname, iworkregionmid, status, starttime, endtime));
   }
 
     public JBoltApiRet getModocdetails(Long imodocid) {
@@ -90,7 +87,7 @@ public class ModocApiService extends JBoltApiBaseService {
     Record moRecod = moDoc.toRecord();
     moRecod.keep("cmodocno", "dplandate", "iqty", "icompqty");
     if (notOk(moRecod.getBigDecimal("icompqty"))) {
-      moRecod.set("icompqty", new BigDecimal(0));
+      moRecod.set("icompqty", BigDecimal.ZERO);
     }
     if (isOk(moDoc.getIInventoryId())) {
       //存货
@@ -131,7 +128,7 @@ public class ModocApiService extends JBoltApiBaseService {
       BigDecimal cyqty = moDoc.getIQty().subtract(moDoc.getICompQty());
       moRecod.set("cyqty", cyqty);
     } else {
-      moRecod.set("cyqty", new BigDecimal(0));
+      moRecod.set("cyqty", BigDecimal.ZERO);
     }
     //产线
     if (isOk(moDoc.getIWorkRegionMid())) {
@@ -224,7 +221,7 @@ public class ModocApiService extends JBoltApiBaseService {
       BigDecimal cyqty = moDoc.getIQty().subtract(moDoc.getICompQty());
       modocApiPag.setCyqty(cyqty);
     } else {
-      modocApiPag.setCyqty(new BigDecimal(0));
+      modocApiPag.setCyqty(BigDecimal.ZERO);
     }
 
     //产线

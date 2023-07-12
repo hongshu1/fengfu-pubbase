@@ -1,135 +1,128 @@
 <div class="jbolt_page">
     <div style="text-align: center; font-size: 24px;">销售出库单</div>
-<div class="jbolt_page_title">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="col">
-                        <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs"><i
-                                class="fa fa-window-maximize"></i> 关闭
-                        </button>
-                        <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs" onclick="submitThisForm()"><i
-                                class="fa fa-refresh"></i> 打印
-                        </button>
-                    </div>
+    <div class="jbolt_page_title">
+        <div class="row">
+            <div class="jbolt_table_toolbar">
+                <div class="col-md-l pt-2" role="group" aria-label="btn-group">
+                    <button onclick="closeHandler()" class="btn btn-outline-secondary btn-xs"><i
+                            class="fa fa-window-maximize"></i> 关闭
+                    </button>
+                    <button onclick="submitThisForm()" class="btn btn-outline-secondary btn-xs"
+                            onclick="submitThisForm()"><i
+                            class="fa fa-refresh"></i> 打印
+                    </button>
                 </div>
             </div>
-        </div>
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <form onsubmit="return false;" id="sysSaledeliver_#(pageId)" action="#(action)" method="post">
-                        #if(sysSaledeliver.autoid??)
-                        <input id="autoid" type="hidden" name="sysSaledeliver.autoid" value="#(sysSaledeliver.autoid??)"/>
-                        #end
+            <div class="col-12">
+                <form onsubmit="return false;" id="sysSaledeliver_#(pageId)" action="#(action)" method="post">
+                    #if(sysSaledeliver.autoid??)
+                    <input id="autoid" type="hidden" name="sysSaledeliver.autoid" value="#(sysSaledeliver.autoid??)"/>
+                    #end
 
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">出库单号：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.billno??)
-                                </div>
-                                <label class="col-sm-2 col-form-label">出库日期：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.billdate??)
+                    <div class="form-group row">
+                        <label class="col-sm-1 col-form-label">出库单号：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.billno??)
+                        </div>
+                        <label class="col-sm-2 col-form-label">出库日期：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.billdate??)
 
-                                </div>
-                                <label class="col-sm-2 col-form-label">仓库名称：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.whname??)
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">出库类别：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.rdname??)
-                                </div>
-                                <label class="col-sm-2 col-form-label">业务类型：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.billtype??)
+                        </div>
+                        <label class="col-sm-2 col-form-label">仓库名称：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.whname??)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-1 col-form-label">出库类别：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.rdname??)
+                        </div>
+                        <label class="col-sm-2 col-form-label">业务类型：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.billtype??)
 
-                                </div>
-                                <label class="col-sm-2 col-form-label">业务号：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.salename??)
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">销售部门：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.depname??)
-                                </div>
-                                <label class="col-sm-2 col-form-label">业务员：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.salename??)
+                        </div>
+                        <label class="col-sm-2 col-form-label">业务号：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.salename??)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-1 col-form-label">销售部门：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.depname??)
+                        </div>
+                        <label class="col-sm-2 col-form-label">业务员：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.salename??)
 
-                                </div>
-                                <label class="col-sm-2 col-form-label">客户简称：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.cusname??)
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">审批日期：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.auditdate??)
-                                </div>
-                                <label class="col-sm-2 col-form-label">备注：</label>
-                                <div class="col-sm-2 col-form-label">
-                                    #(sysSaledeliver.memo??)
-                                </div>
-                            </div>
-                    </form>
-                </div>
+                        </div>
+                        <label class="col-sm-2 col-form-label">客户简称：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.cusname??)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-1 col-form-label">审批日期：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.auditdate??)
+                        </div>
+                        <label class="col-sm-2 col-form-label">备注：</label>
+                        <div class="col-sm-2 col-form-label">
+                            #(sysSaledeliver.memo??)
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
-<div class="jbolt_page_content">
-    <script type="text/template" id="sysSaledeliver_tpl_#(pageId)">
-        {@each datas as data,index}
-        <tr data-id="${data.autoid}">
-            <td>${pageNumber,pageSize,index | rownum}</td>
-            <td>${data.invcode}</td>
-            <td>${data.invcode}</td>
-            <td>${data.invname}</td>
-            <td>${data.invspecs}</td>
-            <td>${data.invspecs}</td>
-            <td>${data.qty}</td>
-            <td>${data.model}</td>
-        </tr>
-        {@/each}
-    </script>
+    <div class="jbolt_page_content">
+        <script type="text/template" id="sysSaledeliver_tpl_#(pageId)">
+            {@each datas as data,index}
+            <tr data-id="${data.autoid}">
+                <td>${pageNumber,pageSize,index | rownum}</td>
+                <td>${data.invcode}</td>
+                <td>${data.invcode}</td>
+                <td>${data.invname}</td>
+                <td>${data.invspecs}</td>
+                <td>${data.invspecs}</td>
+                <td>${data.qty}</td>
+                <td>${data.model}</td>
+            </tr>
+            {@/each}
+        </script>
 
-    <table class="jbolt_table thead_font_normal table-bordered table-center"
-           data-jbolttable
-           data-ajax="true"
-           data-height="300"
-           data-url="admin/salesDeliveryList/getLineData"
-           id="jbolt_Table_#(pageId)"
-           data-column-resize="true"
-           data-tfoot-fixed="true"
-           data-column-prepend="1:checkbox"
-           data-rowtpl="sysSaledeliver_tpl_#(pageId)"
-           data-toolbar="sysSaledeliver_toolbar_#(pageId)"
-           data-editable="true"
-           data-page="sysSaledeliver_tpl_#(pageId)">
-        <thead class="fw_normal">
-        <tr>
-            <th data-width="60">序号</th>
-            <th data-min-width="150" data-column="invcode">存货编码</th>
-            <th data-min-width="150" data-column="invcode">存货代码</th>
-            <th data-min-width="150" data-column="invname">存货名称</th>
-            <th data-width="200" data-column="invspecs">规格型号</th>
-            <th data-width="100" data-column="invspecs">主计量单位</th>
-            <th data-width="100" data-column="qty">数量</th>
-            <th data-width="100" data-column="model">所属机型</th>
-        </tr>
-        </thead>
-    </table>
-</div>
+        <table class="jbolt_table thead_font_normal table-bordered table-center"
+               data-jbolttable
+               data-ajax="true"
+               data-height="300"
+               data-url="admin/salesDeliveryList/getLineData"
+               id="jbolt_Table_#(pageId)"
+               data-column-resize="true"
+               data-tfoot-fixed="true"
+               data-column-prepend="1:checkbox"
+               data-rowtpl="sysSaledeliver_tpl_#(pageId)"
+               data-toolbar="sysSaledeliver_toolbar_#(pageId)"
+               data-editable="true"
+               data-page="sysSaledeliver_tpl_#(pageId)">
+            <thead class="fw_normal">
+            <tr>
+                <th data-width="60">序号</th>
+                <th data-min-width="150" data-column="invcode">存货编码</th>
+                <th data-min-width="150" data-column="invcode">存货代码</th>
+                <th data-min-width="150" data-column="invname">存货名称</th>
+                <th data-width="200" data-column="invspecs">规格型号</th>
+                <th data-width="100" data-column="invspecs">主计量单位</th>
+                <th data-width="100" data-column="qty">数量</th>
+                <th data-width="100" data-column="model">所属机型</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">制单人：</label>
+        <label class="col-sm-1 col-form-label">制单人：</label>
         <div class="col-sm-2 col-form-label">
             #(sysSaledeliver.createperson??)
         </div>

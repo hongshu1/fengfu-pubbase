@@ -353,7 +353,7 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
 //		String docInfoRelaStrings= JSON.toJSONStringWithDateFormat(importData,"HH:mm");
         String docInfoRelaStrings= JSON.toJSONString(importData);
         List<RcvPlanD> rcvPlanDS = JSON.parseArray(docInfoRelaStrings, RcvPlanD.class);
-        System.out.println("===="+rcvPlanDS);
+//        System.out.println("===="+rcvPlanDS);
         if(notOk(rcvPlanDS)) {
             if(errorMsg.length()>0) {
                 return fail(errorMsg.toString());
@@ -374,11 +374,11 @@ public class RcvPlanMService extends BaseService<RcvPlanM> implements IApprovalS
 //        rcvPlanDS.add(lines);
 
         //执行批量操作
-        boolean success=tx(() -> true);
+        /*boolean success=tx(() -> true);
 
         if(!success) {
             return fail(JBoltMsg.DATA_IMPORT_FAIL);
-        }
+        }*/
         return successWithData(rcvPlanDS);
     }
 

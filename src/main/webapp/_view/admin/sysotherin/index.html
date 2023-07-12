@@ -10,10 +10,19 @@
                            value=""/>
                     <input type="text" autocomplete="off" class="form-control" placeholder="仓库名称" name="whname"
                            value=""/>
-                    <input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptName"
-                           value=""/>
-                    <select class="form-control" name="state" data-autoload data-url="admin/dictionary/options?key=null"
-                            data-select-type="select" data-text="=状态=" data-value="" data-value-attr="sn"></select>
+<!--                    <input type="text" autocomplete="off" class="form-control" placeholder="生产部门" name="deptName"-->
+<!--                           value=""/>-->
+                    <select style="width:150px" class="form-control"
+                            data-autoload
+                            data-text="=状态="
+                            name="state"
+                    >
+                        <option value="">=状态=</option>
+                        <option value="0">已保存</option>
+                        <option value="1">待审核</option>
+                        <option value="2">审核通过</option>
+                        <option value="3">审核不通过</option>
+                    </select>
                     <input type="text" data-date class="form-control ml-2" placeholder="开始日期" maxlength="20"
                            name="startTime" value=""/>
                     <span class="ml-1 mr-1">至</span>
@@ -55,6 +64,7 @@
 				<td>${data.rdcodename}</td>
 				<td>${data.billtype}</td>
 				<td>${data.billno}</td>
+                <td>${data.u8billno}</td>
 				<td>${data.venname}</td>
 				<td>${data.daudittime}</td>
 				<td>${data.memo}</td>
@@ -100,6 +110,7 @@
                 <th data-width="150" data-column="warehousingType">入库类别</th>
                 <th data-width="150" data-column="BillType">业务类型</th>
                 <th data-width="150" data-column="BillNo">业务单号</th>
+                <th data-width="100" data-column="transformation">ERP单据</th>
                 <th data-width="150" data-column="venName">供应商名称</th>
                 <th data-width="150" data-column="dAuditTime">审核日期</th>
                 <th data-width="150" data-column="remark">备注</th>

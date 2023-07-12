@@ -13,18 +13,15 @@ import cn.jbolt.core.poi.excel.JBoltExcelSheet;
 import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.InventoryClass;
-import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.kit.Okv;
 import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.IAtom;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,14 +34,13 @@ import java.util.Optional;
  * @date: 2023-03-23 09:02
  */
 public class InventoryClassService extends BaseService<InventoryClass> {
+    
 	private final InventoryClass dao=new InventoryClass().dao();
+    
 	@Override
 	protected InventoryClass dao() {
 		return dao;
 	}
-
-	@Inject
-	private CusFieldsMappingDService cusFieldsMappingDService;
 
 	@Override
     protected int systemLogTargetType() {
@@ -54,7 +50,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 	/**
 	 * 后台管理数据查询
 	 * @param keywords   关键词
-	 * @return
 	 */
 	public List<InventoryClass> getAdminDatas(String keywords) {
 	    //创建sql对象
@@ -68,8 +63,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 
 	/**
 	 * 保存
-	 * @param inventoryClass
-	 * @return
 	 */
 	public Ret save(InventoryClass inventoryClass) {
 		if(inventoryClass==null || isOk(inventoryClass.getIAutoId())) {
@@ -87,8 +80,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 
 	/**
 	 * 设置参数
-	 * @param inventoryClass
-	 * @return
 	 */
 	private InventoryClass setInventoryClass(InventoryClass inventoryClass){
 		inventoryClass.setIsDeleted(false);
@@ -106,8 +97,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 
 	/**
 	 * 更新
-	 * @param inventoryClass
-	 * @return
 	 */
 	public Ret update(InventoryClass inventoryClass) {
 		if(inventoryClass==null || notOk(inventoryClass.getIAutoId())) {
@@ -129,7 +118,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 	 * 删除数据后执行的回调
 	 * @param inventoryClass 要删除的model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	protected String afterDelete(InventoryClass inventoryClass, Kv kv) {
@@ -141,7 +129,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 	 * 检测是否可以删除
 	 * @param inventoryClass model
 	 * @param kv 携带额外参数一般用不上
-	 * @return
 	 */
 	@Override
 	public String checkInUse(InventoryClass inventoryClass, Kv kv) {
@@ -156,7 +143,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 
 	/**
      * 生成excel导入使用的模板
-     * @return
      */
     public JBoltExcel getImportExcelTpl() {
         return JBoltExcel
@@ -175,8 +161,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 
     /**
 	 * 读取excel文件
-	 * @param file
-	 * @return
 	 */
 	public Ret importExcel(File file) {
 		StringBuilder errorMsg=new StringBuilder();
@@ -208,13 +192,10 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 			setInventoryClass(classs);
 		}
 		//执行批量操作
-		boolean success=tx(new IAtom() {
-			@Override
-			public boolean run() throws SQLException {
-				batchSave(inventoryClasss);
-				return true;
-			}
-		});
+		boolean success=tx(() -> {
+            batchSave(inventoryClasss);
+            return true;
+        });
 
 		if(!success) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL);
@@ -224,7 +205,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 
     /**
 	 * 生成要导出的Excel
-	 * @return
 	 */
 	public JBoltExcel exportExcel(List<InventoryClass> datas) {
 	    return JBoltExcel
@@ -247,9 +227,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 
 	/**
 	 * 获取树状数据源
-	 * @param selectId
-	 * @param openLevel
-	 * @return
 	 */
 	public List<JsTreeBean> getMgrTree(Long selectId, Integer openLevel) {
 		List<InventoryClass> inventoryClassList = find("select * from Bd_InventoryClass where isdeleted='0' order by cInvCCode asc ");
@@ -274,8 +251,6 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 
 	/**
 	 * 查所有
-	 * @param kv
-	 * @return
 	 */
 	public List<Record> selectClassList(Kv kv) {
 		return dbTemplate("inventoryclass.list",kv).find();
@@ -308,14 +283,14 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 	 * 从系统导入字段配置，获得导入的数据
 	 */
 	public Ret importExcelClass(File file) {
-		List<Record> records = cusFieldsMappingDService.getImportRecordsByTableName(file, table());
+		List<Record> records = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
 		if (notOk(records)) {
 			return fail(JBoltMsg.DATA_IMPORT_FAIL_EMPTY);
 		}
 
+        Date now = new Date();
 
 		for (Record record : records) {
-
 
 			if (StrUtil.isBlank(record.getStr("cInvCCode"))) {
 				return fail("存货分类编码不能为空");
@@ -324,14 +299,12 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 				return fail("存货分类名称不能为空");
 			}
 
-			if (notNull(record.get("iPid")))
-			{
-				InventoryClass inventoryClass = findFirst(selectSql().eq("cInvCCode", record.getStr("iPid")).or().eq("cInvCName", record.getStr("iPid")));
-				Long iPid = Optional.ofNullable(inventoryClass).map(InventoryClass::getIAutoId).orElse(null);
-				record.set("iPid", iPid);
-			}
+            if (notNull(record.get("iPid"))) {
+                InventoryClass inventoryClass = findFirst(selectSql().eq("cInvCCode", record.getStr("iPid")).or().eq("cInvCName", record.getStr("iPid")));
+                Long iPid = Optional.ofNullable(inventoryClass).map(InventoryClass::getIAutoId).orElse(null);
+                record.set("iPid", iPid);
+            }
 
-			Date now=new Date();
 			record.set("iAutoId", JBoltSnowflakeKit.me.nextId());
 			record.set("iOrgId", getOrgId());
 			record.set("cOrgCode", getOrgCode());
@@ -355,4 +328,5 @@ public class InventoryClassService extends BaseService<InventoryClass> {
 		});
 		return SUCCESS;
 	}
+    
 }

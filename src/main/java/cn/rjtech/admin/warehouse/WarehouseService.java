@@ -1,24 +1,18 @@
 package cn.rjtech.admin.warehouse;
 
-import cn.hutool.core.util.StrUtil;
 import cn.jbolt.core.base.JBoltMsg;
 import cn.jbolt.core.db.sql.Sql;
-import cn.jbolt.core.kit.JBoltSnowflakeKit;
 import cn.jbolt.core.kit.JBoltUserKit;
-import cn.jbolt.core.poi.excel.JBoltExcel;
-import cn.jbolt.core.poi.excel.JBoltExcelHeader;
-import cn.jbolt.core.poi.excel.JBoltExcelSheet;
-import cn.jbolt.core.poi.excel.JBoltExcelUtil;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.person.PersonService;
+import cn.rjtech.cache.CusFieldsMappingdCache;
 import cn.rjtech.enums.SourceEnum;
 import cn.rjtech.model.momdata.Department;
 import cn.rjtech.model.momdata.Person;
-import cn.rjtech.model.momdata.VendorAddr;
 import cn.rjtech.model.momdata.Warehouse;
+import cn.rjtech.util.BillNoUtils;
 import cn.rjtech.util.ValidationUtils;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
@@ -29,7 +23,8 @@ import com.jfinal.plugin.activerecord.Record;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 仓库建模-仓库档案
@@ -40,24 +35,17 @@ import java.util.*;
  */
 public class WarehouseService extends BaseService<Warehouse> {
 
-  private final Warehouse dao = new Warehouse().dao();
+    private final Warehouse dao = new Warehouse().dao();
 
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingDService;
+    @Inject
+    private PersonService personService;
+    @Inject
+    private DepartmentService departmentService;
 
-  @Inject
-  private DepartmentService departmentService;
-
-  @Inject
-  private CusFieldsMappingDService cusFieldsMappingdService;
-
-  @Inject
-  private PersonService personService;
-
-  @Override
-  protected Warehouse dao() {
-    return dao;
-  }
+    @Override
+    protected Warehouse dao() {
+        return dao;
+    }
 
   /**
    * 设置返回二开业务所属的关键systemLog的targetType
@@ -66,7 +54,6 @@ public class WarehouseService extends BaseService<Warehouse> {
   protected int systemLogTargetType() {
     return ProjectSystemLogTargetType.NONE.getValue();
   }
-
 
   /**
    * 后台管理数据查询
@@ -229,9 +216,8 @@ public class WarehouseService extends BaseService<Warehouse> {
    * 后台管理分页查询
    */
   public Page<Record> paginateAdminDatas(int pageNumber, int pageSize, Kv kv) {
-    kv.set("iorgid", getOrgId());
-    Page<Record> paginate = dbTemplate("warehouse.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
-    return paginate;
+      kv.set("iorgid", getOrgId());
+      return dbTemplate("warehouse.paginateAdminDatas", kv).paginate(pageNumber, pageSize);
   }
 
   public Object dataList() {
@@ -264,10 +250,10 @@ public class WarehouseService extends BaseService<Warehouse> {
       }
       String[] split = ids.split(",");
       for (String id : split) {
-        Warehouse warehouse = findById(ids);
+        Warehouse warehouse = findById(id);
         if (warehouse.getISource() != null) {
           if (warehouse.getISource() == 2) {
-            ValidationUtils.error("【"+warehouse.getCWhName() + "】来源U8，无法删除");
+            ValidationUtils.error("【" + warehouse.getCWhName() + "】来源U8，无法删除");
           }
         }
         warehouse.setIsDeleted(true);
@@ -303,117 +289,119 @@ public class WarehouseService extends BaseService<Warehouse> {
 
   /**
    * 根据仓库id获得对应的数据
-   *
-   * @param id
-   * @return
    */
   public Warehouse findById(Long id) {
     return dao.findById(id);
   }
 
-  /**
-   * 数据导入
-   *
-   * @param file
-   * @param cformatName
-   * @return
-   */
-  public Ret importExcelData(File file, String cformatName) {
-    Ret ret = cusFieldsMappingdService.getImportDatas(file, cformatName);
-    ValidationUtils.isTrue(ret.isOk(), "导入失败");
-    ArrayList<Map> datas = (ArrayList<Map>) ret.get("data");
-    StringBuilder msg = new StringBuilder();
+    /**
+     * 数据导入
+     */
+    public Ret importExcelData(File file) {
+        List<Record> datas = CusFieldsMappingdCache.ME.getImportRecordsByTableName(file, table());
+        ValidationUtils.notEmpty(datas, "导入数据不能为空");
+        
+        Date now = new Date();
 
-    tx(() -> {
-      Integer iseq = 1;
-      // 封装数据
-      for (Map<String, Object> data : datas) {
-        // 基本信息校验
-        ValidationUtils.notNull(data.get("cwhcode"), "第" + iseq + "行的【仓库编码】不能为空！");
-        ValidationUtils.notNull(data.get("cwhname"), "第" + iseq + "行的【仓库名称】不能为空！");
-        ValidationUtils.notNull(data.get("cdepcode"), "第" + iseq + "行的【所属部门名称】不能为空");
-        ValidationUtils.notNull(data.get("isspacecontrolenabled"), "第" + iseq + "行的【是否启用空间掌控】不能为空！");
-        ValidationUtils.notNull(data.get("isstockwarnenabled"), "第" + iseq + "行的【启用库存预警】不能为空！");
-        ValidationUtils.notNull(data.get("isreservoirarea"), "第" + iseq + "行的【启用库区】不能为空！");
+        tx(() -> {
+            int iseq = 1;
+            
+            // 封装数据
+            for (Record data : datas) {
+                // 基本信息校验
+                ValidationUtils.notNull(data.get("cwhcode"), "第" + iseq + "行的【仓库编码】不能为空！");
+                ValidationUtils.notNull(data.get("cwhname"), "第" + iseq + "行的【仓库名称】不能为空！");
+                ValidationUtils.notNull(data.get("cdepcode"), "第" + iseq + "行的【所属部门名称】不能为空");
+                ValidationUtils.notNull(data.get("isspacecontrolenabled"), "第" + iseq + "行的【是否启用空间掌控】不能为空！");
+                ValidationUtils.notNull(data.get("isstockwarnenabled"), "第" + iseq + "行的【启用库存预警】不能为空！");
+                ValidationUtils.notNull(data.get("isreservoirarea"), "第" + iseq + "行的【启用库区】不能为空！");
 
-        // 查重
-        ValidationUtils.assertNull(findByWhCode(data.get("cwhcode") + ""), "第" + iseq + "行的【仓库编码】已存在！");
-        ValidationUtils.assertNull(findByWhName(data.get("cwhname") + ""), "第" + iseq + "行的【仓库名称】已存在！");
-        Department dept = departmentService.findByCdepName(data.get("cdepcode") + "");
-        ValidationUtils.notNull(dept, "第" + iseq + "行的【所属部门名称】未找到对应的部门档案数据！");
-        if (data.get("imaxstock") != null || data.get("imaxspace") != null) {
-          if ((data.get("isspacecontrolenabled") + "").equals("否")) {
-            ValidationUtils.error("第" + iseq + "行的【是否启用空间掌控】为否时，【最大存储数量】【最大存储空间】必须为空！");
-          }
-        } else {
-          if ((data.get("isspacecontrolenabled") + "").equals("是")) {
-            ValidationUtils.error("第" + iseq + "行的【是否启用空间掌控】为是时，【最大存储数量】【最大存储空间】不能为空！");
-          }
-        }
+                // 查重
+                ValidationUtils.assertNull(findByWhCode(data.get("cwhcode") + ""), "第" + iseq + "行的【仓库编码】已存在！");
+                ValidationUtils.assertNull(findByWhName(data.get("cwhname") + ""), "第" + iseq + "行的【仓库名称】已存在！");
+                
+                Department dept = departmentService.findByCdepName(data.get("cdepcode") + "");
+                ValidationUtils.notNull(dept, "第" + iseq + "行的【所属部门名称】未找到对应的部门档案数据！");
+                
+                if (data.get("imaxstock") != null || data.get("imaxspace") != null) {
+                    if ("否".equals(data.get("isspacecontrolenabled") + "")) {
+                        ValidationUtils.error("第" + iseq + "行的【是否启用空间掌控】为否时，【最大存储数量】【最大存储空间】必须为空！");
+                    }
+                } else {
+                    if ("是".equals(data.get("isspacecontrolenabled") + "")) {
+                        ValidationUtils.error("第" + iseq + "行的【是否启用空间掌控】为是时，【最大存储数量】【最大存储空间】不能为空！");
+                    }
+                }
 
-        //仓库数据保存
+                // 仓库数据保存
+                Warehouse warehouse = new Warehouse();
+                
+                // 组织数据
+                warehouse.setIOrgId(getOrgId());
+                warehouse.setCOrgCode(getOrgCode());
+                warehouse.setCOrgName(getOrgName());
+
+                // 创建人
+                warehouse.setIcreateby(JBoltUserKit.getUserId());
+                warehouse.setCcreatename(JBoltUserKit.getUserName());
+                warehouse.setDCreateTime(now);
+
+                // 更新人
+                warehouse.setIupdateby(JBoltUserKit.getUserId());
+                warehouse.setCupdatename(JBoltUserKit.getUserName());
+                warehouse.setDupdatetime(now);
+
+                // 是否删除，是否启用,数据来源
+                warehouse.setIsDeleted(false);
+                warehouse.setIsEnabled(true);
+                warehouse.setISource(SourceEnum.MES.getValue());
+
+                //数据添加
+                warehouse.setCWhCode(data.getStr("cwhcode"));
+                warehouse.setCWhName(data.getStr("cwhname"));
+                warehouse.setCDepCode(dept.getCDepCode());
+                
+                if (data.get("cwhperson") != null) {
+                    Person person = personService.findFirstByCpersonName(data.getStr("cwhperson"));
+                    ValidationUtils.notNull(person, "第" + iseq + "行的【负责人】未找到对应的人员档案数据！");
+                    warehouse.setCWhPerson(person.getCpsnNum());
+                }
+                
+                if (data.get("imaxstock") != null) {
+                    warehouse.setIMaxStock(BigDecimal.valueOf(Integer.parseInt(data.getStr("imaxstock"))));
+                }
+                if (data.get("imaxspace") != null) {
+                    warehouse.setImaxspace(BigDecimal.valueOf(Integer.parseInt(data.getStr("imaxspace"))));
+                }
+                
+                // 空间掌控
+                boolean isspacecontrolenabled = "是".equals(data.getStr("isspacecontrolenabled"));
+                // 库存预警
+                boolean isstockwarnenabled = "是".equals(data.getStr("isstockwarnenabled"));
+                warehouse.setIsSpaceControlEnabled(isspacecontrolenabled);
+                warehouse.setIsStockWarnEnabled(isstockwarnenabled);
+                warehouse.setCWhAddress(data.getStr("cwhaddress"));
+                warehouse.setIsReservoirAread(true);
+                warehouse.setCWhMemo(data.getStr("cwhmemo"));
+
+                ValidationUtils.isTrue(warehouse.save(), "第" + iseq + "行保存数据失败");
+                iseq++;
+            }
+
+            return true;
+        });
+
+        return SUCCESS;
+    }
+
+    public List<Warehouse> findByIds(List<Long> ids) {
+        Sql sql = selectSql().in(Warehouse.IAUTOID, ids);
+        return find(sql);
+    }
+
+    public Warehouse getWarehouseCode() {
         Warehouse warehouse = new Warehouse();
-        //组织数据
-        warehouse.setIOrgId(getOrgId());
-        warehouse.setCOrgCode(getOrgCode());
-        warehouse.setCOrgName(getOrgName());
-
-        //创建人
-        warehouse.setIcreateby(JBoltUserKit.getUserId());
-        warehouse.setCcreatename(JBoltUserKit.getUserName());
-        warehouse.setDCreateTime(new Date());
-
-        //更新人
-        warehouse.setIupdateby(JBoltUserKit.getUserId());
-        warehouse.setCupdatename(JBoltUserKit.getUserName());
-        warehouse.setDupdatetime(new Date());
-
-        //是否删除，是否启用,数据来源
-        warehouse.setIsDeleted(false);
-        warehouse.setIsEnabled(true);
-        warehouse.setISource(1);
-
-        //数据添加
-        warehouse.setCWhCode(data.get("cwhcode") + "");
-        warehouse.setCWhName(data.get("cwhname") + "");
-        warehouse.setCDepCode(dept.getCDepCode());
-        if (data.get("cwhperson") != null) {
-          Person person = personService.findFirstByCpersonName(data.get("cwhperson") + "");
-          if (person == null) {
-            ValidationUtils.error("第" + iseq + "行的【负责人】未找到对应的人员档案数据！");
-          } else {
-            warehouse.setCWhPerson(person.getCpsnNum());
-          }
-        }
-        if (data.get("imaxstock") != null) {
-          warehouse.setIMaxStock(BigDecimal.valueOf(Integer.parseInt(data.get("imaxstock") + "")));
-        }
-        if (data.get("imaxspace") != null) {
-          warehouse.setImaxspace(BigDecimal.valueOf(Integer.parseInt(data.get("imaxspace") + "")));
-        }
-        //空间掌控
-        boolean isspacecontrolenabled = (data.get("isspacecontrolenabled") + "").equals("是") ? true : false;
-        //库存预警
-        boolean isstockwarnenabled = (data.get("isstockwarnenabled") + "").equals("是") ? true : false;
-        warehouse.setIsSpaceControlEnabled(isspacecontrolenabled);
-        warehouse.setIsStockWarnEnabled(isstockwarnenabled);
-        warehouse.setCWhAddress(data.get("cwhaddress") + "");
-        warehouse.setIsReservoirAread(true);
-        warehouse.setCWhMemo(data.get("cwhmemo") + "");
-
-        ValidationUtils.isTrue(warehouse.save(), "第" + iseq + "行保存数据失败");
-        iseq++;
-      }
-
-      return true;
-    });
-
-    ValidationUtils.assertBlank(msg.toString(), msg + ",其他数据已处理");
-    return SUCCESS;
-  }
-
-  public List<Warehouse> findByIds(List<Long> ids) {
-    Sql sql = selectSql().in(Warehouse.IAUTOID, ids);
-    return find(sql);
-  }
+        warehouse.setCWhCode(BillNoUtils.genCode(getOrgCode(), table()));
+        return warehouse;
+    }
 }

@@ -11,7 +11,6 @@ import cn.jbolt.core.kit.JBoltUserKit;
 import cn.jbolt.core.poi.excel.*;
 import cn.jbolt.core.service.base.BaseService;
 import cn.jbolt.extend.systemlog.ProjectSystemLogTargetType;
-import cn.rjtech.admin.cusfieldsmappingd.CusFieldsMappingDService;
 import cn.rjtech.admin.department.DepartmentService;
 import cn.rjtech.admin.person.PersonService;
 import cn.rjtech.admin.warehouse.WarehouseService;
@@ -47,11 +46,9 @@ public class WorkregionmService extends BaseService<Workregionm> {
     @Inject
     private PersonService personService;
     @Inject
-    private DepartmentService departmentService;
-    @Inject
     private WarehouseService warehouseService;
     @Inject
-    private CusFieldsMappingDService cusFieldsMappingDService;
+    private DepartmentService departmentService;
 
     @Override
     protected Workregionm dao() {
@@ -69,15 +66,16 @@ public class WorkregionmService extends BaseService<Workregionm> {
      * 保存
      */
     public Ret save(Workregionm workregionm) {
+        if (workregionm == null || isOk(workregionm.getIAutoId())) {
+            return fail(JBoltMsg.PARAM_ERROR);
+        }
+        
         Long iDepId = workregionm.getIDepId();
         Department department = departmentService.findByid(iDepId);
         workregionm.setCDepCode(department.getCDepCode());
         workregionm.setCDepName(department.getCDepName());
 
-        if (workregionm == null || isOk(workregionm.getIAutoId())) {
-            return fail(JBoltMsg.PARAM_ERROR);
-        }
-        ValidationUtils.isTrue(getCworkcode(workregionm.getCWorkCode()) == null, "编码重复！");
+        ValidationUtils.assertNull(getCworkcode(workregionm.getCWorkCode()), "编码重复！");
         //if(existsName(workregionm.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
         saveWorkRegionMHandle(workregionm, JBoltUserKit.getUserId(), new Date(), JBoltUserKit.getUserName(), getOrgId(), getOrgCode(), getOrgName());
         boolean success = workregionm.save();

@@ -2,6 +2,7 @@ package cn.rjtech.admin.bomm;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -1784,8 +1785,102 @@ public class BomMService extends BaseService<BomM> {
 	}
 	
 	private boolean checkInventoryIsNotExistence(Long orgId, Long inventoryId){
-		Sql sql = selectSql().eq(BomM.IORGID, orgId).eq(BomM.ISDELETED, "0").eq(BomM.IINVENTORYID, inventoryId);
-		BomM bomM = findFirst(sql);
+		BomM bomM = getBomByInvId(orgId, inventoryId);
 		return isOk(bomM);
 	}
+	
+	public BomM getBomByInvId(Long orgId, Long inventoryId){
+		Sql sql = selectSql().eq(BomM.IORGID, orgId).eq(BomM.ISDELETED, "0").eq(BomM.IINVENTORYID, inventoryId);
+		return findFirst(sql);
+	}
+	
+	public Page<Record> findBomCompareByBomMasterInvId(Kv kv, Integer pageNumber, Integer pageSize){
+		Long masterInvId = kv.getLong("invId");
+		ValidationUtils.notNull(masterInvId, "未获取到存货编码数据");
+		BomM bomM = getBomByInvId(getOrgId(), masterInvId);
+		ValidationUtils.notNull(bomM, JBoltMsg.DATA_NOT_EXIST);
+		List<Record> records = new ArrayList<>();
+
+		if (ObjUtil.isNotNull(bomM)){
+			List<Record> allList = dbTemplate("bomm.findBomCompareByBomMasterInvId", Kv.by("orgId", getOrgId())).find();
+			// 第一层根据pid区分子件
+			Map<Long, List<Record>> compareMap = allList.stream().filter(record -> StrUtil.isNotBlank(record.getStr(BomD.IPID))).collect(Collectors.groupingBy(record -> record.getLong(BomD.IPID)));
+			// 第二层及以下的通过存货编码区分下一级
+			Map<Long, Long> invMap = new HashMap<>();
+			
+			for (Record record : allList){
+				Long iInventoryId = record.getLong(BomD.IINVENTORYID);
+				// pId不为空，则说明是子件
+				if (ObjectUtil.isNotNull(record.getLong(BomD.IPID))){
+					continue;
+				}
+				invMap.put(iInventoryId, record.getLong("id"));
+			}
+			
+			Long id = bomM.getIAutoId();
+			if (compareMap.containsKey(id)){
+				routingRecursiveTraversal(id, records, compareMap.get(id), compareMap, invMap);
+			}
+			
+			if (StrUtil.isNotBlank(kv.getStr("routingConfigData"))){
+				String routingConfigData = kv.getStr("routingConfigData");
+				for (String inventoryName : routingConfigData.split(",")){
+					Record record = new Record();
+					record.set(Inventory.CINVNAME, inventoryName);
+					records.add(record);
+				}
+			}
+		}
+		return getPageData(pageNumber, pageSize, records);
+	}
+	
+	/**
+	 *  递归遍历所有子件
+	 * @param pid  父id
+	 * @param records 集合
+	 * @param compareList 子件集合
+	 * @param compareMap  key=父id, value = 子件集合
+	 */
+	public void routingRecursiveTraversal(Long pid, List<Record> records, List<Record> compareList, Map<Long, List<Record>> compareMap, Map<Long, Long> invMap){
+		for (Record record : compareList){
+			Long iInventoryId = record.getLong(BomD.IINVENTORYID);
+			Long newId = JBoltSnowflakeKit.me.nextId();
+			// 判断当前子件是否存在 子件
+			if (invMap.containsKey(iInventoryId)){
+				routingRecursiveTraversal(newId, records, compareMap.get(invMap.get(iInventoryId)), compareMap, invMap);
+			}
+			records.add(record);
+		}
+	}
+	
+	public Page<Record> getPageData(int pageNumber, int pageSize, List<Record> records){
+		int end = pageNumber * pageSize;
+		if (end <= 0) {
+			end = pageSize;
+		}
+		
+		int begin = (pageNumber - 1) * pageSize;
+		if (begin < 0) {
+			begin = 0;
+		}
+		
+		Integer size = CollUtil.isNotEmpty(records) ? records.size() : 0;
+		
+		if (size == null || size < 0){
+			return new Page(new ArrayList(0), pageNumber, pageSize, 0, 0);
+		}
+		
+		long totalRow = Long.valueOf(size);
+		int totalPage = (int)(totalRow / (long)pageSize);
+		if (totalRow % (long)pageSize != 0L) {
+			++totalPage;
+		}
+		
+		if (pageNumber > totalPage) {
+			return new Page(new ArrayList(0), pageNumber, pageSize, totalPage, (int)totalRow);
+		}
+		List<Record> list = ListUtil.page(begin, end, records);
+		return new Page(list, pageNumber, pageSize, totalPage, (int)totalRow);
+	}
+	
 }

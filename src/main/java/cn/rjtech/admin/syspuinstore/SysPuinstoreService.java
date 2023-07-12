@@ -667,7 +667,7 @@ public class SysPuinstoreService extends BaseService<SysPuinstore> implements IA
                 //
                 puinstoreList.add(puinstore);
 
-                //2、采购订单，如果是双单位收货，需要生成形态转换单
+
                 SysPureceive pureceive = pureceiveService.findByBillNo(puinstore.getSourceBillNo());
                 boolean special = checkPUReceiveSpecial(pureceive);
                 if (special) {

@@ -31,7 +31,7 @@
             <input type="hidden" id="detailHidden" name="detailHidden" value="#(detailHidden??)"/>
             <input type="hidden" id="barcodes" name="barcodes"/>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">出库单号：</label>
+                <label class="col-sm-1 col-form-label">出库单号：</label>
                 <div class="col-sm-2 col-form-label">
                     <input type="text" class="form-control border-none" readonly="readonly" placeholder=""
                            name="otherOut.billno" value="#(otherOut.billno??)"/>
@@ -46,6 +46,7 @@
                 <div class="col-sm-2 col-form-label">
                     <select class="form-control"
                             name="otherOut.whcode"
+                            data-rule="required"
                             data-autoload
                             data-url="admin/SysEnumeration/wareHouse"
                             data-select-type="select2"
@@ -58,11 +59,12 @@
             </div>
 
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">出库类别：</label>
+                <label class="col-sm-1 col-form-label">出库类别：</label>
                 <div class="col-sm-2 col-form-label">
                     <select class="form-control"
                             name="otherOut.rdcode"
                             data-autoload
+                            data-rule="required"
                             data-url="admin/materialDeliveryList/RDStyle?bRdFlag=0"
                             data-select-type="select2"
                             data-text="=请选择出库类别="
@@ -91,7 +93,7 @@
 
 
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">出库部门：</label>
+                <label class="col-sm-1 col-form-label">出库部门：</label>
                 <div class="col-sm-2 col-form-label">
                     <select class="form-control"
                             data-autoload
@@ -113,23 +115,21 @@
                 </div>
                 <label class="col-sm-2 col-form-label">备注：</label>
                 <div class="col-sm-2 col-form-label">
-                    <textarea style="width: 210px; height: 100px; resize: none" placeholder="=请输入备注=" type="text"
+                    <textarea style="width: 310px; height: 35px; resize: none" placeholder="=请输入备注=" type="text"
                               maxlength="300" class="form-control border-none" name="otherOut.memo" placeholder=""
                               value="#(otherOut.memo??)">#(otherOut.memo??)</textarea>
                 </div>
             </div>
         </form>
 
-        <div class="form-group row">
-            <div class="col-11" style="margin-left: 180px;">
-                <div class="jbolt_page_content">
-                    #render("_table_split.html")
-                </div>
+        <div class="col-20">
+            <div class="jbolt_page_content">
+                #render("_table_split.html")
             </div>
         </div>
 
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">制单人：</label>
+            <label class="col-sm-1 col-form-label">制单人：</label>
             <div class="col-sm-2 col-form-label">
                 <input type="text" class="form-control border-none" readonly="readonly" placeholder=""
                        value="#(otherOut.createperson??)"/>
