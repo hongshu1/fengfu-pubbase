@@ -2303,7 +2303,7 @@ public class ScheduProductPlanMonthService extends BaseService<ApsAnnualplanm> {
                         moMoroutingconfig.setCMergedSeq(invRoutingConfig.getCMergedSeq());
                         moMoroutingconfig.setCOperationName(invRoutingConfig.getCOperationName());
                         moMoroutingconfig.setIType(invRoutingConfig.getIType());
-                        moMoroutingconfig.setIRsInventoryId(invRoutingConfig.getIRsInventoryId());
+//                        moMoroutingconfig.setIRsInventoryId(invRoutingConfig.getIRsInventoryId());
                         moMoroutingconfig.setCProductSn(invRoutingConfig.getCProductSn());
                         moMoroutingconfig.setCProductTechSn(invRoutingConfig.getCProductTechSn());
                         moMoroutingconfig.setIMergedNum(invRoutingConfig.getIMergedNum());

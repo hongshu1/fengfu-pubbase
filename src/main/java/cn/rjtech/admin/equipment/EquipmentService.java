@@ -94,7 +94,9 @@ public class EquipmentService extends BaseService<Equipment> {
 		if(equipment==null || isOk(equipment.getIAutoId())) {
 			return fail(JBoltMsg.PARAM_ERROR);
 		}
-		equipment.setCEquipmentCode(BillNoUtils.genCode(getOrgCode(), table()));
+		if (StrUtil.isBlank(equipment.getCEquipmentCode())) {
+			equipment.setCEquipmentCode(BillNoUtils.genCode(getOrgCode(), table()));
+		}
 		setEquipment(equipment);
 		//if(existsName(equipment.getName())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=equipment.save();
@@ -138,6 +140,9 @@ public class EquipmentService extends BaseService<Equipment> {
 		}
 		//更新时需要判断数据存在
 		Equipment dbEquipment=findById(equipment.getIAutoId());
+		if (StrUtil.isBlank(equipment.getCEquipmentCode())) {
+			equipment.setCEquipmentCode(BillNoUtils.genCode(getOrgCode(), table()));
+		}
 		if(dbEquipment==null) {return fail(JBoltMsg.DATA_NOT_EXIST);}
 		//if(existsName(equipment.getName(), equipment.getIAutoId())) {return fail(JBoltMsg.DATA_SAME_NAME_EXIST);}
 		boolean success=equipment.update();
