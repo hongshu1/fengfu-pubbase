@@ -392,7 +392,7 @@ public class OtherOutReturnService extends BaseService<OtherOut> {
 			if (isOk(post)) {
 				if ("201".equals(jsonObject.getString("code"))) {
 					System.out.println(jsonObject);
-					return Ret.ok("提交成功");
+					return success("提交成功");
 				}
 			}
 		}catch (Exception e){

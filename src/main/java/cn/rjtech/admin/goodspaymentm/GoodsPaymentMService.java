@@ -259,7 +259,7 @@ public class GoodsPaymentMService extends BaseService<GoodsPaymentM> implements 
 			deleteTableSubmitDatas(jBoltTable);
 			return true;
 		});
-		return Ret.ok().set("autoid", goodspaymentm.getIAutoId());
+		return successWithData(goodspaymentm.keep("autoid"));
 	}
 
 	//可编辑表格提交-新增数据

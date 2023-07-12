@@ -309,7 +309,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return Ret.ok().set("autoid", sysotherin.getAutoID());
+        return successWithData(sysotherin.keep("autoid"));
     }
 
     //可编辑表格提交-新增数据
@@ -321,8 +321,7 @@ public class SysAssemService extends BaseService<SysAssem> implements IApprovalS
         User user = JBoltUserKit.getUser();
         Date now = new Date();
         ArrayList<SysAssembarcode> sysassembarcodeList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            Record row = list.get(i);
+        for (Record row : list) {
             SysAssemdetail sysAssemdetail = new SysAssemdetail();
             sysAssemdetail.setMasID(sysotherin.getAutoID());
             sysAssemdetail.setAutoID(JBoltSnowflakeKit.me.nextIdStr());

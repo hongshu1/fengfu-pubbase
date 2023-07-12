@@ -234,7 +234,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return Ret.ok().set("autoid", sysotherin.getAutoID());
+        return successWithData(sysotherin.keep("autoid"));
     }
 
     // 可编辑表格提交-新增数据
@@ -243,8 +243,7 @@ public class SysProductinService extends BaseService<SysProductin> implements IA
         if (CollUtil.isEmpty(list)) return;
         ArrayList<SysProductindetail> sysproductindetail = new ArrayList<>();
         Date now = new Date();
-        for (int i = 0; i < list.size(); i++) {
-            Record row = list.get(i);
+        for (Record row : list) {
             SysProductindetail sysdetail = new SysProductindetail();
             sysdetail.setBarcode(row.get("barcode"));
             sysdetail.setInvCode(row.get("cinvcode"));

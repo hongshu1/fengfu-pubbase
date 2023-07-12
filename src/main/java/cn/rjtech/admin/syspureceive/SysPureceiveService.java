@@ -384,7 +384,7 @@ public class SysPureceiveService extends BaseService<SysPureceive> implements IA
             return true;
         });
 
-        return Ret.ok().set("autoid", sysPureceive.getAutoID());
+        return successWithData(sysPureceive.keep("autoid"));
     }
 
     private void saveData(JBoltTable jBoltTable, SysPureceive sysPureceive, String operationType, User user, HashMap<String, String> map) {

@@ -290,7 +290,7 @@ public class SysSaledeliverService extends BaseService<SysSaledeliver> {
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("200".equals(jsonObject.getString("code"))) {
-                    return Ret.ok("提交成功");
+                    return success("提交成功");
                 }
             }
         }catch (Exception e){

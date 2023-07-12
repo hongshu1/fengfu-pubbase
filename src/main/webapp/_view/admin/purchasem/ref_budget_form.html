@@ -871,7 +871,7 @@
 
     function uploadHandlerSuccess(uploader,type,fileInput,res){
     	clearJboltTable("#jbolt_table_#(pageId)");
-    	jboltTableInsertRow('#jbolt_table_#(pageId)', res.rows);
+    	jboltTableInsertRow('#jbolt_table_#(pageId)', res.data.rows);
     }
     function uploadHandlerFail(uploader,type,fileInput,res){
     	LayerMsgBox.alert(res.msg,2);

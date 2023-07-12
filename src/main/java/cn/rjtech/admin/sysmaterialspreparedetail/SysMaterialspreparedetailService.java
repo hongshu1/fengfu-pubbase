@@ -343,7 +343,7 @@ public class SysMaterialspreparedetailService extends BaseService<SysMaterialspr
             com.alibaba.fastjson.JSONObject jsonObject = JSON.parseObject(post);
             if (isOk(post)) {
                 if ("201".equals(jsonObject.getString("code"))) {
-                    return Ret.ok().setOk().data(jsonObject);
+                    return successWithData(jsonObject);
                 }
             }
         } catch (Exception e) {

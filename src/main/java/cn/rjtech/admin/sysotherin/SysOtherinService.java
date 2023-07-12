@@ -179,7 +179,6 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
      * 执行JBoltTable表格整体提交
      */
     public Ret submitByJBoltTable(JBoltTable jBoltTable) {
-
         SysOtherin sysotherin = jBoltTable.getFormModel(SysOtherin.class, "sysotherin");
 
         // 获取当前用户信息？
@@ -206,7 +205,7 @@ public class SysOtherinService extends BaseService<SysOtherin> implements IAppro
             deleteTableSubmitDatas(jBoltTable);
             return true;
         });
-        return Ret.ok().set("autoid", sysotherin.getAutoID());
+        return successWithData(sysotherin.keep("autoid"));
     }
 
     // 可编辑表格提交-新增数据

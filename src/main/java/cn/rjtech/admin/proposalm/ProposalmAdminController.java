@@ -38,7 +38,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
-import com.jfinal.kit.Ret;
+import com.jfinal.kit.Okv;
 import com.jfinal.plugin.activerecord.Record;
 
 import java.math.BigDecimal;
@@ -326,7 +326,7 @@ public class ProposalmAdminController extends BaseAdminController {
         List<Record> proposalds = null;
         //追加禀议-对追加选定的项目进行处理后回填到表格
         if (isSupplemental != null) proposalds = getProposaldDatas(expensebudgetitemid, investmentplanitemid, new Proposalm(), isSupplemental);
-        renderJson(Ret.ok().set("proposalds", proposalds));
+        renderJsonData(Okv.by("proposalds", proposalds));
     }
 
     /**
